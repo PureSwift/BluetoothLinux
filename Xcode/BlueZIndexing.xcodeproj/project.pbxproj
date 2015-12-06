@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6E16978E1C142AEF00264BED /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E16978D1C142AEF00264BED /* main.swift */; };
-		6E1697901C142B0100264BED /* BlueZ.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E16978F1C142B0100264BED /* BlueZ.swift */; };
+		6E1697901C142B0100264BED /* Bluetooth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E16978F1C142B0100264BED /* Bluetooth.swift */; };
+		6E16B2031C14458300264BED /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E16B2011C14458300264BED /* Address.swift */; };
+		6E16B2041C14458300264BED /* ByteValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E16B2021C14458300264BED /* ByteValue.swift */; };
+		6E16B2051C144DA500264BED /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E16B2001C14456F00264BED /* main.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,8 +28,11 @@
 /* Begin PBXFileReference section */
 		6E16977B1C142A0A00264BED /* BlueZIndexing */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BlueZIndexing; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E16978D1C142AEF00264BED /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		6E16978F1C142B0100264BED /* BlueZ.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlueZ.swift; sourceTree = "<group>"; };
+		6E16978F1C142B0100264BED /* Bluetooth.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bluetooth.swift; sourceTree = "<group>"; };
 		6E16AE581C14307200264BED /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Package.swift; path = ../Package.swift; sourceTree = "<group>"; };
+		6E16B2001C14456F00264BED /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = main.swift; path = ../Sources/main.swift; sourceTree = "<group>"; };
+		6E16B2011C14458300264BED /* Address.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
+		6E16B2021C14458300264BED /* ByteValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByteValue.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +50,7 @@
 			isa = PBXGroup;
 			children = (
 				6E16AE581C14307200264BED /* Package.swift */,
+				6E16B2001C14456F00264BED /* main.swift */,
 				6E16978C1C142ACE00264BED /* Tests */,
 				6E1697851C142A6600264BED /* Sources */,
 				6E16977C1C142A0A00264BED /* Products */,
@@ -62,7 +68,9 @@
 		6E1697851C142A6600264BED /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				6E16978F1C142B0100264BED /* BlueZ.swift */,
+				6E16978F1C142B0100264BED /* Bluetooth.swift */,
+				6E16B2011C14458300264BED /* Address.swift */,
+				6E16B2021C14458300264BED /* ByteValue.swift */,
 			);
 			name = Sources;
 			path = ../Sources;
@@ -145,8 +153,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E1697901C142B0100264BED /* BlueZ.swift in Sources */,
-				6E16978E1C142AEF00264BED /* main.swift in Sources */,
+				6E16B2031C14458300264BED /* Address.swift in Sources */,
+				6E1697901C142B0100264BED /* Bluetooth.swift in Sources */,
+				6E16B2051C144DA500264BED /* main.swift in Sources */,
+				6E16B2041C14458300264BED /* ByteValue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,7 +249,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "BlueZ-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -250,7 +259,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "BlueZ-Bridging-Header.h";
 			};
 			name = Release;
 		};
