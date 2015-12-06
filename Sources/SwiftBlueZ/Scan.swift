@@ -55,7 +55,7 @@ public extension Adapter {
         
         var results = [inquiry_info]()
         
-        for i in 0..<foundDevicesCount {
+        for i in 0..<Int(foundDevicesCount) {
             
             let infoPointer = inquiryInfoPointers[i]
             
