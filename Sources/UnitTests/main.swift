@@ -14,9 +14,7 @@
     import Darwin.C
 #endif
 
-print("Initializing first Bluetooth Adapter")
-
-guard let adapter = Bluetooth.Adapter() else {
+guard let adapter = Adapter() else {
     
     print("No Bluetooth adapters found")
     
@@ -24,3 +22,4 @@ guard let adapter = Bluetooth.Adapter() else {
 }
 
 print("Found Bluetooth adapter with device ID: \(adapter.deviceIdentifier)")
+

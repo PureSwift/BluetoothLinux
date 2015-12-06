@@ -10,9 +10,48 @@
 		6E2F71CA1C14D26200E81D56 /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F71C41C14D26200E81D56 /* Adapter.swift */; };
 		6E2F71CB1C14D26200E81D56 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F71C51C14D26200E81D56 /* Address.swift */; };
 		6E2F71CC1C14D26200E81D56 /* Bluetooth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F71C61C14D26200E81D56 /* Bluetooth.swift */; };
-		6E2F71CD1C14D26200E81D56 /* ByteValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F71C71C14D26200E81D56 /* ByteValue.swift */; };
 		6E2F71CE1C14D26200E81D56 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F71C91C14D26200E81D56 /* main.swift */; };
+		6E2F71D01C14D7FB00E81D56 /* Scan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F71CF1C14D7FB00E81D56 /* Scan.swift */; };
+		6E2F71E61C14F20800E81D56 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F71E51C14F20800E81D56 /* Error.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6E2F71DB1C14EEDB00E81D56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E2F71D31C14EEDA00E81D56 /* SwiftFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E30BA0D1B40F543009B1B49;
+			remoteInfo = "SwiftFoundation OS X";
+		};
+		6E2F71DD1C14EEDB00E81D56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E2F71D31C14EEDA00E81D56 /* SwiftFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E30BA171B40F543009B1B49;
+			remoteInfo = "SwiftFoundationTests OS X";
+		};
+		6E2F71DF1C14EEDB00E81D56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E2F71D31C14EEDA00E81D56 /* SwiftFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1AE78F6C1B96774100CDEF17;
+			remoteInfo = "SwiftFoundation iOS";
+		};
+		6E2F71E11C14EEDB00E81D56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E2F71D31C14EEDA00E81D56 /* SwiftFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E08F8571BBE7B8800548B1E;
+			remoteInfo = "SwiftFoundationTests iOS";
+		};
+		6E2F71E31C14EEDB00E81D56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E2F71D31C14EEDA00E81D56 /* SwiftFoundation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1AE78FC41B96774300CDEF17;
+			remoteInfo = "SwiftFoundation WatchOS";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		6E1697791C142A0A00264BED /* CopyFiles */ = {
@@ -32,8 +71,10 @@
 		6E2F71C41C14D26200E81D56 /* Adapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Adapter.swift; sourceTree = "<group>"; };
 		6E2F71C51C14D26200E81D56 /* Address.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
 		6E2F71C61C14D26200E81D56 /* Bluetooth.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bluetooth.swift; sourceTree = "<group>"; };
-		6E2F71C71C14D26200E81D56 /* ByteValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByteValue.swift; sourceTree = "<group>"; };
 		6E2F71C91C14D26200E81D56 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		6E2F71CF1C14D7FB00E81D56 /* Scan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scan.swift; sourceTree = "<group>"; };
+		6E2F71D31C14EEDA00E81D56 /* SwiftFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SwiftFoundation.xcodeproj; path = ../Carthage/Checkouts/SwiftFoundation/SwiftFoundation/SwiftFoundation.xcodeproj; sourceTree = "<group>"; };
+		6E2F71E51C14F20800E81D56 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +91,7 @@
 		6E1697721C142A0A00264BED = {
 			isa = PBXGroup;
 			children = (
+				6E2F71D31C14EEDA00E81D56 /* SwiftFoundation.xcodeproj */,
 				6E16AE581C14307200264BED /* Package.swift */,
 				6E2F71C31C14D26200E81D56 /* SwiftBlueZ */,
 				6E2F71C81C14D26200E81D56 /* UnitTests */,
@@ -71,7 +113,8 @@
 				6E2F71C41C14D26200E81D56 /* Adapter.swift */,
 				6E2F71C51C14D26200E81D56 /* Address.swift */,
 				6E2F71C61C14D26200E81D56 /* Bluetooth.swift */,
-				6E2F71C71C14D26200E81D56 /* ByteValue.swift */,
+				6E2F71CF1C14D7FB00E81D56 /* Scan.swift */,
+				6E2F71E51C14F20800E81D56 /* Error.swift */,
 			);
 			name = SwiftBlueZ;
 			path = ../Sources/SwiftBlueZ;
@@ -84,6 +127,18 @@
 			);
 			name = UnitTests;
 			path = ../Sources/UnitTests;
+			sourceTree = "<group>";
+		};
+		6E2F71D41C14EEDA00E81D56 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6E2F71DC1C14EEDB00E81D56 /* SwiftFoundation.framework */,
+				6E2F71DE1C14EEDB00E81D56 /* SwiftFoundationTests.xctest */,
+				6E2F71E01C14EEDB00E81D56 /* SwiftFoundation.framework */,
+				6E2F71E21C14EEDB00E81D56 /* SwiftFoundationTests.xctest */,
+				6E2F71E41C14EEDB00E81D56 /* SwiftFoundation.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -142,6 +197,12 @@
 			mainGroup = 6E1697721C142A0A00264BED;
 			productRefGroup = 6E16977C1C142A0A00264BED /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 6E2F71D41C14EEDA00E81D56 /* Products */;
+					ProjectRef = 6E2F71D31C14EEDA00E81D56 /* SwiftFoundation.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				6E16977A1C142A0A00264BED /* BlueZ */,
@@ -149,16 +210,55 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXReferenceProxy section */
+		6E2F71DC1C14EEDB00E81D56 /* SwiftFoundation.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SwiftFoundation.framework;
+			remoteRef = 6E2F71DB1C14EEDB00E81D56 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E2F71DE1C14EEDB00E81D56 /* SwiftFoundationTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = SwiftFoundationTests.xctest;
+			remoteRef = 6E2F71DD1C14EEDB00E81D56 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E2F71E01C14EEDB00E81D56 /* SwiftFoundation.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SwiftFoundation.framework;
+			remoteRef = 6E2F71DF1C14EEDB00E81D56 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E2F71E21C14EEDB00E81D56 /* SwiftFoundationTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = SwiftFoundationTests.xctest;
+			remoteRef = 6E2F71E11C14EEDB00E81D56 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E2F71E41C14EEDB00E81D56 /* SwiftFoundation.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SwiftFoundation.framework;
+			remoteRef = 6E2F71E31C14EEDB00E81D56 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
 /* Begin PBXSourcesBuildPhase section */
 		6E1697771C142A0A00264BED /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E2F71CB1C14D26200E81D56 /* Address.swift in Sources */,
 				6E2F71CE1C14D26200E81D56 /* main.swift in Sources */,
+				6E2F71CB1C14D26200E81D56 /* Address.swift in Sources */,
+				6E2F71D01C14D7FB00E81D56 /* Scan.swift in Sources */,
 				6E2F71CC1C14D26200E81D56 /* Bluetooth.swift in Sources */,
+				6E2F71E61C14F20800E81D56 /* Error.swift in Sources */,
 				6E2F71CA1C14D26200E81D56 /* Adapter.swift in Sources */,
-				6E2F71CD1C14D26200E81D56 /* ByteValue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,6 +349,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/Mac;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = BlueZ;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -259,6 +360,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/Mac;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = BlueZ;
 			};

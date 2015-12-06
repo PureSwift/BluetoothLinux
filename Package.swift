@@ -4,6 +4,7 @@ let package = Package(
     name: "SwiftBlueZ",
     dependencies: [
         .Package(url: "https://github.com/PureSwift/CBlueZ.git", majorVersion: 1),
+        .Package(url: "https://github.com/PureSwift/SwiftFoundation.git", majorVersion: 1),
     ],
     targets: [
         Target(

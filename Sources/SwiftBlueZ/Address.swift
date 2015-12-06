@@ -10,26 +10,25 @@
     import CBlueZ
 #endif
 
-public extension Bluetooth {
+import SwiftFoundation
+
+public struct Address: ByteValue {
     
-    public struct Address: ByteValue {
+    // MARK: - Properties
+    
+    public var byteValue: bdaddr_t
+    
+    // MARK: - Initialization
+    
+    public init(bytes: bdaddr_t) {
         
-        // MARK: - Properties
-        
-        public var byteValue: bdaddr_t
-        
-        // MARK: - Initialization
-        
-        public init(bytes: bdaddr_t) {
-        
-            self.byteValue = bytes
-        }
+        self.byteValue = bytes
     }
 }
 
 // MARK: - RawRepresentable
 
-extension Bluetooth.Address: RawRepresentable {
+extension Address: RawRepresentable {
     
     public init?(rawValue: String) {
         
@@ -56,7 +55,7 @@ extension Bluetooth.Address: RawRepresentable {
     }
 }
 
-extension Bluetooth.Address: CustomStringConvertible {
+extension Address: CustomStringConvertible {
     
     public var description: String { return rawValue }
 }
@@ -67,9 +66,9 @@ extension Bluetooth.Address: CustomStringConvertible {
 
     public typealias bdaddr_t = (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
     
-    public func str2ba(string: String, _ bytes: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }
+    func str2ba(string: String, _ bytes: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }
     
-    public func ba2str(bytes: UnsafePointer<bdaddr_t>, _ str: UnsafeMutablePointer<CChar>) -> CInt { stub() }
+    func ba2str(bytes: UnsafePointer<bdaddr_t>, _ str: UnsafeMutablePointer<CChar>) -> CInt { stub() }
     
 #endif
 
