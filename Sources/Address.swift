@@ -61,15 +61,15 @@ extension Bluetooth.Address: CustomStringConvertible {
     public var description: String { return rawValue }
 }
 
-// MARK: - Darwin
+// MARK: - Darwin Stubs
 
 #if os(OSX)
 
     public typealias bdaddr_t = (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
     
-    public func str2ba(string: String, _ bytes: UnsafeMutablePointer<bdaddr_t>) -> CInt { return 0 }
+    public func str2ba(string: String, _ bytes: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }
     
-    public func ba2str(bytes: UnsafePointer<bdaddr_t>, _ str: UnsafeMutablePointer<CChar>) -> CInt { return 0 }
+    public func ba2str(bytes: UnsafePointer<bdaddr_t>, _ str: UnsafeMutablePointer<CChar>) -> CInt { stub() }
     
 #endif
 

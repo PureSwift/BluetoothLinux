@@ -16,6 +16,7 @@ public struct Bluetooth { }
 
 #if os(OSX)
 
+    @noreturn
     internal func stub() {
         
         fatalError("Method not implemented. This code only runs on Linux.")
