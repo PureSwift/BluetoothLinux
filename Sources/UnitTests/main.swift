@@ -14,6 +14,8 @@
     import Darwin.C
 #endif
 
+import SwiftFoundation
+
 guard let adapter = Adapter() else {
     
     print("No Bluetooth adapters found")
@@ -23,3 +25,14 @@ guard let adapter = Adapter() else {
 
 print("Found Bluetooth adapter with device ID: \(adapter.deviceIdentifier)")
 
+let scanDate = Date()
+
+print("Scanning...")
+
+let scanResults = adapter.scan()
+
+let scanDuration = Date() - scanDate
+
+print("Finished scanning (\(scanDuration)s)")
+
+print("Scan results:  \(scanResults)")
