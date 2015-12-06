@@ -39,4 +39,11 @@ let scanDuration = Date() - scanDate
 
 print("Finished scanning (\(scanDuration)s)")
 
-print("Scan results:  \(scanResults)")
+print("Scan results:")
+
+for info in scanResults {
+    
+    let address = Address(bytes: info.bdaddr)
+    
+    print(address.rawValue)
+}

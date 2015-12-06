@@ -39,14 +39,19 @@ public extension Adapter {
         let inquiryInfoPointers = UnsafeMutablePointer<UnsafeMutablePointer<inquiry_info>>.alloc(scanLimit)
         defer { inquiryInfoPointers.dealloc(scanLimit) }
         
-        let deviceClassPointer = UnsafeMutablePointer<UInt8>.alloc(3)
+        let deviceClassPointer: UnsafeMutablePointer<UInt8>
+        
+        defer { if deviceClass != nil { deviceClassPointer.dealloc(3) } }
         
         if let deviceClass = deviceClass {
+            
+            deviceClassPointer = UnsafeMutablePointer<UInt8>.alloc(3)
             
             deviceClassPointer[0] = deviceClass.0
             deviceClassPointer[1] = deviceClass.1
             deviceClassPointer[2] = deviceClass.2
         }
+        else { deviceClassPointer = nil }
         
         let foundDevicesCount = hci_inquiry(deviceIdentifier, CInt(duration), CInt(scanLimit), deviceClassPointer, inquiryInfoPointers, Int(flags))
         
