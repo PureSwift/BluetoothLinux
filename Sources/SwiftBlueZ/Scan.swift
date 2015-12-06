@@ -49,7 +49,7 @@ public extension Adapter {
             deviceClassPointer[2] = deviceClass.2
         }
         
-        let foundDevicesCount = hci_inquiry(deviceIdentifier, CInt(duration), CInt(scanLimit), deviceClassPointer, inquiryInfoPointers, flags)
+        let foundDevicesCount = hci_inquiry(deviceIdentifier, CInt(duration), CInt(scanLimit), deviceClassPointer, inquiryInfoPointers, Int(flags))
         
         guard foundDevicesCount >= 0 else { throw POSIXError.fromErrorNumber! }
         
@@ -124,7 +124,7 @@ public typealias DeviceClass = (Byte, Byte, Byte)
     }
     
     func hci_inquiry(dev_id: CInt, _ len: CInt, _ max_rsp: CInt, _ lap: UnsafeMutablePointer<UInt8>,
-        _ inquiryInfo: UnsafeMutablePointer<UnsafeMutablePointer<inquiry_info>>, _ flags: Int32) -> CInt { stub() }
+        _ inquiryInfo: UnsafeMutablePointer<UnsafeMutablePointer<inquiry_info>>, _ flags: Int) -> CInt { stub() }
     
     let IREQ_CACHE_FLUSH: Int32 = 0x0001
     
