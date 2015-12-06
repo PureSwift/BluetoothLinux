@@ -29,7 +29,11 @@ let scanDate = Date()
 
 print("Scanning...")
 
-let scanResults = try! adapter.scan()
+let scanResults: [inquiry_info] 
+
+do { scanResults = try adapter.scan() }
+
+catch { print("Count not scan: \(error)"); exit(1) }
 
 let scanDuration = Date() - scanDate
 

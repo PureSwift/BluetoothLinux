@@ -40,7 +40,6 @@ public extension Adapter {
         defer { inquiryInfoPointers.dealloc(scanLimit) }
         
         let deviceClassPointer = UnsafeMutablePointer<UInt8>.alloc(3)
-        defer { inquiryInfoPointers.dealloc(3) }
         
         if let deviceClass = deviceClass {
             
