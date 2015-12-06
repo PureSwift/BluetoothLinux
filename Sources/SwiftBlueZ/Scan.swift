@@ -25,21 +25,39 @@ public extension Adapter {
     ///
     /// - Parameter scanLimit: The maximum amount of devices to scan.
     ///
+    /// - Parameter deviceClass: Device class to filter results by.
+    ///
     /// - Parameter options: Array of ```ScanOption```.
-    func scan(duration: Int = 8, scanLimit: Int = 255, options: [ScanOption] = []) throws -> [inquiry_info] {
+    func scan(duration: Int = 8, scanLimit: Int = 255, deviceClass: DeviceClass? = nil, options: [ScanOption] = []) throws -> [inquiry_info] {
         
-        assert(duration > 0)
-        assert(scanLimit > 0)
+        assert(duration > 0, "Scan must be longer than 0 seconds")
+        assert(scanLimit > 0, "Must scan at least one device")
         assert(scanLimit <= 255, "Should not scan more then 255 devices for memory allocation purposes")
         
         let flags = options.optionsBitmask()
         
-        let foundDevicesCount = hci_inquiry(deviceIdentifier, CInt(duration), CInt(), <#T##lap: UnsafeMutablePointer<UInt8>##UnsafeMutablePointer<UInt8>#>, <#T##inquiryInfo: UnsafeMutablePointer<UnsafeMutablePointer<inquiry_info>>##UnsafeMutablePointer<UnsafeMutablePointer<inquiry_info>>#>, <#T##flags: CLong##CLong#>)
+        let inquiryInfoPointers = UnsafeMutablePointer<UnsafeMutablePointer<inquiry_info>>.alloc(scanLimit)
+        defer { inquiryInfoPointers.dealloc(scanLimit) }
+        
+        let foundDevicesCount = hci_inquiry(deviceIdentifier, CInt(duration), CInt(scanLimit), deviceClass, inquiryInfoPointers, flags)
+        
+        guard foundDevicesCount >= 0 else { throw POSIXError.fromErrorNumber()! }
+        
+        var results = [inquiry_info]()
+        
+        for i in 0..<foundDevicesCount {
+            
+            let infoPointer = inquiryInfoPointers[i]
+            
+            results.append(infoPointer.memory)
+        }
+        
+        return results
     }
     
     func requestDeviceName(deviceAddress: Address) throws -> String? {
         
-        
+        fatalError("Not implemented")
     }
 }
 
@@ -48,12 +66,12 @@ public extension Adapter {
 public extension Adapter {
     
     /// Options for scanning Bluetooth devices
-    public enum ScanOption: CInt, BitMaskOption {
+    public enum ScanOption: CLong, BitMaskOption {
         
         /// The cache of previously detected devices is flushed before performing the current inquiry. Otherwise, if flags is set to 0, then the results of previous inquiries may be returned, even if the devices aren't in range anymore. 
         case FlushCache
         
-        public init?(rawValue: CInt) {
+        public init?(rawValue: CLong) {
             
             switch rawValue {
                 
@@ -63,7 +81,7 @@ public extension Adapter {
             }
         }
         
-        public var rawValue: CInt {
+        public var rawValue: CLong {
             
             switch self {
                 
@@ -72,6 +90,8 @@ public extension Adapter {
         }
     }
 }
+
+public typealias DeviceClass = (Byte, Byte, Byte)
 
 // MARK: - Darwin Stubs
 
