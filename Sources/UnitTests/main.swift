@@ -29,7 +29,7 @@ let scanDate = Date()
 
 print("Scanning...")
 
-let scanResults = adapter.scan()
+let scanResults = try! adapter.scan()
 
 let scanDuration = Date() - scanDate
 
