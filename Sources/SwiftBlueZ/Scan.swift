@@ -44,7 +44,9 @@ public extension Adapter {
         
         if let deviceClass = deviceClass {
             
-            deviceClassPointer.memory = deviceClass
+            deviceClassPointer[0] = deviceClass.0
+            deviceClassPointer[1] = deviceClass.1
+            deviceClassPointer[2] = deviceClass.2
         }
         
         let foundDevicesCount = hci_inquiry(deviceIdentifier, CInt(duration), CInt(scanLimit), deviceClassPointer, inquiryInfoPointers, flags)
