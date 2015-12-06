@@ -74,12 +74,12 @@ public extension Adapter {
 public extension Adapter {
     
     /// Options for scanning Bluetooth devices
-    public enum ScanOption: CLong, BitMaskOption {
+    public enum ScanOption: Int32, BitMaskOption {
         
         /// The cache of previously detected devices is flushed before performing the current inquiry. Otherwise, if flags is set to 0, then the results of previous inquiries may be returned, even if the devices aren't in range anymore. 
         case FlushCache
         
-        public init?(rawValue: CLong) {
+        public init?(rawValue: Int32) {
             
             switch rawValue {
                 
@@ -89,7 +89,7 @@ public extension Adapter {
             }
         }
         
-        public var rawValue: CLong {
+        public var rawValue: Int32 {
             
             switch self {
                 
@@ -122,9 +122,9 @@ public typealias DeviceClass = (Byte, Byte, Byte)
     }
     
     func hci_inquiry(dev_id: CInt, _ len: CInt, _ max_rsp: CInt, _ lap: UnsafeMutablePointer<UInt8>,
-        _ inquiryInfo: UnsafeMutablePointer<UnsafeMutablePointer<inquiry_info>>, _ flags: CLong) -> CInt { stub() }
+        _ inquiryInfo: UnsafeMutablePointer<UnsafeMutablePointer<inquiry_info>>, _ flags: Int32) -> CInt { stub() }
     
-    let IREQ_CACHE_FLUSH: CInt = 0x0001
+    let IREQ_CACHE_FLUSH: Int32 = 0x0001
     
 #endif
 
