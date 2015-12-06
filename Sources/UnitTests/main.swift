@@ -14,7 +14,7 @@
     import Darwin.C
 #endif
 
-print("Initializaing ")
+print("Initializing first Bluetooth Adapter")
 
 guard let adapter = Bluetooth.Adapter() else {
     
