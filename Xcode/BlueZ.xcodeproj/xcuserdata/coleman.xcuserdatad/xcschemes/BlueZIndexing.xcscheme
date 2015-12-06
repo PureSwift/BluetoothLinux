@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6E16977A1C142A0A00264BED"
-               BuildableName = "BlueZIndexing"
-               BlueprintName = "BlueZIndexing"
-               ReferencedContainer = "container:BlueZIndexing.xcodeproj">
+               BuildableName = "BlueZ"
+               BlueprintName = "BlueZ"
+               ReferencedContainer = "container:BlueZ.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6E16977A1C142A0A00264BED"
-            BuildableName = "BlueZIndexing"
-            BlueprintName = "BlueZIndexing"
-            ReferencedContainer = "container:BlueZIndexing.xcodeproj">
+            BuildableName = "BlueZ"
+            BlueprintName = "BlueZ"
+            ReferencedContainer = "container:BlueZ.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -56,9 +56,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6E16977A1C142A0A00264BED"
-            BuildableName = "BlueZIndexing"
-            BlueprintName = "BlueZIndexing"
-            ReferencedContainer = "container:BlueZIndexing.xcodeproj">
+            BuildableName = "BlueZ"
+            BlueprintName = "BlueZ"
+            ReferencedContainer = "container:BlueZ.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6E16977A1C142A0A00264BED"
-            BuildableName = "BlueZIndexing"
-            BlueprintName = "BlueZIndexing"
-            ReferencedContainer = "container:BlueZIndexing.xcodeproj">
+            BuildableName = "BlueZ"
+            BlueprintName = "BlueZ"
+            ReferencedContainer = "container:BlueZ.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

@@ -11,6 +11,7 @@
 		6E16B2031C14458300264BED /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E16B2011C14458300264BED /* Address.swift */; };
 		6E16B2041C14458300264BED /* ByteValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E16B2021C14458300264BED /* ByteValue.swift */; };
 		6E16B2051C144DA500264BED /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E16B2001C14456F00264BED /* main.swift */; };
+		6E16B2071C1453A900264BED /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E16B2061C1453A900264BED /* Adapter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,13 +27,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		6E16977B1C142A0A00264BED /* BlueZIndexing */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BlueZIndexing; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E16977B1C142A0A00264BED /* BlueZ */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BlueZ; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E16978D1C142AEF00264BED /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		6E16978F1C142B0100264BED /* Bluetooth.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bluetooth.swift; sourceTree = "<group>"; };
 		6E16AE581C14307200264BED /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Package.swift; path = ../Package.swift; sourceTree = "<group>"; };
 		6E16B2001C14456F00264BED /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = main.swift; path = ../Sources/main.swift; sourceTree = "<group>"; };
 		6E16B2011C14458300264BED /* Address.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
 		6E16B2021C14458300264BED /* ByteValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByteValue.swift; sourceTree = "<group>"; };
+		6E16B2061C1453A900264BED /* Adapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Adapter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +62,7 @@
 		6E16977C1C142A0A00264BED /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6E16977B1C142A0A00264BED /* BlueZIndexing */,
+				6E16977B1C142A0A00264BED /* BlueZ */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -71,6 +73,7 @@
 				6E16978F1C142B0100264BED /* Bluetooth.swift */,
 				6E16B2011C14458300264BED /* Address.swift */,
 				6E16B2021C14458300264BED /* ByteValue.swift */,
+				6E16B2061C1453A900264BED /* Adapter.swift */,
 			);
 			name = Sources;
 			path = ../Sources;
@@ -98,9 +101,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		6E16977A1C142A0A00264BED /* BlueZIndexing */ = {
+		6E16977A1C142A0A00264BED /* BlueZ */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6E1697821C142A0A00264BED /* Build configuration list for PBXNativeTarget "BlueZIndexing" */;
+			buildConfigurationList = 6E1697821C142A0A00264BED /* Build configuration list for PBXNativeTarget "BlueZ" */;
 			buildPhases = (
 				6E1697771C142A0A00264BED /* Sources */,
 				6E1697781C142A0A00264BED /* Frameworks */,
@@ -111,9 +114,9 @@
 			);
 			dependencies = (
 			);
-			name = BlueZIndexing;
+			name = BlueZ;
 			productName = BlueZIndexing;
-			productReference = 6E16977B1C142A0A00264BED /* BlueZIndexing */;
+			productReference = 6E16977B1C142A0A00264BED /* BlueZ */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -131,7 +134,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 6E1697761C142A0A00264BED /* Build configuration list for PBXProject "BlueZIndexing" */;
+			buildConfigurationList = 6E1697761C142A0A00264BED /* Build configuration list for PBXProject "BlueZ" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -143,7 +146,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				6E16977A1C142A0A00264BED /* BlueZIndexing */,
+				6E16977A1C142A0A00264BED /* BlueZ */,
 			);
 		};
 /* End PBXProject section */
@@ -156,6 +159,7 @@
 				6E16B2031C14458300264BED /* Address.swift in Sources */,
 				6E1697901C142B0100264BED /* Bluetooth.swift in Sources */,
 				6E16B2051C144DA500264BED /* main.swift in Sources */,
+				6E16B2071C1453A900264BED /* Adapter.swift in Sources */,
 				6E16B2041C14458300264BED /* ByteValue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -248,7 +252,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = BlueZ;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -258,14 +262,14 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = BlueZ;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		6E1697761C142A0A00264BED /* Build configuration list for PBXProject "BlueZIndexing" */ = {
+		6E1697761C142A0A00264BED /* Build configuration list for PBXProject "BlueZ" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6E1697801C142A0A00264BED /* Debug */,
@@ -274,7 +278,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6E1697821C142A0A00264BED /* Build configuration list for PBXNativeTarget "BlueZIndexing" */ = {
+		6E1697821C142A0A00264BED /* Build configuration list for PBXNativeTarget "BlueZ" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6E1697831C142A0A00264BED /* Debug */,

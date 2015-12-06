@@ -1,6 +1,6 @@
 //
 //  main.swift
-//  BlueZIndexing
+//  BlueZ
 //
 //  Created by Alsey Coleman Miller on 12/6/15.
 //  Copyright © 2015 PureSwift. All rights reserved.
@@ -8,12 +8,18 @@
 
 #if os(Linux)
     import CBlueZ
+    import Glibc
+#elseif os(OSX)
+    import Darwin.C
 #endif
 
-print("Hello, World!")
+print("Initializaing ")
 
-let addressString = "01:23:45:67:89:AB"
+guard let adapter = Bluetooth.Adapter() else {
+    
+    print("No Bluetooth adapters found")
+    
+    exit(0)
+}
 
-let address = Bluetooth.Address(rawValue: addressString)
-
-print("Created Bluetooth address: \(address)")
+print("Found Bluetooth adapter with device ID: \(adapter.deviceIdentifier)")
