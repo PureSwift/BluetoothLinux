@@ -66,7 +66,7 @@ extension Address: CustomStringConvertible {
 
     public struct bdaddr_t {
         
-        var b: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
+        var b: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8) = (0,0,0,0,0,0)
     }
     
     func str2ba(string: String, _ bytes: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }

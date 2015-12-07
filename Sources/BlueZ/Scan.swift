@@ -74,7 +74,7 @@ public extension Adapter {
         
         let maxNameLength = 248
         
-        var address = bdaddr_t(0,0,0,0,0,0)
+        var address = bdaddr_t()
         
         let nameBuffer = UnsafeMutablePointer<CChar>.alloc(maxNameLength)
         defer { nameBuffer.dealloc(maxNameLength) }
