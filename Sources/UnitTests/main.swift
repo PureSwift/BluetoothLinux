@@ -56,6 +56,7 @@ for info in scanResults {
     catch { name = nil; print("Error fetching name: \(error)") }
     
     print(name ?? "[No Name]")
+
 }
 
 
