@@ -14,13 +14,15 @@ import SwiftFoundation
 
 public struct Address: ByteValue {
     
+    public typealias ByteValue = (Byte, Byte, Byte, Byte, Byte, Byte)
+    
     // MARK: - Properties
     
-    public var byteValue: bdaddr_t
+    public var byteValue: ByteValue
     
     // MARK: - Initialization
     
-    public init(bytes: bdaddr_t) {
+    public init(bytes: ByteValue) {
         
         self.byteValue = bytes
     }
