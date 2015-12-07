@@ -39,11 +39,23 @@ let scanDuration = Date() - scanDate
 
 print("Finished scanning (\(scanDuration)s)")
 
-print("Scan results:")
+print("Fetch names: ")
 
 for info in scanResults {
     
     let address = Address(bytes: info.bdaddr)
     
     print(address.rawValue)
+    
+    let requestNameDate = Date()
+    
+    let name: String?
+    
+    do { name = try adapter.requestDeviceName(address, timeout: 10) }
+    
+    catch { name = nil; print("Error fetching name: \(error)") }
+    
+    print(name ?? "[No Name]")
 }
+
+
