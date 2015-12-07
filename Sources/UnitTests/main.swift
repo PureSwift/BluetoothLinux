@@ -9,7 +9,7 @@
 #if os(Linux)
     import CBlueZ
     import Glibc
-    import SwiftBlueZ
+    import BlueZ
 #elseif os(OSX) || os(iOS)
     import Darwin.C
 #endif
