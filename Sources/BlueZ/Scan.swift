@@ -79,7 +79,7 @@ public extension Adapter {
         let nameBuffer = UnsafeMutablePointer<CChar>.alloc(maxNameLength)
         defer { nameBuffer.dealloc(maxNameLength) }
         
-        guard hci_read_remote_name(socket, &address, len: CInt(maxNameLength), name: nameBuffer, timeout: CInt(timeout)) == CInt(0)
+        guard hci_read_remote_name(socket, &address, CInt(maxNameLength), nameBuffer, CInt(timeout)) == CInt(0)
             else { throw POSIXError.fromErrorNumber! }
         
         let name = String.fromCString(nameBuffer)
@@ -145,7 +145,7 @@ public typealias DeviceClass = (Byte, Byte, Byte)
     func hci_inquiry(dev_id: CInt, _ len: CInt, _ max_rsp: CInt, _ lap: UnsafeMutablePointer<UInt8>,
         _ inquiryInfo: UnsafeMutablePointer<UnsafeMutablePointer<inquiry_info>>, _ flags: Int) -> CInt { stub() }
     
-    func hci_read_remote_name(sock: CInt, _ ba: UnsafeMutablePointer<bdaddr_t>, len: CInt, name: UnsafeMutablePointer<CChar>, timeout: CInt) -> CInt { stub() }
+    func hci_read_remote_name(sock: CInt, _ ba: UnsafeMutablePointer<bdaddr_t>, _ len: CInt, _ name: UnsafeMutablePointer<CChar>, _ timeout: CInt) -> CInt { stub() }
     
 #endif
 
