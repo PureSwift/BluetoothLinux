@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6E16977A1C142A0A00264BED"
-               BuildableName = "BlueZ"
+               BlueprintIdentifier = "6E92A4231C15309B007BC4E9"
+               BuildableName = "BlueZ.framework"
                BlueprintName = "BlueZ"
                ReferencedContainer = "container:BlueZ.xcodeproj">
             </BuildableReference>
@@ -29,15 +29,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6E16977A1C142A0A00264BED"
-            BuildableName = "BlueZ"
-            BlueprintName = "BlueZ"
-            ReferencedContainer = "container:BlueZ.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -51,16 +42,15 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6E16977A1C142A0A00264BED"
-            BuildableName = "BlueZ"
+            BlueprintIdentifier = "6E92A4231C15309B007BC4E9"
+            BuildableName = "BlueZ.framework"
             BlueprintName = "BlueZ"
             ReferencedContainer = "container:BlueZ.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -70,16 +60,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6E16977A1C142A0A00264BED"
-            BuildableName = "BlueZ"
+            BlueprintIdentifier = "6E92A4231C15309B007BC4E9"
+            BuildableName = "BlueZ.framework"
             BlueprintName = "BlueZ"
             ReferencedContainer = "container:BlueZ.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

@@ -62,7 +62,7 @@ extension Address: CustomStringConvertible {
 
 // MARK: - Darwin Stubs
 
-#if os(OSX)
+#if os(OSX) || os(iOS)
 
     public typealias bdaddr_t = (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
     

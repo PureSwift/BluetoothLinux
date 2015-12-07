@@ -14,7 +14,7 @@ public struct Bluetooth { }
 
 // MARK: - Darwin
 
-#if os(OSX)
+#if os(OSX) || os(iOS)
 
     @noreturn
     internal func stub() {

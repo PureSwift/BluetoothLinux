@@ -9,7 +9,7 @@
 #if os(Linux)
     import CBlueZ
     import Glibc
-#elseif os(OSX)
+#elseif os(OSX) || os(iOS)
     import Darwin.C
 #endif
 
@@ -69,9 +69,22 @@ public extension Adapter {
         return results
     }
     
-    func requestDeviceName(deviceAddress: Address) throws -> String? {
+    /// Requests the remote device for its user-friendly name. 
+    func requestDeviceName(deviceAddress: Address, timeout: Int = 0) throws -> String? {
         
-        fatalError("Not implemented")
+        let maxNameLength = 248
+        
+        var address = bdaddr_t(0,0,0,0,0,0)
+        
+        let nameBuffer = UnsafeMutablePointer<CChar>.alloc(maxNameLength)
+        defer { nameBuffer.dealloc(maxNameLength) }
+        
+        guard hci_read_remote_name(socket, &address, len: CInt(maxNameLength), name: nameBuffer, timeout: CInt(timeout)) == 0
+            else { throw POSIXError.fromErrorNumber! }
+        
+        let name = String.fromCString(nameBuffer)
+        
+        return name
     }
 }
 
@@ -109,7 +122,9 @@ public typealias DeviceClass = (Byte, Byte, Byte)
 
 // MARK: - Darwin Stubs
 
-#if os(OSX)
+#if os(OSX) || os(iOS)
+    
+    let IREQ_CACHE_FLUSH: Int32 = 0x0001
     
     public struct inquiry_info {
         
@@ -130,7 +145,7 @@ public typealias DeviceClass = (Byte, Byte, Byte)
     func hci_inquiry(dev_id: CInt, _ len: CInt, _ max_rsp: CInt, _ lap: UnsafeMutablePointer<UInt8>,
         _ inquiryInfo: UnsafeMutablePointer<UnsafeMutablePointer<inquiry_info>>, _ flags: Int) -> CInt { stub() }
     
-    let IREQ_CACHE_FLUSH: Int32 = 0x0001
+    func hci_read_remote_name(sock: CInt, _ ba: UnsafeMutablePointer<bdaddr_t>, len: CInt, name: UnsafeMutablePointer<CChar>, timeout: CInt) -> CInt { stub() }
     
 #endif
 

@@ -1,7 +1,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "SwiftBlueZ",
+    name: "BlueZ",
     dependencies: [
         .Package(url: "https://github.com/PureSwift/CBlueZ.git", majorVersion: 1),
         .Package(url: "https://github.com/PureSwift/SwiftFoundation.git", majorVersion: 1),
@@ -9,8 +9,8 @@ let package = Package(
     targets: [
         Target(
             name: "UnitTests",
-            dependencies: [.Target(name: "SwiftBlueZ")]),
+            dependencies: [.Target(name: "BlueZ")]),
         Target(
-            name: "SwiftBlueZ")
+            name: "BlueZ")
     ]
 )

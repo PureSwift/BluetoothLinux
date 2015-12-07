@@ -9,7 +9,7 @@
 #if os(Linux)
     import CBlueZ
     import Glibc
-#elseif os(OSX)
+#elseif os(OSX) || os(iOS)
     import Darwin.C
 #endif
 
@@ -23,7 +23,7 @@ public final class Adapter {
     
     // MARK: - Private Properties
     
-    private let socket: CInt
+    internal let socket: CInt
     
     // MARK: - Initizalization
     
@@ -57,7 +57,7 @@ public final class Adapter {
 
 // MARK: - Darwin Stubs
 
-#if os(OSX)
+#if os(OSX) || os(iOS)
     
     func hci_get_route(bytes: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }
     

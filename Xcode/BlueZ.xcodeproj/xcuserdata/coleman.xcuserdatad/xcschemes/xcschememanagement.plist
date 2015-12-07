@@ -4,7 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>BlueZ.xcscheme_^#shared#^_</key>
+		<key>BlueZ.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
@@ -12,7 +12,7 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>6E16977A1C142A0A00264BED</key>
+		<key>6E92A4231C15309B007BC4E9</key>
 		<dict>
 			<key>primary</key>
 			<true/>
