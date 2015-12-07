@@ -64,7 +64,10 @@ extension Address: CustomStringConvertible {
 
 #if os(OSX) || os(iOS)
 
-    public typealias bdaddr_t = (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
+    public struct bdaddr_t {
+        
+        var b: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
+    }
     
     func str2ba(string: String, _ bytes: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }
     
