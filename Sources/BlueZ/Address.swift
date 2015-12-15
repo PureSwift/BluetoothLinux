@@ -12,7 +12,7 @@
 
 import SwiftFoundation
 
-public struct Address: ByteValue {
+public struct Address: ByteValueType {
     
     // MARK: - Properties
     
