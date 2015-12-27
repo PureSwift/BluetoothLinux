@@ -1,4 +1,4 @@
-.build
-Packages
+.build/*
+Packages/*
 Xcode/BlueZ.xcodeproj/project.xcworkspace/xcuserdata/*
 Carthage/*
