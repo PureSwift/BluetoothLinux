@@ -55,6 +55,8 @@ extension Address: RawRepresentable {
     }
 }
 
+// MARK: - CustomStringConvertible
+
 extension Address: CustomStringConvertible {
     
     public var description: String { return rawValue }
