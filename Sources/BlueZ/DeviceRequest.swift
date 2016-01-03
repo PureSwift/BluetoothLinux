@@ -51,7 +51,7 @@ public extension BluetoothAdapter {
         
         try withUnsafePointer(&request) { (pointer) throws in
             
-            guard hci_send_req(socket, COpaquePointer(pointer), CInt(timeout)) == 0
+            guard hci_send_req(socket, unsafeBitCast(pointer, COpaquePointer.self), CInt(timeout)) == 0
                 else { throw POSIXError.fromErrorNumber! }
         }
         

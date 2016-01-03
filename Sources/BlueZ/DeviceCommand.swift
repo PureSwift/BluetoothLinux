@@ -22,9 +22,14 @@ public extension BluetoothAdapter {
     /// - Note: Does not wait for a response.
     func deviceCommand<T: HCICommand>(command: T) -> Bool {
         
-        let data = command.toData()
+        var bytes = command.toData().byteValue
         
-        return hci_send_cmd(socket, UInt16(T.opcodeGroupField.rawValue), UInt16(T.opcodeCommandField), T.dataLength, data.byteValue) == 0
+        return withUnsafeMutablePointer(&bytes) { (pointer) in
+            
+            let voidPointer = UnsafeMutablePointer<Void>(pointer)
+            
+            return hci_send_cmd(socket, UInt16(T.opcodeGroupField.rawValue), UInt16(T.opcodeCommandField), T.dataLength, voidPointer) == 0
+        }
     }
 }
 
@@ -32,6 +37,6 @@ public extension BluetoothAdapter {
 
 #if os(OSX) || os(iOS)
     
-    func hci_send_cmd(dd: CInt, _ ogf: UInt16, _ ocf: UInt16, _ plen: UInt8 , _ param: UnsafePointer<Void>) -> CInt { stub() }
+    func hci_send_cmd(dd: CInt, _ ogf: UInt16, _ ocf: UInt16, _ plen: UInt8 , _ param: UnsafeMutablePointer<Void>) -> CInt { stub() }
     
 #endif
