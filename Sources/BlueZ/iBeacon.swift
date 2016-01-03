@@ -6,6 +6,13 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
+#if os(Linux)
+    import CBlueZ
+    import Glibc
+#elseif os(OSX) || os(iOS)
+    import Darwin.C
+#endif
+
 import SwiftFoundation
 
 public extension Bluetooth {
