@@ -24,11 +24,11 @@ func iBeacon(adapter: BluetoothAdapter) {
     
     print("Enabling iBeacon: \(uuid)")
     
-    var status: Byte!
+    var status: Byte = 0
     
-    do { try adapter.enableBeacon(uuid, mayor: 1, minor: 1, RSSI: 59) }
+    do { try status = adapter.enableBeacon(uuid, mayor: 1, minor: 1, RSSI: 59) }
     
-    catch { print("Error enabling iBeacon: \(error)") }
+    catch { print("Error enabling iBeacon: \(error)"); exit(1) }
     
     print("iBeacon Status: \(status)")
 }

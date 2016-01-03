@@ -56,7 +56,7 @@ public extension HCICommand {
 
 #if os(OSX)
     let OCF_INQUIRY: UInt16 = 0x0001
-    struct inquiry_cp {
+    public struct inquiry_cp {
         var lap: (UInt8, UInt8, UInt8)
         var length: UInt8 /* 1.28s units */
         var num_rsp: UInt8
@@ -67,14 +67,14 @@ public extension HCICommand {
 
 extension inquiry_cp: HCICommand {
     
-    static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LinkControl }
-    static var opcodeCommandField: Bluetooth.OpcodeCommandField { return OCF_INQUIRY }
-    static var dataLength: Byte { return Byte(INQUIRY_CP_SIZE) }
+    public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LinkControl }
+    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return OCF_INQUIRY }
+    public static var dataLength: Byte { return Byte(INQUIRY_CP_SIZE) }
 }
 
 #if os(OSX)
     let OCF_LE_SET_ADVERTISING_PARAMETERS: UInt16 = 0x0006
-    struct le_set_advertising_parameters_cp {
+    public struct le_set_advertising_parameters_cp {
         var min_interval: UInt16
         var max_interval: UInt16
         var advtype: UInt8
@@ -90,14 +90,14 @@ extension inquiry_cp: HCICommand {
 
 extension le_set_advertising_parameters_cp: HCICommand {
     
-    static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
-    static var opcodeCommandField: Bluetooth.OpcodeCommandField { return OCF_LE_SET_ADVERTISING_PARAMETERS }
-    static var dataLength: Byte { return Byte(LE_SET_ADVERTISING_PARAMETERS_CP_SIZE) }
+    public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
+    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return OCF_LE_SET_ADVERTISING_PARAMETERS }
+    public static var dataLength: Byte { return Byte(LE_SET_ADVERTISING_PARAMETERS_CP_SIZE) }
 }
 
 #if os(OSX)
     let OCF_LE_SET_ADVERTISE_ENABLE: UInt16 = 0x000A
-    struct le_set_advertise_enable_cp {
+    public struct le_set_advertise_enable_cp {
         var enable: UInt8
         init() { stub() }
     }
@@ -106,14 +106,14 @@ extension le_set_advertising_parameters_cp: HCICommand {
 
 extension le_set_advertise_enable_cp: HCICommand {
     
-    static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
-    static var opcodeCommandField: Bluetooth.OpcodeCommandField { return OCF_LE_SET_ADVERTISE_ENABLE }
-    static var dataLength: Byte { return Byte(LE_SET_ADVERTISE_ENABLE_CP_SIZE) }
+    public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
+    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return OCF_LE_SET_ADVERTISE_ENABLE }
+    public static var dataLength: Byte { return Byte(LE_SET_ADVERTISE_ENABLE_CP_SIZE) }
 }
 
 #if os(OSX)
     let OCF_LE_SET_ADVERTISING_DATA: UInt16 = 0x0008
-    struct le_set_advertising_data_cp {
+    public struct le_set_advertising_data_cp {
         var length: UInt8
         var data: Bluetooth.LowEnergyAdvertisingData
         init() { stub() }
@@ -123,9 +123,9 @@ extension le_set_advertise_enable_cp: HCICommand {
 
 extension le_set_advertising_data_cp: HCICommand {
     
-    static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
-    static var opcodeCommandField: Bluetooth.OpcodeCommandField { return OCF_LE_SET_ADVERTISING_DATA }
-    static var dataLength: Byte { return Byte(LE_SET_ADVERTISING_DATA_CP_SIZE) }
+    public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
+    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return OCF_LE_SET_ADVERTISING_DATA }
+    public static var dataLength: Byte { return Byte(LE_SET_ADVERTISING_DATA_CP_SIZE) }
 }
 
 // TODO: Add extensions (and stubs) for all HCI Command C structs
