@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		6E881D7A1C386E8F00E509A9 /* ScanTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881D791C386E8F00E509A9 /* ScanTest.swift */; };
+		6E881D7C1C38832400E509A9 /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881D7B1C38832400E509A9 /* Command.swift */; };
+		6E881D7E1C3884EB00E509A9 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881D7D1C3884EB00E509A9 /* Request.swift */; };
+		6E881D821C389F4B00E509A9 /* iBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881D811C389F4B00E509A9 /* iBeacon.swift */; };
 		6E92A4281C15309B007BC4E9 /* BlueZ.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E92A4271C15309B007BC4E9 /* BlueZ.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E92A4371C1530EF007BC4E9 /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92A4321C1530EF007BC4E9 /* Adapter.swift */; };
 		6E92A4381C1530EF007BC4E9 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92A4331C1530EF007BC4E9 /* Address.swift */; };
@@ -19,6 +22,9 @@
 
 /* Begin PBXFileReference section */
 		6E881D791C386E8F00E509A9 /* ScanTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScanTest.swift; sourceTree = "<group>"; };
+		6E881D7B1C38832400E509A9 /* Command.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
+		6E881D7D1C3884EB00E509A9 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
+		6E881D811C389F4B00E509A9 /* iBeacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iBeacon.swift; sourceTree = "<group>"; };
 		6E92A4241C15309B007BC4E9 /* BlueZ.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlueZ.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E92A4271C15309B007BC4E9 /* BlueZ.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlueZ.h; sourceTree = "<group>"; };
 		6E92A4291C15309B007BC4E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -78,6 +84,9 @@
 				6E92A4341C1530EF007BC4E9 /* Bluetooth.swift */,
 				6E92A4351C1530EF007BC4E9 /* Error.swift */,
 				6E92A4361C1530EF007BC4E9 /* Scan.swift */,
+				6E881D7B1C38832400E509A9 /* Command.swift */,
+				6E881D7D1C3884EB00E509A9 /* Request.swift */,
+				6E881D811C389F4B00E509A9 /* iBeacon.swift */,
 			);
 			name = Source;
 			path = ../Sources/BlueZ;
@@ -174,10 +183,13 @@
 				6E92A43A1C1530EF007BC4E9 /* Error.swift in Sources */,
 				6E92A43B1C1530EF007BC4E9 /* Scan.swift in Sources */,
 				6E92A43F1C153121007BC4E9 /* main.swift in Sources */,
+				6E881D821C389F4B00E509A9 /* iBeacon.swift in Sources */,
 				6E92A4381C1530EF007BC4E9 /* Address.swift in Sources */,
 				6E92A4391C1530EF007BC4E9 /* Bluetooth.swift in Sources */,
 				6E881D7A1C386E8F00E509A9 /* ScanTest.swift in Sources */,
 				6E92A4371C1530EF007BC4E9 /* Adapter.swift in Sources */,
+				6E881D7E1C3884EB00E509A9 /* Request.swift in Sources */,
+				6E881D7C1C38832400E509A9 /* Command.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
