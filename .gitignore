@@ -2,3 +2,5 @@
 Packages/*
 Xcode/BlueZ.xcodeproj/project.xcworkspace/xcuserdata/*
 Carthage/*
+
+Headers/*
