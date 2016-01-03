@@ -16,10 +16,14 @@ public protocol HCICommand {
     /// Opcode Command Field of this particular command.
     static var opcodeCommandField: Byte  { get }
     
-    /// Length of the command when encoded to data.
+    /// Length of the command when encoded to data. 
+    ///
+    /// - Note: Commands are a fixed length.
     static var dataLength: Byte { get }
     
     /// Converts the HCI command to binary data.
+    ///
+    /// - Precondition: The number of bytes should always be the same as `dataLength`.
     func toData() -> Data
 }
 
@@ -27,7 +31,15 @@ public extension HCICommand {
     
     func toData() -> Data {
         
+        var copy = self
         
+        let length = Int(self.dynamicType.dataLength)
+        
+        var buffer: [UInt8] = [UInt8](count: length, repeatedValue: 0)
+        
+        memcpy(&buffer, &copy, length)
+        
+        return Data(byteValue: buffer)
     }
 }
 
