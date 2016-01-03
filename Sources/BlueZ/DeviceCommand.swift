@@ -12,14 +12,14 @@
 
 import SwiftFoundation
 
-public extension Adapter {
+public extension BluetoothAdapter {
     
     /// Sends a command to the device. 
     /// 
     /// - Note: Does not wait for a response.
     func deviceCommand(opcodeGroupField: UInt16, opcodeCommandField: UInt16, data: Data) -> Bool {
         
-        return hci_send_cmd(socket, opcodeGroupField, opcodeCommandField, Byte(data.count), data) == 0
+        return hci_send_cmd(socket, opcodeGroupField, opcodeCommandField, Byte(data.byteValue.count), data.byteValue) == 0
     }
 }
 

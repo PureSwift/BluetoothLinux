@@ -17,7 +17,7 @@
 import SwiftFoundation
 
 /// Tests the Scanning functionality
-func scan(adapter: Adapter) {
+func scan(adapter: BluetoothAdapter) {
     
     let scanDate = Date()
     
@@ -37,7 +37,7 @@ func scan(adapter: Adapter) {
     
     for info in scanResults {
         
-        let address = Address(bytes: info.bdaddr)
+        let address = info.bdaddr
         
         print(address.rawValue)
         

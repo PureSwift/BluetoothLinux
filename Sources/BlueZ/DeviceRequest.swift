@@ -12,21 +12,24 @@
 
 import SwiftFoundation
 
-public extension Adapter {
+public extension BluetoothAdapter {
     
     /// Sends a command to the device and waits for a response. 
-    func deviceRequest(opcodeGroupField: UInt16, opcodeCommandField: UInt16, event: CInt, command: Data, timeout: Int = 1000) {
+    func deviceRequest(opcodeGroupField: UInt16, opcodeCommandField: UInt16, event: CInt, command: Data, timeout: Int = 1000) throws {
                 
-        var hciRequest = hci_request()
+        let HCIRequestPointer = UnsafeMutablePointer<hci_request>.alloc(1)
+        defer { HCIRequestPointer.dealloc(1) }
         
-        memset(&hciRequest, 0, sizeof(hci_request))
+        memset(HCIRequestPointer, 0, sizeof(hci_request))
         
-        guard hci_send_req(socket, &hciRequest, CInt(timeout)) == 0
-            else {  }
+        guard hci_send_req(socket, COpaquePointer(HCIRequestPointer), CInt(timeout)) == 0
+            else { throw POSIXError.fromErrorNumber! }
+        
+        
     }
 }
 
-public extension Adapter {
+public extension BluetoothAdapter {
     
     public struct DeviceRequest {
         
@@ -55,6 +58,7 @@ public extension Adapter {
         
         var ocf: UInt16
         
+        /// The event code of the event to wait for.
         var event: CInt
         
         var cparam: UnsafeMutablePointer<Void>

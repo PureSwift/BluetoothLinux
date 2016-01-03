@@ -13,12 +13,17 @@
     import Darwin.C
 #endif
 
+public extension Bluetooth {
+    
+    typealias Adapter = BluetoothAdapter
+}
+
 /// Manages connection / communication to the underlying Bluetooth hardware.
-public final class Adapter {
+public final class BluetoothAdapter {
     
     // MARK: - Properties
     
-    /// The identifier of the bluetooth adapter.
+    /// The device identifier of the Bluetooth adapter.
     public let deviceIdentifier: CInt
     
     // MARK: - Private Properties
@@ -35,16 +40,16 @@ public final class Adapter {
     /// Initializes the Bluetooth Adapter with the specified address.
     ///
     /// If no address is specified then it tries to intialize the first Bluetooth adapter.
-    public init?(address: Address? = nil) {
+    public init?(address: Bluetooth.Address? = nil) {
         
         // get device ID
         
         let addressPointer = UnsafeMutablePointer<bdaddr_t>.alloc(1)
         defer { addressPointer.dealloc(1) }
         
-        if let addressBytes = address?.byteValue {
+        if let address = address {
             
-            addressPointer.memory = addressBytes
+            addressPointer.memory = address
         }
         
         self.deviceIdentifier = hci_get_route(addressPointer)

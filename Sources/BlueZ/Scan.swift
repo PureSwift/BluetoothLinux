@@ -17,7 +17,7 @@ import SwiftFoundation
 
 // MARK: - Methods
 
-public extension Adapter {
+public extension BluetoothAdapter {
     
     /// Scans for nearby Bluetooth devices.
     ///
@@ -70,7 +70,7 @@ public extension Adapter {
     }
     
     /// Requests the remote device for its user-friendly name. 
-    func requestDeviceName(deviceAddress: Address, timeout: Int = 0) throws -> String? {
+    func requestDeviceName(deviceAddress: Bluetooth.Address, timeout: Int = 0) throws -> String? {
         
         let maxNameLength = 248
         
@@ -90,7 +90,7 @@ public extension Adapter {
 
 // MARK: - Supporting Types
 
-public extension Adapter {
+public extension BluetoothAdapter {
     
     /// Options for scanning Bluetooth devices
     public enum ScanOption: Int32, BitMaskOption {

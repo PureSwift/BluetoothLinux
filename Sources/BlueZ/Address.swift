@@ -12,23 +12,43 @@
 
 import SwiftFoundation
 
-public struct Address: ByteValueType {
+// MARK: - Typealias
+
+public extension Bluetooth {
+    
+    /// Bluetooth Address type.
+    ///
+    /// Typealias for `bdaddr_t` from the BlueZ C API.
+    public typealias Address = bdaddr_t
+}
+
+// MARK: - ByteValue
+
+extension Bluetooth.Address: ByteValueType {
+    
+    /// Raw Bluetooth Address 6 byte (48 bit) value.
+    public typealias ByteValue = (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
     
     // MARK: - Properties
     
-    public var byteValue: bdaddr_t
+    public var byteValue: ByteValue {
+        
+        get { return b }
+        
+        set { self.b = newValue }
+    }
     
     // MARK: - Initialization
     
-    public init(bytes: bdaddr_t) {
+    public init(byteValue: ByteValue) {
         
-        self.byteValue = bytes
+        self.b = byteValue
     }
 }
 
 // MARK: - RawRepresentable
 
-extension Address: RawRepresentable {
+extension Bluetooth.Address: RawRepresentable {
     
     public init?(rawValue: String) {
         
@@ -37,7 +57,7 @@ extension Address: RawRepresentable {
         
         guard str2ba(rawValue, resultPointer) == 0 else { return nil }
         
-        self.byteValue = resultPointer.memory
+        self = resultPointer.memory
     }
     
     public var rawValue: String {
@@ -47,24 +67,36 @@ extension Address: RawRepresentable {
         let stringPointer = UnsafeMutablePointer<CChar>.alloc(stringLength)
         defer { stringPointer.dealloc(stringLength) }
         
-        var byteValue = self.byteValue
+        var copy = self
         
-        ba2str(&byteValue, stringPointer)
+        ba2str(&copy, stringPointer)
         
         return String.fromCString(stringPointer)!
     }
 }
 
+// MARK: - Equatable
+
+extension Bluetooth.Address: Equatable { }
+
+public func == (lhs: Bluetooth.Address, rhs: Bluetooth.Address) {
+    
+    var copy1 = lhs
+    var copy2 = rhs
+    
+    memcmp(&copy1, &copy2, sizeof(bdaddr_t.self))
+}
+
 // MARK: - CustomStringConvertible
 
-extension Address: CustomStringConvertible {
+extension Bluetooth.Address: CustomStringConvertible {
     
     public var description: String { return rawValue }
 }
 
 // MARK: - Adapter Extensions
 
-public extension Address {
+public extension Bluetooth.Address {
     
     /// Extracts the Bluetooth address from the device ID.
     public init?(deviceIdentifier: CInt) {
@@ -73,18 +105,18 @@ public extension Address {
         
         guard hci_devba(deviceIdentifier, &address) == 0 else { return nil }
         
-        self.byteValue = address
+        self = address
     }
 }
 
-public extension Adapter {
+public extension BluetoothAdapter {
     
     /// Attempts to get the address from the underlying Bluetooth hardware. 
     ///
     /// Fails if the Bluetooth adapter was disconnected or hardware failure.
-    public var address: Address? {
+    public var address: Bluetooth.Address? {
         
-        return Address(deviceIdentifier: deviceIdentifier)
+        return Bluetooth.Address(deviceIdentifier: deviceIdentifier)
     }
 }
 
