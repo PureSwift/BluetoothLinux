@@ -53,6 +53,7 @@ public extension HCICommand {
         var lap: (UInt8, UInt8, UInt8)
         var length: UInt8 /* 1.28s units */
         var num_rsp: UInt8
+        init() { stub() }
     }
     let INQUIRY_CP_SIZE = 5
 #endif
@@ -75,6 +76,7 @@ extension inquiry_cp: HCICommand {
         var direct_bdaddr: bdaddr_t
         var chan_map: UInt8
         var filter: UInt8
+        init() { stub() }
     }
     let LE_SET_ADVERTISING_PARAMETERS_CP_SIZE = 15
 #endif
@@ -90,6 +92,7 @@ extension le_set_advertising_parameters_cp: HCICommand {
     let OCF_LE_SET_ADVERTISE_ENABLE: UInt16 = 0x000A
     struct le_set_advertise_enable_cp {
         var enable: UInt8
+        init() { stub() }
     }
     let LE_SET_ADVERTISE_ENABLE_CP_SIZE = 1
 #endif
@@ -106,10 +109,17 @@ extension le_set_advertise_enable_cp: HCICommand {
     struct le_set_advertising_data_cp {
         var length: UInt8
         var data: Bluetooth.LowEnergyAdvertisingData
+        init() { stub() }
     }
     let LE_SET_ADVERTISING_DATA_CP_SIZE = 32
 #endif
 
+extension le_set_advertising_data_cp: HCICommand {
+    
+    static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
+    static var opcodeCommandField: Bluetooth.OpcodeCommandField { return OCF_LE_SET_ADVERTISING_DATA }
+    static var dataLength: Byte { return Byte(LE_SET_ADVERTISING_DATA_CP_SIZE) }
+}
 
 // TODO: Add extensions (and stubs) for all HCI Command C structs
 
