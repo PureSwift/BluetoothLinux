@@ -14,6 +14,7 @@
     import Darwin.C
 #endif
 
+import Foundation
 import SwiftFoundation
 
 // get Bluetooth device
@@ -32,4 +33,6 @@ print("Address: \(adapter.address!)")
 // test scanning
 scan(adapter)
 
+iBeacon(adapter)
 
+NSRunLoop.mainRunLoop().run()

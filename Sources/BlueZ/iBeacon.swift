@@ -19,7 +19,7 @@ public extension BluetoothAdapter {
     /// Enable iBeacon functionality.
     ///
     /// - Returns: The status byte.
-    func enableBeacon(UUID: SwiftFoundation.UUID, mayor: UInt16, minor: UInt16, RSSI: Byte, interval: Int = 100) throws -> Byte {
+    func enableBeacon(UUID: SwiftFoundation.UUID = UUID(), mayor: UInt16, minor: UInt16, RSSI: Byte, interval: Int = 100) throws -> Byte {
         
         assert(interval <= Int(UInt16.max), "Interval can only be 2 bytes long")
         
