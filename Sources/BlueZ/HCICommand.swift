@@ -68,7 +68,7 @@ public extension HCICommand {
 extension inquiry_cp: HCICommand {
     
     public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LinkControl }
-    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return OCF_INQUIRY }
+    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return UInt16(OCF_INQUIRY) }
     public static var dataLength: Byte { return Byte(INQUIRY_CP_SIZE) }
 }
 
@@ -91,7 +91,7 @@ extension inquiry_cp: HCICommand {
 extension le_set_advertising_parameters_cp: HCICommand {
     
     public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
-    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return OCF_LE_SET_ADVERTISING_PARAMETERS }
+    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return UInt16(OCF_LE_SET_ADVERTISING_PARAMETERS) }
     public static var dataLength: Byte { return Byte(LE_SET_ADVERTISING_PARAMETERS_CP_SIZE) }
 }
 
@@ -107,7 +107,7 @@ extension le_set_advertising_parameters_cp: HCICommand {
 extension le_set_advertise_enable_cp: HCICommand {
     
     public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
-    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return OCF_LE_SET_ADVERTISE_ENABLE }
+    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return UInt16(OCF_LE_SET_ADVERTISE_ENABLE) }
     public static var dataLength: Byte { return Byte(LE_SET_ADVERTISE_ENABLE_CP_SIZE) }
 }
 
@@ -124,7 +124,7 @@ extension le_set_advertise_enable_cp: HCICommand {
 extension le_set_advertising_data_cp: HCICommand {
     
     public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
-    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return OCF_LE_SET_ADVERTISING_DATA }
+    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return UInt16(OCF_LE_SET_ADVERTISING_DATA) }
     public static var dataLength: Byte { return Byte(LE_SET_ADVERTISING_DATA_CP_SIZE) }
 }
 

@@ -49,9 +49,9 @@ public extension BluetoothAdapter {
             request.rparam = UnsafeMutablePointer<Void>(pointer)
         }
         
-        try withUnsafePointer(&request) { (pointer) throws in
+        try withUnsafeMutablePointer(&request) { (pointer) throws in
             
-            guard hci_send_req(socket, unsafeBitCast(pointer, COpaquePointer.self), CInt(timeout)) == 0
+            guard hci_send_req(socket, pointer, CInt(timeout)) == 0
                 else { throw POSIXError.fromErrorNumber! }
         }
         
@@ -100,7 +100,7 @@ public extension BluetoothAdapter {
 #if os(OSX) || os(iOS)
     
     /// Sends command and waits for response.
-    func hci_send_req(dd: CInt, _ hci_request: COpaquePointer, _ timeout: CInt) -> CInt { stub() }
+    func hci_send_req(dd: CInt, _ hcirequest: UnsafeMutablePointer<hci_request>, _ timeout: CInt) -> CInt { stub() }
     
     struct hci_request {
         
