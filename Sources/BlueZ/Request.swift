@@ -24,7 +24,15 @@ public extension Adapter {
     
     public struct Request {
         
+        var ogf: UInt16
         
+        var ocf: UInt16
+        
+        var event: CInt
+        
+        var cParameter: Data
+        
+        var rParameter: Data
     }
 }
 

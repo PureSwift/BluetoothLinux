@@ -62,6 +62,32 @@ extension Address: CustomStringConvertible {
     public var description: String { return rawValue }
 }
 
+// MARK: - Adapter Extensions
+
+public extension Address {
+    
+    /// Extracts the Bluetooth address from the device ID.
+    public init?(deviceIdentifier: CInt) {
+        
+        var address = bdaddr_t()
+        
+        guard hci_devba(deviceIdentifier, &address) == 0 else { return nil }
+        
+        self.byteValue = address
+    }
+}
+
+public extension Adapter {
+    
+    /// Attempts to get the address from the underlying Bluetooth hardware. 
+    ///
+    /// Fails if the Bluetooth adapter was disconnected or hardware failure.
+    public var address: Address? {
+        
+        return Address(deviceIdentifier: deviceIdentifier)
+    }
+}
+
 // MARK: - Darwin Stubs
 
 #if os(OSX) || os(iOS)
@@ -74,6 +100,8 @@ extension Address: CustomStringConvertible {
     func str2ba(string: String, _ bytes: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }
     
     func ba2str(bytes: UnsafePointer<bdaddr_t>, _ str: UnsafeMutablePointer<CChar>) -> CInt { stub() }
+    
+    func hci_devba(dev_id: CInt, _ bdaddr: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }
     
 #endif
 

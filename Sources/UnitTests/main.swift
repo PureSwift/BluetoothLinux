@@ -27,6 +27,8 @@ guard let adapter = Adapter() else {
 
 print("Found Bluetooth adapter with device ID: \(adapter.deviceIdentifier)")
 
+print("Address: \(adapter.address!)")
+
 // test scanning
 scan(adapter)
 

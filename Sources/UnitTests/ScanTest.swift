@@ -41,7 +41,7 @@ func scan(adapter: Adapter) {
         
         print(address.rawValue)
         
-        let requestNameDate = Date()
+        //let requestNameDate = Date()
         
         let name: String?
         
