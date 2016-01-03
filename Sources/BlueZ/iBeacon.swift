@@ -6,4 +6,10 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-import Foundation
+import SwiftFoundation
+
+public extension Bluetooth {
+    
+    /// 31 Byte String
+    public typealias LowEnergyAdvertisingData = (Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte)
+}

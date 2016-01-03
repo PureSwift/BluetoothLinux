@@ -14,19 +14,82 @@ import SwiftFoundation
 
 public extension BluetoothAdapter {
     
-    /// Sends a command to the device and waits for a response. 
-    func deviceRequest(opcodeGroupField: UInt16, opcodeCommandField: UInt16, event: CInt, command: Data, timeout: Int = 1000) throws {
+    /// Sends a command to the device and waits for a response.
+    ///
+    /// The response is always a byte.
+    func deviceRequest<Command: HCICommand>(command: Command, timeout: Int = 1000) throws -> Byte {
                 
-        let HCIRequestPointer = UnsafeMutablePointer<hci_request>.alloc(1)
-        defer { HCIRequestPointer.dealloc(1) }
+        var request = hci_request()
+        var status: Byte = 0
         
-        memset(HCIRequestPointer, 0, sizeof(hci_request))
+        // initialize by zeroing memory
+        memset(&request, 0, sizeof(hci_request))
         
-        guard hci_send_req(socket, COpaquePointer(HCIRequestPointer), CInt(timeout)) == 0
-            else { throw POSIXError.fromErrorNumber! }
+        // set HCI command parameters
         
+        request.ogf = Command.opcodeGroupField.rawValue
+        request.ocf = Command.opcodeCommandField
+        request.clen = CInt(Command.dataLength)
         
+        var commandBytes = command.toData().byteValue
+        
+        withUnsafePointer(&commandBytes) { (pointer) in
+
+            request.cparam = UnsafeMutablePointer<Void>(pointer)
+        }
+        
+        // set HCI Event to a status byte
+        request.rlen = 1
+        
+        withUnsafeMutablePointer(&status) { (pointer) in
+            
+            request.rparam = UnsafeMutablePointer<Void>(pointer)
+        }
+        
+        try withUnsafePointer(&request) { (pointer) throws in
+            
+            guard hci_send_req(socket, COpaquePointer(pointer), CInt(timeout)) == 0
+                else { throw POSIXError.fromErrorNumber! }
+        }
+        
+        return status
     }
+    
+    /*
+    /// Sends a command to the device and waits for a response.
+    ///
+    /// The response is always a byte.
+    func deviceRequest<Command: HCICommand, Event: HCIEvent>(command: Command, timeout: Int = 1000) throws -> Event {
+        
+        var request = hci_request()
+        
+        // initialize by zeroing memory
+        memset(&request, 0, sizeof(hci_request))
+        
+        // set HCI command parameters
+        
+        request.ogf = Command.opcodeGroupField.rawValue
+        request.ocf = Command.opcodeCommandField
+        request.clen = CInt(Command.dataLength)
+        
+        var commandBytes = command.toData().byteValue
+        
+        withUnsafePointer(&commandBytes) { (pointer) in
+            
+            request.cparam = UnsafeMutablePointer<Void>(pointer)
+        }
+        
+        // set HCI Event
+        request.event = Event.
+        
+        try withUnsafePointer(&request) { (pointer) throws in
+            
+            guard hci_send_req(socket, COpaquePointer(pointer), CInt(timeout)) == 0
+                else { throw POSIXError.fromErrorNumber! }
+        }
+        
+        
+    }*/
 }
 
 // MARK: - Darwin Stubs
@@ -52,6 +115,8 @@ public extension BluetoothAdapter {
         var rparam: UnsafeMutablePointer<Void>
         
         var rlen: CInt
+        
+        init() { stub() }
     }
     
 #endif
