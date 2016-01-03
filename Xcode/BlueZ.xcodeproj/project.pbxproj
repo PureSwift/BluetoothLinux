@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6E1552461C39A045002CC322 /* HCIEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1552451C39A045002CC322 /* HCIEvent.swift */; };
+		6E1552481C39A18A002CC322 /* HCIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1552471C39A18A002CC322 /* HCIError.swift */; };
+		6E15524A1C39A284002CC322 /* LowEnergyAddressType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1552491C39A284002CC322 /* LowEnergyAddressType.swift */; };
 		6E881D7A1C386E8F00E509A9 /* ScanTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881D791C386E8F00E509A9 /* ScanTest.swift */; };
 		6E881D7C1C38832400E509A9 /* DeviceCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881D7B1C38832400E509A9 /* DeviceCommand.swift */; };
 		6E881D821C389F4B00E509A9 /* iBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881D811C389F4B00E509A9 /* iBeacon.swift */; };
@@ -23,6 +26,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6E1552451C39A045002CC322 /* HCIEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIEvent.swift; sourceTree = "<group>"; };
+		6E1552471C39A18A002CC322 /* HCIError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIError.swift; sourceTree = "<group>"; };
+		6E1552491C39A284002CC322 /* LowEnergyAddressType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyAddressType.swift; sourceTree = "<group>"; };
 		6E881D791C386E8F00E509A9 /* ScanTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScanTest.swift; sourceTree = "<group>"; };
 		6E881D7B1C38832400E509A9 /* DeviceCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceCommand.swift; sourceTree = "<group>"; };
 		6E881D811C389F4B00E509A9 /* iBeacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iBeacon.swift; sourceTree = "<group>"; };
@@ -93,8 +99,11 @@
 				6E881D7B1C38832400E509A9 /* DeviceCommand.swift */,
 				6E881D831C39783F00E509A9 /* DeviceRequest.swift */,
 				6E881D811C389F4B00E509A9 /* iBeacon.swift */,
-				6E881DA91C39934200E509A9 /* HCICommand.swift */,
 				6E881DAB1C3996A200E509A9 /* OpcodeGroupField.swift */,
+				6E881DA91C39934200E509A9 /* HCICommand.swift */,
+				6E1552451C39A045002CC322 /* HCIEvent.swift */,
+				6E1552471C39A18A002CC322 /* HCIError.swift */,
+				6E1552491C39A284002CC322 /* LowEnergyAddressType.swift */,
 			);
 			name = Source;
 			path = ../Sources/BlueZ;
@@ -189,6 +198,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E881DAC1C3996A200E509A9 /* OpcodeGroupField.swift in Sources */,
+				6E15524A1C39A284002CC322 /* LowEnergyAddressType.swift in Sources */,
 				6E92A43A1C1530EF007BC4E9 /* Error.swift in Sources */,
 				6E92A43B1C1530EF007BC4E9 /* Scan.swift in Sources */,
 				6E92A43F1C153121007BC4E9 /* main.swift in Sources */,
@@ -197,7 +207,9 @@
 				6E881DAA1C39934200E509A9 /* HCICommand.swift in Sources */,
 				6E881DA21C39812F00E509A9 /* DeviceRequest.swift in Sources */,
 				6E92A4391C1530EF007BC4E9 /* Bluetooth.swift in Sources */,
+				6E1552481C39A18A002CC322 /* HCIError.swift in Sources */,
 				6E881D7A1C386E8F00E509A9 /* ScanTest.swift in Sources */,
+				6E1552461C39A045002CC322 /* HCIEvent.swift in Sources */,
 				6E92A4371C1530EF007BC4E9 /* Adapter.swift in Sources */,
 				6E881D7C1C38832400E509A9 /* DeviceCommand.swift in Sources */,
 			);

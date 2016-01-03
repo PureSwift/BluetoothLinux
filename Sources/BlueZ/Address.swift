@@ -14,12 +14,14 @@ import SwiftFoundation
 
 // MARK: - Typealias
 
+/// Bluetooth Address type.
+///
+/// Typealias for `bdaddr_t` from the BlueZ C API.
+public typealias BluetoothAddress = bdaddr_t
+
 public extension Bluetooth {
     
-    /// Bluetooth Address type.
-    ///
-    /// Typealias for `bdaddr_t` from the BlueZ C API.
-    public typealias Address = bdaddr_t
+    typealias Address = BluetoothAddress
 }
 
 // MARK: - ByteValue

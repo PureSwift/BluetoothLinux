@@ -29,22 +29,6 @@ public extension BluetoothAdapter {
     }
 }
 
-public extension BluetoothAdapter {
-    
-    public struct DeviceRequest {
-        
-        var opcodeGroupField: UInt16
-        
-        var opcodeCommandField: UInt16
-        
-        var event: CInt
-        
-        var commandParameter: Data
-        
-        var responseData: Data
-    }
-}
-
 // MARK: - Darwin Stubs
 
 #if os(OSX) || os(iOS)

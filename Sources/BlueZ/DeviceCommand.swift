@@ -17,9 +17,11 @@ public extension BluetoothAdapter {
     /// Sends a command to the device. 
     /// 
     /// - Note: Does not wait for a response.
-    func deviceCommand(opcodeGroupField: UInt16, opcodeCommandField: UInt16, data: Data) -> Bool {
+    func deviceCommand<T: HCICommand>(command: T) -> Bool {
         
-        return hci_send_cmd(socket, opcodeGroupField, opcodeCommandField, Byte(data.byteValue.count), data.byteValue) == 0
+        var commandCopy = command
+        
+        return hci_send_cmd(socket, UInt16(T.opcodeGroupField), UInt16(T.opcodeCommandField.rawValue), T.dataLength, &commandCopy) == 0
     }
 }
 

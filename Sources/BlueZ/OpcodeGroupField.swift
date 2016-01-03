@@ -30,4 +30,7 @@ public enum OpcodeGroupField: Byte {
     
     /// Testing Commands
     case Testing = 0x3e
+    
+    /// Vendor specific commands
+    case Vendor = 0x3f
 }
