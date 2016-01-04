@@ -31,6 +31,4 @@ func iBeacon(adapter: BluetoothAdapter) {
     catch { print("Error enabling iBeacon: \(error)"); exit(1) }
     
     print("iBeacon Status: \(status)")
-    
-    sleep(10000)
 }
