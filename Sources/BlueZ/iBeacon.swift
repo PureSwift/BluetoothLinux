@@ -26,7 +26,7 @@ public extension BluetoothAdapter {
     /// Enable iBeacon functionality.
     ///
     /// - Returns: The status byte.
-    func enableBeacon(UUID: SwiftFoundation.UUID = UUID(), mayor: UInt16, minor: UInt16, RSSI: Byte, interval: Int = 100) throws -> Byte {
+    func enableBeacon(UUID: SwiftFoundation.UUID = UUID(), mayor: UInt16, minor: UInt16, RSSI: Byte, interval: Int = 100) throws {
         
         assert(interval <= Int(UInt16.max), "Interval can only be 2 bytes long")
         
@@ -40,7 +40,7 @@ public extension BluetoothAdapter {
         advertisingParameters.advtype = 3  // advertising non-connectable
         advertisingParameters.chan_map = 7 // // all three advertising channels
         
-        var status = try self.deviceRequest(advertisingParameters)
+        try self.deviceRequest(advertisingParameters)
         
         // start advertising
         
@@ -49,7 +49,7 @@ public extension BluetoothAdapter {
         
         enableAdvertise.enable = 0x01 // true
         
-        status = try self.deviceRequest(enableAdvertise)
+        try self.deviceRequest(enableAdvertise)
         
         // set iBeacon data
         
@@ -60,9 +60,7 @@ public extension BluetoothAdapter {
         advertisingDataCommand.length = beaconData.length
         advertisingDataCommand.data = beaconData.data
         
-        status = try self.deviceRequest(advertisingDataCommand)
-        
-        return status
+        try self.deviceRequest(advertisingDataCommand)
     }
     
     func disableBeacon() {
