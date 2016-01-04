@@ -17,10 +17,8 @@ import SwiftFoundation
 
 public extension BluetoothAdapter {
     
-    /// Sends a command to the device and waits for a response.
-    ///
-    /// The response is always a byte.
-    func deviceRequest<Command: HCICommand>(command: Command, timeout: Int = 1000) throws -> Byte {
+    /// Sends a command to the device and waits for a response. No specific event is expected.
+    func deviceRequest<Command: HCICommand>(command: Command, timeout: Int = 1000) throws {
                 
         var request = hci_request()
         var status: Byte = 0
@@ -55,14 +53,16 @@ public extension BluetoothAdapter {
                 else { throw POSIXError.fromErrorNumber! }
         }
         
-        return status
+        guard status == 0x00
+            else { throw Bluetooth.Error.DeviceRequestStatus(status) }
     }
     
-    /*
-    /// Sends a command to the device and waits for a response.
+    /// Sends a command to the device and waits for a response. The specified event is returned.
     ///
-    /// The response is always a byte.
-    func deviceRequest<Command: HCICommand, Event: HCIEvent>(command: Command, timeout: Int = 1000) throws -> Event {
+    /// - Precondition: The `Event` type is a value type.
+    func deviceRequest<Command: HCICommand, Event: HCIEvent>(command: Command, inout event: Event, timeout: Int = 1000) throws {
+        
+        assert(event as? AnyObject == nil, "\(event) must be a C struct from BlueZ")
         
         var request = hci_request()
         
@@ -83,16 +83,20 @@ public extension BluetoothAdapter {
         }
         
         // set HCI Event
-        request.event = Event.
+        request.event = Event.eventCode
+        request.rlen = CInt(Event.dataLength)
         
-        try withUnsafePointer(&request) { (pointer) throws in
+        withUnsafeMutablePointer(&event) { (pointer) in
             
-            guard hci_send_req(socket, COpaquePointer(pointer), CInt(timeout)) == 0
-                else { throw POSIXError.fromErrorNumber! }
+            request.rparam = UnsafeMutablePointer<Void>(pointer)
         }
         
-        
-    }*/
+        try withUnsafeMutablePointer(&request) { (pointer) throws in
+            
+            guard hci_send_req(socket, pointer, CInt(timeout)) == 0
+                else { throw POSIXError.fromErrorNumber! }
+        }
+    }
 }
 
 // MARK: - Darwin Stubs
