@@ -27,7 +27,7 @@ func scan(adapter: BluetoothAdapter) {
     
     do { scanResults = try adapter.scan() }
         
-    catch { print("Count not scan: \(error)"); exit(1) }
+    catch { print("Could not scan: \(error)"); exit(1) }
     
     let scanDuration = Date() - scanDate
     
