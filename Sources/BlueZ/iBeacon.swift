@@ -34,7 +34,7 @@ public extension BluetoothAdapter {
         
         advertisingParameters.max_interval = UInt16(interval).littleEndian
         advertisingParameters.min_interval = UInt16(interval).littleEndian
-        //advertisingParameters.advtype = 3  // advertising non-connectable
+        advertisingParameters.advtype = 3  // advertising non-connectable
         advertisingParameters.chan_map = 7 // // all three advertising channels
         
         try self.deviceRequest(advertisingParameters, timeout: commandTimeout)
