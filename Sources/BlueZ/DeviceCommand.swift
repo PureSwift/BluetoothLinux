@@ -22,9 +22,9 @@ public extension BluetoothAdapter {
     /// - Note: Does not wait for a response.
     func deviceCommand<T: HCICommand>(command: T) -> Bool {
         
-        var bytes = command.toData().byteValue
+        var commandCopy = command
         
-        return withUnsafeMutablePointer(&bytes) { (pointer) in
+        return withUnsafeMutablePointer(&commandCopy) { (pointer) in
             
             let voidPointer = UnsafeMutablePointer<Void>(pointer)
             

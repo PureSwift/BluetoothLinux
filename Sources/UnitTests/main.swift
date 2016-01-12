@@ -29,9 +29,8 @@ print("Found Bluetooth adapter with device ID: \(adapter.deviceIdentifier)")
 
 print("Address: \(adapter.address!)")
 
-// test scanning
-//scan(adapter)
+iBeaconTest(adapter, timeout: 5)
 
-//iBeacon(adapter)
+ScanTest(adapter, timeout: 3)
 
-manualBeaconEnable()
+
