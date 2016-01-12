@@ -32,4 +32,6 @@ print("Address: \(adapter.address!)")
 // test scanning
 //scan(adapter)
 
-iBeacon(adapter)
+//iBeacon(adapter)
+
+manualBeaconEnable()

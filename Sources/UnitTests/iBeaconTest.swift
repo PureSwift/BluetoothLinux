@@ -16,15 +16,14 @@
 
 import SwiftFoundation
 
+let iBeaconUUID = UUID(rawValue: "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0")!
 
 /// Test iBeacon
 func iBeacon(adapter: BluetoothAdapter) {
     
-    let uuid = UUID(rawValue: "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0")!
+    print("Enabling iBeacon: \(iBeaconUUID)")
     
-    print("Enabling iBeacon: \(uuid)")
-    
-    do { try adapter.enableBeacon(uuid, mayor: 1, minor: 1, RSSI: unsafeBitCast(Int8(-59), UInt8.self)) }
+    do { try adapter.enableBeacon(iBeaconUUID, mayor: 1, minor: 1, RSSI: unsafeBitCast(Int8(-59), UInt8.self)) }
     
     catch { print("Error enabling iBeacon: \(error)"); exit(1) }
 }
@@ -75,8 +74,8 @@ func manualBeaconEnable() {
     
     guard hci_send_req(deviceHandle, &request, 1000) != -1 else { print("Cant send request"); exit(1) }
     
+    guard status == 0x00 else { fatalError("\(Bluetooth.HCIError(rawValue: status))") }
     
     
-    sleep(1000)
 }
 
