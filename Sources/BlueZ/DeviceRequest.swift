@@ -54,7 +54,7 @@ public extension BluetoothAdapter {
         }
         
         guard status == 0x00
-            else { throw Bluetooth.Error.DeviceRequestStatus(status) }
+            else { throw Bluetooth.HCIError(rawValue: status)! }
     }
     
     /// Sends a command to the device and waits for a response. The specified event is returned.
