@@ -73,7 +73,7 @@ extension inquiry_cp: HCICommand {
 }
 
 #if os(OSX)
-    let OCF_LE_SET_ADVERTISING_PARAMETERS: UInt16 = 0x0006
+    let OCF_LE_SET_ADVERTISING_PARAMETERS: CInt = 0x0006
     public struct le_set_advertising_parameters_cp {
         var min_interval: UInt16
         var max_interval: UInt16
@@ -85,7 +85,7 @@ extension inquiry_cp: HCICommand {
         var filter: UInt8
         init() { stub() }
     }
-    let LE_SET_ADVERTISING_PARAMETERS_CP_SIZE = 15
+let LE_SET_ADVERTISING_PARAMETERS_CP_SIZE: CInt = 15
 #endif
 
 extension le_set_advertising_parameters_cp: HCICommand {
