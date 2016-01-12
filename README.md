@@ -17,7 +17,11 @@ sudo .build/debug/UnitTests
 
 Then `ctrl + c` when you're finished.
 
-I recommend [LightBlue Explorer](https://itunes.apple.com/us/app/lightblue-explorer-bluetooth/id557428110?mt=8) to verify the iBeacon is advertising.
+I recommend [LightBlue Explorer](https://itunes.apple.com/us/app/lightblue-explorer-bluetooth/id557428110?mt=8) and [Locate Beacon](https://itunes.apple.com/us/app/locate-beacon/id738709014?mt=8) to verify the iBeacon is advertising. The iBeacon test case is already configured to use a UUID that is preinstalled in the *Locate Beacon* app.
 
 ## Note
-Do NOT test with Parallels or VMware, and please do not create issues regarding those VMs.
+Do NOT test with Parallels or VMware with the built in Bluetooth adapter found in Macs. You can, however, use VMWare or Parallels, with a Linux compatible BLE USB adapter plugged in.
+
+## Troubleshooting
+
+If the unit tests fail, particularly for the iBeacon case, disconnect and reconnect the USB adapter. Sometimes disabling the advertising fails, and if you run the unit test a 2nd time, it fails to advertise because it already is.
