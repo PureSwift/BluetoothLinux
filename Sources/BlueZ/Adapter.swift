@@ -43,7 +43,6 @@ public final class BluetoothAdapter {
     public init?(address: Bluetooth.Address? = nil) {
         
         // get device ID
-        
         let addressPointer = UnsafeMutablePointer<bdaddr_t>.alloc(1)
         defer { addressPointer.dealloc(1) }
         
@@ -54,9 +53,12 @@ public final class BluetoothAdapter {
         
         self.deviceIdentifier = hci_get_route(addressPointer)
         
+        guard self.deviceIdentifier != -1
+            else { self.socket = -1; return nil } // cant be -1
+        
         self.socket = hci_open_dev(deviceIdentifier)
         
-        guard deviceIdentifier >= 0 || socket >= 0 else { return nil } // cant be -1
+        guard socket != -1 else { return nil } // cant be -1
     }
 }
 

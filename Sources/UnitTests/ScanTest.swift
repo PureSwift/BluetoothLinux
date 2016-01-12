@@ -17,23 +17,21 @@
 import SwiftFoundation
 
 /// Tests the Scanning functionality
-func scan(adapter: BluetoothAdapter) {
+func ScanTest(adapter: BluetoothAdapter, timeout: Int) {
     
     let scanDate = Date()
     
-    print("Scanning...")
+    print("Scanning for ~\(timeout) seconds...")
     
     let scanResults: [inquiry_info]
     
-    do { scanResults = try adapter.scan() }
+    do { scanResults = try adapter.scan(timeout) }
         
-    catch { print("Could not scan: \(error)"); exit(1) }
+    catch { Error("Could not scan: \(error)") }
     
     let scanDuration = Date() - scanDate
     
     print("Finished scanning (\(scanDuration)s)")
-    
-    print("Fetch names: ")
     
     for info in scanResults {
         
@@ -41,7 +39,8 @@ func scan(adapter: BluetoothAdapter) {
         
         print(address.rawValue)
         
-        //let requestNameDate = Date()
+        /*
+        let requestNameDate = Date()
         
         let name: String?
         
@@ -50,5 +49,6 @@ func scan(adapter: BluetoothAdapter) {
         catch { name = nil; print("Error fetching name: \(error)") }
         
         print(name ?? "[No Name]")
+        */
     }
 }

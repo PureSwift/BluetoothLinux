@@ -15,6 +15,9 @@
 
 import SwiftFoundation
 
+/// HCI Command type. 
+///
+///- Note: Only C packed structs from the BlueZ library should adopt this protocol.
 public protocol HCICommand {
     
     /// Opcode Group Field of all commands of this type.
@@ -27,29 +30,6 @@ public protocol HCICommand {
     ///
     /// - Note: Commands are a fixed length.
     static var dataLength: Byte { get }
-    
-    /// Converts the HCI command to binary data.
-    ///
-    /// - Precondition: The number of bytes should always be the same as `dataLength`.
-    func toData() -> Data
-}
-
-public extension HCICommand {
-    
-    func toData() -> Data {
-        
-        assert(self as? AnyObject == nil, "The default data encoding implementation for HCICommand only works for value types")
-        
-        var copy = self
-        
-        let length = Int(self.dynamicType.dataLength)
-        
-        var buffer: [UInt8] = [UInt8](count: length, repeatedValue: 0)
-        
-        memcpy(&buffer, &copy, length)
-        
-        return Data(byteValue: buffer)
-    }
 }
 
 // MARK: - C API Extensions
@@ -73,7 +53,7 @@ extension inquiry_cp: HCICommand {
 }
 
 #if os(OSX)
-    let OCF_LE_SET_ADVERTISING_PARAMETERS: UInt16 = 0x0006
+    let OCF_LE_SET_ADVERTISING_PARAMETERS: CInt = 0x0006
     public struct le_set_advertising_parameters_cp {
         var min_interval: UInt16
         var max_interval: UInt16
@@ -85,7 +65,7 @@ extension inquiry_cp: HCICommand {
         var filter: UInt8
         init() { stub() }
     }
-    let LE_SET_ADVERTISING_PARAMETERS_CP_SIZE = 15
+let LE_SET_ADVERTISING_PARAMETERS_CP_SIZE: CInt = 15
 #endif
 
 extension le_set_advertising_parameters_cp: HCICommand {

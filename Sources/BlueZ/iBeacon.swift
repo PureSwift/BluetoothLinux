@@ -24,50 +24,47 @@ public extension Bluetooth {
 public extension BluetoothAdapter {
     
     /// Enable iBeacon functionality.
-    ///
-    /// - Returns: The status byte.
-    func enableBeacon(UUID: SwiftFoundation.UUID = UUID(), mayor: UInt16, minor: UInt16, RSSI: Byte, interval: Int = 100) throws -> Byte {
+    func enableBeacon(UUID: SwiftFoundation.UUID = UUID(), mayor: UInt16, minor: UInt16, RSSI: Byte, interval: Int = 100, commandTimeout: Int = 1000) throws {
         
         assert(interval <= Int(UInt16.max), "Interval can only be 2 bytes long")
         
         // set advertising parameters
-        
         var advertisingParameters = le_set_advertising_parameters_cp()
-        memset(&advertisingParameters, 0, sizeof(le_set_advertising_parameters_cp.self))
+        memset(&advertisingParameters, 0, sizeof(le_set_advertising_parameters_cp))
         
         advertisingParameters.max_interval = UInt16(interval).littleEndian
         advertisingParameters.min_interval = UInt16(interval).littleEndian
-        advertisingParameters.advtype = 3  // advertising non-connectable
+        //advertisingParameters.advtype = 3  // advertising non-connectable
         advertisingParameters.chan_map = 7 // // all three advertising channels
         
-        var status = try self.deviceRequest(advertisingParameters)
+        try self.deviceRequest(advertisingParameters, timeout: commandTimeout)
         
         // start advertising
-        
         var enableAdvertise = le_set_advertise_enable_cp()
         memset(&enableAdvertise, 0, sizeof(le_set_advertise_enable_cp.self))
         
         enableAdvertise.enable = 0x01 // true
         
-        status = try self.deviceRequest(enableAdvertise)
+        try self.deviceRequest(enableAdvertise, timeout: commandTimeout)
         
         // set iBeacon data
-        
         var advertisingDataCommand = le_set_advertising_data_cp()
-        memset(&advertisingDataCommand, 0, sizeof(le_set_advertising_data_cp.self))
+        memset(&advertisingDataCommand, 0, sizeof(le_set_advertising_data_cp))
         
         let beaconData = GenerateBeaconData(UUID, mayor: mayor, minor: minor, RSSI: RSSI)
         advertisingDataCommand.length = beaconData.length
         advertisingDataCommand.data = beaconData.data
         
-        status = try self.deviceRequest(advertisingDataCommand)
-        
-        return status
+        try self.deviceRequest(advertisingDataCommand, timeout: commandTimeout)
     }
     
-    func disableBeacon() {
+    func disableBeacon() throws {
         
+        // stop advertising
+        var enableAdvertise = le_set_advertise_enable_cp()
+        enableAdvertise.enable = 0x00 // false
         
+        try self.deviceRequest(enableAdvertise)
     }
 }
 

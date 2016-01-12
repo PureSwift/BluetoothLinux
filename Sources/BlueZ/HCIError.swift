@@ -13,9 +13,29 @@ public extension Bluetooth {
     /// HCI Errors
     public enum HCIError: Byte, ErrorType {
         
-        case UnknownCommand     = 0x01
-        case NoConnection       = 0x02
-        case HardwareFailure    = 0x03
+        case UnknownCommand             = 0x01
+        case NoConnection
+        case HardwareFailure
+        case PageTimeout
+        case AuthenticationFailure
+        case KeyMissing
+        case MemoryFull
+        case ConnectionTimeout
+        case MaxConnections
+        case MaxSCOConnections
+        case ACLConnectionExists
+        case CommandDisallowed
+        case RejectedLimitedResources
+        case RejectedSecurity
+        case RejectedPersonal
+        case HostTimeout
+        case UnsupportedFeature
+        case InvalidParameters
+        case OEUserEndedConnection
+        case OELowResources
+        case OEPowerOff
+        case ConnectionTerminated
+        case RepeatedAttempts
         
         // TODO: Add all errors
         

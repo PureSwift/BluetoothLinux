@@ -16,19 +16,21 @@
 
 import SwiftFoundation
 
+let iBeaconUUID = UUID(rawValue: "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0")!
 
 /// Test iBeacon
-func iBeacon(adapter: BluetoothAdapter) {
+func iBeaconTest(adapter: BluetoothAdapter, timeout: Int) {
     
-    let uuid = UUID()
+    print("Enabling iBeacon \(iBeaconUUID) for \(timeout) seconds")
     
-    print("Enabling iBeacon: \(uuid)")
+    do { try adapter.enableBeacon(iBeaconUUID, mayor: 1, minor: 1, RSSI: unsafeBitCast(Int8(-59), UInt8.self)) }
     
-    var status: Byte = 0
+    catch { Error("Error enabling iBeacon: \(error)") }
     
-    do { try status = adapter.enableBeacon(uuid, mayor: 1, minor: 1, RSSI: 59) }
+    // sleep
+    sleep(UInt32(timeout))
     
-    catch { print("Error enabling iBeacon: \(error)"); exit(1) }
+    do { try adapter.disableBeacon() }
     
-    print("iBeacon Status: \(status)")
+    catch { Error("Error disabling iBeacon") }
 }
