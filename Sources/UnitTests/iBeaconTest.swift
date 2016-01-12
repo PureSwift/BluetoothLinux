@@ -20,7 +20,7 @@ import SwiftFoundation
 /// Test iBeacon
 func iBeacon(adapter: BluetoothAdapter) {
     
-    let uuid = UUID()
+    let uuid = UUID(rawValue: "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0")!
     
     print("Enabling iBeacon: \(uuid)")
     
@@ -28,3 +28,55 @@ func iBeacon(adapter: BluetoothAdapter) {
     
     catch { print("Error enabling iBeacon: \(error)"); exit(1) }
 }
+
+func manualBeaconEnable() {
+    
+    print("Enabling iBeacon Manually...")
+    
+    let deviceID = hci_get_route(nil)
+    
+    let deviceHandle = hci_open_dev(deviceID)
+    
+    guard deviceHandle != -1 else { "Could not open device"; exit(1) }
+    
+    var advParam = le_set_advertising_parameters_cp()
+    
+    memset(&advParam, 0, sizeof(le_set_advertising_parameters_cp))
+    
+    advParam.min_interval = UInt16(100).littleEndian
+    
+    advParam.max_interval = UInt16(100).littleEndian
+    
+    advParam.chan_map = 7
+    
+    var status = Byte()
+    
+    var request = hci_request()
+    
+    memset(&request, 0, sizeof(request.dynamicType))
+    
+    request.ogf = 0x08
+    
+    request.ocf = UInt16(OCF_LE_SET_ADVERTISING_PARAMETERS)
+    
+    withUnsafePointer(&advParam) { (pointer) in
+        
+        request.cparam = UnsafeMutablePointer<Void>(pointer)
+    }
+    
+    request.clen = LE_SET_ADVERTISING_PARAMETERS_CP_SIZE
+    
+    withUnsafePointer(&status) { (pointer) in
+        
+        request.rparam = UnsafeMutablePointer<Void>(pointer)
+    }
+    
+    request.rlen = 1
+    
+    guard hci_send_req(deviceHandle, &request, 1000) != -1 else { print("Cant send request"); exit(1) }
+    
+    
+    
+    sleep(1000)
+}
+
