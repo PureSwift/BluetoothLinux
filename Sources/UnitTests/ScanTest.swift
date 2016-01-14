@@ -33,22 +33,20 @@ func ScanTest(adapter: BluetoothAdapter, timeout: Int) {
     
     print("Finished scanning (\(scanDuration)s)")
     
-    for info in scanResults {
+    for (index, info) in scanResults.enumerate() {
         
         let address = info.bdaddr
         
-        print(address.rawValue)
+        print("\(index + 1). " + address.rawValue)
         
-        /*
         let requestNameDate = Date()
         
         let name: String?
         
         do { name = try adapter.requestDeviceName(address, timeout: 10) }
             
-        catch { name = nil; print("Error fetching name: \(error)") }
+        catch { name = nil; print("Error fetching name: \(error)"); break }
         
-        print(name ?? "[No Name]")
-        */
+        print(name ?? "[No Name]" + " (\(Date() - requestNameDate)s)")
     }
 }
