@@ -16,6 +16,8 @@
 import SwiftFoundation
 
 /// HCI Command Parameter Data.
+///
+///- Note: Only C packed structs from the BlueZ library should adopt this protocol.
 public protocol HCICommandParameter {
     
     /// Opcode Group Field of all commands of this type.
@@ -43,7 +45,7 @@ public protocol HCICommandParameter {
     let INQUIRY_CP_SIZE = 5
 #endif
 
-extension inquiry_cp: HCICommand {
+extension inquiry_cp: HCICommandParameter {
     
     public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LinkControl }
     public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return UInt16(OCF_INQUIRY) }
@@ -66,7 +68,7 @@ extension inquiry_cp: HCICommand {
 let LE_SET_ADVERTISING_PARAMETERS_CP_SIZE: CInt = 15
 #endif
 
-extension le_set_advertising_parameters_cp: HCICommand {
+extension le_set_advertising_parameters_cp: HCICommandParameter {
     
     public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
     public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return UInt16(OCF_LE_SET_ADVERTISING_PARAMETERS) }
@@ -82,7 +84,7 @@ extension le_set_advertising_parameters_cp: HCICommand {
     let LE_SET_ADVERTISE_ENABLE_CP_SIZE = 1
 #endif
 
-extension le_set_advertise_enable_cp: HCICommand {
+extension le_set_advertise_enable_cp: HCICommandParameter {
     
     public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
     public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return UInt16(OCF_LE_SET_ADVERTISE_ENABLE) }
@@ -99,7 +101,7 @@ extension le_set_advertise_enable_cp: HCICommand {
     let LE_SET_ADVERTISING_DATA_CP_SIZE = 32
 #endif
 
-extension le_set_advertising_data_cp: HCICommand {
+extension le_set_advertising_data_cp: HCICommandParameter {
     
     public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
     public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return UInt16(OCF_LE_SET_ADVERTISING_DATA) }

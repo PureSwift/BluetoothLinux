@@ -10,5 +10,9 @@ import SwiftFoundation
 
 public extension BluetoothAddress {
     
-    
+    public enum LowEnergyAddressType: CInt {
+        
+        case Public = 0x00
+        case Random = 0x01
+    }
 }

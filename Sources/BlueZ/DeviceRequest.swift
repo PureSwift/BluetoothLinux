@@ -18,7 +18,7 @@ import SwiftFoundation
 public extension BluetoothAdapter {
 
     /// Sends a command to the device and waits for a response. No specific event is expected.
-    func deviceRequest<Command: HCICommand>(command: Command, timeout: Int = 1000) throws {
+    func deviceRequest<Command: HCICommandParameter>(command: Command, timeout: Int = 1000) throws {
 
         var request = hci_request()
         var status: Byte = 0
@@ -59,7 +59,7 @@ public extension BluetoothAdapter {
     /// Sends a command to the device and waits for a response. The specified event is returned.
     ///
     /// - Precondition: The `Event` type is a value type.
-    func deviceRequest<Command: HCICommand, Event: HCIEvent>(command: Command, inout event: Event, timeout: Int = 1000) throws {
+    func deviceRequest<Command: HCICommandParameter, Event: HCIEvent>(command: Command, inout event: Event, timeout: Int = 1000) throws {
 
         assert(event as? AnyObject == nil, "\(event) must be a C struct from BlueZ")
 

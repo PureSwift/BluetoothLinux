@@ -20,7 +20,7 @@ public extension BluetoothAdapter {
     /// Sends a command to the device. 
     /// 
     /// - Note: Does not wait for a response.
-    func deviceCommand<T: HCICommand>(command: T) -> Bool {
+    func deviceCommand<T: HCICommandParameter>(command: T) -> Bool {
         
         var commandCopy = command
         
