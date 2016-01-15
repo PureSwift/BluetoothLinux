@@ -36,6 +36,12 @@ public extension Bluetooth {
         case OEPowerOff
         case ConnectionTerminated
         case RepeatedAttempts
+        case PairingNotAllowed
+        
+        // ... Add More
+        
+        case TransactionCollision       = 0x2a
+        case QOSUnacceptableParameter   = 0x2c
         
         // TODO: Add all errors
         

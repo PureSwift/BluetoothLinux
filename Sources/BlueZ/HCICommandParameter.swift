@@ -6,108 +6,17 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-#if os(Linux)
-    import CBlueZ
-    import Glibc
-#elseif os(OSX) || os(iOS)
-    import Darwin.C
-#endif
-
-import SwiftFoundation
+import typealias SwiftFoundation.Byte
 
 /// HCI Command Parameter Data.
 ///
 ///- Note: Only C packed structs from the BlueZ library should adopt this protocol.
 public protocol HCICommandParameter {
     
-    /// Opcode Group Field of all commands of this type.
-    static var opcodeGroupField: Bluetooth.OpcodeGroupField { get }
-    
-    /// Opcode Command Field of this particular command.
-    static var opcodeCommandField: Bluetooth.OpcodeCommandField  { get }
-    
     /// Length of the command when encoded to data. 
     ///
     /// - Note: Commands are a fixed length.
-    static var dataLength: Byte { get }
+    static var dataLength: CInt { get }
 }
-
-// MARK: - C API Extensions
-
-#if os(OSX)
-    let OCF_INQUIRY: UInt16 = 0x0001
-    public struct inquiry_cp {
-        var lap: (UInt8, UInt8, UInt8)
-        var length: UInt8 /* 1.28s units */
-        var num_rsp: UInt8
-        init() { stub() }
-    }
-    let INQUIRY_CP_SIZE = 5
-#endif
-
-extension inquiry_cp: HCICommandParameter {
-    
-    public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LinkControl }
-    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return UInt16(OCF_INQUIRY) }
-    public static var dataLength: Byte { return Byte(INQUIRY_CP_SIZE) }
-}
-
-#if os(OSX)
-    let OCF_LE_SET_ADVERTISING_PARAMETERS: CInt = 0x0006
-    public struct le_set_advertising_parameters_cp {
-        var min_interval: UInt16
-        var max_interval: UInt16
-        var advtype: UInt8
-        var own_bdaddr_type: UInt8
-        var direct_bdaddr_type: UInt8
-        var direct_bdaddr: bdaddr_t
-        var chan_map: UInt8
-        var filter: UInt8
-        init() { stub() }
-    }
-let LE_SET_ADVERTISING_PARAMETERS_CP_SIZE: CInt = 15
-#endif
-
-extension le_set_advertising_parameters_cp: HCICommandParameter {
-    
-    public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
-    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return UInt16(OCF_LE_SET_ADVERTISING_PARAMETERS) }
-    public static var dataLength: Byte { return Byte(LE_SET_ADVERTISING_PARAMETERS_CP_SIZE) }
-}
-
-#if os(OSX)
-    let OCF_LE_SET_ADVERTISE_ENABLE: UInt16 = 0x000A
-    public struct le_set_advertise_enable_cp {
-        var enable: UInt8
-        init() { stub() }
-    }
-    let LE_SET_ADVERTISE_ENABLE_CP_SIZE = 1
-#endif
-
-extension le_set_advertise_enable_cp: HCICommandParameter {
-    
-    public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
-    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return UInt16(OCF_LE_SET_ADVERTISE_ENABLE) }
-    public static var dataLength: Byte { return Byte(LE_SET_ADVERTISE_ENABLE_CP_SIZE) }
-}
-
-#if os(OSX)
-    let OCF_LE_SET_ADVERTISING_DATA: UInt16 = 0x0008
-    public struct le_set_advertising_data_cp {
-        var length: UInt8
-        var data: Bluetooth.LowEnergyAdvertisingData
-        init() { stub() }
-    }
-    let LE_SET_ADVERTISING_DATA_CP_SIZE = 32
-#endif
-
-extension le_set_advertising_data_cp: HCICommandParameter {
-    
-    public static var opcodeGroupField: Bluetooth.OpcodeGroupField { return .LowEnergy }
-    public static var opcodeCommandField: Bluetooth.OpcodeCommandField { return UInt16(OCF_LE_SET_ADVERTISING_DATA) }
-    public static var dataLength: Byte { return Byte(LE_SET_ADVERTISING_DATA_CP_SIZE) }
-}
-
-// TODO: Add extensions (and stubs) for all HCI Command C structs
 
 

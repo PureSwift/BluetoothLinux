@@ -18,7 +18,7 @@ import SwiftFoundation
 public extension BluetoothAdapter {
 
     /// Sends a command to the device and waits for a response. No specific event is expected.
-    func deviceRequest<Command: HCICommandParameter>(command: Command, timeout: Int = 1000) throws {
+    func deviceRequest<Command: HCICommand, CommandParameter: HCICommandParameter>(command: Command, parameter: CommandParameter? = nil, timeout: Int = 1000) throws {
 
         var request = hci_request()
         var status: Byte = 0
@@ -29,14 +29,16 @@ public extension BluetoothAdapter {
         // set HCI command parameters
 
         request.ogf = Command.opcodeGroupField.rawValue
-        request.ocf = Command.opcodeCommandField
-        request.clen = CInt(Command.dataLength)
-
-        var commandCopy = command
-
-        withUnsafePointer(&commandCopy) { (pointer) in
-
-            request.cparam = UnsafeMutablePointer<Void>(pointer)
+        request.ocf = command.rawValue
+        
+        if var commandParameter = parameter {
+            
+            request.clen = CommandParameter.dataLength
+            
+            withUnsafePointer(&commandParameter) { (pointer) in
+                
+                request.cparam = UnsafeMutablePointer<Void>(pointer)
+            }
         }
 
         // set HCI Event to a status byte
