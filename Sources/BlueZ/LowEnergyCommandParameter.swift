@@ -169,6 +169,100 @@ extension le_create_connection_cp: HCICommandParameter {
     public static var dataLength: CInt { return 25 }
 }
 
+#if os(OSX)
+    public struct le_read_white_list_size_rp {
+        public var bdaddr_type: UInt8
+        public var bdaddr: bdaddr_t
+        public init() { stub() }
+    }
+#endif
+
+extension le_read_white_list_size_rp: HCICommandParameter {
+    public static var dataLength: CInt { return 7 }
+}
+
+#if os(OSX)
+    public struct le_set_host_channel_classification_cp {
+        public var map: (UInt8, UInt8, UInt8, UInt8, UInt8)
+        public init() { stub() }
+    }
+#endif
+
+extension le_set_host_channel_classification_cp: HCICommandParameter {
+    public static var dataLength: CInt { return 5 }
+}
+
+#if os(OSX)
+    public struct le_read_channel_map_cp {
+        public var handle: UInt16
+        public init() { stub() }
+    }
+#endif
+
+extension le_read_channel_map_cp: HCICommandParameter {
+    public static var dataLength: CInt { return 2 }
+}
+
+#if os(OSX)
+    public struct le_read_channel_map_rp {
+        public var status: UInt8
+        public var handle: UInt16
+        public var map: (UInt8, UInt8, UInt8, UInt8, UInt8)
+        public init() { stub() }
+    }
+#endif
+
+extension le_read_channel_map_rp: HCICommandParameter {
+    public static var dataLength: CInt { return 8 }
+}
+
+#if os(OSX)
+    public struct le_read_remote_used_features_cp {
+        public var handle: UInt16
+        public init() { stub() }
+    }
+#endif
+
+extension le_read_remote_used_features_cp: HCICommandParameter {
+    public static var dataLength: CInt { return 2 }
+}
+
+#if os(OSX)
+    public struct le_encrypt_cp {
+        public var key: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
+        public var plaintext: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
+        public init() { stub() }
+    }
+#endif
+
+extension le_encrypt_cp: HCICommandParameter {
+    public static var dataLength: CInt { return 32 }
+}
+
+#if os(OSX)
+    public struct le_encrypt_rp {
+        public var status: UInt8
+        public var data: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
+        public init() { stub() }
+    }
+#endif
+
+extension le_encrypt_rp: HCICommandParameter {
+    public static var dataLength: CInt { return 17 }
+}
+
+#if os(OSX)
+    public struct le_rand_rp {
+        public var status: UInt8
+        public var random: UInt64
+        public init() { stub() }
+    }
+#endif
+
+extension le_rand_rp: HCICommandParameter {
+    public static var dataLength: CInt { return 9 }
+}
+
 
 
 
