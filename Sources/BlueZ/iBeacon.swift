@@ -37,7 +37,7 @@ public extension BluetoothAdapter {
         //advertisingParameters.advtype = 3  // advertising non-connectable
         advertisingParameters.chan_map = 7 // // all three advertising channels
         
-        try self.deviceRequest(advertisingParameters, timeout: commandTimeout)
+        try self.deviceRequest(Bluetooth.LowEnergyCommand.SetAdvertisingParameters, parameter: advertisingParameters, timeout: commandTimeout)
         
         // start advertising
         var enableAdvertise = le_set_advertise_enable_cp()
@@ -45,7 +45,7 @@ public extension BluetoothAdapter {
         
         enableAdvertise.enable = 0x01 // true
         
-        try self.deviceRequest(enableAdvertise, timeout: commandTimeout)
+        try self.deviceRequest(Bluetooth.LowEnergyCommand.SetAdvertiseEnable, parameter: enableAdvertise, timeout: commandTimeout)
         
         // set iBeacon data
         var advertisingDataCommand = le_set_advertising_data_cp()
@@ -55,7 +55,7 @@ public extension BluetoothAdapter {
         advertisingDataCommand.length = beaconData.length
         advertisingDataCommand.data = beaconData.data
         
-        try self.deviceRequest(advertisingDataCommand, timeout: commandTimeout)
+        try self.deviceRequest(Bluetooth.LowEnergyCommand.SetAdvertisingData, parameter: advertisingDataCommand, timeout: commandTimeout)
     }
     
     func disableBeacon() throws {
@@ -64,7 +64,7 @@ public extension BluetoothAdapter {
         var enableAdvertise = le_set_advertise_enable_cp()
         enableAdvertise.enable = 0x00 // false
         
-        try self.deviceRequest(enableAdvertise)
+        try self.deviceRequest(Bluetooth.LowEnergyCommand.SetAdvertiseEnable, parameter: enableAdvertise)
     }
 }
 

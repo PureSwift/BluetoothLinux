@@ -24,11 +24,11 @@ public extension BluetoothAdapter {
         
         var commandCopy = command
         
-        let  withUnsafeMutablePointer(&commandCopy) { (pointer) in
+        return withUnsafeMutablePointer(&commandCopy) { (pointer) in
             
             let voidPointer = UnsafeMutablePointer<Void>(pointer)
             
-            return hci_send_cmd(socket, UInt16(T.opcodeGroupField.rawValue), UInt16(T.opcodeCommandField), T.dataLength, voidPointer) == 0
+            return hci_send_cmd(socket, UInt16(Command.opcodeGroupField.rawValue), command.rawValue, UInt8(CommandParameter.dataLength), voidPointer) == 0
         }
     }
 }

@@ -58,6 +58,7 @@ public extension BluetoothAdapter {
         guard status == 0x00 else { throw Bluetooth.HCIError(rawValue: status)! }
     }
 
+    /*
     /// Sends a command to the device and waits for a response. The specified event is returned.
     ///
     /// - Precondition: The `Event` type is a value type.
@@ -97,7 +98,7 @@ public extension BluetoothAdapter {
             guard hci_send_req(socket, pointer, CInt(timeout)) == 0
                 else { throw POSIXError.fromErrorNumber! }
         }
-    }
+    }*/
 }
 
 // MARK: - Darwin Stubs
