@@ -53,13 +53,13 @@ public extension Adapter {
         }
         else { deviceClassPointer = nil }
         
-        let foundDevicesCount = hci_inquiry(deviceIdentifier, CInt(duration), CInt(scanLimit), deviceClassPointer, inquiryInfoPointers, Int(flags))
+        let foundDevicesCount = hci_inquiry(identifier, CInt(duration), CInt(scanLimit), deviceClassPointer, inquiryInfoPointers, Int(flags))
         
         guard foundDevicesCount >= 0 else { throw POSIXError.fromErrorNumber! }
         
         var results = [inquiry_info]()
         
-        for i in 0..<Int(foundDevicesCount) {
+        for i in 0 ..< Int(foundDevicesCount) {
             
             let infoPointer = inquiryInfoPointers[i]
             

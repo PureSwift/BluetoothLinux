@@ -13,7 +13,7 @@
     import Darwin.C
 #endif
 
-public final class GattDatabase {
+public final class GATTDatabase {
     
     // MARK: - Internal Properties
     
@@ -27,4 +27,29 @@ public final class GattDatabase {
         
         self.internalPointer = internalPointer
     }
+    
+    public init?() {
+        
+        self.internalPointer = gatt_db_new()
+        
+        guard internalPointer != nil else { return }
+    }
+    
+    // MARK: - Methods
+    
+    
+    
+    // MARK: - Dynamic Properties
+    
+    
 }
+
+// MARK: - Darwin Stubs
+
+#if os(OSX) || os(iOS)
+    
+    func gatt_db_new(_: Void) -> COpaquePointer { stub() }
+    
+    func
+
+#endif

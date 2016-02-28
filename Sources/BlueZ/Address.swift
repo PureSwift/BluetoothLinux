@@ -115,7 +115,7 @@ public extension Adapter {
     /// Fails if the Bluetooth adapter was disconnected or hardware failure.
     public var address: Address? {
         
-        return Address(deviceIdentifier: deviceIdentifier)
+        return Address(deviceIdentifier: identifier)
     }
 }
 
@@ -132,6 +132,7 @@ public extension Adapter {
     
     func ba2str(bytes: UnsafePointer<bdaddr_t>, _ str: UnsafeMutablePointer<CChar>) -> CInt { stub() }
     
+    /// Attempts to get the device address.
     func hci_devba(dev_id: CInt, _ bdaddr: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }
     
 #endif

@@ -45,6 +45,11 @@ public final class DaemonAdapter {
     
     // MARK: - Initialization
     
+    deinit {
+        
+        btd_adapter_unref(internalPointer)
+    }
+    
     internal init(_ internalPointer: COpaquePointer) {
         
         assert(internalPointer != nil)
@@ -74,7 +79,7 @@ public final class DaemonAdapter {
         
         let errorCode = adapter_init()
         
-        guard errorCode != 0 else { throw POSIXError(rawValue: errorCode)! }
+        guard errorCode == 0 else { throw POSIXError(rawValue: errorCode)! }
     }
     
     public static func cleanup() { adapter_cleanup() }
@@ -83,7 +88,29 @@ public final class DaemonAdapter {
     
     // MARK: - Methods
     
+    public func setDeviceClass(mayor mayor: UInt8, minor: UInt8) {
+        
+        btd_adapter_set_class(internalPointer, mayor, minor)
+    }
     
+    public func setDeviceName(name: String) throws {
+        
+        let errorCode = adapter_set_name(internalPointer, name)
+        
+        guard errorCode == 0 else { throw POSIXError(rawValue: errorCode)! }
+    }
+    
+    public func GATTServerStart() throws {
+        
+        let errorCode = btd_adapter_gatt_server_start(internalPointer)
+        
+        guard errorCode == 0 else { throw POSIXError(rawValue: errorCode)! }
+    }
+    
+    public func GATTServerStop() {
+        
+        btd_adapter_gatt_server_stop(internalPointer)
+    }
     
     // MARK: - Dynamic Properties
     
@@ -128,12 +155,22 @@ public final class DaemonAdapter {
         return database
     }
     
+    public var deviceName: String {
+        
+        return String.fromCString(UnsafePointer<CChar>(btd_adapter_get_name(internalPointer))) ?? ""
+    }
     
+    public var address: Address {
+        
+        let addressOpaquePointer = btd_adapter_get_address(internalPointer)
+        
+        assert(addressOpaquePointer != nil, "Nil address pointer")
+        
+        let addressPointer = UnsafePointer<Address>(addressOpaquePointer)
+        
+        return addressPointer.memory
+    }
 }
-
-// MARK: - Private
-
-
 
 // MARK: - Darwin Stubs
 
@@ -178,5 +215,9 @@ public final class DaemonAdapter {
     func btd_adapter_set_class(adapter: COpaquePointer, _ major: UInt8, _ minor: UInt8) { stub() }
     
     func btd_le_connect_before_pairing(_: Void) -> CBool { stub() }
+    
+    func btd_adapter_gatt_server_start(adapter: COpaquePointer) -> CInt { stub() }
+    
+    func btd_adapter_gatt_server_stop(adapter: COpaquePointer) { stub() }
     
 #endif
