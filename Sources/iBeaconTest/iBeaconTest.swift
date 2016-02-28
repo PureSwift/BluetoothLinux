@@ -16,7 +16,7 @@
 
 import SwiftFoundation
 
-let iBeaconUUID = UUID(rawValue: "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0")!
+let iBeaconUUID = SwiftFoundation.UUID(rawValue: "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0")!
 
 /// Test iBeacon
 func iBeaconTest(adapter: Adapter, timeout: Int) {

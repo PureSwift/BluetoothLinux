@@ -41,7 +41,10 @@ public final class GATTDatabase {
     
     // MARK: - Dynamic Properties
     
-    
+    public var isEmpty: Bool {
+        
+        return gatt_db_isempty(internalPointer)
+    }
 }
 
 // MARK: - Darwin Stubs
@@ -50,6 +53,10 @@ public final class GATTDatabase {
     
     func gatt_db_new(_: Void) -> COpaquePointer { stub() }
     
+    func gatt_db_unref(db: COpaquePointer) { stub() }
     
+    func gatt_db_isempty(db: COpaquePointer) -> CBool { stub() }
+    
+    func gatt_db_add_service() { stub() }
     
 #endif
