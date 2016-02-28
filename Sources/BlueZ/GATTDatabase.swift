@@ -50,6 +50,6 @@ public final class GATTDatabase {
     
     func gatt_db_new(_: Void) -> COpaquePointer { stub() }
     
-    func
-
+    
+    
 #endif

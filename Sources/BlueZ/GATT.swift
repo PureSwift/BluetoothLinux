@@ -7,10 +7,16 @@
 //
 
 // Provides namespace for GATT related types. 
+
 /// BlueZ GATT
 public struct GATT {
     
     typealias Server = GATTServer
     
     typealias Database = GATTDatabase
+}
+
+public extension GATTDatabase {
+    
+    typealias Attribute = GATTDatabaseAttribute
 }

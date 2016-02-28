@@ -6,12 +6,12 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-import Foundation
-
-public extension GATTDatabase {
-    
-    typealias Attribute = GATTDatabaseAttribute
-}
+#if os(Linux)
+    import CBlueZ
+    import Glibc
+#elseif os(OSX) || os(iOS)
+    import Darwin.C
+#endif
 
 public final class GATTDatabaseAttribute {
     
@@ -36,3 +36,11 @@ public final class GATTDatabaseAttribute {
     
     
 }
+
+// MARK: - Darwin Stubs
+
+#if os(OSX) || os(iOS)
+    
+    //func btd_adapter_unref(adapter: COpaquePointer) { stub() }
+
+#endif

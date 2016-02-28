@@ -17,7 +17,7 @@
 		6E0C5BCF1C83889900AF63E5 /* DaemonDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BCE1C83889900AF63E5 /* DaemonDevice.swift */; };
 		6E0C5BD11C839C5D00AF63E5 /* GATTDatabaseAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BD01C839C5D00AF63E5 /* GATTDatabaseAttribute.swift */; };
 		6E0C5BD41C839E1C00AF63E5 /* ATT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BD31C839E1C00AF63E5 /* ATT.swift */; };
-		6E0C5BD61C839E9400AF63E5 /* GATT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BD51C839E9400AF63E5 /* GATT.swift */; };
+		6E0C5BD81C83A45100AF63E5 /* SecurityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BD71C83A45100AF63E5 /* SecurityType.swift */; };
 		6E1552461C39A045002CC322 /* HCIEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1552451C39A045002CC322 /* HCIEvent.swift */; };
 		6E1552481C39A18A002CC322 /* HCIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1552471C39A18A002CC322 /* HCIError.swift */; };
 		6E15524A1C39A284002CC322 /* LowEnergyAddressType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1552491C39A284002CC322 /* LowEnergyAddressType.swift */; };
@@ -55,6 +55,7 @@
 		6E0C5BD01C839C5D00AF63E5 /* GATTDatabaseAttribute.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTDatabaseAttribute.swift; sourceTree = "<group>"; };
 		6E0C5BD31C839E1C00AF63E5 /* ATT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ATT.swift; sourceTree = "<group>"; };
 		6E0C5BD51C839E9400AF63E5 /* GATT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATT.swift; sourceTree = "<group>"; };
+		6E0C5BD71C83A45100AF63E5 /* SecurityType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityType.swift; sourceTree = "<group>"; };
 		6E1552451C39A045002CC322 /* HCIEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIEvent.swift; sourceTree = "<group>"; };
 		6E1552471C39A18A002CC322 /* HCIError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIError.swift; sourceTree = "<group>"; };
 		6E1552491C39A284002CC322 /* LowEnergyAddressType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyAddressType.swift; sourceTree = "<group>"; };
@@ -197,6 +198,7 @@
 				6E881D811C389F4B00E509A9 /* iBeacon.swift */,
 				6E1552471C39A18A002CC322 /* HCIError.swift */,
 				6E1552491C39A284002CC322 /* LowEnergyAddressType.swift */,
+				6E0C5BD71C83A45100AF63E5 /* SecurityType.swift */,
 				6E881DAB1C3996A200E509A9 /* OpcodeGroupField.swift */,
 				6E15524B1C39C08A002CC322 /* OpcodeCommandField.swift */,
 				6E795E9A1C49821B002377FE /* LinkMode.swift */,
@@ -305,6 +307,7 @@
 				6E881DAC1C3996A200E509A9 /* OpcodeGroupField.swift in Sources */,
 				6E15524A1C39A284002CC322 /* LowEnergyAddressType.swift in Sources */,
 				6E0C5BC31C837AAA00AF63E5 /* iBeaconTest.swift in Sources */,
+				6E0C5BD81C83A45100AF63E5 /* SecurityType.swift in Sources */,
 				6E92A43B1C1530EF007BC4E9 /* Scan.swift in Sources */,
 				6E0C5BCB1C83865000AF63E5 /* GATTDatabase.swift in Sources */,
 				6E795E941C48B80F002377FE /* LowEnergyEvent.swift in Sources */,
@@ -320,7 +323,6 @@
 				6E795E901C489FE7002377FE /* LowEnergyCommandParameter.swift in Sources */,
 				6E795E9B1C49821B002377FE /* LinkMode.swift in Sources */,
 				6E795E921C48A186002377FE /* LinkControlCommandParameter.swift in Sources */,
-				6E0C5BD61C839E9400AF63E5 /* GATT.swift in Sources */,
 				6E0C5BC21C837AA700AF63E5 /* ScanTest.swift in Sources */,
 				6ECB305D1C47613F004CCA68 /* LinkControlCommand.swift in Sources */,
 				6ECB30601C47618E004CCA68 /* HCICommand.swift in Sources */,

@@ -144,13 +144,13 @@ public final class DaemonAdapter {
         return btd_adapter_get_class(internalPointer)
     }
     
-    public var database: GattDatabase? {
+    public var database: GATTDatabase? {
         
         let databaseInternalPointer = btd_adapter_get_database(internalPointer)
         
         guard databaseInternalPointer != nil else { return nil }
         
-        let database = GattDatabase(databaseInternalPointer)
+        let database = GATTDatabase(databaseInternalPointer)
         
         return database
     }
