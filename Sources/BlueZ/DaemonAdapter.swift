@@ -1,19 +1,17 @@
 //
-//  Error.swift
+//  DaemonAdapter.swift
 //  BlueZ
 //
-//  Created by Alsey Coleman Miller on 1/12/16.
+//  Created by Alsey Coleman Miller on 2/28/16.
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
 #if os(Linux)
+    import CBlueZ
     import Glibc
 #elseif os(OSX) || os(iOS)
     import Darwin.C
 #endif
 
-@noreturn func Error(text: String) {
-    
-    print(text)
-    exit(1)
-}
+import SwiftFoundation
+

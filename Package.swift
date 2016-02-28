@@ -8,7 +8,10 @@ let package = Package(
     ],
     targets: [
         Target(
-            name: "UnitTests",
+            name: "ScanTest",
+            dependencies: [.Target(name: "BlueZ")]),
+        Target(
+            name: "iBeaconTest",
             dependencies: [.Target(name: "BlueZ")]),
         Target(
             name: "BlueZ")

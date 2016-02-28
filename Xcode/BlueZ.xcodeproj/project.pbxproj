@@ -11,6 +11,7 @@
 		6E0C5BC21C837AA700AF63E5 /* ScanTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BBE1C8379D100AF63E5 /* ScanTest.swift */; };
 		6E0C5BC31C837AAA00AF63E5 /* iBeaconTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BC01C837A9F00AF63E5 /* iBeaconTest.swift */; };
 		6E0C5BC51C837B7700AF63E5 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BC41C837B7700AF63E5 /* TestError.swift */; };
+		6E0C5BC91C83807700AF63E5 /* DaemonAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BC81C83807700AF63E5 /* DaemonAdapter.swift */; };
 		6E1552461C39A045002CC322 /* HCIEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1552451C39A045002CC322 /* HCIEvent.swift */; };
 		6E1552481C39A18A002CC322 /* HCIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1552471C39A18A002CC322 /* HCIError.swift */; };
 		6E15524A1C39A284002CC322 /* LowEnergyAddressType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1552491C39A284002CC322 /* LowEnergyAddressType.swift */; };
@@ -41,7 +42,7 @@
 		6E0C5BC01C837A9F00AF63E5 /* iBeaconTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iBeaconTest.swift; sourceTree = "<group>"; };
 		6E0C5BC11C837A9F00AF63E5 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		6E0C5BC41C837B7700AF63E5 /* TestError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
-		6E0C5BC61C837B8300AF63E5 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestError.swift; path = ../ScanTest/TestError.swift; sourceTree = "<group>"; };
+		6E0C5BC81C83807700AF63E5 /* DaemonAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DaemonAdapter.swift; sourceTree = "<group>"; };
 		6E1552451C39A045002CC322 /* HCIEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIEvent.swift; sourceTree = "<group>"; };
 		6E1552471C39A18A002CC322 /* HCIError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIError.swift; sourceTree = "<group>"; };
 		6E1552491C39A284002CC322 /* LowEnergyAddressType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyAddressType.swift; sourceTree = "<group>"; };
@@ -105,10 +106,17 @@
 			children = (
 				6E0C5BC01C837A9F00AF63E5 /* iBeaconTest.swift */,
 				6E0C5BC11C837A9F00AF63E5 /* main.swift */,
-				6E0C5BC61C837B8300AF63E5 /* TestError.swift */,
 			);
 			name = iBeaconTest;
 			path = ../Sources/iBeaconTest;
+			sourceTree = "<group>";
+		};
+		6E0C5BC71C83805200AF63E5 /* Daemon */ = {
+			isa = PBXGroup;
+			children = (
+				6E0C5BC81C83807700AF63E5 /* DaemonAdapter.swift */,
+			);
+			name = Daemon;
 			sourceTree = "<group>";
 		};
 		6E795E951C48B815002377FE /* HCI Event */ = {
@@ -123,9 +131,9 @@
 		6E92A41A1C15309B007BC4E9 = {
 			isa = PBXGroup;
 			children = (
-				6E0C5BBA1C83794700AF63E5 /* Tests */,
-				6E881DA51C398D0C00E509A9 /* Headers */,
 				6E92A42F1C1530DC007BC4E9 /* Package.swift */,
+				6E881DA51C398D0C00E509A9 /* Headers */,
+				6E0C5BBA1C83794700AF63E5 /* Tests */,
 				6E92A4311C1530EF007BC4E9 /* Source */,
 				6E92A4261C15309B007BC4E9 /* BlueZ */,
 				6E92A4251C15309B007BC4E9 /* Products */,
@@ -152,6 +160,7 @@
 		6E92A4311C1530EF007BC4E9 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6E0C5BC71C83805200AF63E5 /* Daemon */,
 				6E0C5BB81C8373DB00AF63E5 /* Darwin.swift */,
 				6E92A4331C1530EF007BC4E9 /* Address.swift */,
 				6E92A4321C1530EF007BC4E9 /* Adapter.swift */,
@@ -275,6 +284,7 @@
 				6E881DAA1C39934200E509A9 /* HCICommandParameter.swift in Sources */,
 				6E881DA21C39812F00E509A9 /* DeviceRequest.swift in Sources */,
 				6E1552501C3A42FE002CC322 /* Error.swift in Sources */,
+				6E0C5BC91C83807700AF63E5 /* DaemonAdapter.swift in Sources */,
 				6E0C5BC51C837B7700AF63E5 /* TestError.swift in Sources */,
 				6E1552481C39A18A002CC322 /* HCIError.swift in Sources */,
 				6E795E901C489FE7002377FE /* LowEnergyCommandParameter.swift in Sources */,
