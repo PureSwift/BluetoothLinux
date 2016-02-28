@@ -8,6 +8,7 @@
 
 #if os(Linux)
     import CBlueZ
+    import CBlueZInternal
     import Glibc
 #elseif os(OSX) || os(iOS)
     import Darwin.C

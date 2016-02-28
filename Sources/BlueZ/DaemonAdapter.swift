@@ -8,6 +8,7 @@
 
 #if os(Linux)
     import CBlueZ
+    import CBlueZInternal
     import Glibc
 #elseif os(OSX) || os(iOS)
     import Darwin.C
@@ -61,7 +62,7 @@ public final class DaemonAdapter {
         
         var addressCopy = address
         
-        self.internalPointer = withUnsafeMutablePointer(&addressCopy) { adapter_find(COpaquePointer($0)) }
+        self.internalPointer = withUnsafeMutablePointer(&addressCopy) { adapter_find($0) }
         
         guard internalPointer != nil else { return nil }
     }
@@ -162,11 +163,9 @@ public final class DaemonAdapter {
     
     public var address: Address {
         
-        let addressOpaquePointer = btd_adapter_get_address(internalPointer)
+        let addressPointer = btd_adapter_get_address(internalPointer)
         
-        assert(addressOpaquePointer != nil, "Nil address pointer")
-        
-        let addressPointer = UnsafePointer<Address>(addressOpaquePointer)
+        assert(addressPointer != nil, "Nil address pointer")
         
         return addressPointer.memory
     }
@@ -180,7 +179,7 @@ public final class DaemonAdapter {
     
     func btd_adapter_get_default(_: Void) -> COpaquePointer { stub() }
     
-    func adapter_find(address: COpaquePointer) -> COpaquePointer { stub() }
+    func adapter_find(address: UnsafePointer<bdaddr_t>) -> COpaquePointer { stub() }
     
     func adapter_find_by_id(id: CInt) -> COpaquePointer { stub() }
     
@@ -208,7 +207,7 @@ public final class DaemonAdapter {
     
     func adapter_get_path(adapter: COpaquePointer) -> UnsafePointer<CChar> { stub() }
     
-    func btd_adapter_get_address(adapter: COpaquePointer) -> COpaquePointer { stub() }
+    func btd_adapter_get_address(adapter: COpaquePointer) -> UnsafePointer<bdaddr_t> { stub() }
     
     func adapter_set_name(adapter: COpaquePointer, _ name: UnsafePointer<CChar>) -> CInt { stub() }
     

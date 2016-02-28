@@ -21,7 +21,7 @@ import SwiftFoundation
 guard let adapter = Adapter()
     else { Error("No Bluetooth adapters found") }
 
-print("Found Bluetooth adapter with device ID: \(adapter.deviceIdentifier)")
+print("Found Bluetooth adapter with device ID: \(adapter.identifier)")
 
 print("Address: \(adapter.address!)")
 
