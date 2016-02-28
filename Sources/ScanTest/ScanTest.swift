@@ -17,7 +17,7 @@
 import SwiftFoundation
 
 /// Tests the Scanning functionality
-func ScanTest(adapter: BluetoothAdapter, timeout: Int) {
+func ScanTest(adapter: Adapter, timeout: Int) {
     
     let scanDate = Date()
     

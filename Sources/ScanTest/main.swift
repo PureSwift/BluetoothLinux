@@ -18,17 +18,13 @@ import SwiftFoundation
 
 // get Bluetooth device
 
-guard let adapter = BluetoothAdapter() else {
-
-    print("No Bluetooth adapters found")
-
-    exit(0)
-}
+guard let adapter = Adapter()
+    else { Error("No Bluetooth adapters found") }
 
 print("Found Bluetooth adapter with device ID: \(adapter.deviceIdentifier)")
 
 print("Address: \(adapter.address!)")
 
-iBeaconTest(adapter, timeout: 10)
-
+/// Perform Test
 ScanTest(adapter, timeout: 3)
+

@@ -6,11 +6,8 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-public extension Bluetooth {
+public enum BlueZError: ErrorType {
     
-    public enum Error: ErrorType {
-        
-        /// The error status byte used with `deviceRequest()`.
-        case DeviceRequestStatus(UInt8)
-    }
+    /// The error status byte used with `deviceRequest()`.
+    case DeviceRequestStatus(UInt8)
 }

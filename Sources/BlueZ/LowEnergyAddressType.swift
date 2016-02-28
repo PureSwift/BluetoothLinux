@@ -8,7 +8,7 @@
 
 import SwiftFoundation
 
-public extension BluetoothAddress {
+public extension Address {
     
     public enum LowEnergyAddressType: CInt {
         

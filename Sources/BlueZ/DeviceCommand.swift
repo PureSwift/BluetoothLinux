@@ -15,7 +15,7 @@
 
 import SwiftFoundation
 
-public extension BluetoothAdapter {
+public extension Adapter {
     
     /// Sends a command to the device. 
     /// 
