@@ -19,7 +19,7 @@ public final class Adapter {
     // MARK: - Properties
     
     /// The device identifier of the Bluetooth adapter.
-    public let deviceIdentifier: CInt
+    public let identifier: CInt
     
     // MARK: - Private Properties
     
@@ -46,12 +46,12 @@ public final class Adapter {
             addressPointer.memory = address
         }
         
-        self.deviceIdentifier = hci_get_route(addressPointer)
+        self.identifier = hci_get_route(addressPointer)
         
-        guard self.deviceIdentifier != -1
+        guard self.identifier != -1
             else { self.socket = -1; return nil } // cant be -1
         
-        self.socket = hci_open_dev(deviceIdentifier)
+        self.socket = hci_open_dev(identifier)
         
         guard socket != -1 else { return nil } // cant be -1
     }
