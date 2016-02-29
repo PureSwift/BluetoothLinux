@@ -125,7 +125,7 @@ public final class L2CAPSocket {
         let client = withUnsafeMutablePointer(&remoteAddress, { accept(internalSocket, UnsafeMutablePointer<sockaddr>($0), &socketLength) })
 
         // error accepting new connection
-        guard client == 0 else { throw POSIXError.fromErrorNumber! }
+        guard client >= 0 else { throw POSIXError.fromErrorNumber! }
 
         return L2CAPSocket(clientSocket: client, remoteAddress: remoteAddress)
     }
@@ -153,9 +153,9 @@ public final class L2CAPSocket {
 
 // MARK: - Additional Constants
 
-public let ATT_CID: CInt = 4
+public let ATT_CID: UInt16 = 4
 
-public let ATT_PSM: CInt = 31
+public let ATT_PSM: UInt16 = 31
 
 // MARK: - Linux Support
 
