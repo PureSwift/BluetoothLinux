@@ -6,32 +6,6 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-#if os(Linux)
-    import CBlueZ
-    import Glibc
-#elseif os(OSX) || os(iOS)
-    import Darwin.C
-#endif
-
-import SwiftFoundation
-
-/// Manages a Bluetooth connection using the ATT protocol.
-public final class ATTConnection {
-    
-    // MARK: - Properties
-    
-    public let socket: L2CAPSocket
-    
-    public private(set) var maximumTransmissionUnit: Int = BT_ATT_DEFAULT_LE_MTU
-    
-    // MARK: - Initialization
-    
-    public init(socket: L2CAPSocket) {
-        
-        self.socket = socket
-    }
-}
-
 // MARK: - Protocol Definitions
 
 /// Bluetooth ATT protocol
@@ -43,11 +17,7 @@ public struct ATT {
     
     public static let MinimumPDULength                  = 1  /* At least 1 byte for the opcode. */
     
-    public static let OpcodeCommandMask                 = 0x40
-    
-    public static let OpcodeSignedMask                  = 0x80
-    
-    public static let Timeout: TimeInterval             = 30000 /* 30000 ms */
+    public static let Timeout: Int                      = 30000 /* 30000 ms */
     
     /// Length of signature in write signed packet.
     public static let SignatureLength                   = 12
@@ -77,11 +47,56 @@ public struct ATT {
     /// ATT protocol opcodes.
     public enum Opcode: UInt8 {
         
+        public static let CommandMask                   = 0x40
+        public static let SignedMask                    = 0x80
+        
         case ErrorResponse                              = 0x01
         case MaximumTransmissionUnitRequest             = 0x02
         case MaximumTransmissionUnitResponse            = 0x03
-        case 
+        case FindInformationRequest                     = 0x04
+        case FindInformationResponse                    = 0x05
+        case FindByTypeRequest                          = 0x06
+        case FindByTypeResponse                         = 0x07
+        case ReadByTypeRequest                          = 0x08
+        case ReadByTypeResponse                         = 0x09
+        
+        // TODO: All Opcodes
     }
+    
+    /// Error codes for Error response PDU.
+    public enum Error: UInt8 {
+        
+        case InvalidHandle                              = 0x01
+        case ReadNotPermitted                           = 0x02
+        
+        // TODO: All Error Codes
+        
+    }
+    
+    /// ATT attribute permission bitfield values. Permissions are grouped as
+    /// "Access", "Encryption", "Authentication", and "Authorization". A bitmask of
+    /// permissions is a byte that encodes a combination of these.
+    public enum AttributePermission: UInt8 {
+        
+        // Access
+        case Read                                       = 0x01
+        case Write                                      = 0x02
+        
+        // Encryption
+        case Encrypt                                    = 12 // ReadEncrypt | WriteEncrypt
+        case ReadEncrypt                                = 0x04
+        case WriteEncrypt                               = 0x08
+        
+        // Authentication
+        case Authentication                             = 48 // ReadAuthentication | WriteAuthentication
+        case ReadAuthentication                         = 0x10
+        case WriteAuthentication                        = 0x20
+        
+        // Authorization
+        case Authorized                                 = 0x40
+        case None                                       = 0x80
+    }
+    
 }
 
 

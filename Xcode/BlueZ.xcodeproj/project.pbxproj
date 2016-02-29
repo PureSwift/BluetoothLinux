@@ -19,6 +19,8 @@
 		6E1552501C3A42FE002CC322 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15524F1C3A42FE002CC322 /* Error.swift */; };
 		6E53E1731C84FD8200AC8FCA /* GATTServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1721C84FD8200AC8FCA /* GATTServer.swift */; };
 		6E53E1751C84FD8C00AC8FCA /* GATTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */; };
+		6E53E1771C8503AC00AC8FCA /* GATTDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */; };
+		6E53E1791C8503CA00AC8FCA /* ATTConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1781C8503CA00AC8FCA /* ATTConnection.swift */; };
 		6E795E891C47EC90002377FE /* LowEnergyCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E795E881C47EC8F002377FE /* LowEnergyCommand.swift */; };
 		6E795E901C489FE7002377FE /* LowEnergyCommandParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E795E8F1C489FE7002377FE /* LowEnergyCommandParameter.swift */; };
 		6E795E921C48A186002377FE /* LinkControlCommandParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E795E911C48A186002377FE /* LinkControlCommandParameter.swift */; };
@@ -59,6 +61,8 @@
 		6E15524F1C3A42FE002CC322 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		6E53E1721C84FD8200AC8FCA /* GATTServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTServer.swift; sourceTree = "<group>"; };
 		6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTClient.swift; sourceTree = "<group>"; };
+		6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTDatabase.swift; sourceTree = "<group>"; };
+		6E53E1781C8503CA00AC8FCA /* ATTConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ATTConnection.swift; sourceTree = "<group>"; };
 		6E795E881C47EC8F002377FE /* LowEnergyCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyCommand.swift; sourceTree = "<group>"; };
 		6E795E8F1C489FE7002377FE /* LowEnergyCommandParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyCommandParameter.swift; sourceTree = "<group>"; };
 		6E795E911C48A186002377FE /* LinkControlCommandParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkControlCommandParameter.swift; sourceTree = "<group>"; };
@@ -189,9 +193,11 @@
 				6E881D811C389F4B00E509A9 /* iBeacon.swift */,
 				6E894C011C83F1C500109F45 /* L2CAP.swift */,
 				6EA37EF51C84D6C800A61969 /* ATT.swift */,
+				6E53E1781C8503CA00AC8FCA /* ATTConnection.swift */,
 				6EA37EF71C84D6CE00A61969 /* GATT.swift */,
 				6E53E1721C84FD8200AC8FCA /* GATTServer.swift */,
 				6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */,
+				6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */,
 				6E795E951C48B815002377FE /* HCI Event */,
 				6ECB305E1C476145004CCA68 /* HCI Commands */,
 			);
@@ -303,6 +309,7 @@
 				6E795E891C47EC90002377FE /* LowEnergyCommand.swift in Sources */,
 				6E894C041C84092100109F45 /* Endianness.swift in Sources */,
 				6E15524C1C39C08A002CC322 /* OpcodeCommandField.swift in Sources */,
+				6E53E1771C8503AC00AC8FCA /* GATTDatabase.swift in Sources */,
 				6E881DAC1C3996A200E509A9 /* OpcodeGroupField.swift in Sources */,
 				6E15524A1C39A284002CC322 /* LowEnergyAddressType.swift in Sources */,
 				6E0C5BC31C837AAA00AF63E5 /* iBeaconTest.swift in Sources */,
@@ -334,6 +341,7 @@
 				6E92A4371C1530EF007BC4E9 /* Adapter.swift in Sources */,
 				6E0C5BB91C8373DB00AF63E5 /* Darwin.swift in Sources */,
 				6E881D7C1C38832400E509A9 /* DeviceCommand.swift in Sources */,
+				6E53E1791C8503CA00AC8FCA /* ATTConnection.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
