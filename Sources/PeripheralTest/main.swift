@@ -17,7 +17,6 @@
 import SwiftFoundation
 
 @noreturn func Error(text: String) {
-    
     print(text)
     exit(1)
 }
@@ -32,5 +31,5 @@ print("Found Bluetooth adapter with device ID: \(adapter.identifier)")
 print("Address: \(adapter.address!)")
 
 /// Perform Test
-ScanTest(adapter, timeout: 3)
+PeripheralTest(adapter)
 

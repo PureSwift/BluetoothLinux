@@ -10,7 +10,6 @@
 		6E0C5BB91C8373DB00AF63E5 /* Darwin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BB81C8373DB00AF63E5 /* Darwin.swift */; };
 		6E0C5BC21C837AA700AF63E5 /* ScanTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BBE1C8379D100AF63E5 /* ScanTest.swift */; };
 		6E0C5BC31C837AAA00AF63E5 /* iBeaconTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BC01C837A9F00AF63E5 /* iBeaconTest.swift */; };
-		6E0C5BC51C837B7700AF63E5 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BC41C837B7700AF63E5 /* TestError.swift */; };
 		6E0C5BD81C83A45100AF63E5 /* SecurityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BD71C83A45100AF63E5 /* SecurityType.swift */; };
 		6E0C5BDA1C83AAC000AF63E5 /* UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BD91C83AAC000AF63E5 /* UUID.swift */; };
 		6E1552461C39A045002CC322 /* HCIEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1552451C39A045002CC322 /* HCIEvent.swift */; };
@@ -29,6 +28,8 @@
 		6E881DAA1C39934200E509A9 /* HCICommandParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881DA91C39934200E509A9 /* HCICommandParameter.swift */; };
 		6E881DAC1C3996A200E509A9 /* OpcodeGroupField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881DAB1C3996A200E509A9 /* OpcodeGroupField.swift */; };
 		6E894BF41C83B51B00109F45 /* AddressType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E894BF31C83B51B00109F45 /* AddressType.swift */; };
+		6E894BF71C83DE7200109F45 /* PeripheralTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E894BF61C83DE7200109F45 /* PeripheralTest.swift */; };
+		6E894C001C83EA2000109F45 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BBD1C8379D100AF63E5 /* main.swift */; };
 		6E92A4281C15309B007BC4E9 /* BlueZ.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E92A4271C15309B007BC4E9 /* BlueZ.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E92A4371C1530EF007BC4E9 /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92A4321C1530EF007BC4E9 /* Adapter.swift */; };
 		6E92A4381C1530EF007BC4E9 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92A4331C1530EF007BC4E9 /* Address.swift */; };
@@ -43,7 +44,6 @@
 		6E0C5BBE1C8379D100AF63E5 /* ScanTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanTest.swift; sourceTree = "<group>"; };
 		6E0C5BC01C837A9F00AF63E5 /* iBeaconTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iBeaconTest.swift; sourceTree = "<group>"; };
 		6E0C5BC11C837A9F00AF63E5 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		6E0C5BC41C837B7700AF63E5 /* TestError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
 		6E0C5BD71C83A45100AF63E5 /* SecurityType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityType.swift; sourceTree = "<group>"; };
 		6E0C5BD91C83AAC000AF63E5 /* UUID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UUID.swift; sourceTree = "<group>"; };
 		6E1552451C39A045002CC322 /* HCIEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIEvent.swift; sourceTree = "<group>"; };
@@ -63,6 +63,8 @@
 		6E881DA91C39934200E509A9 /* HCICommandParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCICommandParameter.swift; sourceTree = "<group>"; };
 		6E881DAB1C3996A200E509A9 /* OpcodeGroupField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpcodeGroupField.swift; sourceTree = "<group>"; };
 		6E894BF31C83B51B00109F45 /* AddressType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressType.swift; sourceTree = "<group>"; };
+		6E894BF61C83DE7200109F45 /* PeripheralTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralTest.swift; sourceTree = "<group>"; };
+		6E894BF81C83DE8E00109F45 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		6E92A4241C15309B007BC4E9 /* BlueZ.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlueZ.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E92A4271C15309B007BC4E9 /* BlueZ.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlueZ.h; sourceTree = "<group>"; };
 		6E92A4291C15309B007BC4E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -88,6 +90,7 @@
 		6E0C5BBA1C83794700AF63E5 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6E894BF51C83DE5800109F45 /* PeripheralTest */,
 				6E0C5BBF1C837A9F00AF63E5 /* iBeaconTest */,
 				6E0C5BBC1C8379D100AF63E5 /* ScanTest */,
 			);
@@ -99,7 +102,6 @@
 			children = (
 				6E0C5BBD1C8379D100AF63E5 /* main.swift */,
 				6E0C5BBE1C8379D100AF63E5 /* ScanTest.swift */,
-				6E0C5BC41C837B7700AF63E5 /* TestError.swift */,
 			);
 			name = ScanTest;
 			path = ../Sources/ScanTest;
@@ -108,8 +110,8 @@
 		6E0C5BBF1C837A9F00AF63E5 /* iBeaconTest */ = {
 			isa = PBXGroup;
 			children = (
-				6E0C5BC01C837A9F00AF63E5 /* iBeaconTest.swift */,
 				6E0C5BC11C837A9F00AF63E5 /* main.swift */,
+				6E0C5BC01C837A9F00AF63E5 /* iBeaconTest.swift */,
 			);
 			name = iBeaconTest;
 			path = ../Sources/iBeaconTest;
@@ -122,6 +124,16 @@
 				6E795E931C48B80F002377FE /* LowEnergyEvent.swift */,
 			);
 			name = "HCI Event";
+			sourceTree = "<group>";
+		};
+		6E894BF51C83DE5800109F45 /* PeripheralTest */ = {
+			isa = PBXGroup;
+			children = (
+				6E894BF81C83DE8E00109F45 /* main.swift */,
+				6E894BF61C83DE7200109F45 /* PeripheralTest.swift */,
+			);
+			name = PeripheralTest;
+			path = ../Sources/PeripheralTest;
 			sourceTree = "<group>";
 		};
 		6E92A41A1C15309B007BC4E9 = {
@@ -283,8 +295,8 @@
 				6E881DAA1C39934200E509A9 /* HCICommandParameter.swift in Sources */,
 				6E881DA21C39812F00E509A9 /* DeviceRequest.swift in Sources */,
 				6E1552501C3A42FE002CC322 /* Error.swift in Sources */,
-				6E0C5BC51C837B7700AF63E5 /* TestError.swift in Sources */,
 				6E1552481C39A18A002CC322 /* HCIError.swift in Sources */,
+				6E894BF71C83DE7200109F45 /* PeripheralTest.swift in Sources */,
 				6E795E901C489FE7002377FE /* LowEnergyCommandParameter.swift in Sources */,
 				6E795E9B1C49821B002377FE /* LinkMode.swift in Sources */,
 				6E795E921C48A186002377FE /* LinkControlCommandParameter.swift in Sources */,
@@ -292,6 +304,7 @@
 				6ECB305D1C47613F004CCA68 /* LinkControlCommand.swift in Sources */,
 				6ECB30601C47618E004CCA68 /* HCICommand.swift in Sources */,
 				6E1552461C39A045002CC322 /* HCIEvent.swift in Sources */,
+				6E894C001C83EA2000109F45 /* main.swift in Sources */,
 				6E0C5BDA1C83AAC000AF63E5 /* UUID.swift in Sources */,
 				6E894BF41C83B51B00109F45 /* AddressType.swift in Sources */,
 				6E92A4371C1530EF007BC4E9 /* Adapter.swift in Sources */,

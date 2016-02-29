@@ -16,6 +16,12 @@
 
 import SwiftFoundation
 
+@noreturn func Error(text: String) {
+    
+    print(text)
+    exit(1)
+}
+
 // get Bluetooth device
 
 guard let adapter = Adapter()
