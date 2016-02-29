@@ -20,24 +20,21 @@ func PeripheralTest(adapter: Adapter) {
 
     do {
 
-        let ATT_CID: UInt16 = 4
+        //let ATT_CID: UInt16 = 4
 
         //let ATT_PSM: UInt16 = 31
 
-        let server = try L2CAPSocket(deviceIdentifier: adapter.identifier, channelIdentifier: ATT_CID)
+        let server = try L2CAPSocket(deviceIdentifier: adapter.identifier, port: 0x1001)
 
         print("Created L2CAP server")
-
-        while true {
-
-            let newConnection = try server.waitForConnection()
-
-            print("New \(newConnection.addressType) connection from \(newConnection.address)")
-
-            let readData = try newConnection.recieve()
-
-            print("Recieved data: \(String(UTF8Data: readData) ?? "<\(readData.byteValue.count) bytes>"))")
-        }
+        
+        let newConnection = try server.waitForConnection()
+        
+        print("New \(newConnection.addressType) connection from \(newConnection.address)")
+        
+        let readData = try newConnection.recieve()
+        
+        print("Recieved data: \(String(UTF8Data: readData) ?? "<\(readData.byteValue.count) bytes>"))")
     }
 
     catch { Error("Error: \(error)") }

@@ -109,7 +109,8 @@ public final class L2CAPSocket {
         var remoteAddress = sockaddr_l2()
 
         var socketLength = socklen_t(sizeof(sockaddr_l2))
-
+        
+        // accept new client
         let client = withUnsafeMutablePointer(&remoteAddress, { accept(internalSocket, UnsafeMutablePointer<sockaddr>($0), &socketLength) })
 
         // error accepting new connection
