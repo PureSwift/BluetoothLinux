@@ -15,28 +15,42 @@
 
 import SwiftFoundation
 
-public typealias BluetoothUUID = bt_uuid_t
+/// Bluetooth UUID used with BlueZ.
+public struct BluetoothUUID: ByteValueType {
+    
+    public typealias ByteValue = UUID.ByteValue
+    
+    public var byteValue: UUID.ByteValue
+    
+    public init(byteValue: UUID.ByteValue) {
+        
+        self.byteValue = byteValue
+    }
+}
 
 /*
 public extension BluetoothUUID {
     
-    public init(_ value: UInt16) {
+    public init?(_ value: UInt16) {
         
-        var uuid = bt_uuid_t()
+        let pointer = UnsafeMutablePointer<bt_uuid_t>.alloc(1)
         
-        bt_uuid16_create(&uuid, value)
+        defer { pointer.dealloc(1) }
         
-        self = uuid
+        bt_uuid16_create(pointer, value)
+        
+        self.byteValue =
     }
     
+    /*
     public init(_ value: UInt32) {
         
         var uuid = bt_uuid_t()
         
         bt_uuid32_create(&uuid, value)
         
-        self = uuid
-    }
+        self.byteValue = uuid
+    }*/
     
     // https://bugs.swift.org/browse/SR-847
     /*
@@ -49,8 +63,7 @@ public extension BluetoothUUID {
         self = uuid
     
     }*/
-}
-*/
+}*/
 
 public extension BluetoothUUID {
     
@@ -72,6 +85,10 @@ public extension BluetoothUUID {
     public struct bt_uuid_t {
         
         public init() { stub() }
+        
+        //public var type: CInt
+        
+        //public var value: UInt128
     }
     
     func bt_uuid16_create(btuuid: UnsafeMutablePointer<bt_uuid_t>, _ value: UInt16) -> CInt { stub() }
