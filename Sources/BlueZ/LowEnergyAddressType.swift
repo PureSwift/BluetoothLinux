@@ -6,11 +6,9 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-import SwiftFoundation
-
-public extension BluetoothAddress {
+public extension Address {
     
-    public enum LowEnergyAddressType: CInt {
+    public enum LowEnergyType: UInt8 {
         
         case Public = 0x00
         case Random = 0x01

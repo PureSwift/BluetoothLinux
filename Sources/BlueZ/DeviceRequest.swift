@@ -15,7 +15,7 @@
 
 import SwiftFoundation
 
-public extension BluetoothAdapter {
+public extension Adapter {
 
     /// Sends a command to the device and waits for a response. No specific event is expected.
     func deviceRequest<Command: HCICommand, CommandParameter: HCICommandParameter>(command: Command, parameter: CommandParameter? = nil, timeout: Int = 1000) throws {
@@ -51,11 +51,11 @@ public extension BluetoothAdapter {
 
         try withUnsafeMutablePointer(&request) { (pointer) throws in
 
-            guard hci_send_req(socket, pointer, CInt(timeout)) == 0
+            guard hci_send_req(internalSocket, pointer, CInt(timeout)) == 0
                 else { throw POSIXError.fromErrorNumber! }
         }
 
-        guard status == 0x00 else { throw Bluetooth.HCIError(rawValue: status)! }
+        guard status == 0x00 else { throw HCIError(rawValue: status)! }
     }
 
     /*

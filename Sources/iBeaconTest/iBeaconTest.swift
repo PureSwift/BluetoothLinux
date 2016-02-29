@@ -7,19 +7,19 @@
 //
 
 #if os(Linux)
+    import BlueZ
     import CBlueZ
     import Glibc
-    import BlueZ
 #elseif os(OSX) || os(iOS)
     import Darwin.C
 #endif
 
 import SwiftFoundation
 
-let iBeaconUUID = UUID(rawValue: "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0")!
+let iBeaconUUID = SwiftFoundation.UUID(rawValue: "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0")!
 
 /// Test iBeacon
-func iBeaconTest(adapter: BluetoothAdapter, timeout: Int) {
+func iBeaconTest(adapter: Adapter, timeout: Int) {
     
     print("Enabling iBeacon \(iBeaconUUID) for \(timeout) seconds")
     

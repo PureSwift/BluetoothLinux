@@ -15,13 +15,10 @@
 
 import SwiftFoundation
 
-public extension Bluetooth {
-    
-    /// 31 Byte String
-    public typealias LowEnergyAdvertisingData = (Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte)
-}
+/// 31 Byte String
+public typealias LowEnergyAdvertisingData = (Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte)
 
-public extension BluetoothAdapter {
+public extension Adapter {
     
     /// Enable iBeacon functionality.
     func enableBeacon(UUID: SwiftFoundation.UUID = UUID(), mayor: UInt16, minor: UInt16, RSSI: Byte, interval: Int = 100, commandTimeout: Int = 1000) throws {
@@ -37,7 +34,7 @@ public extension BluetoothAdapter {
         //advertisingParameters.advtype = 3  // advertising non-connectable
         advertisingParameters.chan_map = 7 // // all three advertising channels
         
-        try self.deviceRequest(Bluetooth.LowEnergyCommand.SetAdvertisingParameters, parameter: advertisingParameters, timeout: commandTimeout)
+        try self.deviceRequest(LowEnergyCommand.SetAdvertisingParameters, parameter: advertisingParameters, timeout: commandTimeout)
         
         // start advertising
         var enableAdvertise = le_set_advertise_enable_cp()
@@ -45,7 +42,7 @@ public extension BluetoothAdapter {
         
         enableAdvertise.enable = 0x01 // true
         
-        try self.deviceRequest(Bluetooth.LowEnergyCommand.SetAdvertiseEnable, parameter: enableAdvertise, timeout: commandTimeout)
+        try self.deviceRequest(LowEnergyCommand.SetAdvertiseEnable, parameter: enableAdvertise, timeout: commandTimeout)
         
         // set iBeacon data
         var advertisingDataCommand = le_set_advertising_data_cp()
@@ -55,7 +52,7 @@ public extension BluetoothAdapter {
         advertisingDataCommand.length = beaconData.length
         advertisingDataCommand.data = beaconData.data
         
-        try self.deviceRequest(Bluetooth.LowEnergyCommand.SetAdvertisingData, parameter: advertisingDataCommand, timeout: commandTimeout)
+        try self.deviceRequest(LowEnergyCommand.SetAdvertisingData, parameter: advertisingDataCommand, timeout: commandTimeout)
     }
     
     func disableBeacon() throws {
@@ -64,13 +61,13 @@ public extension BluetoothAdapter {
         var enableAdvertise = le_set_advertise_enable_cp()
         enableAdvertise.enable = 0x00 // false
         
-        try self.deviceRequest(Bluetooth.LowEnergyCommand.SetAdvertiseEnable, parameter: enableAdvertise)
+        try self.deviceRequest(LowEnergyCommand.SetAdvertiseEnable, parameter: enableAdvertise)
     }
 }
 
 // MARK: - Private
 
-private func GenerateBeaconData(UUID: SwiftFoundation.UUID, mayor: UInt16, minor: UInt16, RSSI: Byte) -> (data: Bluetooth.LowEnergyAdvertisingData, length: Byte) {
+private func GenerateBeaconData(UUID: SwiftFoundation.UUID, mayor: UInt16, minor: UInt16, RSSI: Byte) -> (data: LowEnergyAdvertisingData, length: Byte) {
     
     let length = 30
     
@@ -102,9 +99,9 @@ private func GenerateBeaconData(UUID: SwiftFoundation.UUID, mayor: UInt16, minor
     
     data[29] = RSSI
     
-    let byteTuple: Bluetooth.LowEnergyAdvertisingData = withUnsafePointer(&data) { (pointer) in
+    let byteTuple: LowEnergyAdvertisingData = withUnsafePointer(&data) { (pointer) in
         
-        let convertedPointer = UnsafePointer<Bluetooth.LowEnergyAdvertisingData>(pointer)
+        let convertedPointer = UnsafePointer<LowEnergyAdvertisingData>(pointer)
         
         return convertedPointer.memory
     }

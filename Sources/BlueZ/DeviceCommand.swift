@@ -15,7 +15,7 @@
 
 import SwiftFoundation
 
-public extension BluetoothAdapter {
+public extension Adapter {
     
     /// Sends a command to the device. 
     /// 
@@ -28,7 +28,7 @@ public extension BluetoothAdapter {
             
             let voidPointer = UnsafeMutablePointer<Void>(pointer)
             
-            return hci_send_cmd(socket, UInt16(Command.opcodeGroupField.rawValue), command.rawValue, UInt8(CommandParameter.dataLength), voidPointer) == 0
+            return hci_send_cmd(internalSocket, UInt16(Command.opcodeGroupField.rawValue), command.rawValue, UInt8(CommandParameter.dataLength), voidPointer) == 0
         }
     }
 }

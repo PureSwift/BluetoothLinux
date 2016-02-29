@@ -7,28 +7,30 @@
 //
 
 #if os(Linux)
+    import BlueZ
     import CBlueZ
     import Glibc
-    import BlueZ
 #elseif os(OSX) || os(iOS)
     import Darwin.C
 #endif
 
 import SwiftFoundation
 
-// get Bluetooth device
-
-guard let adapter = BluetoothAdapter() else {
-
-    print("No Bluetooth adapters found")
-
-    exit(0)
+@noreturn func Error(text: String) {
+    
+    print(text)
+    exit(1)
 }
 
-print("Found Bluetooth adapter with device ID: \(adapter.deviceIdentifier)")
+// get Bluetooth device
+
+guard let adapter = Adapter()
+    else { Error("No Bluetooth adapters found") }
+
+print("Found Bluetooth adapter with device ID: \(adapter.identifier)")
 
 print("Address: \(adapter.address!)")
 
-iBeaconTest(adapter, timeout: 10)
-
+/// Perform Test
 ScanTest(adapter, timeout: 3)
+

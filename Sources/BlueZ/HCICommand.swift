@@ -9,9 +9,9 @@
 /// HCI Command that can be send to the Bluetooth Adapter.
 public protocol HCICommand: RawRepresentable {
     
-    static var opcodeGroupField: Bluetooth.OpcodeGroupField { get }
+    static var opcodeGroupField: OpcodeGroupField { get }
     
-    init?(rawValue: Bluetooth.OpcodeCommandField)
+    init?(rawValue: OpcodeCommandField)
     
-    var rawValue: Bluetooth.OpcodeCommandField { get }
+    var rawValue: OpcodeCommandField { get }
 }

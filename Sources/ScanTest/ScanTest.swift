@@ -7,9 +7,9 @@
 //
 
 #if os(Linux)
+    import BlueZ
     import CBlueZ
     import Glibc
-    import BlueZ
 #elseif os(OSX) || os(iOS)
     import Darwin.C
 #endif
@@ -17,7 +17,7 @@
 import SwiftFoundation
 
 /// Tests the Scanning functionality
-func ScanTest(adapter: BluetoothAdapter, timeout: Int) {
+func ScanTest(adapter: Adapter, timeout: Int) {
     
     let scanDate = Date()
     

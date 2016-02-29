@@ -17,7 +17,7 @@ import SwiftFoundation
 
 // MARK: - Methods
 
-public extension BluetoothAdapter {
+public extension Adapter {
     
     /// Scans for nearby Bluetooth devices.
     ///
@@ -53,13 +53,13 @@ public extension BluetoothAdapter {
         }
         else { deviceClassPointer = nil }
         
-        let foundDevicesCount = hci_inquiry(deviceIdentifier, CInt(duration), CInt(scanLimit), deviceClassPointer, inquiryInfoPointers, Int(flags))
+        let foundDevicesCount = hci_inquiry(identifier, CInt(duration), CInt(scanLimit), deviceClassPointer, inquiryInfoPointers, Int(flags))
         
         guard foundDevicesCount >= 0 else { throw POSIXError.fromErrorNumber! }
         
         var results = [inquiry_info]()
         
-        for i in 0..<Int(foundDevicesCount) {
+        for i in 0 ..< Int(foundDevicesCount) {
             
             let infoPointer = inquiryInfoPointers[i]
             
@@ -70,7 +70,7 @@ public extension BluetoothAdapter {
     }
     
     /// Requests the remote device for its user-friendly name. 
-    func requestDeviceName(deviceAddress: Bluetooth.Address, timeout: Int = 0) throws -> String? {
+    func requestDeviceName(deviceAddress: Address, timeout: Int = 0) throws -> String? {
         
         let maxNameLength = 248
         
@@ -79,7 +79,7 @@ public extension BluetoothAdapter {
         let nameBuffer = UnsafeMutablePointer<CChar>.alloc(maxNameLength)
         defer { nameBuffer.dealloc(maxNameLength) }
         
-        guard hci_read_remote_name(socket, &address, CInt(maxNameLength), nameBuffer, CInt(timeout)) == CInt(0)
+        guard hci_read_remote_name(internalSocket, &address, CInt(maxNameLength), nameBuffer, CInt(timeout)) == CInt(0)
             else { throw POSIXError.fromErrorNumber! }
         
         let name = String.fromCString(nameBuffer)
@@ -90,7 +90,7 @@ public extension BluetoothAdapter {
 
 // MARK: - Supporting Types
 
-public extension BluetoothAdapter {
+public extension Adapter {
     
     /// Options for scanning Bluetooth devices
     public enum ScanOption: Int32, BitMaskOption {

@@ -95,7 +95,7 @@ extension le_read_advertising_channel_tx_power_rp: HCICommandParameter {
 #if os(OSX)
     public struct le_set_advertising_data_cp {
         public var length: UInt8
-        public var data: Bluetooth.LowEnergyAdvertisingData
+        public var data: LowEnergyAdvertisingData
         public init() { stub() }
     }
 #endif
@@ -107,7 +107,7 @@ extension le_set_advertising_data_cp: HCICommandParameter {
 #if os(OSX)
     public struct le_set_scan_response_data_cp {
         public var length: UInt8
-        public var data: Bluetooth.LowEnergyAdvertisingData
+        public var data: LowEnergyAdvertisingData
         public init() { stub() }
     }
 #endif

@@ -1,0 +1,1 @@
+/home/coleman/Desktop/Parallels Shared Folders/Developer/BlueZ/Sources/ScanTest/TestError.swift

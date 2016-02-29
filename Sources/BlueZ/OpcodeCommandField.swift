@@ -6,7 +6,4 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-public extension Bluetooth {
-    
-    public typealias OpcodeCommandField = UInt16
-}
+public typealias OpcodeCommandField = UInt16

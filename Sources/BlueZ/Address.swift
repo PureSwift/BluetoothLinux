@@ -20,16 +20,11 @@ import SwiftFoundation
 /// Bluetooth Address type.
 ///
 /// Typealias for `bdaddr_t` from the BlueZ C API.
-public typealias BluetoothAddress = bdaddr_t
-
-public extension Bluetooth {
-    
-    typealias Address = BluetoothAddress
-}
+public typealias Address = bdaddr_t
 
 // MARK: - ByteValue
 
-extension Bluetooth.Address: ByteValueType {
+extension Address: ByteValueType {
     
     /// Raw Bluetooth Address 6 byte (48 bit) value.
     public typealias ByteValue = (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
@@ -53,16 +48,15 @@ extension Bluetooth.Address: ByteValueType {
 
 // MARK: - RawRepresentable
 
-extension Bluetooth.Address: RawRepresentable {
+extension Address: RawRepresentable {
     
     public init?(rawValue: String) {
         
-        let resultPointer = UnsafeMutablePointer<bdaddr_t>.alloc(1)
-        defer { resultPointer.dealloc(1) }
+        var address = bdaddr_t()
         
-        guard str2ba(rawValue, resultPointer) == 0 else { return nil }
+        guard str2ba(rawValue, &address) == 0 else { return nil }
         
-        self = resultPointer.memory
+        self = address
     }
     
     public var rawValue: String {
@@ -82,9 +76,9 @@ extension Bluetooth.Address: RawRepresentable {
 
 // MARK: - Equatable
 
-extension Bluetooth.Address: Equatable { }
+extension Address: Equatable { }
 
-public func == (lhs: Bluetooth.Address, rhs: Bluetooth.Address) {
+public func == (lhs: Address, rhs: Address) {
     
     var copy1 = lhs
     var copy2 = rhs
@@ -94,34 +88,35 @@ public func == (lhs: Bluetooth.Address, rhs: Bluetooth.Address) {
 
 // MARK: - CustomStringConvertible
 
-extension Bluetooth.Address: CustomStringConvertible {
+extension Address: CustomStringConvertible {
     
     public var description: String { return rawValue }
 }
 
 // MARK: - Adapter Extensions
 
-public extension Bluetooth.Address {
+public extension Address {
     
     /// Extracts the Bluetooth address from the device ID.
-    public init?(deviceIdentifier: CInt) {
+    public init(deviceIdentifier: CInt) throws {
         
         var address = bdaddr_t()
         
-        guard hci_devba(deviceIdentifier, &address) == 0 else { return nil }
+        guard hci_devba(deviceIdentifier, &address) == 0
+            else { throw POSIXError.fromErrorNumber! }
         
         self = address
     }
 }
 
-public extension BluetoothAdapter {
+public extension Adapter {
     
     /// Attempts to get the address from the underlying Bluetooth hardware. 
     ///
     /// Fails if the Bluetooth adapter was disconnected or hardware failure.
-    public var address: Bluetooth.Address? {
+    public var address: Address? {
         
-        return Bluetooth.Address(deviceIdentifier: deviceIdentifier)
+        return try? Address(deviceIdentifier: identifier)
     }
 }
 
@@ -138,6 +133,7 @@ public extension BluetoothAdapter {
     
     func ba2str(bytes: UnsafePointer<bdaddr_t>, _ str: UnsafeMutablePointer<CChar>) -> CInt { stub() }
     
+    /// Attempts to get the device address.
     func hci_devba(dev_id: CInt, _ bdaddr: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }
     
 #endif
