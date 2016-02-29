@@ -79,7 +79,7 @@ public extension Adapter {
         let nameBuffer = UnsafeMutablePointer<CChar>.alloc(maxNameLength)
         defer { nameBuffer.dealloc(maxNameLength) }
         
-        guard hci_read_remote_name(socket, &address, CInt(maxNameLength), nameBuffer, CInt(timeout)) == CInt(0)
+        guard hci_read_remote_name(internalSocket, &address, CInt(maxNameLength), nameBuffer, CInt(timeout)) == CInt(0)
             else { throw POSIXError.fromErrorNumber! }
         
         let name = String.fromCString(nameBuffer)

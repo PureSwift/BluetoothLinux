@@ -51,7 +51,7 @@ public extension Adapter {
 
         try withUnsafeMutablePointer(&request) { (pointer) throws in
 
-            guard hci_send_req(socket, pointer, CInt(timeout)) == 0
+            guard hci_send_req(internalSocket, pointer, CInt(timeout)) == 0
                 else { throw POSIXError.fromErrorNumber! }
         }
 

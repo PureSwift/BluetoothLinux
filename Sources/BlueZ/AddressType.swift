@@ -6,11 +6,12 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-public enum AddressType {
+/// BlueZ Address type
+public enum AddressType: CInt {
     
-    case BDR
-    case LowEnergyRandom
-    case LowEnergyPublic
+    case BREDR              = 0x00
+    case LowEnergyRandom    = 0x01
+    case LowEnergyPublic    = 0x02
     
     /// Whether the Bluetooth address type is LE.
     public var isLowEnergy: Bool {
