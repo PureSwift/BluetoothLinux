@@ -15,10 +15,10 @@
 
 import SwiftFoundation
 
-public typealias BluezUUID = bt_uuid_t
+public typealias BluetoothUUID = bt_uuid_t
 
 /*
-public extension BluezUUID {
+public extension BluetoothUUID {
     
     public init(_ value: UInt16) {
         
@@ -52,12 +52,15 @@ public extension BluezUUID {
 }
 */
 
-/// Type of Bluetooth UUID.
-public enum UUIDType: Int {
+public extension BluetoothUUID {
     
-    case Bit16      = 16
-    case Bit32      = 32
-    case Bit128     = 128
+    /// Type of Bluetooth UUID.
+    public enum UUIDType: Int {
+        
+        case Bit16      = 16
+        case Bit32      = 32
+        case Bit128     = 128
+    }
 }
 
 // MARK: - Darwin Stubs
