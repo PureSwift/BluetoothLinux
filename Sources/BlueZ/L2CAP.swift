@@ -151,12 +151,6 @@ public final class L2CAPSocket {
     }
 }
 
-// MARK: - Additional Constants
-
-public let ATT_CID: UInt16 = 4
-
-public let ATT_PSM: UInt16 = 31
-
 // MARK: - Linux Support
 
 #if os(Linux)

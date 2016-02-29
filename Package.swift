@@ -14,7 +14,7 @@ let package = Package(
             name: "iBeaconTest",
             dependencies: [.Target(name: "BlueZ")]),
         Target(
-            name: "PeripheralTest",
+            name: "L2CAPServerTest",
             dependencies: [.Target(name: "BlueZ")]),
         Target(
             name: "BlueZ")

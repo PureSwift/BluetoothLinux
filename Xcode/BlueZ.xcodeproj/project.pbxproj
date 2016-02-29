@@ -17,6 +17,8 @@
 		6E15524A1C39A284002CC322 /* LowEnergyAddressType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1552491C39A284002CC322 /* LowEnergyAddressType.swift */; };
 		6E15524C1C39C08A002CC322 /* OpcodeCommandField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15524B1C39C08A002CC322 /* OpcodeCommandField.swift */; };
 		6E1552501C3A42FE002CC322 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15524F1C3A42FE002CC322 /* Error.swift */; };
+		6E53E1731C84FD8200AC8FCA /* GATTServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1721C84FD8200AC8FCA /* GATTServer.swift */; };
+		6E53E1751C84FD8C00AC8FCA /* GATTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */; };
 		6E795E891C47EC90002377FE /* LowEnergyCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E795E881C47EC8F002377FE /* LowEnergyCommand.swift */; };
 		6E795E901C489FE7002377FE /* LowEnergyCommandParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E795E8F1C489FE7002377FE /* LowEnergyCommandParameter.swift */; };
 		6E795E921C48A186002377FE /* LinkControlCommandParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E795E911C48A186002377FE /* LinkControlCommandParameter.swift */; };
@@ -28,7 +30,6 @@
 		6E881DAA1C39934200E509A9 /* HCICommandParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881DA91C39934200E509A9 /* HCICommandParameter.swift */; };
 		6E881DAC1C3996A200E509A9 /* OpcodeGroupField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881DAB1C3996A200E509A9 /* OpcodeGroupField.swift */; };
 		6E894BF41C83B51B00109F45 /* AddressType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E894BF31C83B51B00109F45 /* AddressType.swift */; };
-		6E894BF71C83DE7200109F45 /* PeripheralTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E894BF61C83DE7200109F45 /* PeripheralTest.swift */; };
 		6E894C001C83EA2000109F45 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BBD1C8379D100AF63E5 /* main.swift */; };
 		6E894C021C83F1C500109F45 /* L2CAP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E894C011C83F1C500109F45 /* L2CAP.swift */; };
 		6E894C041C84092100109F45 /* Endianness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E894C031C84092100109F45 /* Endianness.swift */; };
@@ -36,6 +37,9 @@
 		6E92A4371C1530EF007BC4E9 /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92A4321C1530EF007BC4E9 /* Adapter.swift */; };
 		6E92A4381C1530EF007BC4E9 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92A4331C1530EF007BC4E9 /* Address.swift */; };
 		6E92A43B1C1530EF007BC4E9 /* Scan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92A4361C1530EF007BC4E9 /* Scan.swift */; };
+		6EA37EF41C84B4EA00A61969 /* L2CAPServerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA37EF21C84B4EA00A61969 /* L2CAPServerTest.swift */; };
+		6EA37EF61C84D6C800A61969 /* ATT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA37EF51C84D6C800A61969 /* ATT.swift */; };
+		6EA37EF81C84D6CE00A61969 /* GATT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA37EF71C84D6CE00A61969 /* GATT.swift */; };
 		6ECB305D1C47613F004CCA68 /* LinkControlCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB305C1C47613F004CCA68 /* LinkControlCommand.swift */; };
 		6ECB30601C47618E004CCA68 /* HCICommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB305F1C47618E004CCA68 /* HCICommand.swift */; };
 /* End PBXBuildFile section */
@@ -53,6 +57,8 @@
 		6E1552491C39A284002CC322 /* LowEnergyAddressType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyAddressType.swift; sourceTree = "<group>"; };
 		6E15524B1C39C08A002CC322 /* OpcodeCommandField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpcodeCommandField.swift; sourceTree = "<group>"; };
 		6E15524F1C3A42FE002CC322 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
+		6E53E1721C84FD8200AC8FCA /* GATTServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTServer.swift; sourceTree = "<group>"; };
+		6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTClient.swift; sourceTree = "<group>"; };
 		6E795E881C47EC8F002377FE /* LowEnergyCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyCommand.swift; sourceTree = "<group>"; };
 		6E795E8F1C489FE7002377FE /* LowEnergyCommandParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyCommandParameter.swift; sourceTree = "<group>"; };
 		6E795E911C48A186002377FE /* LinkControlCommandParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkControlCommandParameter.swift; sourceTree = "<group>"; };
@@ -65,8 +71,6 @@
 		6E881DA91C39934200E509A9 /* HCICommandParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCICommandParameter.swift; sourceTree = "<group>"; };
 		6E881DAB1C3996A200E509A9 /* OpcodeGroupField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpcodeGroupField.swift; sourceTree = "<group>"; };
 		6E894BF31C83B51B00109F45 /* AddressType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressType.swift; sourceTree = "<group>"; };
-		6E894BF61C83DE7200109F45 /* PeripheralTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralTest.swift; sourceTree = "<group>"; };
-		6E894BF81C83DE8E00109F45 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		6E894C011C83F1C500109F45 /* L2CAP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = L2CAP.swift; sourceTree = "<group>"; };
 		6E894C031C84092100109F45 /* Endianness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Endianness.swift; sourceTree = "<group>"; };
 		6E92A4241C15309B007BC4E9 /* BlueZ.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlueZ.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,6 +80,10 @@
 		6E92A4321C1530EF007BC4E9 /* Adapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Adapter.swift; sourceTree = "<group>"; };
 		6E92A4331C1530EF007BC4E9 /* Address.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
 		6E92A4361C1530EF007BC4E9 /* Scan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scan.swift; sourceTree = "<group>"; };
+		6EA37EF11C84B4EA00A61969 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		6EA37EF21C84B4EA00A61969 /* L2CAPServerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = L2CAPServerTest.swift; sourceTree = "<group>"; };
+		6EA37EF51C84D6C800A61969 /* ATT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ATT.swift; sourceTree = "<group>"; };
+		6EA37EF71C84D6CE00A61969 /* GATT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATT.swift; sourceTree = "<group>"; };
 		6ECB305C1C47613F004CCA68 /* LinkControlCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkControlCommand.swift; sourceTree = "<group>"; };
 		6ECB305F1C47618E004CCA68 /* HCICommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCICommand.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -94,7 +102,7 @@
 		6E0C5BBA1C83794700AF63E5 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				6E894BF51C83DE5800109F45 /* PeripheralTest */,
+				6EA37EF01C84B4EA00A61969 /* L2CAPServerTest */,
 				6E0C5BBF1C837A9F00AF63E5 /* iBeaconTest */,
 				6E0C5BBC1C8379D100AF63E5 /* ScanTest */,
 			);
@@ -128,16 +136,6 @@
 				6E795E931C48B80F002377FE /* LowEnergyEvent.swift */,
 			);
 			name = "HCI Event";
-			sourceTree = "<group>";
-		};
-		6E894BF51C83DE5800109F45 /* PeripheralTest */ = {
-			isa = PBXGroup;
-			children = (
-				6E894BF81C83DE8E00109F45 /* main.swift */,
-				6E894BF61C83DE7200109F45 /* PeripheralTest.swift */,
-			);
-			name = PeripheralTest;
-			path = ../Sources/PeripheralTest;
 			sourceTree = "<group>";
 		};
 		6E92A41A1C15309B007BC4E9 = {
@@ -178,23 +176,37 @@
 				6E894BF31C83B51B00109F45 /* AddressType.swift */,
 				6E0C5BD91C83AAC000AF63E5 /* UUID.swift */,
 				6E92A4321C1530EF007BC4E9 /* Adapter.swift */,
-				6E894C011C83F1C500109F45 /* L2CAP.swift */,
 				6E15524F1C3A42FE002CC322 /* Error.swift */,
-				6E92A4361C1530EF007BC4E9 /* Scan.swift */,
 				6E881D7B1C38832400E509A9 /* DeviceCommand.swift */,
 				6E881D831C39783F00E509A9 /* DeviceRequest.swift */,
-				6E881D811C389F4B00E509A9 /* iBeacon.swift */,
 				6E1552471C39A18A002CC322 /* HCIError.swift */,
 				6E1552491C39A284002CC322 /* LowEnergyAddressType.swift */,
 				6E0C5BD71C83A45100AF63E5 /* SecurityType.swift */,
 				6E881DAB1C3996A200E509A9 /* OpcodeGroupField.swift */,
 				6E15524B1C39C08A002CC322 /* OpcodeCommandField.swift */,
 				6E795E9A1C49821B002377FE /* LinkMode.swift */,
+				6E92A4361C1530EF007BC4E9 /* Scan.swift */,
+				6E881D811C389F4B00E509A9 /* iBeacon.swift */,
+				6E894C011C83F1C500109F45 /* L2CAP.swift */,
+				6EA37EF51C84D6C800A61969 /* ATT.swift */,
+				6EA37EF71C84D6CE00A61969 /* GATT.swift */,
+				6E53E1721C84FD8200AC8FCA /* GATTServer.swift */,
+				6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */,
 				6E795E951C48B815002377FE /* HCI Event */,
 				6ECB305E1C476145004CCA68 /* HCI Commands */,
 			);
 			name = Source;
 			path = ../Sources/BlueZ;
+			sourceTree = "<group>";
+		};
+		6EA37EF01C84B4EA00A61969 /* L2CAPServerTest */ = {
+			isa = PBXGroup;
+			children = (
+				6EA37EF11C84B4EA00A61969 /* main.swift */,
+				6EA37EF21C84B4EA00A61969 /* L2CAPServerTest.swift */,
+			);
+			name = L2CAPServerTest;
+			path = ../Sources/L2CAPServerTest;
 			sourceTree = "<group>";
 		};
 		6ECB305E1C476145004CCA68 /* HCI Commands */ = {
@@ -294,26 +306,30 @@
 				6E881DAC1C3996A200E509A9 /* OpcodeGroupField.swift in Sources */,
 				6E15524A1C39A284002CC322 /* LowEnergyAddressType.swift in Sources */,
 				6E0C5BC31C837AAA00AF63E5 /* iBeaconTest.swift in Sources */,
+				6E53E1751C84FD8C00AC8FCA /* GATTClient.swift in Sources */,
 				6E0C5BD81C83A45100AF63E5 /* SecurityType.swift in Sources */,
 				6E92A43B1C1530EF007BC4E9 /* Scan.swift in Sources */,
 				6E795E941C48B80F002377FE /* LowEnergyEvent.swift in Sources */,
 				6E881D821C389F4B00E509A9 /* iBeacon.swift in Sources */,
 				6E92A4381C1530EF007BC4E9 /* Address.swift in Sources */,
 				6E881DAA1C39934200E509A9 /* HCICommandParameter.swift in Sources */,
+				6E53E1731C84FD8200AC8FCA /* GATTServer.swift in Sources */,
 				6E881DA21C39812F00E509A9 /* DeviceRequest.swift in Sources */,
 				6E1552501C3A42FE002CC322 /* Error.swift in Sources */,
 				6E1552481C39A18A002CC322 /* HCIError.swift in Sources */,
-				6E894BF71C83DE7200109F45 /* PeripheralTest.swift in Sources */,
 				6E795E901C489FE7002377FE /* LowEnergyCommandParameter.swift in Sources */,
 				6E795E9B1C49821B002377FE /* LinkMode.swift in Sources */,
 				6E795E921C48A186002377FE /* LinkControlCommandParameter.swift in Sources */,
+				6EA37EF61C84D6C800A61969 /* ATT.swift in Sources */,
 				6E0C5BC21C837AA700AF63E5 /* ScanTest.swift in Sources */,
 				6ECB305D1C47613F004CCA68 /* LinkControlCommand.swift in Sources */,
+				6EA37EF81C84D6CE00A61969 /* GATT.swift in Sources */,
 				6ECB30601C47618E004CCA68 /* HCICommand.swift in Sources */,
 				6E1552461C39A045002CC322 /* HCIEvent.swift in Sources */,
 				6E894C001C83EA2000109F45 /* main.swift in Sources */,
 				6E0C5BDA1C83AAC000AF63E5 /* UUID.swift in Sources */,
 				6E894BF41C83B51B00109F45 /* AddressType.swift in Sources */,
+				6EA37EF41C84B4EA00A61969 /* L2CAPServerTest.swift in Sources */,
 				6E894C021C83F1C500109F45 /* L2CAP.swift in Sources */,
 				6E92A4371C1530EF007BC4E9 /* Adapter.swift in Sources */,
 				6E0C5BB91C8373DB00AF63E5 /* Darwin.swift in Sources */,
