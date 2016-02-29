@@ -6,11 +6,13 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-/// Bluetooth security type.
-public enum SecurityType: UInt8 {
+/// Bluetooth security level.
+public enum SecurityLevel: UInt8 {
     
-    case SDP
-    case Low
-    case Medium
-    case High
+    case SDP        = 0
+    case Low        = 1
+    case Medium     = 2
+    case High       = 3
+    
+    public init() { self = .SDP }
 }

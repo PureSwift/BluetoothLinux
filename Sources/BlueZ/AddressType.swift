@@ -16,6 +16,8 @@ public enum AddressType: UInt8 {
     case LowEnergyRandom    = 0x01
     case LowEnergyPublic    = 0x02
     
+    public init() { self = BREDR }
+    
     /// Whether the Bluetooth address type is LE.
     public var isLowEnergy: Bool {
         

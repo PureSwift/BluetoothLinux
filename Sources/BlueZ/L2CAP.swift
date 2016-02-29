@@ -42,7 +42,7 @@ public final class L2CAPSocket {
     }
 
     /// Create a new L2CAP server on the adapter with the specified identifier.
-    public init(deviceIdentifier: CInt? = nil, port: UInt16? = nil, channelIdentifier: UInt16? = nil) throws {
+    public init(deviceIdentifier: CInt? = nil, port: UInt16 = 0, channelIdentifier: UInt16 = 0, addressType: AddressType = AddressType(), securityLevel: SecurityLevel = SecurityLevel()) throws {
 
         // get address
 
@@ -53,7 +53,7 @@ public final class L2CAPSocket {
             do { address = try Address(deviceIdentifier: identifier) }
 
             catch {
-
+                
                 // must set values to satisfy compiler
                 address = Address()
                 self.internalSocket = 0
@@ -61,7 +61,7 @@ public final class L2CAPSocket {
 
                 throw error
             }
-
+            
         } else {
 
             address = Address(byteValue: (0, 0, 0, 0, 0, 0)) // BDADDR_ANY
@@ -70,10 +70,14 @@ public final class L2CAPSocket {
         // set address
 
         var localAddress = sockaddr_l2()
+        
+        memset(&localAddress, 0, sizeof(sockaddr_l2))
+        
         localAddress.l2_family = sa_family_t(AF_BLUETOOTH)
         localAddress.l2_bdaddr = address
-        localAddress.l2_psm = port?.littleEndian ?? 0
-        localAddress.l2_cid = channelIdentifier?.littleEndian ?? 0
+        localAddress.l2_psm = port.littleEndian
+        localAddress.l2_cid = channelIdentifier.littleEndian
+        localAddress.l2_bdaddr_type = addressType.rawValue
 
         self.internalAddress = localAddress
 
@@ -88,9 +92,16 @@ public final class L2CAPSocket {
         // bind socket to port and address
         guard withUnsafePointer(&localAddress, { bind(internalSocket, UnsafePointer<sockaddr>($0), socketLength) }) == 0
             else { close(internalSocket); throw POSIXError.fromErrorNumber! }
-
+        
+        // set security level
+        var security = bt_security()
+        security.level = securityLevel.rawValue
+        
+        guard setsockopt(internalSocket, SOL_BLUETOOTH, BT_SECURITY, &security, socklen_t(sizeof(bt_security))) == 0
+            else { close(internalSocket); throw POSIXError.fromErrorNumber! }
+        
         // put socket into listening mode
-        guard listen(internalSocket, 1) == 0
+        guard listen(internalSocket, 10) == 0
             else { close(internalSocket); throw POSIXError.fromErrorNumber! }
     }
 
@@ -140,6 +151,12 @@ public final class L2CAPSocket {
     }
 }
 
+// MARK: - Additional Constants
+
+public let ATT_CID: CInt = 4
+
+public let ATT_PSM: CInt = 31
+
 // MARK: - Linux Support
 
 #if os(Linux)
@@ -155,11 +172,11 @@ public final class L2CAPSocket {
     let AF_BLUETOOTH: CInt = 31
 
     let BTPROTO_L2CAP: CInt = 0
-
-    let ATT_CID: CInt = 4
-
-    let ATT_PSM: CInt = 31
-
+    
+    let SOL_BLUETOOTH: CInt = 274
+    
+    let BT_SECURITY: CInt = 4
+    
     /// L2CAP socket address
     struct sockaddr_l2 {
         var l2_family: sa_family_t
@@ -167,6 +184,13 @@ public final class L2CAPSocket {
         var l2_bdaddr: bdaddr_t
         var l2_cid: CUnsignedShort
         var l2_bdaddr_type: UInt8
+        init() { stub() }
+    }
+    
+    /// Bluetooth security level
+    struct bt_security {
+        var level: UInt8
+        var key_size: UInt8
         init() { stub() }
     }
 
