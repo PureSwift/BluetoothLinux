@@ -22,11 +22,11 @@ public final class L2CAPSocket {
     
     public lazy var address: Address = self.internalAddress.l2_bdaddr
     
+    public lazy var addressType: AddressType = AddressType(rawValue: self.internalAddress.l2_bdaddr_type)!
+    
     public lazy var port: UInt16 = self.internalAddress.l2_psm.currentEndian
     
     public lazy var channelIdentifier: UInt16 = self.internalAddress.l2_cid.currentEndian
-    
-    public lazy var addressType: AddressType = AddressType(rawValue: self.internalAddress.l2_bdaddr_type)!
     
     // MARK: - Internal Properties
     
@@ -42,7 +42,7 @@ public final class L2CAPSocket {
     }
     
     /// Create a new L2CAP server on the adapter with the specified identifier.
-    public init(deviceIdentifier: CInt? = nil, port: UInt16, CID: UInt16? = nil) throws {
+    public init(deviceIdentifier: CInt? = nil, port: UInt16, channelIdentifier: UInt16? = nil) throws {
         
         // get address
         
@@ -73,7 +73,7 @@ public final class L2CAPSocket {
         localAddress.l2_family = sa_family_t(AF_BLUETOOTH)
         localAddress.l2_bdaddr = address
         localAddress.l2_psm = port.littleEndian
-        localAddress.l2_cid = CID?.littleEndian ?? 0
+        localAddress.l2_cid = channelIdentifier?.littleEndian ?? 0
         
         self.internalAddress = localAddress
         
@@ -118,8 +118,34 @@ public final class L2CAPSocket {
         return L2CAPSocket(clientSocket: client, remoteAddress: remoteAddress)
     }
     
-    //public func
+    /// Reads from the socket.
+    public func recieve(bufferSize: Int = 1024) throws -> Data {
+        
+        var buffer = [UInt8](count: bufferSize, repeatedValue: 0)
+        
+        let actualByteCount = read(internalSocket, &buffer, bufferSize)
+        
+        guard actualByteCount >= 0 else { throw POSIXError.fromErrorNumber! }
+        
+        let actualBytes =  Array(buffer.prefix(actualByteCount))
+        
+        return Data(byteValue: actualBytes)
+    }
+    
+    /// Write to the socket.
+    public func send(data: Data) throws {
+        
+        fatalError("Not implemented")
+    }
 }
+
+// MARK: - Linux Support
+
+#if os(Linux)
+
+    public let SOCK_SEQPACKET: CInt = 5
+    
+#endif
 
 // MARK: - Darwin Stubs
 
