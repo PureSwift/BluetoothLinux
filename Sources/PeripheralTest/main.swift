@@ -32,4 +32,3 @@ print("Address: \(adapter.address!)")
 
 /// Perform Test
 PeripheralTest(adapter)
-
