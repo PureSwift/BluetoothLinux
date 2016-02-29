@@ -7,8 +7,11 @@
 //
 
 /// BlueZ Address type
-public enum AddressType: CInt {
+///
+/// - SeeAlso: [Ten Important Differences between Bluetooth BR/EDR and Bluetooth Smart](http://blog.bluetooth.com/ten-important-differences-between-bluetooth-bredr-and-bluetooth-smart/)
+public enum AddressType: UInt8 {
     
+    /// Bluetooth Basic Rate/Enhanced Data Rate
     case BREDR              = 0x00
     case LowEnergyRandom    = 0x01
     case LowEnergyPublic    = 0x02

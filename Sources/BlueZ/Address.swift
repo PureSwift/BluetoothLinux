@@ -98,11 +98,12 @@ extension Address: CustomStringConvertible {
 public extension Address {
     
     /// Extracts the Bluetooth address from the device ID.
-    public init?(deviceIdentifier: CInt) {
+    public init(deviceIdentifier: CInt) throws {
         
         var address = bdaddr_t()
         
-        guard hci_devba(deviceIdentifier, &address) == 0 else { return nil }
+        guard hci_devba(deviceIdentifier, &address) == 0
+            else { throw POSIXError.fromErrorNumber! }
         
         self = address
     }
@@ -115,7 +116,7 @@ public extension Adapter {
     /// Fails if the Bluetooth adapter was disconnected or hardware failure.
     public var address: Address? {
         
-        return Address(deviceIdentifier: identifier)
+        return try? Address(deviceIdentifier: identifier)
     }
 }
 

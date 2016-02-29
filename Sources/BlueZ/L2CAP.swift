@@ -15,14 +15,24 @@
 
 import SwiftFoundation
 
-/// L2CAP Bluetooth Server socket
-public final class L2CAPServer {
+/// L2CAP Bluetooth socket
+public final class L2CAPSocket {
     
     // MARK: - Properties
+    
+    public lazy var address: Address = self.internalAddress.l2_bdaddr
+    
+    public lazy var port: UInt16 = self.internalAddress.l2_psm.currentEndian
+    
+    public lazy var channelIdentifier: UInt16 = self.internalAddress.l2_cid.currentEndian
+    
+    public lazy var addressType: AddressType = AddressType(rawValue: self.internalAddress.l2_bdaddr_type)!
     
     // MARK: - Internal Properties
     
     internal let internalSocket: CInt
+    
+    internal let internalAddress: sockaddr_l2
     
     // MARK: - Initialization
     
@@ -31,8 +41,41 @@ public final class L2CAPServer {
         close(internalSocket)
     }
     
-    /// Create a new L2CAP server on the adapter with the specified address.
-    public init(address: Address? = nil, port: CUnsignedShort = 0x1001) throws {
+    /// Create a new L2CAP server on the adapter with the specified identifier.
+    public init(deviceIdentifier: CInt? = nil, port: UInt16, CID: UInt16? = nil) throws {
+        
+        // get address
+        
+        let address: Address
+        
+        if let identifier = deviceIdentifier {
+            
+            do { address = try Address(deviceIdentifier: identifier) }
+            
+            catch {
+                
+                // must set values to satisfy compiler
+                address = Address()
+                self.internalSocket = 0
+                self.internalAddress = sockaddr_l2()
+                
+                throw error
+            }
+            
+        } else {
+            
+            address = Address(byteValue: (0, 0, 0, 0, 0, 0)) // BDADDR_ANY
+        }
+        
+        // set address
+        
+        var localAddress = sockaddr_l2()
+        localAddress.l2_family = sa_family_t(AF_BLUETOOTH)
+        localAddress.l2_bdaddr = address
+        localAddress.l2_psm = port.littleEndian
+        localAddress.l2_cid = CID?.littleEndian ?? 0
+        
+        self.internalAddress = localAddress
         
         // allocate socket
         self.internalSocket = socket(AF_BLUETOOTH, SOCK_SEQPACKET, BTPROTO_L2CAP)
@@ -40,23 +83,43 @@ public final class L2CAPServer {
         // error creating socket
         guard internalSocket == 0 else { throw POSIXError.fromErrorNumber! }
         
-        
-        var localAddress = sockaddr_l2()
-        localAddress.l2_family = sa_family_t(AF_BLUETOOTH)
-        localAddress.l2_psm = port
-        localAddress.l2_bdaddr = address ?? Address(byteValue: (0, 0, 0, 0, 0, 0)) // BDADDR_ANY
-        
         let socketLength = socklen_t(sizeof(sockaddr_l2))
         
         // bind socket to port and address
         guard withUnsafePointer(&localAddress, { bind(internalSocket, UnsafePointer<sockaddr>($0), socketLength) }) == 0
             else { close(internalSocket); throw POSIXError.fromErrorNumber! }
         
-        
-        
+        // put socket into listening mode
+        guard listen(internalSocket, 1) == 0
+            else { close(internalSocket); throw POSIXError.fromErrorNumber! }
     }
+    
+    /// For already opened client socket.
+    internal init(clientSocket: CInt, remoteAddress: sockaddr_l2) {
+        
+        self.internalSocket = clientSocket
+        self.internalAddress = remoteAddress
+    }
+    
+    // MARK: - Methods
+    
+    /// Blocks the caller until a new connection is recieved.
+    public func waitForConnection() throws -> L2CAPSocket {
+        
+        var remoteAddress = sockaddr_l2()
+        
+        var socketLength = socklen_t(sizeof(sockaddr_l2))
+        
+        let client = withUnsafeMutablePointer(&remoteAddress, { accept(internalSocket, UnsafeMutablePointer<sockaddr>($0), &socketLength) })
+        
+        // error accepting new connection
+        guard client == 0 else { throw POSIXError.fromErrorNumber! }
+        
+        return L2CAPSocket(clientSocket: client, remoteAddress: remoteAddress)
+    }
+    
+    //public func
 }
-
 
 // MARK: - Darwin Stubs
 
@@ -65,6 +128,10 @@ public final class L2CAPServer {
     let AF_BLUETOOTH: CInt = 31
     
     let BTPROTO_L2CAP: CInt = 0
+    
+    let ATT_CID: CInt = 4
+    
+    let ATT_PSM: CInt = 31
     
     /// L2CAP socket address
     struct sockaddr_l2 {
@@ -75,7 +142,5 @@ public final class L2CAPServer {
         var l2_bdaddr_type: UInt8
         init() { stub() }
     }
-    
-    
 
 #endif
