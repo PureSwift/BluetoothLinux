@@ -8,6 +8,8 @@
 
 // MARK: - Protocol Definitions
 
+import SwiftFoundation
+
 /// Bluetooth ATT protocol
 public struct ATT {
     
@@ -17,6 +19,7 @@ public struct ATT {
     
     public static let MinimumPDULength                  = 1  /* At least 1 byte for the opcode. */
     
+    /// ATT Timeout, in miliseconds
     public static let Timeout: Int                      = 30000 /* 30000 ms */
     
     /// Length of signature in write signed packet.
@@ -65,6 +68,11 @@ public enum ATTError: UInt8, ErrorType {
     
     // TODO: All Error Codes
     
+    /*
+    public init(POSIXError: SwiftFoundation.POSIXError) {
+        
+        
+    }*/
 }
 
 /// ATT protocol opcodes.
