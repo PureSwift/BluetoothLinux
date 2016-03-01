@@ -20,20 +20,28 @@ public final class L2CAPSocket {
 
     // MARK: - Properties
 
+    /// Bluetooth address
     public lazy var address: Address = self.internalAddress.l2_bdaddr
-
+    
     public lazy var addressType: AddressType = AddressType(rawValue: self.internalAddress.l2_bdaddr_type)!
+    
+    /// Protocol/Service Multiplexer (PSM)
+    public lazy var protocolServiceMultiplexer: UInt16 = self.internalAddress.l2_psm.currentEndian
 
-    public lazy var port: UInt16 = self.internalAddress.l2_psm.currentEndian
-
+    /// Channel Identifier (CID)
+    /// 
+    /// L2CAP channel endpoints are identified to their clients by a Channel Identifier (CID). 
+    /// This is assigned by L2CAP, and each L2CAP channel endpoint on any device has a different CID.
     public lazy var channelIdentifier: UInt16 = self.internalAddress.l2_cid.currentEndian
 
     // MARK: - Internal Properties
-
+    
+    /// Internal socket file descriptor
     internal let internalSocket: CInt
-
+    
+    /// Internal L2CAP Socket address
     internal let internalAddress: sockaddr_l2
-
+    
     // MARK: - Initialization
 
     deinit {
@@ -42,7 +50,7 @@ public final class L2CAPSocket {
     }
 
     /// Create a new L2CAP server on the adapter with the specified identifier.
-    public init(deviceIdentifier: CInt? = nil, port: UInt16 = 0, channelIdentifier: UInt16 = 0, addressType: AddressType = AddressType(), securityLevel: SecurityLevel = SecurityLevel()) throws {
+    public init(deviceIdentifier: CInt? = nil, protocolServiceMultiplexer: UInt16 = 0, channelIdentifier: UInt16 = 0, addressType: AddressType = AddressType(), securityLevel: SecurityLevel = SecurityLevel()) throws {
 
         // get address
 
@@ -58,7 +66,7 @@ public final class L2CAPSocket {
                 address = Address()
                 self.internalSocket = 0
                 self.internalAddress = sockaddr_l2()
-
+                
                 throw error
             }
             
@@ -75,7 +83,7 @@ public final class L2CAPSocket {
         
         localAddress.l2_family = sa_family_t(AF_BLUETOOTH)
         localAddress.l2_bdaddr = address
-        localAddress.l2_psm = port.littleEndian
+        localAddress.l2_psm = protocolServiceMultiplexer.littleEndian
         localAddress.l2_cid = channelIdentifier.littleEndian
         localAddress.l2_bdaddr_type = addressType.rawValue
 
@@ -164,14 +172,14 @@ public final class L2CAPSocket {
 #if os(OSX) || os(iOS)
 
     let AF_BLUETOOTH: CInt = 31
-
+    
     let BTPROTO_L2CAP: CInt = 0
     
     let SOL_BLUETOOTH: CInt = 274
     
     let BT_SECURITY: CInt = 4
     
-    /// L2CAP socket address
+    /// L2CAP socket address (not packed)
     struct sockaddr_l2 {
         var l2_family: sa_family_t
         var l2_psm: CUnsignedShort
@@ -181,7 +189,7 @@ public final class L2CAPSocket {
         init() { stub() }
     }
     
-    /// Bluetooth security level
+    /// Bluetooth security level (not packed)
     struct bt_security {
         var level: UInt8
         var key_size: UInt8
