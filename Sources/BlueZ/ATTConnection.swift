@@ -72,6 +72,10 @@ public final class ATTConnection {
 #if os(OSX) || os(iOS)
     
     // Packed struct definitions for ATT protocol PDUs
+    
+    /// ATT Error Response protocol data unit
+    ///
+    /// Packed
     struct bt_att_pdu_error_rsp {
         
         var opcode: UInt8
