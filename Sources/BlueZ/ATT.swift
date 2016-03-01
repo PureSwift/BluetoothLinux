@@ -63,8 +63,23 @@ public enum ATTSecurity: CInt {
 /// Error codes for Error response PDU.
 public enum ATTError: UInt8, ErrorType {
     
+    /// The attribute handle given was not valid on this server.
     case InvalidHandle                              = 0x01
+    
+    /// The attribute cannot be read.
     case ReadNotPermitted                           = 0x02
+    
+    /// The attribute cannot be written.
+    case WriteNotPermitted                          = 0x03
+    
+    /// The attribute PDU was invalid.
+    case InvalidPDU                                 = 0x04
+    
+    /// The attribute requires authentication before it can be read or written.
+    case Authentication                             = 0x05
+    
+    /// Attribute server does not support the request received from the client.
+    case RequestNotSupported                        = 0x06
     
     // TODO: All Error Codes
     

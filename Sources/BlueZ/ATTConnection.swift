@@ -92,11 +92,23 @@ public final class ATTConnection {
         // Act on the received PDU based on the opcode type
         switch opcode.type {
             
-        case .Response: try handleResponse(recievedData, opcode: opcode)
+        case .Response:
+            
+            try handleResponse(recievedData, opcode: opcode)
+            
+        case .Confirmation:
+            
+            try handleConfirmation(recievedData, opcode: opcode)
+            
+        case .Request:
+            
+            try handleRequest(recievedData, opcode: opcode)
+            
+        case .Command, .Notification, .Indication:
+            
+            // For all other opcodes notify the upper layer of the PDU and let them act on it.
+            try handleNotify(recievedData, opcode: opcode)
         }
-        
-        
-        
     }
     
     /// Performs the actual IO for sending data.
@@ -218,56 +230,98 @@ public final class ATTConnection {
     private func handleResponse(data: Data, opcode: ATT.Opcode) throws {
         
         // If no request is pending, then the response is unexpected. Disconnect the bearer.
-        guard let pendingRequest = pendingRequest else {
+        guard let sendOpcode = pendingRequest else {
             
             throw Error.UnexpectedResponse(data)
         }
         
         // If the received response doesn't match the pending request, or if the request is malformed, 
         // end the current request with failure.
-        guard pendingRequest.dynamicType.PDUType.attributeOpcode == opcode else {
-            
-            /*
-            // attempt to recover from unexpected error
-            guard opcode != ATT.Opcode.ErrorResponse else {
-                
-                try handleErrorResponse(data, opcode: opcode)
-            }*/
+        guard sendOpcode.dynamicType.PDUType.attributeOpcode == opcode else {
             
             throw Error.UnexpectedResponse(data)
         }
         
         // attempt to deserialize
-        guard let PDU = pendingRequest.dynamicType.PDUType.init(byteValue: data.byteValue)
+        guard let PDU = sendOpcode.dynamicType.PDUType.init(byteValue: data.byteValue)
             else { throw Error.GarbageResponse(data) }
         
         // success!
-        pendingRequest.callback(PDU)
+        sendOpcode.callback(PDU)
         
         self.pendingRequest = nil
+        
+        //wakeup_writer(att);
     }
     
-    private func handleErrorResponse(data: Data, opcode: ATT.Opcode) throws {
+    private func handleConfirmation(data: Data, opcode: ATT.Opcode) throws {
         
+        // Disconnect the bearer if the confirmation is unexpected or the PDU is invalid.
         
+        guard let sendOpcode = pendingIndication
+            else { throw Error.UnexpectedResponse(data) }
+        
+        guard data.byteValue.count == 1
+            else { throw Error.GarbageResponse(data) }
+        
+        // attempt to deserialize
+        guard let PDU = sendOpcode.dynamicType.PDUType.init(byteValue: data.byteValue)
+            else { throw Error.GarbageResponse(data) }
+        
+        // success!
+        sendOpcode.callback(PDU)
+        
+        self.pendingIndication = nil
+        
+        //wakeup_writer(att);
     }
     
-    private func handleConfirmation() {
+    private func handleRequest(data: Data, opcode: ATT.Opcode) throws {
         
+        /*
+        * If a request is currently pending, then the sequential
+        * protocol was violated. Disconnect the bearer, which will
+        * promptly notify the upper layer via disconnect handlers.
+        */
         
+        // Received request while another is pending.
+        guard incomingRequest == false
+            else { throw Error.UnexpectedResponse(data) }
+        
+        incomingRequest = true
+        
+        // notify
+        try handleNotify(data, opcode: opcode)
     }
     
-    /*
-    private func canReadData() -> Bool {
+    private func handleNotify(data: Data, opcode: ATT.Opcode) throws {
         
+        var foundPDU: ATTProtocolDataUnit?
+        
+        for notify in notifyList {
+            
+            // try next
+            if notify.dynamicType.PDUType.attributeOpcode != opcode { continue }
+            
+            // attempt to deserialize
+            guard let PDU = foundPDU ?? notify.dynamicType.PDUType.init(byteValue: data.byteValue)
+                else { throw Error.GarbageResponse(data) }
+            
+            notify.callback(PDU)
+            
+            // callback could remove all entries from notify list, break for loop
+            if self.notifyList.isEmpty { break }
+        }
+        
+        // If this was a request and no handler was registered for it, respond with "Not Supported"
+        if foundPDU == nil && opcode.type == .Request {
+            
+            let errorResponse = ATTErrorResponse(requestOpcode: opcode, attributeHandle: 0x00, error: .RequestNotSupported)
+            
+            send(errorResponse) { _ in }
+        }
         
     }
-    
-    private func canWriteData() -> Bool {
-        
-        guard let sendOpcode = pickNextSendOpcode()
-            else { return false }
-    }*/
     
     private func pickNextSendOpcode() -> ATTSendOpcodeType? {
         
