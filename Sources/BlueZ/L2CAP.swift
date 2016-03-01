@@ -165,9 +165,30 @@ public final class L2CAPSocket {
 
     /// Write to the socket.
     public func send(data: Data) throws {
-
-        fatalError("Not implemented")
+        
+        var buffer = data.byteValue
+        
+        let actualByteCount = write(internalSocket, &buffer, buffer.count)
+        
+        guard actualByteCount >= 0
+            else { throw POSIXError.fromErrorNumber! }
+        
+        guard actualByteCount == buffer.count
+            else { throw Error.SentLessBytes(actualByteCount) }
     }
+}
+
+// MARK: - Supporting Types
+    
+public extension L2CAPSocket {
+    
+    public typealias Error = L2CAPConnectionError
+}
+
+public enum L2CAPConnectionError: ErrorType {
+    
+    /// Sent less bytes than expected.
+    case SentLessBytes(Int)
 }
 
 // MARK: - Linux Support
