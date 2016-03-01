@@ -11,7 +11,7 @@
 /// Bluetooth ATT protocol
 public struct ATT {
     
-    public static let PSM: UInt16                       = 31
+    public static let PSM: ProtocolServiceMultiplexer   = .ATT
     
     public static let CID: UInt16                       = 4
     
