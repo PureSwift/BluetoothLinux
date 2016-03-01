@@ -25,6 +25,29 @@ public final class ATTConnection {
     /// Actual number of bytes for PDU ATT exchange.
     public private(set) var maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default
     
+    // MARK: - Private Properties
+    
+    /// Whether ATT is engaged in write operation.
+    private var writerActive = false
+    
+    /// There's a pending incoming request.
+    private var incomingRequest = false
+    
+    /// Pending request state.
+    private var pendingRequest: ATTSendOpcode?
+    
+    /// Pending indication state.
+    private var pendingIndication: ATTSendOpcode?
+    
+    /// Queued ATT protocol requests
+    private var requestQueue = Deque<ATTSendOpcode>()
+    
+    /// Queued ATT protocol indications
+    private var indicationQueue = Deque<ATTSendOpcode>()
+    
+    /// Queue of PDUs ready to send
+    private var writeQueue = Deque<ATTSendOpcode>()
+    
     // MARK: - Initialization
     
     public init(socket: L2CAPSocket) {
@@ -49,40 +72,59 @@ public final class ATTConnection {
         
     }
     
-    public func sendError(error: ATT.Error, opcode: ATT.Opcode, handle: UInt16) throws {
+    public func send<T: ATTProtocolDataUnit>(PDU: T) throws {
         
-        var pdu = bt_att_pdu_error_rsp()
+        let sendOpcode = createSendOpcode()
         
-        pdu.opcode = opcode.rawValue
-        pdu.ecode = error.rawValue
-        pdu.handle = handle.littleEndian // put_le16(handle, &pdu.handle); att.c BlueZ
         
-        // bt_att_send(att, BT_ATT_OP_ERROR_RSP, &pdu, sizeof(pdu), NULL, NULL, NULL);
-        //send()
     }
     
-    public func send<T: Any>(opcode: ATT.Opcode, PDU: T) throws {
+    // MARK: - Private Methods
+    
+    private func createSendOpcode() -> ATTSendOpcode {
+        
+        
+    }
+    
+    private func encodePDU(sendOpcode: ATTSendOpcode) -> [UInt8] {
         
         
     }
 }
 
-// MARK: - Darwin Stubs
+// MARK: - Private Supporting Types
 
-#if os(OSX) || os(iOS)
+private struct ATTSendOpcode {
     
-    // Packed struct definitions for ATT protocol PDUs
+    let identifier: UInt
     
-    /// ATT Error Response protocol data unit
-    ///
-    /// Packed
-    struct bt_att_pdu_error_rsp {
+    let opcode: ATT.Opcode
+    
+    let PDU: [UInt8]
+    
+    let response: () -> ()
+    
+    init(identifier: UInt, opcode: ATT.Opcode, PDU: [UInt8], response: () -> ()) {
         
-        var opcode: UInt8
-        var handle: UInt16
-        var ecode: UInt8
-        
-        init() { stub() }
+        self.identifier = identifier
+        self.opcode = opcode
+        self.PDU = PDU
+        self.response = response
     }
+}
+
+private struct ATTNotify {
     
-#endif
+    let identifier: UInt
+    
+    let opcode: ATT.Opcode
+    
+    let notify: () -> ()
+    
+    init(identifier: UInt, opcode: ATT.Opcode, notify: () -> ()) {
+        
+        self.identifier = identifier
+        self.opcode = opcode
+        self.notify = notify
+    }
+}

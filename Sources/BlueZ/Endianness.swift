@@ -39,3 +39,22 @@ public extension EndianConvertible {
 }
 
 public let isBigEndian = 10.bigEndian == 10
+
+public extension UInt16 {
+    
+    /// Initializes value from two little endian ordered bytes. 
+    public init(littleEndian value: (UInt8, UInt8)) {
+        
+        self = UInt16(value.0).littleEndian + UInt16(value.1).bigEndian
+    }
+    
+    public var littleEndianBytes: (UInt8, UInt8) {
+        
+        let value = self.littleEndian
+        
+        let lowerByte = value & 0xff
+        let higherByte = value >> 8
+        
+        return (UInt8(truncatingBitPattern: lowerByte), UInt8(truncatingBitPattern: higherByte))
+    }
+}
