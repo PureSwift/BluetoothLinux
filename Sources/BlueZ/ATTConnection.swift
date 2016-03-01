@@ -23,18 +23,23 @@ public final class ATTConnection {
     public let socket: L2CAPSocket
     
     /// Actual number of bytes for PDU ATT exchange.
-    public var maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default {
+    public var maximumTransmissionUnit: Int {
         
-        willSet {
+        get { return buffer.count }
+        
+        set {
             
             // enforce value range
             assert(newValue >= ATT.MTU.LowEnergy.Default)
             assert(newValue <= ATT.MTU.LowEnergy.Maximum)
             
             // recreate buffer
-            
+            buffer = [UInt8](count: newValue, repeatedValue: 0)
         }
     }
+    
+    /// Whether logging is enabled.
+    public var logEnabled: Bool = false
     
     // MARK: - Private Properties
     
@@ -116,7 +121,16 @@ public final class ATTConnection {
         
         
     }
+    
+    private func log(string: String) {
+        
+        if self.logEnabled { print(string) }
+    }
 }
+
+// MARK: - Supporting Types
+
+public typealias ATTResponseCallback = ATTProtocolDataUnit -> ()
 
 // MARK: - Private Supporting Types
 
@@ -128,9 +142,9 @@ private struct ATTSendOpcode {
     
     let PDU: [UInt8]
     
-    let response: () -> ()
+    let response: ATTResponseCallback
     
-    init(identifier: UInt, opcode: ATT.Opcode, PDU: [UInt8], response: () -> ()) {
+    init(identifier: UInt, opcode: ATT.Opcode, PDU: [UInt8], response: ATTResponseCallback) {
         
         self.identifier = identifier
         self.opcode = opcode
