@@ -23,15 +23,35 @@ public final class ATTConnection {
     public let socket: L2CAPSocket
     
     /// Actual number of bytes for PDU ATT exchange.
-    public private(set) var maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default
+    public var maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default {
+        
+        willSet {
+            
+            // enforce value range
+            assert(newValue >= ATT.MTU.LowEnergy.Default)
+            assert(newValue <= ATT.MTU.LowEnergy.Maximum)
+            
+            // recreate buffer
+            
+        }
+    }
     
     // MARK: - Private Properties
+    
+    // Internal buffer. Should always be the size of MTU.
+    private var buffer = [UInt8](count: ATT.MTU.LowEnergy.Default, repeatedValue: 0)
     
     /// Whether ATT is engaged in write operation.
     private var writerActive = false
     
     /// There's a pending incoming request.
     private var incomingRequest = false
+    
+    /// IDs for registered callbacks.
+    private var nextRegisterID: UInt = 0
+    
+    /// IDs for "send" ops.
+    private var nextSendOpcodeID: UInt = 0
     
     /// Pending request state.
     private var pendingRequest: ATTSendOpcode?
@@ -47,6 +67,12 @@ public final class ATTConnection {
     
     /// Queue of PDUs ready to send
     private var writeQueue = Deque<ATTSendOpcode>()
+    
+    /// List of registered callbacks.
+    private var notifyList = Deque<() -> ()>()
+    
+    /// List of disconnect handlers.
+    private var disconnectList = Deque<() -> ()>()
     
     // MARK: - Initialization
     
