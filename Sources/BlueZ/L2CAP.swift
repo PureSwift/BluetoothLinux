@@ -21,18 +21,33 @@ public final class L2CAPSocket {
     // MARK: - Properties
 
     /// Bluetooth address
-    public lazy var address: Address = self.internalAddress.l2_bdaddr
+    public var address: Address {
+        
+        return internalAddress.l2_bdaddr
+    }
     
-    public lazy var addressType: AddressType = AddressType(rawValue: self.internalAddress.l2_bdaddr_type)!
+    public var addressType: AddressType {
+        
+        return AddressType(rawValue: internalAddress.l2_bdaddr_type)!
+    }
     
     /// Protocol/Service Multiplexer (PSM)
-    public lazy var protocolServiceMultiplexer: UInt16 = self.internalAddress.l2_psm.currentEndian
+    public var protocolServiceMultiplexer: UInt16 {
+        
+        return internalAddress.l2_psm.currentEndian
+    }
 
     /// Channel Identifier (CID)
     /// 
     /// L2CAP channel endpoints are identified to their clients by a Channel Identifier (CID). 
     /// This is assigned by L2CAP, and each L2CAP channel endpoint on any device has a different CID.
-    public lazy var channelIdentifier: UInt16 = self.internalAddress.l2_cid.currentEndian
+    public var channelIdentifier: UInt16 {
+        
+        return internalAddress.l2_cid.currentEndian
+    }
+    
+    /// The socket's security level.
+    public private(set) var securityLevel: SecurityLevel
 
     // MARK: - Internal Properties
     
@@ -50,30 +65,14 @@ public final class L2CAPSocket {
     }
 
     /// Create a new L2CAP server on the adapter with the specified identifier.
-    public init(deviceIdentifier: CInt? = nil, protocolServiceMultiplexer: UInt16 = 0, channelIdentifier: UInt16 = 0, addressType: AddressType = AddressType(), securityLevel: SecurityLevel = SecurityLevel()) throws {
+    public init(adapterAddress: Address, protocolServiceMultiplexer: UInt16 = 0, channelIdentifier: UInt16 = 0, addressType: AddressType = AddressType(), securityLevel: SecurityLevel = SecurityLevel()) throws {
+        
+        // set properties
+        self.securityLevel = securityLevel
 
         // get address
 
-        let address: Address
-
-        if let identifier = deviceIdentifier {
-
-            do { address = try Address(deviceIdentifier: identifier) }
-
-            catch {
-                
-                // must set values to satisfy compiler
-                address = Address()
-                self.internalSocket = 0
-                self.internalAddress = sockaddr_l2()
-                
-                throw error
-            }
-            
-        } else {
-
-            address = Address(byteValue: (0, 0, 0, 0, 0, 0)) // BDADDR_ANY
-        }
+        let address = adapterAddress ?? Address(byteValue: (0, 0, 0, 0, 0, 0)) // BDADDR_ANY
 
         // set address
 
@@ -113,14 +112,26 @@ public final class L2CAPSocket {
             else { close(internalSocket); throw POSIXError.fromErrorNumber! }
     }
 
-    /// For already opened client socket.
-    internal init(clientSocket: CInt, remoteAddress: sockaddr_l2) {
+    /// For new incoming connections for server.
+    internal init(clientSocket: CInt, remoteAddress: sockaddr_l2, securityLevel: SecurityLevel) {
 
         self.internalSocket = clientSocket
         self.internalAddress = remoteAddress
+        self.securityLevel = securityLevel
     }
 
     // MARK: - Methods
+    
+    /// Attempts to change the socket's security level.
+    public func setSecurityLevel(securityLevel: SecurityLevel) throws {
+        
+        // set security level
+        var security = bt_security()
+        security.level = securityLevel.rawValue
+        
+        guard setsockopt(internalSocket, SOL_BLUETOOTH, BT_SECURITY, &security, socklen_t(sizeof(bt_security))) == 0
+            else { throw POSIXError.fromErrorNumber! }
+    }
 
     /// Blocks the caller until a new connection is recieved.
     public func waitForConnection() throws -> L2CAPSocket {
@@ -135,7 +146,7 @@ public final class L2CAPSocket {
         // error accepting new connection
         guard client >= 0 else { throw POSIXError.fromErrorNumber! }
 
-        return L2CAPSocket(clientSocket: client, remoteAddress: remoteAddress)
+        return L2CAPSocket(clientSocket: client, remoteAddress: remoteAddress, securityLevel: securityLevel)
     }
 
     /// Reads from the socket.
@@ -147,7 +158,7 @@ public final class L2CAPSocket {
 
         guard actualByteCount >= 0 else { throw POSIXError.fromErrorNumber! }
 
-        let actualBytes =  Array(buffer.prefix(actualByteCount))
+        let actualBytes = Array(buffer.prefix(actualByteCount))
 
         return Data(byteValue: actualBytes)
     }
