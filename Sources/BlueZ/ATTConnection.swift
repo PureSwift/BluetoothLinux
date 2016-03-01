@@ -117,9 +117,36 @@ public final class ATTConnection {
         guard let sendOpcode = pickNextSendOpcode()
             else { return } // throw error?
         
-        //try socket.send(Data(byteValue: []))
+        try socket.send(Data(byteValue: sendOpcode.data))
         
+        let opcode = sendOpcode.dynamicType.PDUType.attributeOpcode
         
+        /* Based on the operation type, set either the pending request or the
+        * pending indication. If it came from the write queue, then there is
+        * no need to keep it around.
+        */
+        switch opcode.type {
+            
+        case .Request:
+            
+            pendingRequest = sendOpcode
+            
+        case .Indication:
+            
+            pendingRequest = sendOpcode
+            
+        case .Response:
+            
+            // Set `incomingRequest` to false to indicate that no request is pending
+            incomingRequest = false
+            
+            // Fall through to the next case
+            fallthrough
+            
+        case .Command, .Notification, .Confirmation:
+            
+            break
+        }
     }
     
     /// Registers a callback for an opcode and returns the ID associated with that callback.
@@ -307,9 +334,11 @@ public final class ATTConnection {
             guard let PDU = foundPDU ?? notify.dynamicType.PDUType.init(byteValue: data.byteValue)
                 else { throw Error.GarbageResponse(data) }
             
+            foundPDU = PDU
+            
             notify.callback(PDU)
             
-            // callback could remove all entries from notify list, break for loop
+            // callback could remove all entries from notify list, if so, exit the loop
             if self.notifyList.isEmpty { break }
         }
         
