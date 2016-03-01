@@ -74,7 +74,7 @@ public final class ATTConnection {
     private var writeQueue = Deque<ATTSendOpcode>()
     
     /// List of registered callbacks.
-    private var notifyList = Deque<() -> ()>()
+    private var notifyList = Deque<ATTNotify>()
     
     /// List of disconnect handlers.
     private var disconnectList = Deque<() -> ()>()
@@ -88,22 +88,64 @@ public final class ATTConnection {
     
     // MARK: - Methods
     
-    public func register(opcode: ATT.Opcode) {
+    /// Performs the actual IO for recieving data.
+    public func read() throws {
+        
+        //let data = try self.socket.recieve(maximumTransmissionUnit)
         
         
     }
     
-    public func unregister() {
+    /// Performs the actual IO for sending data.
+    public func write() throws {
         
+        try self.socket.send(Data(byteValue: buffer))
+    }
+    
+    /// Registers a callback for an opcode and returns the ID associated with that callback.
+    public func register(opcode: ATT.Opcode, callback: ATTNotifyCallback) -> UInt {
         
+        // ID starts at 1
+        if nextRegisterID < 1 {
+            
+            nextRegisterID = 1
+        }
+        
+        let identifier = nextRegisterID
+        
+        // create notification
+        let notify = ATTNotify(identifier: identifier, opcode: opcode, notify: callback)
+        
+        // increment ID
+        nextRegisterID += 1
+        
+        // add to queue
+        notifyList.append(notify)
+        
+        return identifier
+    }
+    
+    /// Unregisters the callback associated with the specified identifier.
+    ///
+    /// - Returns: Whether the callback was unregistered.
+    public func unregister(identifier: UInt) -> Bool {
+        
+        guard let index = notifyList.indexOf({ $0.identifier == identifier })
+            else { return false }
+        
+        notifyList.removeAtIndex(index)
+        
+        return true
     }
     
     public func unregisterAll() {
         
-        
+        notifyList.removeAll()
+        disconnectList.removeAll()
     }
     
-    public func send<T: ATTProtocolDataUnit>(PDU: T) throws {
+    /// Adds a PDU to the queue to send.
+    public func send<T: ATTProtocolDataUnit>(PDU: T, response: ATTResponseCallback? = nil) throws {
         
         let sendOpcode = createSendOpcode()
         
@@ -112,9 +154,13 @@ public final class ATTConnection {
     
     // MARK: - Private Methods
     
-    private func createSendOpcode() -> ATTSendOpcode {
+    private func createSendOpcode<T: ATTProtocolDataUnit>(PDU: T) -> ATTSendOpcode {
         
-        
+        /* If the opcode corresponds to an operation type that does not elicit a
+        * response from the remote end, then no callback should have been
+        * provided, since it will never be called.
+        */
+        guard ()
     }
     
     private func encodePDU(sendOpcode: ATTSendOpcode) -> [UInt8] {
@@ -131,6 +177,8 @@ public final class ATTConnection {
 // MARK: - Supporting Types
 
 public typealias ATTResponseCallback = ATTProtocolDataUnit -> ()
+
+public typealias ATTNotifyCallback = ATTProtocolDataUnit -> ()
 
 // MARK: - Private Supporting Types
 
@@ -159,9 +207,9 @@ private struct ATTNotify {
     
     let opcode: ATT.Opcode
     
-    let notify: () -> ()
+    let notify: ATTNotifyCallback
     
-    init(identifier: UInt, opcode: ATT.Opcode, notify: () -> ()) {
+    init(identifier: UInt, opcode: ATT.Opcode, notify: ATTNotifyCallback) {
         
         self.identifier = identifier
         self.opcode = opcode
