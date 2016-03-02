@@ -141,24 +141,26 @@ public enum HCIPacketType: UInt8 {
 /// HCI `ioctl()` defines
 public struct HCIIOCTL {
     
+    private static let H                    = CInt(UnicodeScalar(unicodeScalarLiteral: "H").value)
+    
     /// #define HCIDEVUP	_IOW('H', 201, int)
-    public static let DeviceUp              = IOC.IOW(CInt("H")!, 201, CInt.self)
+    public static let DeviceUp              = IOC.IOW(H, 201, CInt.self)
     
     /// #define HCIDEVDOWN	_IOW('H', 202, int)
-    public static let DeviceDown            = IOC.IOW(CInt("H")!, 202, CInt.self)
+    public static let DeviceDown            = IOC.IOW(H, 202, CInt.self)
     
     /// #define HCIDEVRESET	_IOW('H', 203, int)
-    public static let DeviceReset           = IOC.IOW(CInt("H")!, 203, CInt.self)
+    public static let DeviceReset           = IOC.IOW(H, 203, CInt.self)
     
     /// #define HCIDEVRESTAT	_IOW('H', 204, int)
-    public static let DeviceRestat          = IOC.IOW(CInt("H")!, 204, CInt.self)
+    public static let DeviceRestat          = IOC.IOW(H, 204, CInt.self)
     
     
     /// #define HCIGETDEVLIST	_IOR('H', 210, int)
-    public static let GetDeviceList         = IOC.IOR(CInt("H")!, 210, CInt.self)
+    public static let GetDeviceList         = IOC.IOR(H, 210, CInt.self)
     
     /// #define HCIGETDEVINFO	_IOR('H', 211, int)
-    public static let GetDeviceInfo         = IOC.IOR(CInt("H")!, 211, CInt.self)
+    public static let GetDeviceInfo         = IOC.IOR(H, 211, CInt.self)
     
     // TODO: All HCI ioctl defines
 }
@@ -186,9 +188,35 @@ internal struct HCIDeviceListRequest {
     var count: UInt16 = 0
     
     /// struct hci_dev_req dev_req[0];	/* hci_dev_req structures */
-    var deviceRequest: ()
+    /// 16 elements
+    var list: (HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest) = (HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest())
     
     init() { }
+    
+    subscript (index: Int) -> HCIDeviceRequest {
+        
+        switch index {
+            
+        case 0:  return list.0
+        case 1:  return list.1
+        case 2:  return list.2
+        case 3:  return list.3
+        case 4:  return list.4
+        case 5:  return list.5
+        case 6:  return list.6
+        case 7:  return list.7
+        case 8:  return list.8
+        case 9:  return list.9
+        case 10: return list.10
+        case 11: return list.11
+        case 12: return list.12
+        case 13: return list.13
+        case 14: return list.14
+        case 15: return list.15
+            
+        default: fatalError("Invalid index \(index)")
+        }
+    }
 }
 
 /// `hci_inquiry_req`
