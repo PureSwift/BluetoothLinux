@@ -1,10 +1,22 @@
 //
-//  HCIError.swift
+//  HCI.swift
 //  BlueZ
 //
-//  Created by Alsey Coleman Miller on 1/3/16.
+//  Created by Alsey Coleman Miller on 3/1/16.
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
+
+
+public struct HCI {
+    
+    
+    
+    // MARK: - Typealiases
+    
+    public typealias Error = HCIError
+    
+    public typealias Event = HCIEvent
+}
 
 /// HCI Errors
 public enum HCIError: UInt8, ErrorType {
@@ -41,5 +53,43 @@ public enum HCIError: UInt8, ErrorType {
     
     // TODO: Add all errors
     
-    case HostBusyPairing    = 0x38
+    case HostBusyPairing            = 0x38
 }
+
+/// HCI device flags
+public enum HCIDeviceFlag: CInt {
+    
+    case Up
+    case Initialized
+    case Running
+    
+    case PassiveScan
+    case InteractiveScan
+    case Authenticated
+    case Encrypt
+    case Inquiry
+    
+    case Raw
+}
+
+/// HCI controller types
+public enum HCIControllerType: UInt8 {
+    
+    case BREDR                      = 0x00
+    case AMP                        = 0x01
+}
+
+/// HCI bus types
+public enum HCIBusType: CInt {
+    
+    case Virtual
+    case USB
+    case PCCard
+    case UART
+    case RS232
+    case PCI
+    case SDIO
+}
+
+
+

@@ -57,6 +57,14 @@ public final class Adapter {
     }
 }
 
+// MARK: - Private Function
+
+/// int hci_for_each_dev(int flag, int (*func)(int dd, int dev_id, long arg)
+private func HCIEnumerateDevices(flag: HCIDeviceFlag, handler: (CInt, CInt, CLong)) {
+    
+    
+}
+
 // MARK: - Darwin Stubs
 
 #if os(OSX) || os(iOS)
