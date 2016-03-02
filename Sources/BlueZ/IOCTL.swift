@@ -82,6 +82,6 @@ internal struct IOC {
 
 #if os(OSX) || os(iOS)
     
-    func ioctl(d: CInt, _ request: CInt, _ varargs: Any...) { stub() }
+    func ioctl(d: CInt, _ request: UInt, _ varargs: Any...) -> CInt { stub() }
 
 #endif
