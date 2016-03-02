@@ -186,7 +186,7 @@ internal struct HCIDeviceListRequest {
     var count: UInt16 = 0
     
     /// struct hci_dev_req dev_req[0];	/* hci_dev_req structures */
-    var deviceRequest: HCIDeviceRequest = HCIDeviceRequest()
+    var deviceRequest: ()
     
     init() { }
 }

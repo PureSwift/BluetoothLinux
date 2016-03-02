@@ -86,38 +86,36 @@ private func HCIIdentifierOfDevice(flagFilter: HCIDeviceFlag = HCIDeviceFlag(), 
 
     // allocate HCI device list buffer
 
-    let deviceList: UnsafeMutablePointer<HCIDeviceListRequest>
+    let deviceList: UnsafeMutablePointer<hci_dev_list_req>
 
     let deviceListBufferSize = HCI.MaximumDeviceCount * sizeof(HCIDeviceRequest) + sizeof(HCIDeviceListRequest)
 
     // allocate device list
     let voidDeviceListBuffer = malloc(deviceListBufferSize)
 
-    deviceList = UnsafeMutablePointer<HCIDeviceListRequest>(voidDeviceListBuffer)
+    deviceList = UnsafeMutablePointer<hci_dev_list_req>(voidDeviceListBuffer)
 
     defer { free(deviceList) }
 
     memset(voidDeviceListBuffer, 0, deviceListBufferSize)
 
-    deviceList.memory.count = UInt16(HCI.MaximumDeviceCount)
-
-    let deviceRequestPointer = UnsafeMutablePointer<HCIDeviceRequest>()
-
-    deviceRequestPointer.memory = deviceList.memory.deviceRequest
-
+    deviceList.memory.dev_num = UInt16(HCI.MaximumDeviceCount)
+    
+    let deviceRequestPointer = withUnsafeMutablePointer(&deviceList.memory.dev_req) { UnsafeMutablePointer<hci_dev_req>($0) }
+    
     // request device list
 
     guard swift_bluetooth_ioctl(hciSocket, HCI.IOCTL.GetDeviceList, voidDeviceListBuffer) >= 0
         else { throw POSIXError.fromErrorNumber! }
 
-    for i in 0 ..< Int(deviceList.memory.count) {
+    for i in 0 ..< Int(deviceList.memory.dev_num) {
 
         let deviceRequest = deviceRequestPointer[i]
 
-        guard HCITestBit(flagFilter.rawValue, options: deviceRequest.options) else { continue }
+        guard HCITestBit(flagFilter.rawValue, options: deviceRequest.dev_opt) else { continue }
 
-        let deviceIdentifier = CInt(deviceRequest.identifier)
-
+        let deviceIdentifier = CInt(deviceRequest.dev_id)
+        
         /* Operation not supported by device */
         guard deviceIdentifier >= 0 else { throw POSIXError(rawValue: ENODEV)! }
 
@@ -169,5 +167,17 @@ private func HCITestBit(flag: CInt, options: UInt32) -> Bool {
     var SOCK_CLOEXEC: CInt { stub() }
 
     func hci_open_dev(dev_id: CInt) -> CInt { stub() }
+    
+    struct hci_dev_req {
+        var dev_id: UInt16 = 0
+        var dev_opt: UInt32 = 0
+        init() { }
+    }
+    
+    struct hci_dev_list_req {
+        var dev_num: UInt16 = 0
+        var dev_req: ()
+        init() { }
+    }
 
 #endif
