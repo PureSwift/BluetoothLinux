@@ -14,10 +14,11 @@
 
 import SwiftFoundation
 
-// MARK: - ByteValue
 
 /// Bluetooth Address type.
 public struct Address: ByteValueType {
+    
+    // MARK: - ByteValueType
     
     /// Raw Bluetooth Address 6 byte (48 bit) value.
     public typealias ByteValue = (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
@@ -40,7 +41,9 @@ extension Address: RawRepresentable {
     
     public init?(rawValue: String) {
         
-        fatalError("\(__FUNCTION__) not implemented")
+        self.byteValue = (0,0,0,0,0,0)
+        
+        fatalError("Bluetooth address parsing not implemented")
     }
     
     public var rawValue: String {
@@ -93,12 +96,7 @@ public extension Address {
     /// Extracts the Bluetooth address from the device ID.
     public init(deviceIdentifier: CInt) throws {
         
-        var address = bdaddr_t()
-        
-        guard hci_devba(deviceIdentifier, &address) == 0
-            else { throw POSIXError.fromErrorNumber! }
-        
-        self = address
+        self = try HCIDeviceAddress(deviceIdentifier)
     }
 }
 
@@ -117,8 +115,13 @@ public extension Adapter {
 
 #if os(OSX) || os(iOS)
 
-    typealias bdaddr_t = Address
+    public struct bdaddr_t {
         
+        var b: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8) = (0,0,0,0,0,0)
+        
+        init() { }
+    }
+    
     /// Attempts to get the device address.
     func hci_devba(dev_id: CInt, _ bdaddr: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }
     

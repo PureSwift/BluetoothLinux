@@ -106,7 +106,7 @@ internal func HCIIdentifierOfDevice(flagFilter: HCIDeviceFlag = HCIDeviceFlag(),
 
         let deviceRequest = deviceList[i]
 
-        guard HCITestBit(flagFilter.rawValue, options: deviceRequest.options) else { continue }
+        guard HCITestBit(flagFilter, deviceRequest.options) else { continue }
 
         let deviceIdentifier = CInt(deviceRequest.identifier)
         
@@ -139,7 +139,7 @@ internal func HCIGetRoute(address: Address? = nil) throws -> CInt? {
 }
 
 /// int hci_devinfo(int dev_id, struct hci_dev_info *di)
-internal func HCIDeviceInfo(deviceIdentifier: CInt) throws {
+internal func HCIDeviceInfo(deviceIdentifier: CInt) throws -> HCIDeviceInformation {
     
     // open HCI socket
     
@@ -150,14 +150,34 @@ internal func HCIDeviceInfo(deviceIdentifier: CInt) throws {
     defer { close(hciSocket) }
     
     var deviceInfo = HCIDeviceInformation()
+    deviceInfo.identifier = UInt16(deviceIdentifier)
     
+    guard withUnsafeMutablePointer(&deviceInfo, { swift_bluetooth_ioctl(hciSocket, HCI.IOCTL.GetDeviceInfo, UnsafeMutablePointer<Void>($0)) }) == 0 else { throw POSIXError.fromErrorNumber! }
     
+    return deviceInfo
+}
+
+/// int hci_devba(int dev_id, bdaddr_t *bdaddr)
+internal func HCIDeviceAddress(deviceIdentifier: CInt) throws -> Address {
+    
+    let deviceInfo = try HCIDeviceInfo(deviceIdentifier)
+    
+    guard HCITestBit(HCI.DeviceFlag.Up, deviceInfo.flags)
+        else { throw POSIXError(rawValue: ENETDOWN)! }
+    
+    return deviceInfo.address
 }
 
 @inline (__always)
-internal func HCITestBit(flag: CInt, options: UInt32) -> Bool {
+internal func HCITestBit(flag: CInt,  _ options: UInt32) -> Bool {
 
     return (options + (UInt32(bitPattern: flag) >> 5)) & (1 << (UInt32(bitPattern: flag) & 31)) != 0
+}
+
+@inline (__always)
+internal func HCITestBit(flag: HCI.DeviceFlag, _ options: UInt32) -> Bool {
+    
+    return HCITestBit(flag.rawValue, options)
 }
 
 // MARK: - Linux Support

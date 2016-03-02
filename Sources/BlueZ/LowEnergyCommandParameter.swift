@@ -53,7 +53,7 @@ extension le_read_local_supported_features_rp: HCICommandParameter {
 
 #if os(OSX)
     public struct le_set_random_address_cp {
-        public var bdaddr: bdaddr_t
+        public var bdaddr: Address
         public init() { stub() }
     }
 #endif
@@ -69,7 +69,7 @@ extension le_set_random_address_cp: HCICommandParameter {
         public var advtype: UInt8
         public var own_bdaddr_type: UInt8
         public var direct_bdaddr_type: UInt8
-        public var direct_bdaddr: bdaddr_t
+        public var direct_bdaddr: Address
         public var chan_map: UInt8
         public var filter: UInt8
         public init() { stub() }

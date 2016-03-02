@@ -35,7 +35,7 @@ func ScanTest(adapter: Adapter, timeout: Int) {
     
     for (index, info) in scanResults.enumerate() {
         
-        let address = info.bdaddr
+        let address = Address(byteValue: info.bdaddr.b)
         
         print("\(index + 1). " + address.rawValue)
         

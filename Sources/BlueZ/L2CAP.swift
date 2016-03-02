@@ -7,7 +7,6 @@
 //
 
 #if os(Linux)
-    import CBlueZ
     import Glibc
 #elseif os(OSX) || os(iOS)
     import Darwin.C
@@ -199,33 +198,30 @@ public enum L2CAPConnectionError: ErrorType {
 
 #endif
 
-// MARK: - Darwin Stubs
+// MARK: - Supporting Types
 
-#if os(OSX) || os(iOS)
+let AF_BLUETOOTH: CInt = 31
 
-    let AF_BLUETOOTH: CInt = 31
-    
-    let BTPROTO_L2CAP: CInt = 0
-    
-    let SOL_BLUETOOTH: CInt = 274
-    
-    let BT_SECURITY: CInt = 4
-    
-    /// L2CAP socket address (not packed)
-    struct sockaddr_l2 {
-        var l2_family: sa_family_t
-        var l2_psm: CUnsignedShort
-        var l2_bdaddr: bdaddr_t
-        var l2_cid: CUnsignedShort
-        var l2_bdaddr_type: UInt8
-        init() { stub() }
-    }
-    
-    /// Bluetooth security level (not packed)
-    struct bt_security {
-        var level: UInt8
-        var key_size: UInt8
-        init() { stub() }
-    }
+let BTPROTO_L2CAP: CInt = 0
 
-#endif
+let SOL_BLUETOOTH: CInt = 274
+
+let BT_SECURITY: CInt = 4
+
+/// L2CAP socket address (not packed)
+struct sockaddr_l2 {
+    var l2_family: sa_family_t = 0
+    var l2_psm: CUnsignedShort = 0
+    var l2_bdaddr: Address = Address()
+    var l2_cid: CUnsignedShort = 0
+    var l2_bdaddr_type: UInt8 = 0
+    init() { }
+}
+
+/// Bluetooth security level (not packed)
+struct bt_security {
+    var level: UInt8 = 0
+    var key_size: UInt8 = 0
+    init() { }
+}
+
