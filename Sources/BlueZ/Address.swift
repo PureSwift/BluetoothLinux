@@ -7,7 +7,6 @@
 //
 
 #if os(Linux)
-    import CBlueZ
     import Glibc
 #elseif os(OSX) || os(iOS)
     import Darwin.C
@@ -15,34 +14,23 @@
 
 import SwiftFoundation
 
-// MARK: - Typealias
-
-/// Bluetooth Address type.
-///
-/// Typealias for `bdaddr_t` from the BlueZ C API.
-public typealias Address = bdaddr_t
-
 // MARK: - ByteValue
 
-extension Address: ByteValueType {
+/// Bluetooth Address type.
+public struct Address: ByteValueType {
     
     /// Raw Bluetooth Address 6 byte (48 bit) value.
     public typealias ByteValue = (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
     
     // MARK: - Properties
     
-    public var byteValue: ByteValue {
-        
-        get { return b }
-        
-        set { self.b = newValue }
-    }
+    public var byteValue: ByteValue
     
     // MARK: - Initialization
     
-    public init(byteValue: ByteValue) {
+    public init(byteValue: ByteValue = (0,0,0,0,0,0)) {
         
-        self.b = byteValue
+        self.byteValue = byteValue
     }
 }
 
@@ -52,11 +40,7 @@ extension Address: RawRepresentable {
     
     public init?(rawValue: String) {
         
-        var address = bdaddr_t()
-        
-        guard str2ba(rawValue, &address) == 0 else { return nil }
-        
-        self = address
+        fatalError("\(__FUNCTION__) not implemented")
     }
     
     public var rawValue: String {
@@ -85,12 +69,14 @@ extension Address: RawRepresentable {
 
 extension Address: Equatable { }
 
-public func == (lhs: Address, rhs: Address) {
+public func == (lhs: Address, rhs: Address) -> Bool {
     
-    var copy1 = lhs
-    var copy2 = rhs
-    
-    memcmp(&copy1, &copy2, sizeof(bdaddr_t.self))
+    return lhs.byteValue.0 == rhs.byteValue.0
+        && lhs.byteValue.1 == rhs.byteValue.1
+        && lhs.byteValue.2 == rhs.byteValue.2
+        && lhs.byteValue.3 == rhs.byteValue.3
+        && lhs.byteValue.4 == rhs.byteValue.4
+        && lhs.byteValue.5 == rhs.byteValue.5
 }
 
 // MARK: - CustomStringConvertible
@@ -131,15 +117,8 @@ public extension Adapter {
 
 #if os(OSX) || os(iOS)
 
-    public struct bdaddr_t {
+    typealias bdaddr_t = Address
         
-        var b: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8) = (0,0,0,0,0,0)
-        
-        init() { }
-    }
-    
-    func str2ba(string: String, _ bytes: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }
-    
     /// Attempts to get the device address.
     func hci_devba(dev_id: CInt, _ bdaddr: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }
     

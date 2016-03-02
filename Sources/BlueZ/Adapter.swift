@@ -54,10 +54,10 @@ public final class Adapter {
     }
 }
 
-// MARK: - Private HCI Functions
+// MARK: - Internal HCI Functions
 
 /// int hci_open_dev(int dev_id)
-private func HCIOpenDevice(deviceIdentifier: CInt) throws -> CInt {
+internal func HCIOpenDevice(deviceIdentifier: CInt) throws -> CInt {
     
     // Create HCI socket
     let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.HCI.rawValue)
@@ -78,7 +78,7 @@ private func HCIOpenDevice(deviceIdentifier: CInt) throws -> CInt {
 }
 
 /// int hci_for_each_dev(int flag, int (*func)(int dd, int dev_id, long arg)
-private func HCIIdentifierOfDevice(flagFilter: HCIDeviceFlag = HCIDeviceFlag(), _ predicate: (deviceDescriptor: CInt, deviceIdentifier: CInt) throws -> Bool) throws -> CInt? {
+internal func HCIIdentifierOfDevice(flagFilter: HCIDeviceFlag = HCIDeviceFlag(), _ predicate: (deviceDescriptor: CInt, deviceIdentifier: CInt) throws -> Bool) throws -> CInt? {
 
     // open HCI socket
 
@@ -122,7 +122,7 @@ private func HCIIdentifierOfDevice(flagFilter: HCIDeviceFlag = HCIDeviceFlag(), 
     return nil
 }
 
-private func HCIGetRoute(address: Address? = nil) throws -> CInt? {
+internal func HCIGetRoute(address: Address? = nil) throws -> CInt? {
 
     return try HCIIdentifierOfDevice { (dd, deviceIdentifier) in
 
@@ -138,8 +138,24 @@ private func HCIGetRoute(address: Address? = nil) throws -> CInt? {
     }
 }
 
+/// int hci_devinfo(int dev_id, struct hci_dev_info *di)
+internal func HCIDeviceInfo(deviceIdentifier: CInt) throws {
+    
+    // open HCI socket
+    
+    let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.HCI.rawValue)
+    
+    guard hciSocket >= 0 else { throw POSIXError.fromErrorNumber! }
+    
+    defer { close(hciSocket) }
+    
+    var deviceInfo = HCIDeviceInformation()
+    
+    
+}
+
 @inline (__always)
-private func HCITestBit(flag: CInt, options: UInt32) -> Bool {
+internal func HCITestBit(flag: CInt, options: UInt32) -> Bool {
 
     return (options + (UInt32(bitPattern: flag) >> 5)) & (1 << (UInt32(bitPattern: flag) & 31)) != 0
 }
