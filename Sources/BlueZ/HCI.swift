@@ -167,6 +167,17 @@ public struct HCIIOCTL {
 
 // MARK: - Internal Supporting Types
 
+internal struct HCISocketAddress {
+    
+    var family = sa_family_t()
+    
+    var deviceIdentifier: UInt16 = 0
+    
+    var channel: UInt16 = 0
+    
+    init() { }
+}
+
 /* Ioctl requests structures */
 
 /// `hci_dev_req`

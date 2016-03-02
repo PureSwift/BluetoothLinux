@@ -7,7 +7,6 @@
 //
 
 #if os(Linux)
-    import CBlueZ
     import Glibc
     import CSwiftBluetoothLinux
 #elseif os(OSX) || os(iOS)
@@ -38,40 +37,45 @@ public final class Adapter {
     /// Initializes the Bluetooth Adapter with the specified address.
     ///
     /// If no address is specified then it tries to intialize the first Bluetooth adapter.
-    public init(address: Address? = nil) throws {
-
-        // get device ID
-        let addressPointer = UnsafeMutablePointer<bdaddr_t>.alloc(1)
-        defer { addressPointer.dealloc(1) }
-
-        if let address = address {
-
-            addressPointer.memory = address
-        }
-
-        do {
-
-            guard let identifier = try HCIGetRoute(address)
-                else { throw BlueZError.AdapterNotFound }
-
-            self.identifier = identifier
-
-            self.internalSocket = hci_open_dev(identifier)
-
-            guard internalSocket != -1 else { fatalError("Could not open socket") }
-        }
-
-        catch {
-
-            self.internalSocket = 0
-            self.identifier = 0
-
-            throw error
-        }
+    public convenience init(address: Address? = nil) throws {
+        
+        guard let deviceIdentifier = try HCIGetRoute(address)
+            else { throw BlueZError.AdapterNotFound }
+        
+        let internalSocket = try HCIOpenDevice(deviceIdentifier)
+        
+        self.init(identifier: deviceIdentifier, internalSocket: internalSocket)
+    }
+    
+    private init(identifier: CInt, internalSocket: CInt) {
+        
+        self.identifier = identifier
+        self.internalSocket = internalSocket
     }
 }
 
-// MARK: - Private Function
+// MARK: - Private HCI Functions
+
+/// int hci_open_dev(int dev_id)
+private func HCIOpenDevice(deviceIdentifier: CInt) throws -> CInt {
+    
+    // Create HCI socket
+    let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.HCI.rawValue)
+    
+    guard hciSocket >= 0 else { throw POSIXError.fromErrorNumber! }
+    
+    // Bind socket to the HCI device
+    var address = HCISocketAddress()
+    address.family = sa_family_t(AF_BLUETOOTH)
+    address.deviceIdentifier = UInt16(deviceIdentifier)
+    
+    let addressPointer = withUnsafeMutablePointer(&address) { UnsafeMutablePointer<sockaddr>($0) }
+    
+    guard bind(hciSocket, addressPointer, socklen_t(sizeof(HCISocketAddress))) >= 0
+        else { close(hciSocket); throw POSIXError.fromErrorNumber! }
+    
+    return hciSocket
+}
 
 /// int hci_for_each_dev(int flag, int (*func)(int dd, int dev_id, long arg)
 private func HCIIdentifierOfDevice(flagFilter: HCIDeviceFlag = HCIDeviceFlag(), _ predicate: (deviceDescriptor: CInt, deviceIdentifier: CInt) throws -> Bool) throws -> CInt? {
@@ -147,6 +151,8 @@ private func HCITestBit(flag: CInt, options: UInt32) -> Bool {
     let SOCK_RAW = CInt(Glibc.SOCK_RAW.rawValue)
 
     let SOCK_CLOEXEC = CInt(Glibc.SOCK_CLOEXEC.rawValue)
+    
+    typealias sa_family_t = Glibc.sa_family_t
 
 #endif
 
@@ -155,7 +161,5 @@ private func HCITestBit(flag: CInt, options: UInt32) -> Bool {
 #if os(OSX) || os(iOS)
 
     var SOCK_CLOEXEC: CInt { stub() }
-
-    func hci_open_dev(dev_id: CInt) -> CInt { stub() }
-
+    
 #endif
