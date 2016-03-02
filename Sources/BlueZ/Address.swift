@@ -61,16 +61,23 @@ extension Address: RawRepresentable {
     
     public var rawValue: String {
         
-        let stringLength = 18 // 17 characters, nil terminated string
+        let bytes = [byteValue.5, byteValue.4, byteValue.3, byteValue.2, byteValue.1, byteValue.0]
         
-        let stringPointer = UnsafeMutablePointer<CChar>.alloc(stringLength)
-        defer { stringPointer.dealloc(stringLength) }
+        var string = ""
         
-        var copy = self
+        for (index, byte) in bytes.enumerate() {
+            
+            string += byte.toHexadecimal()
+            
+            if index != bytes.count - 1 {
+                
+                string += ":"
+            }
+        }
         
-        ba2str(&copy, stringPointer)
+        assert(string.utf8.count == 17)
         
-        return String.fromCString(stringPointer)!
+        return string
     }
 }
 
@@ -132,8 +139,6 @@ public extension Adapter {
     }
     
     func str2ba(string: String, _ bytes: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }
-    
-    func ba2str(bytes: UnsafePointer<bdaddr_t>, _ str: UnsafeMutablePointer<CChar>) -> CInt { stub() }
     
     /// Attempts to get the device address.
     func hci_devba(dev_id: CInt, _ bdaddr: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }
