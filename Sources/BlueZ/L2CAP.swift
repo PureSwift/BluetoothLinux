@@ -190,15 +190,7 @@ public enum L2CAPConnectionError: ErrorType {
     case SentLessBytes(Int)
 }
 
-// MARK: - Linux Support
-
-#if os(Linux)
-
-    public let SOCK_SEQPACKET: CInt = 5
-
-#endif
-
-// MARK: - Supporting Types
+// MARK: - Internal Supporting Types
 
 let AF_BLUETOOTH: CInt = 31
 
@@ -224,4 +216,12 @@ struct bt_security {
     var key_size: UInt8 = 0
     init() { }
 }
+
+// MARK: - Linux Support
+
+#if os(Linux)
+    
+    public let SOCK_SEQPACKET: CInt = 5
+    
+#endif
 

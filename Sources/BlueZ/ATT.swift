@@ -8,8 +8,6 @@
 
 // MARK: - Protocol Definitions
 
-import SwiftFoundation
-
 /// Bluetooth ATT protocol
 public struct ATT {
     
