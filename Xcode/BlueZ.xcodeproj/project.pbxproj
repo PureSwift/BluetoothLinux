@@ -17,6 +17,7 @@
 		6E15524C1C39C08A002CC322 /* OpcodeCommandField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15524B1C39C08A002CC322 /* OpcodeCommandField.swift */; };
 		6E1552501C3A42FE002CC322 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15524F1C3A42FE002CC322 /* Error.swift */; };
 		6E196CC31C8659DA009FA9CF /* HCI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E196CC21C8659DA009FA9CF /* HCI.swift */; };
+		6E196CC51C869A2E009FA9CF /* IOCTL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E196CC41C869A2E009FA9CF /* IOCTL.swift */; };
 		6E53E1731C84FD8200AC8FCA /* GATTServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1721C84FD8200AC8FCA /* GATTServer.swift */; };
 		6E53E1751C84FD8C00AC8FCA /* GATTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */; };
 		6E53E1771C8503AC00AC8FCA /* GATTDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */; };
@@ -62,6 +63,7 @@
 		6E15524B1C39C08A002CC322 /* OpcodeCommandField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpcodeCommandField.swift; sourceTree = "<group>"; };
 		6E15524F1C3A42FE002CC322 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		6E196CC21C8659DA009FA9CF /* HCI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCI.swift; sourceTree = "<group>"; };
+		6E196CC41C869A2E009FA9CF /* IOCTL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IOCTL.swift; sourceTree = "<group>"; };
 		6E53E1721C84FD8200AC8FCA /* GATTServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTServer.swift; sourceTree = "<group>"; };
 		6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTClient.swift; sourceTree = "<group>"; };
 		6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTDatabase.swift; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 				6E15524F1C3A42FE002CC322 /* Error.swift */,
 				6E881D7B1C38832400E509A9 /* DeviceCommand.swift */,
 				6E881D831C39783F00E509A9 /* DeviceRequest.swift */,
+				6E196CC41C869A2E009FA9CF /* IOCTL.swift */,
 				6E196CC21C8659DA009FA9CF /* HCI.swift */,
 				6E881DAB1C3996A200E509A9 /* OpcodeGroupField.swift */,
 				6E15524B1C39C08A002CC322 /* OpcodeCommandField.swift */,
@@ -332,6 +335,7 @@
 				6E881DAA1C39934200E509A9 /* HCICommandParameter.swift in Sources */,
 				6E53E1731C84FD8200AC8FCA /* GATTServer.swift in Sources */,
 				6E53E1831C859E8300AC8FCA /* ATTProtocolDataUnit.swift in Sources */,
+				6E196CC51C869A2E009FA9CF /* IOCTL.swift in Sources */,
 				6E881DA21C39812F00E509A9 /* DeviceRequest.swift in Sources */,
 				6E1552501C3A42FE002CC322 /* Error.swift in Sources */,
 				6E795E901C489FE7002377FE /* LowEnergyCommandParameter.swift in Sources */,

@@ -95,26 +95,11 @@ public extension Adapter {
     /// Options for scanning Bluetooth devices
     public enum ScanOption: Int32, BitMaskOption {
         
-        /// The cache of previously detected devices is flushed before performing the current inquiry. Otherwise, if flags is set to 0, then the results of previous inquiries may be returned, even if the devices aren't in range anymore. 
-        case FlushCache
+        /// The cache of previously detected devices is flushed before performing the current inquiry. 
+        /// Otherwise, if flags is set to 0, then the results of previous inquiries may be returned, 
+        /// even if the devices aren't in range anymore.
+        case FlushCache = 0x0001
         
-        public init?(rawValue: Int32) {
-            
-            switch rawValue {
-                
-            case IREQ_CACHE_FLUSH: self = .FlushCache
-                
-            default: return nil
-            }
-        }
-        
-        public var rawValue: Int32 {
-            
-            switch self {
-                
-            case .FlushCache: return IREQ_CACHE_FLUSH
-            }
-        }
     }
 }
 
@@ -123,8 +108,6 @@ public typealias DeviceClass = (Byte, Byte, Byte)
 // MARK: - Darwin Stubs
 
 #if os(OSX) || os(iOS)
-    
-    let IREQ_CACHE_FLUSH: Int32 = 0x0001
     
     public struct inquiry_info {
         

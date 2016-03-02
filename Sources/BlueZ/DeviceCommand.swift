@@ -33,6 +33,13 @@ public extension Adapter {
     }
 }
 
+// MARK: - Private
+
+private func HCISendCommand(deviceDescriptor: CInt, parameter: HCICommandParameter) throws {
+    
+    
+}
+
 // MARK: - Darwin Stubs
 
 #if os(OSX) || os(iOS)
