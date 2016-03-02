@@ -8,7 +8,6 @@
 
 #if os(Linux)
     import BluetoothLinux
-    import CBluetoothLinux
     import Glibc
 #elseif os(OSX) || os(iOS)
     import Darwin.C
