@@ -83,5 +83,7 @@ internal struct IOC {
 #if os(OSX) || os(iOS)
     
     func ioctl(d: CInt, _ request: UInt, _ varargs: Any...) -> CInt { stub() }
+    
+    func swift_bluetooth_ioctl(d: CInt, _ command: CInt, _ pointer: UnsafeMutablePointer<Void>) -> CInt { stub() }
 
 #endif

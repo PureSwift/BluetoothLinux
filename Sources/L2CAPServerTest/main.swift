@@ -23,7 +23,7 @@ import SwiftFoundation
 
 // get Bluetooth device
 
-guard let adapter = try! Adapter()
+guard let adapter = try? Adapter()
     else { Error("No Bluetooth adapters found") }
 
 print("Found Bluetooth adapter with device ID: \(adapter.identifier)")

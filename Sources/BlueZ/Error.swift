@@ -8,6 +8,9 @@
 
 public enum BlueZError: ErrorType {
     
+    /// The specified adapter could not be found.
+    case AdapterNotFound
+    
     /// The error status byte used with `deviceRequest()`.
     case DeviceRequestStatus(UInt8)
 }
