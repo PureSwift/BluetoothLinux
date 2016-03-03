@@ -6,6 +6,12 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
+#if os(Linux)
+    import Glibc
+#elseif os(OSX) || os(iOS)
+    import Darwin.C
+#endif
+
 import SwiftFoundation
 
 /// Bluetooth HCI
@@ -349,7 +355,7 @@ internal struct HCIFilter {
     
     internal struct Bits {
         
-        static let Type                 = CInt(31)
+        static let FilterType           = CInt(31)
         static let Event                = CInt(63)
         static let OpcodeGroupField     = CInt(63)
         static let OpcodeCommandField   = CInt(127)
@@ -376,7 +382,7 @@ internal struct HCIFilter {
     @inline(__always)
     mutating func setPacketType(type: HCIPacketType) {
         
-        let bit = type == .Event ? 0 : CInt(type.rawValue) & HCIFilter.Bits.Type
+        let bit = type == .Event ? 0 : CInt(type.rawValue) & HCIFilter.Bits.FilterType
         
         HCISetBit(bit, &typeMask)
     }
@@ -393,7 +399,7 @@ internal struct HCIFilter {
 // HCI Bit functions
 
 @inline(__always)
-internal func HCISetBit(bit: CInt, inout _ destination: UInt32) {
+internal func HCISetBit(bit: CInt, _ destination: inout UInt32) {
     
     let unsignedBit = UInt32(bit)
     

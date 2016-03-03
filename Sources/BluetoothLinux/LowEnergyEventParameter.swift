@@ -27,7 +27,7 @@ public extension LowEnergyEvent {
         
         public init?(byteValue: [UInt8]) {
             
-            
+            fatalError("Not implemented")
         }
     }
 }

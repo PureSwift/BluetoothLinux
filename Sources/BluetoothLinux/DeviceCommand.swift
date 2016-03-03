@@ -12,15 +12,15 @@
     import Darwin.C
 #endif
 
+import SwiftFoundation
+
 public extension Adapter {
     
-    @inline(__always)
     func deviceCommand<T: HCICommand>(command: T) throws {
         
         try HCISendCommand(internalSocket, opcode: (command.rawValue, T.opcodeGroupField.rawValue))
     }
     
-    @inline(__always)
     func deviceCommand<T: HCICommandParameter>(commandParameter: T) throws {
         
         let command = T.command
