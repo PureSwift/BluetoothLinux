@@ -6,11 +6,10 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-
-
+/// Bluetooth Low Energy Command opcode
 public enum LowEnergyCommand: UInt16, HCICommand {
     
-    public static let opcodeGroupField = OpcodeGroupField.LowEnergy
+    public static let opcodeGroupField = HCIOpcodeGroupField.LowEnergy
     
     case SetEventMask                   = 0x0001
     case ReadBufferSize                 = 0x0002

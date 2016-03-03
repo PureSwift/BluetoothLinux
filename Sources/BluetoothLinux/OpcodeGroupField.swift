@@ -6,7 +6,8 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-public enum OpcodeGroupField: UInt16 {
+/// HCI Opcode Group Field values. 
+public enum HCIOpcodeGroupField: UInt16 {
     
     /// Link Control
     case LinkControl = 0x01

@@ -6,7 +6,7 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-/// BluetoothLinux Address type
+/// Bluetooth Address type
 ///
 /// - SeeAlso: [Ten Important Differences between Bluetooth BR/EDR and Bluetooth Smart](http://blog.bluetooth.com/ten-important-differences-between-bluetooth-bredr-and-bluetooth-smart/)
 public enum AddressType: UInt8 {
@@ -30,4 +30,13 @@ public enum AddressType: UInt8 {
             return false
         }
     }
+}
+
+/// Bluetooth Low Energy Address type
+public enum LowEnergyAddressType: UInt8 {
+    
+    case Public = 0x00
+    case Random = 0x01
+    
+    public init() { self = .Public }
 }

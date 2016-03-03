@@ -6,6 +6,7 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
+/*
 #if os(Linux)
     import Glibc
 #elseif os(OSX) || os(iOS)
@@ -269,6 +270,6 @@ extension le_rand_rp: HCICommandParameter {
     public static var dataLength: CInt { return 9 }
 }
 
-
+*/
 
 

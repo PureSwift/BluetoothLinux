@@ -16,53 +16,11 @@ import SwiftFoundation
 
 public extension Adapter {
 
-    /// Sends a command to the device and waits for a response. No specific event is expected.
-    func deviceRequest<Command: HCICommand, CommandParameter: HCICommandParameter>(command: Command, parameter: CommandParameter? = nil, timeout: Int = 1000) throws {
-
-        var request = hci_request()
-        var status: Byte = 0
-
-        // initialize by zeroing memory
-        memset(&request, 0, sizeof(hci_request))
-
-        // set HCI command parameters
-
-        request.ogf = Command.opcodeGroupField.rawValue
-        request.ocf = command.rawValue
+    /// Sends a command to the device and waits for a response.
+    func deviceRequest<T: HCICommandParameter>(command: T, timeout: Int = 1000) throws {
         
-        if var commandParameter = parameter {
-            
-            request.clen = CommandParameter.dataLength
-            
-            withUnsafePointer(&commandParameter) { (pointer) in
-                
-                request.cparam = UnsafeMutablePointer<Void>(pointer)
-            }
-        }
-
-        // set HCI Event to a status byte
-        request.rlen = 1
-
-        withUnsafeMutablePointer(&status) { (pointer) in
-
-            request.rparam = UnsafeMutablePointer<Void>(pointer)
-        }
-
-        try withUnsafeMutablePointer(&request) { (pointer) throws in
-
-            guard hci_send_req(internalSocket, pointer, CInt(timeout)) == 0
-                else { throw POSIXError.fromErrorNumber! }
-        }
-
-        guard status == 0x00 else { throw HCIError(rawValue: status)! }
+        
     }
-}
-
-// MARK: - Internal HCI Functions
-
-internal func HCISendRequest() {
-    
-    
 }
 
 // MARK: - Darwin Stubs

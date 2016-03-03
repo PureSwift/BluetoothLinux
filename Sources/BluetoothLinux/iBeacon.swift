@@ -16,7 +16,7 @@ import SwiftFoundation
 
 /// 31 Byte String
 public typealias LowEnergyAdvertisingData = (Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte)
-
+/*
 public extension Adapter {
     
     /// Enable iBeacon functionality.
@@ -109,5 +109,5 @@ private func GenerateBeaconData(UUID: SwiftFoundation.UUID, mayor: UInt16, minor
 }
 
 
-
+*/
 

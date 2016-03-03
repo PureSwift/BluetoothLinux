@@ -12,17 +12,18 @@
     import Darwin.C
 #endif
 
-import SwiftFoundation
-
-#if os(OSX)
-    public struct inquiry_cp {
-        var lap: (UInt8, UInt8, UInt8)
-        var length: UInt8 /* 1.28s units */
-        var num_rsp: UInt8
-        init() { stub() }
+public extension LinkControlCommand {
+    
+    public struct InquiryParameter {
+        
+        public static let length = 5
+        
+        public var lap: (UInt8, UInt8, UInt8) = (0, 0, 0)
+        
+        public var length: UInt8 = 0 /* 1.28s units */
+        
+        public var count: UInt8 = 0
+        
+        public init() { }
     }
-#endif
-
-extension inquiry_cp: HCICommandParameter {
-    public static var dataLength: CInt { return 5 }
 }

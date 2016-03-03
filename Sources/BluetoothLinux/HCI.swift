@@ -342,9 +342,18 @@ internal struct HCICommandHDR {
     static let length = 3
     
     /// OCF & OGF
-    var opcode: UInt16 // uint16_t opcode;
+    var opcode: UInt16 = 0// uint16_t opcode;
     
-    var parameterLength: UInt8 // uint8_t plen;
+    var parameterLength: UInt8 = 0// uint8_t plen;
+    
+    init() { }
+    
+    var byteValue: [UInt8] {
+        
+        let opcodeBytes = opcode.littleEndianBytes
+        
+        return [opcodeBytes.0, opcodeBytes.1, parameterLength]
+    }
 }
 
 

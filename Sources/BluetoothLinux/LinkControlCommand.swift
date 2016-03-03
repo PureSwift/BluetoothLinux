@@ -8,7 +8,7 @@
 
 public enum LinkControlCommand: UInt16, HCICommand {
     
-    public static let opcodeGroupField = OpcodeGroupField.LinkControl
+    public static let opcodeGroupField = HCIOpcodeGroupField.LinkControl
     
     /// Command used to enter Inquiry mode where it discovers other Bluetooth devices.
     case Inquiry                    = 0x0001
