@@ -6,6 +6,8 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
+import SwiftFoundation
+
 public extension HCIGeneralEvent {
     
     // TODO: Complete all command parameters
@@ -49,6 +51,34 @@ public extension HCIGeneralEvent {
             self.status = byteValue[0]
             self.ncmd = byteValue[1]
             self.opcode = UInt16(littleEndian: (byteValue[2], byteValue[3]))
+        }
+    }
+    
+    public struct RemoteNameRequestCompleteParameter: HCIEventParameter {
+        
+        public static let event = HCIGeneralEvent.RemoteNameRequestComplete
+        public static let length = 255
+        
+        public var status: UInt8 = 0
+        public var address: Address = Address()
+        public var name: String = ""
+        
+        public init() { }
+        
+        public init?(byteValue: [UInt8]) {
+            
+            guard byteValue.count == RemoteNameRequestCompleteParameter.length
+                else { return nil }
+            
+            self.status = byteValue[0]
+            self.address = Address(byteValue: (byteValue[1], byteValue[2], byteValue[3], byteValue[4], byteValue[5], byteValue[6]))
+            
+            let nameBytes = Array(byteValue[7 ..< HCI.MaximumNameLength])
+            
+            guard let name = String(UTF8Data: Data(byteValue: nameBytes))
+                else { return nil }
+            
+            self.name = name
         }
     }
     

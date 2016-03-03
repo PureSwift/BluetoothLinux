@@ -23,6 +23,8 @@ public struct HCI {
     
     public static let MaximumFrameSize      = MaximumACLSize + 4
     
+    public static let MaximumNameLength     = 248
+    
     public static let TypeLength            = 1
     
     // MARK: - Typealiases

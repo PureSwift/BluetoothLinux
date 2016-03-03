@@ -17,36 +17,80 @@ import SwiftFoundation
 public extension Adapter {
 
     /// Sends a command to the device and waits for a response.
-    @inline(__always)
-    func deviceRequest<T: HCICommand>(command: T, timeout: Int = 1000) throws {
-        
-        
-    }
     
     @inline(__always)
-    func deviceRequest<T: HCICommandParameter>(commandParameter: T, timeout: Int = 1000) throws {
+    func deviceRequest<CP: HCICommandParameter, EP: HCIEventParameter>(commandParameter: CP, eventParameterType: EP.Type, timeout: Int = 1000) throws -> EP {
         
-        
-    }
-    
-    /*
-    @inline(__always)
-    func deviceCommand<T: HCICommand>(command: T) throws {
-        
-        try HCISendCommand(internalSocket, opcode: (command.rawValue, T.opcodeGroupField.rawValue))
-    }
-    
-    @inline(__always)
-    func deviceCommand<T: HCICommandParameter>(commandParameter: T) throws {
-        
-        let command = T.command
+        let command = CP.command
         
         let opcodeGroupField = command.dynamicType.opcodeGroupField
         
         let parameterData = commandParameter.byteValue
         
-        try HCISendCommand(internalSocket, opcode: (command.rawValue, opcodeGroupField.rawValue), parameterData: parameterData)
-    }*/
+        let data = try HCISendRequest(internalSocket, opcode: (command.rawValue, opcodeGroupField.rawValue), commandParameterData: parameterData, eventParameterLength: EP.length, event: EP.event.rawValue, timeout: timeout)
+        
+        guard let eventParameter = EP(byteValue: data)
+            else { throw AdapterError.GarbageResponse(Data(byteValue: data)) }
+        
+        return eventParameter
+    }
+    
+    @inline(__always)
+    func deviceRequest<C: HCICommand, EP: HCIEventParameter>(command: C, eventParameterType: EP.Type, verifyStatusByte: Bool = true, timeout: Int = 1000) throws -> EP {
+        
+        let opcode = (command.rawValue, C.opcodeGroupField.rawValue)
+        
+        let event = EP.event.rawValue
+        
+        let data = try HCISendRequest(internalSocket, opcode: opcode, event: event, eventParameterLength: EP.length, timeout: timeout)
+        
+        guard let eventParameter = EP(byteValue: data)
+            else { throw AdapterError.GarbageResponse(Data(byteValue: data)) }
+        
+        return eventParameter
+    }
+    
+    @inline(__always)
+    func deviceRequest<CP: HCICommandParameter, E: HCIEvent>(commandParameter: CP, event: E, verifyStatusByte: Bool = true, timeout: Int = 1000) throws {
+        
+        let command = CP.command
+        
+        let opcode = (command.rawValue, command.dynamicType.opcodeGroupField.rawValue)
+        
+        let parameterData = commandParameter.byteValue
+        
+        let eventParameterLength = verifyStatusByte ? 1 : 0
+        
+        let data = try HCISendRequest(internalSocket, opcode: opcode, commandParameterData: parameterData, event: event.rawValue, eventParameterLength: eventParameterLength, timeout: timeout)
+        
+        if verifyStatusByte {
+            
+            guard let statusByte = data.first
+                else { fatalError("Missing status byte!") }
+            
+            guard statusByte == 0x00
+                else { throw AdapterError.DeviceRequestStatus(statusByte) }
+        }
+    }
+    
+    @inline(__always)
+    func deviceRequest<C: HCICommand, E: HCIEvent>(command: C, event: E, verifyStatusByte: Bool = true, timeout: Int = 1000) throws {
+        
+        let opcode = (command.rawValue, C.opcodeGroupField.rawValue)
+        
+        let eventParameterLength = verifyStatusByte ? 1 : 0
+        
+        let data = try HCISendRequest(internalSocket, opcode: opcode, event: event.rawValue, eventParameterLength: eventParameterLength, timeout: timeout)
+        
+        if verifyStatusByte {
+            
+            guard let statusByte = data.first
+                else { fatalError("Missing status byte!") }
+            
+            guard statusByte == 0x00
+                else { throw AdapterError.DeviceRequestStatus(statusByte) }
+        }
+    }
 }
 
 // MARK: - Internal HCI Functions
@@ -220,13 +264,35 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
             let dataLength = min(eventData.count - commandParameterLength, eventParameterLength)
             return Array(eventData[commandParameterLength ..< dataLength])
             
+        case HCIGeneralEvent.RemoteNameRequestComplete.rawValue:
+            
+            guard eventHeader.event == event else { break }
+            
+            guard let parameter = HCIGeneralEvent.RemoteNameRequestCompleteParameter(byteValue: eventData)
+                else { throw AdapterError.GarbageResponse(Data(byteValue: eventBuffer)) }
+            
+            if commandParameterData.isEmpty == false {
+                
+                guard let commandParameter = LinkControlCommand.RemoteNameRequestParameter(byteValue: commandParameterData)
+                    else { fatalError("HCI Command 'RemoteNameRequest' was sent, but the event parameter data does not correspond to 'RemoteNameRequestParameter'") }
+                
+                // must be different, for some reason
+                guard commandParameter.address != parameter.address else { continue }
+            }
+            
+            // success!
+            try done()
+            let dataLength = min(eventData.count - 1, eventParameterLength)
+            return Array(eventData.suffix(dataLength))
+            
         // all other events
         default:
             
-            
+            guard eventHeader.event == event else { break }
             
             try done()
-            return eventData
+            let dataLength = min(eventData.count, eventParameterLength)
+            return Array(eventData.suffix(dataLength))
         }
     }
     

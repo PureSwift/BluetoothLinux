@@ -30,9 +30,6 @@ public protocol HCICommandParameter {
     
     /// Converts command parameter to raw bytes.
     var byteValue: [UInt8] { get }
-    
-    /// Initializes command paramter from raw bytes.
-    init?(byteValue: [UInt8])
 }
 
 
