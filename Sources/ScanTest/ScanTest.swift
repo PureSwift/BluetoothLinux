@@ -17,12 +17,12 @@ import SwiftFoundation
 
 /// Tests the Scanning functionality
 func ScanTest(adapter: Adapter, timeout: Int) {
-    /*
+    
     let scanDate = Date()
     
     print("Scanning for ~\(timeout) seconds...")
     
-    let scanResults: [inquiry_info]
+    let scanResults: [Adapter.InquiryResult]
     
     do { scanResults = try adapter.scan(timeout) }
         
@@ -34,10 +34,11 @@ func ScanTest(adapter: Adapter, timeout: Int) {
     
     for (index, info) in scanResults.enumerate() {
         
-        let address = Address(byteValue: info.bdaddr.b)
+        let address = info.address
         
         print("\(index + 1). " + address.rawValue)
         
+        /*
         let requestNameDate = Date()
         
         let name: String?
@@ -47,5 +48,6 @@ func ScanTest(adapter: Adapter, timeout: Int) {
         catch { name = nil; print("Error fetching name: \(error)"); break }
         
         print(name ?? "[No Name]" + " (\(Date() - requestNameDate)s)")
-    }*/
+        */
+    }
 }

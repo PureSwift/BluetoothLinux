@@ -171,6 +171,9 @@ public struct HCIIOCTL {
     public static let GetDeviceInfo         = IOC.IOR(H, 211, CInt.self)
     
     // TODO: All HCI ioctl defines
+    
+    /// #define HCIINQUIRY	_IOR('H', 240, int)
+    public static let Inquiry               = IOC.IOR(H, 240, CInt.self)
 }
 
 // MARK: - Internal Supporting Types
@@ -464,8 +467,6 @@ internal struct HCIEventHeader: HCIPacketHeader {
         return [event, parameterLength]
     }
 }
-
-
 
 
 

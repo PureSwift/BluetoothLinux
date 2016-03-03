@@ -27,47 +27,18 @@ public extension Adapter {
     /// - Parameter deviceClass: Device class to filter results by.
     ///
     /// - Parameter options: Array of ```ScanOption```.
-    /*func scan(duration: Int = 8, scanLimit: Int = 255, deviceClass: DeviceClass? = nil, options: [ScanOption] = []) throws -> [inquiry_info] {
+    func scan(duration: Int = 8, scanLimit: Int = 255, deviceClass: DeviceClass? = nil, options: [ScanOption] = []) throws -> [InquiryResult] {
         
         assert(duration > 0, "Scan must be longer than 0 seconds")
         assert(scanLimit > 0, "Must scan at least one device")
-        assert(scanLimit <= 255, "Should not scan more then 255 devices for memory allocation purposes")
+        assert(scanLimit <= 255, "Cannot be larger than UInt8.max")
         
         let flags = options.optionsBitmask()
         
-        let inquiryInfoPointers = UnsafeMutablePointer<UnsafeMutablePointer<inquiry_info>>.alloc(scanLimit)
-        defer { inquiryInfoPointers.dealloc(scanLimit) }
-        
-        let deviceClassPointer: UnsafeMutablePointer<UInt8>
-        
-        defer { if deviceClass != nil { deviceClassPointer.dealloc(3) } }
-        
-        if let deviceClass = deviceClass {
-            
-            deviceClassPointer = UnsafeMutablePointer<UInt8>.alloc(3)
-            
-            deviceClassPointer[0] = deviceClass.0
-            deviceClassPointer[1] = deviceClass.1
-            deviceClassPointer[2] = deviceClass.2
-        }
-        else { deviceClassPointer = nil }
-        
-        let foundDevicesCount = hci_inquiry(identifier, CInt(duration), CInt(scanLimit), deviceClassPointer, inquiryInfoPointers, Int(flags))
-        
-        guard foundDevicesCount >= 0 else { throw POSIXError.fromErrorNumber! }
-        
-        var results = [inquiry_info]()
-        
-        for i in 0 ..< Int(foundDevicesCount) {
-            
-            let infoPointer = inquiryInfoPointers[i]
-            
-            results.append(infoPointer.memory)
-        }
-        
-        return results
+        return try HCIInquiry(identifier, duration: duration, scanLimit: scanLimit, deviceClass: deviceClass, flags: flags)
     }
     
+    /*
     /// Requests the remote device for its user-friendly name. 
     func requestDeviceName(deviceAddress: Address, timeout: Int = 0) throws -> String? {
         
@@ -91,6 +62,8 @@ public extension Adapter {
 
 public extension Adapter {
     
+    public typealias DeviceClass = (Byte, Byte, Byte)
+    
     /// Options for scanning Bluetooth devices
     public enum ScanOption: Int32, BitMaskOption {
         
@@ -100,34 +73,64 @@ public extension Adapter {
         case FlushCache = 0x0001
         
     }
-}
-
-public typealias DeviceClass = (Byte, Byte, Byte)
-
-// MARK: - Darwin Stubs
-
-#if os(OSX) || os(iOS)
-    /*
-    public struct inquiry_info {
+    
+    public struct InquiryResult {
         
         /// Device Address
-        var bdaddr: bdaddr_t
+        public var address = Address()
         
-        var pscan_rep_mode: UInt8
+        public var pscanRepMode: UInt8 = 0
         
-        var pscan_period_mode: UInt8
+        public var pscanPeriodMode: UInt8 = 0
         
-        var pscan_mode: UInt8
+        public var pscanMode: UInt8 = 0
         
-        var dev_class: (UInt8, UInt8, UInt8)
+        public var deviceClass: DeviceClass = (0, 0, 0)
         
-        var clock_offset: UInt16
+        public var clockOffset: UInt16 = 0
     }
+}
+
+// MARK: - Internal HCI Functions
+
+internal func HCIInquiry(deviceIdentifier: CInt, duration: Int, scanLimit: Int, deviceClass: Adapter.DeviceClass? = nil, flags: CInt) throws -> [Adapter.InquiryResult] {
     
-    func hci_inquiry(dev_id: CInt, _ len: CInt, _ max_rsp: CInt, _ lap: UnsafeMutablePointer<UInt8>,
-        _ inquiryInfo: UnsafeMutablePointer<UnsafeMutablePointer<inquiry_info>>, _ flags: Int) -> CInt { stub() }
+    typealias InquiryResult = Adapter.InquiryResult
     
-    func hci_read_remote_name(sock: CInt, _ ba: UnsafeMutablePointer<bdaddr_t>, _ len: CInt, _ name: UnsafeMutablePointer<CChar>, _ timeout: CInt) -> CInt { stub() }*/
+    let deviceDescriptor = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.HCI.rawValue)
     
-#endif
+    guard deviceDescriptor >= 0 else { throw POSIXError.fromErrorNumber! }
+    
+    defer { close(deviceDescriptor) }
+    
+    let bufferSize = sizeof(HCIInquiryRequest) + (sizeof(InquiryResult) * scanLimit)
+    
+    let buffer = UnsafeMutablePointer<UInt8>.alloc(bufferSize)
+    
+    defer { buffer.dealloc(bufferSize) }
+    
+    let deviceClass = deviceClass ?? (0x33, 0x8b, 0x9e)
+    
+    let inquiryRequest = UnsafeMutablePointer<HCIInquiryRequest>(buffer)
+    
+    inquiryRequest.memory.identifier = UInt16(deviceIdentifier)
+    inquiryRequest.memory.responseCount = UInt8(scanLimit)
+    inquiryRequest.memory.length = UInt8(duration)
+    inquiryRequest.memory.flags = UInt16(flags)
+    inquiryRequest.memory.lap = deviceClass
+    
+    guard swift_bluetooth_ioctl(deviceDescriptor, HCI.IOCTL.Inquiry, buffer) >= 0
+        else { throw POSIXError.fromErrorNumber! }
+    
+    let resultCount = Int(inquiryRequest.memory.responseCount)
+    
+    let resultBufferSize = sizeof(InquiryResult) * resultCount
+    
+    var results = [InquiryResult](count: resultCount, repeatedValue: InquiryResult())
+    
+    memcpy(&results, buffer.advancedBy(sizeof(HCIInquiryRequest)), resultBufferSize)
+    
+    return results
+}
+
 
