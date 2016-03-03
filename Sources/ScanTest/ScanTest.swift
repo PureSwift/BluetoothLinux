@@ -17,7 +17,7 @@ import SwiftFoundation
 
 /// Tests the Scanning functionality
 func ScanTest(adapter: Adapter, timeout: Int) {
-    
+    /*
     let scanDate = Date()
     
     print("Scanning for ~\(timeout) seconds...")
@@ -47,5 +47,5 @@ func ScanTest(adapter: Adapter, timeout: Int) {
         catch { name = nil; print("Error fetching name: \(error)"); break }
         
         print(name ?? "[No Name]" + " (\(Date() - requestNameDate)s)")
-    }
+    }*/
 }

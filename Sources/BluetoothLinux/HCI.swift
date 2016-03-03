@@ -136,6 +136,14 @@ public enum HCIPacketType: UInt8 {
     case Vendor                             = 0xff
 }
 
+/// HCI Socket Option
+public enum HCISocketOption: CInt {
+    
+    case DataDirection                      = 1
+    case Filter                             = 2
+    case TimeStamp                          = 3
+}
+
 /// HCI `ioctl()` defines
 public struct HCIIOCTL {
     
@@ -332,17 +340,76 @@ internal struct HCIDeviceStats {
     init() { }
 }
 
+internal struct HCIFilter {
+    
+    internal struct Bits {
+        
+        static let Type                 = CInt(31)
+        static let Event                = CInt(63)
+        static let OpcodeGroupField     = CInt(63)
+        static let OpcodeCommandField   = CInt(127)
+    }
+    
+    var typeMask: UInt32 = 0
+    
+    var eventMask: (UInt32, UInt32) = (0, 0)
+    
+    var opcode: UInt16 = 0
+    
+    init() { }
+    
+    @inline(__always)
+    mutating func clear() {
+        
+        var newFilter = HCIFilter()
+        
+        memset(&newFilter, 0, sizeof(HCIFilter))
+        
+        self = newFilter
+    }
+    
+    @inline(__always)
+    func setPacketType(type: HCIPacketType) {
+        
+        
+    }
+}
+
+// HCI Bit functions
+
+@inline(__always)
+internal func HCISetBit(bit: Int32, inout destination: Int32) {
+    
+    let unsignedBit = UInt32(bitPattern: bit)
+    
+    var unsignedDestination = UInt32(bitPattern: destination)
+    
+    unsignedDestination = (unsignedDestination + (unsignedBit >> 5)) | (1 << (unsignedBit & 31))
+    
+    // set value
+    destination = Int32(bitPattern: unsignedDestination)
+}
+
 /* --------  HCI Packet structures  -------- */
 
-/// hci_command_hdr (packed)
-internal struct HCICommandHeader {
+internal protocol HCIPacketHeader {
+    
+    static var length: Int { get }
+    
+    var byteValue: [UInt8] { get }
+}
+
+// hci_command_hdr (packed)
+
+/// HCI Command Packet Header
+internal struct HCICommandHeader: HCIPacketHeader {
     
     static let length = 3
     
     /// OCF & OGF
-    var opcode: UInt16 = 0// uint16_t opcode;
+    var opcode: UInt16 = 0 // uint16_t opcode;
     
-    var parameterLength: UInt8 = 0// uint8_t plen;
+    var parameterLength: UInt8 = 0 // uint8_t plen;
     
     init() { }
     
@@ -353,6 +420,25 @@ internal struct HCICommandHeader {
         return [opcodeBytes.0, opcodeBytes.1, parameterLength]
     }
 }
+
+/// HCI Event Packet Header
+internal struct HCIEventHeader: HCIPacketHeader {
+    
+    static let length = 2
+    
+    var event: UInt8 = 0
+    
+    var parameterLength: UInt8 = 0
+    
+    init() { }
+    
+    var byteValue: [UInt8] {
+        
+        return [event, parameterLength]
+    }
+}
+
+
 
 
 

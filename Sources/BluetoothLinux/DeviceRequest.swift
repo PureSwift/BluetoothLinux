@@ -43,12 +43,31 @@ public extension Adapter {
 // MARK: - Internal HCI Functions
 
 /// int hci_send_req(int dd, struct hci_request *r, int to)
-internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), ) throws {
+internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), timeout: Int) throws {
     
     var eventBuffer = [UInt8](count: HCI.MaximumEventSize, repeatedValue: 0)
     
+    let opcodePacked = HCICommandOpcodePack(opcode.commandField, opcode.groupField).littleEndian
+    
+    var newFilter = HCIFilter()
+    
+    var oldFilter = HCIFilter()
+    
+    let oldFilterPointer = withUnsafeMutablePointer(&oldFilter) { UnsafeMutablePointer<Void>($0) }
+    
+    var filterLength = socklen_t(sizeof(HCIFilter))
+    
+    guard getsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, &filterLength) == 0
+        else { throw POSIXError.fromErrorNumber! }
+    
+    var eventHeader = HCIEventHeader()
+    
     
 }
+
+// MARK: - Internal Constants
+
+let SOL_HCI: CInt = 0
 
 // MARK: - Darwin Stubs
 

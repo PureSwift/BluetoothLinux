@@ -27,7 +27,7 @@ public extension Adapter {
     /// - Parameter deviceClass: Device class to filter results by.
     ///
     /// - Parameter options: Array of ```ScanOption```.
-    func scan(duration: Int = 8, scanLimit: Int = 255, deviceClass: DeviceClass? = nil, options: [ScanOption] = []) throws -> [inquiry_info] {
+    /*func scan(duration: Int = 8, scanLimit: Int = 255, deviceClass: DeviceClass? = nil, options: [ScanOption] = []) throws -> [inquiry_info] {
         
         assert(duration > 0, "Scan must be longer than 0 seconds")
         assert(scanLimit > 0, "Must scan at least one device")
@@ -84,7 +84,7 @@ public extension Adapter {
         let name = String.fromCString(nameBuffer)
         
         return name
-    }
+    }*/
 }
 
 // MARK: - Supporting Types
@@ -107,7 +107,7 @@ public typealias DeviceClass = (Byte, Byte, Byte)
 // MARK: - Darwin Stubs
 
 #if os(OSX) || os(iOS)
-    
+    /*
     public struct inquiry_info {
         
         /// Device Address
@@ -127,7 +127,7 @@ public typealias DeviceClass = (Byte, Byte, Byte)
     func hci_inquiry(dev_id: CInt, _ len: CInt, _ max_rsp: CInt, _ lap: UnsafeMutablePointer<UInt8>,
         _ inquiryInfo: UnsafeMutablePointer<UnsafeMutablePointer<inquiry_info>>, _ flags: Int) -> CInt { stub() }
     
-    func hci_read_remote_name(sock: CInt, _ ba: UnsafeMutablePointer<bdaddr_t>, _ len: CInt, _ name: UnsafeMutablePointer<CChar>, _ timeout: CInt) -> CInt { stub() }
+    func hci_read_remote_name(sock: CInt, _ ba: UnsafeMutablePointer<bdaddr_t>, _ len: CInt, _ name: UnsafeMutablePointer<CChar>, _ timeout: CInt) -> CInt { stub() }*/
     
 #endif
 

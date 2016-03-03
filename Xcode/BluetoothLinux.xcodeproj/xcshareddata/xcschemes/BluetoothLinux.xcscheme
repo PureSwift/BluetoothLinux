@@ -28,7 +28,26 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6EF928F51C8830D100D9A103"
+               BuildableName = "BluetoothLinuxTests.xctest"
+               BlueprintName = "BluetoothLinuxTests"
+               ReferencedContainer = "container:BluetoothLinux.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "6E92A4231C15309B007BC4E9"
+            BuildableName = "BluetoothLinux.framework"
+            BlueprintName = "BluetoothLinux"
+            ReferencedContainer = "container:BluetoothLinux.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>

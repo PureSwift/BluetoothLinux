@@ -48,7 +48,36 @@
 		6EA37EF81C84D6CE00A61969 /* GATT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA37EF71C84D6CE00A61969 /* GATT.swift */; };
 		6ECB305D1C47613F004CCA68 /* LinkControlCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB305C1C47613F004CCA68 /* LinkControlCommand.swift */; };
 		6ECB30601C47618E004CCA68 /* HCICommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB305F1C47618E004CCA68 /* HCICommand.swift */; };
+		6EF928FB1C8830D200D9A103 /* BluetoothLinux.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E92A4241C15309B007BC4E9 /* BluetoothLinux.framework */; };
+		6EF929031C88316D00D9A103 /* MathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF929021C88316D00D9A103 /* MathTests.swift */; };
+		6EF929071C8832FF00D9A103 /* DarwinTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF929061C8832FF00D9A103 /* DarwinTests.m */; };
+		6EF929091C88346C00D9A103 /* IOCTLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF929081C88346C00D9A103 /* IOCTLTests.swift */; };
+		6EF929101C88379400D9A103 /* SwiftFoundation.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 6EF9290E1C88378B00D9A103 /* SwiftFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6EF928FC1C8830D200D9A103 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E92A41B1C15309B007BC4E9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E92A4231C15309B007BC4E9;
+			remoteInfo = BluetoothLinux;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6EF9290B1C88376400D9A103 /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6EF929101C88379400D9A103 /* SwiftFoundation.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		6E0C5BB81C8373DB00AF63E5 /* Darwin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Darwin.swift; sourceTree = "<group>"; };
@@ -80,7 +109,6 @@
 		6E795E9A1C49821B002377FE /* LinkMode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkMode.swift; sourceTree = "<group>"; };
 		6E881D811C389F4B00E509A9 /* iBeacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iBeacon.swift; sourceTree = "<group>"; };
 		6E881D831C39783F00E509A9 /* DeviceRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceRequest.swift; sourceTree = "<group>"; };
-		6E881DA51C398D0C00E509A9 /* Headers */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Headers; path = ../Headers; sourceTree = "<group>"; };
 		6E881DAB1C3996A200E509A9 /* OpcodeGroupField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpcodeGroupField.swift; sourceTree = "<group>"; };
 		6E894BF31C83B51B00109F45 /* AddressType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressType.swift; sourceTree = "<group>"; };
 		6E894C011C83F1C500109F45 /* L2CAP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = L2CAP.swift; sourceTree = "<group>"; };
@@ -98,6 +126,15 @@
 		6EA37EF71C84D6CE00A61969 /* GATT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATT.swift; sourceTree = "<group>"; };
 		6ECB305C1C47613F004CCA68 /* LinkControlCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkControlCommand.swift; sourceTree = "<group>"; };
 		6ECB305F1C47618E004CCA68 /* HCICommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCICommand.swift; sourceTree = "<group>"; };
+		6EF928F61C8830D100D9A103 /* BluetoothLinuxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BluetoothLinuxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6EF928FA1C8830D200D9A103 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6EF929021C88316D00D9A103 /* MathTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MathTests.swift; sourceTree = "<group>"; };
+		6EF929041C8831C700D9A103 /* MathTestsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathTestsHelper.h; sourceTree = "<group>"; };
+		6EF929051C8832FF00D9A103 /* BluetoothLinuxTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BluetoothLinuxTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		6EF929061C8832FF00D9A103 /* DarwinTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DarwinTests.m; sourceTree = "<group>"; };
+		6EF929081C88346C00D9A103 /* IOCTLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IOCTLTests.swift; sourceTree = "<group>"; };
+		6EF9290A1C88350600D9A103 /* IOCTLTestsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOCTLTestsHelper.h; sourceTree = "<group>"; };
+		6EF9290E1C88378B00D9A103 /* SwiftFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SwiftFoundation.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,17 +145,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6EF928F31C8830D100D9A103 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6EF928FB1C8830D200D9A103 /* BluetoothLinux.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		6E0C5BBA1C83794700AF63E5 /* Tests */ = {
+		6E0C5BBA1C83794700AF63E5 /* Tests Tools */ = {
 			isa = PBXGroup;
 			children = (
 				6EA37EF01C84B4EA00A61969 /* L2CAPServerTest */,
 				6E0C5BBF1C837A9F00AF63E5 /* iBeaconTest */,
 				6E0C5BBC1C8379D100AF63E5 /* ScanTest */,
 			);
-			name = Tests;
+			name = "Tests Tools";
 			sourceTree = "<group>";
 		};
 		6E0C5BBC1C8379D100AF63E5 /* ScanTest */ = {
@@ -154,11 +199,13 @@
 		6E92A41A1C15309B007BC4E9 = {
 			isa = PBXGroup;
 			children = (
+				6EF9290C1C88377100D9A103 /* Dependencies */,
 				6E92A42F1C1530DC007BC4E9 /* Package.swift */,
-				6E881DA51C398D0C00E509A9 /* Headers */,
-				6E0C5BBA1C83794700AF63E5 /* Tests */,
+				6EF929011C88312A00D9A103 /* Unit Tests */,
+				6E0C5BBA1C83794700AF63E5 /* Tests Tools */,
 				6E92A4311C1530EF007BC4E9 /* Source */,
 				6E92A4261C15309B007BC4E9 /* BluetoothLinux */,
+				6EF928F71C8830D200D9A103 /* BluetoothLinuxTests */,
 				6E92A4251C15309B007BC4E9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -167,6 +214,7 @@
 			isa = PBXGroup;
 			children = (
 				6E92A4241C15309B007BC4E9 /* BluetoothLinux.framework */,
+				6EF928F61C8830D100D9A103 /* BluetoothLinuxTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -240,6 +288,45 @@
 			name = "HCI Commands";
 			sourceTree = "<group>";
 		};
+		6EF928F71C8830D200D9A103 /* BluetoothLinuxTests */ = {
+			isa = PBXGroup;
+			children = (
+				6EF928FA1C8830D200D9A103 /* Info.plist */,
+				6EF929051C8832FF00D9A103 /* BluetoothLinuxTests-Bridging-Header.h */,
+				6EF929041C8831C700D9A103 /* MathTestsHelper.h */,
+				6EF9290A1C88350600D9A103 /* IOCTLTestsHelper.h */,
+				6EF929061C8832FF00D9A103 /* DarwinTests.m */,
+			);
+			path = BluetoothLinuxTests;
+			sourceTree = "<group>";
+		};
+		6EF929011C88312A00D9A103 /* Unit Tests */ = {
+			isa = PBXGroup;
+			children = (
+				6EF929021C88316D00D9A103 /* MathTests.swift */,
+				6EF929081C88346C00D9A103 /* IOCTLTests.swift */,
+			);
+			name = "Unit Tests";
+			path = ../Tests;
+			sourceTree = "<group>";
+		};
+		6EF9290C1C88377100D9A103 /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				6EF9290D1C88378B00D9A103 /* Mac */,
+			);
+			name = Dependencies;
+			sourceTree = "<group>";
+		};
+		6EF9290D1C88378B00D9A103 /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				6EF9290E1C88378B00D9A103 /* SwiftFoundation.framework */,
+			);
+			name = Mac;
+			path = ../Carthage/Build/Mac;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -272,17 +359,40 @@
 			productReference = 6E92A4241C15309B007BC4E9 /* BluetoothLinux.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		6EF928F51C8830D100D9A103 /* BluetoothLinuxTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6EF929001C8830D200D9A103 /* Build configuration list for PBXNativeTarget "BluetoothLinuxTests" */;
+			buildPhases = (
+				6EF928F21C8830D100D9A103 /* Sources */,
+				6EF928F31C8830D100D9A103 /* Frameworks */,
+				6EF928F41C8830D100D9A103 /* Resources */,
+				6EF9290B1C88376400D9A103 /* Copy Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6EF928FD1C8830D200D9A103 /* PBXTargetDependency */,
+			);
+			name = BluetoothLinuxTests;
+			productName = BluetoothLinuxTests;
+			productReference = 6EF928F61C8830D100D9A103 /* BluetoothLinuxTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		6E92A41B1C15309B007BC4E9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0720;
 				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = PureSwift;
 				TargetAttributes = {
 					6E92A4231C15309B007BC4E9 = {
 						CreatedOnToolsVersion = 7.1.1;
+					};
+					6EF928F51C8830D100D9A103 = {
+						CreatedOnToolsVersion = 7.2.1;
 					};
 				};
 			};
@@ -299,12 +409,20 @@
 			projectRoot = "";
 			targets = (
 				6E92A4231C15309B007BC4E9 /* BluetoothLinux */,
+				6EF928F51C8830D100D9A103 /* BluetoothLinuxTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		6E92A4221C15309B007BC4E9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6EF928F41C8830D100D9A103 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -361,7 +479,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6EF928F21C8830D100D9A103 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6EF929071C8832FF00D9A103 /* DarwinTests.m in Sources */,
+				6EF929091C88346C00D9A103 /* IOCTLTests.swift in Sources */,
+				6EF929031C88316D00D9A103 /* MathTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6EF928FD1C8830D200D9A103 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E92A4231C15309B007BC4E9 /* BluetoothLinux */;
+			targetProxy = 6EF928FC1C8830D200D9A103 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		6E92A42A1C15309B007BC4E9 /* Debug */ = {
@@ -490,6 +626,35 @@
 			};
 			name = Release;
 		};
+		6EF928FE1C8830D200D9A103 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/Mac;
+				INFOPLIST_FILE = BluetoothLinuxTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.pureswift.BluetoothLinuxTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "BluetoothLinuxTests/BluetoothLinuxTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		6EF928FF1C8830D200D9A103 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/Mac;
+				INFOPLIST_FILE = BluetoothLinuxTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.pureswift.BluetoothLinuxTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "BluetoothLinuxTests/BluetoothLinuxTests-Bridging-Header.h";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -507,6 +672,15 @@
 			buildConfigurations = (
 				6E92A42D1C15309B007BC4E9 /* Debug */,
 				6E92A42E1C15309B007BC4E9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6EF929001C8830D200D9A103 /* Build configuration list for PBXNativeTarget "BluetoothLinuxTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6EF928FE1C8830D200D9A103 /* Debug */,
+				6EF928FF1C8830D200D9A103 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
