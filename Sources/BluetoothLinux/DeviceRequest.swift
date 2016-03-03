@@ -70,15 +70,6 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
     guard getsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, &filterLength) == 0
         else { throw POSIXError.fromErrorNumber! }
     
-    // restore old filter in case of error
-    func restoreFilter(error: ErrorType) throws {
-        
-        guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, newFilterPointer, filterLength) == 0
-            else { throw POSIXError.fromErrorNumber! }
-        
-        
-    }
-    
     // configure new filter
     newFilter.setPacketType(.Event)
     newFilter.setEvent(HCIGeneralEvent.CommandStatus.rawValue)
@@ -90,6 +81,21 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
     // set new filter
     guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, newFilterPointer, filterLength) == 0
         else { throw POSIXError.fromErrorNumber! }
+    
+    // restore old filter in case of error
+    func restoreFilter(error) -> ErrorType {
+        
+        assert(errno != 0, "errno == 0")
+        
+        let oldPOSIXError = errno
+        
+        guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, newFilterPointer, filterLength) == 0
+            else { return AdapterError.CouldNotRestoreFilter(POSIXError(rawValue: oldPOSIXError)!, POSIXError.fromErrorNumber!) }
+        
+        assert(oldPOSIXError == errno)
+        
+        return POSIXError.fromErrorNumber!
+    }
     
     // send command
     try HCISendCommand(deviceDescriptor, opcode: opcode, parameterData: commandParameterData)
