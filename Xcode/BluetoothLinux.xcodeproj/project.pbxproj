@@ -106,6 +106,7 @@
 		6E739C861C88486A00D4775B /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		6E739C891C884F1200D4775B /* HCIGeneralEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIGeneralEvent.swift; sourceTree = "<group>"; };
 		6E739C8B1C884F3A00D4775B /* HCIGeneralEventParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIGeneralEventParameter.swift; sourceTree = "<group>"; };
+		6E739C8D1C88EE4C00D4775B /* ioctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioctl.h; sourceTree = "<group>"; };
 		6E795E881C47EC8F002377FE /* LowEnergyCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyCommand.swift; sourceTree = "<group>"; };
 		6E795E8F1C489FE7002377FE /* LowEnergyCommandParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyCommandParameter.swift; sourceTree = "<group>"; };
 		6E795E911C48A186002377FE /* LinkControlCommandParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkControlCommandParameter.swift; sourceTree = "<group>"; };
@@ -298,6 +299,7 @@
 				6EF929051C8832FF00D9A103 /* BluetoothLinuxTests-Bridging-Header.h */,
 				6EF929041C8831C700D9A103 /* MathTestsHelper.h */,
 				6EF9290A1C88350600D9A103 /* IOCTLTestsHelper.h */,
+				6E739C8D1C88EE4C00D4775B /* ioctl.h */,
 				6EF929061C8832FF00D9A103 /* DarwinTests.m */,
 			);
 			path = BluetoothLinuxTests;
