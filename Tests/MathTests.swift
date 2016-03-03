@@ -15,19 +15,43 @@
         
         func testHCIMath() {
             
-            let bit = HCIFilter.Bits.Event
+            let bit = HCIFilter.Bits.OpcodeGroupField
             
-            var cDestination: CInt = 0
+            var cDestination: UInt32 = CInt.max
             
-            hci_set_bit(bit, &cDestination)
+            hci_set_bit(bit, withUnsafeMutablePointer(&cDestination, { UnsafeMutablePointer<Void>($0) }))
             
-            var swiftDestination: CInt = 0
+            var swiftDestination: UInt32 = 0
             
             HCISetBit(bit, destination: &swiftDestination)
             
             XCTAssert(cDestination == swiftDestination, "\(cDestination) == \(swiftDestination)")
         }
         
+        func testIOCTLConstants() {
+            
+            let swiftDefinitionList = [
+                HCI.IOCTL.DeviceUp,
+                HCI.IOCTL.DeviceDown,
+                HCI.IOCTL.DeviceReset,
+                HCI.IOCTL.DeviceRestat
+            ]
+            
+            var cListCopy = hci_ioctl_list
+            
+            let cListPointer = withUnsafeMutablePointer(&cListCopy) { UnsafeMutablePointer<Int32>($0) }
+            
+            for (index, swiftDefinition) in swiftDefinitionList.enumerate() {
+                
+                let cDefinition = cListPointer[index]
+                
+                guard swiftDefinition == cDefinition else {
+                    
+                    XCTFail("\(swiftDefinition) == \(cDefinition)")
+                    return
+                }
+            }
+        }
     }
 
 #endif
