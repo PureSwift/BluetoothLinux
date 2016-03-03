@@ -40,7 +40,7 @@ public final class Adapter {
     public convenience init(address: Address? = nil) throws {
         
         guard let deviceIdentifier = try HCIGetRoute(address)
-            else { throw BluetoothLinuxError.AdapterNotFound }
+            else { throw Error.AdapterNotFound }
         
         let internalSocket = try HCIOpenDevice(deviceIdentifier)
         
@@ -52,6 +52,27 @@ public final class Adapter {
         self.identifier = identifier
         self.internalSocket = internalSocket
     }
+}
+
+// MARK: - Errors
+
+public extension Adapter {
+    
+    public typealias Error = AdapterError
+}
+
+public enum AdapterError: ErrorType {
+    
+    /// The specified adapter could not be found.
+    case AdapterNotFound
+    
+    /// The error status byte used with `deviceRequest()`.
+    case DeviceRequestStatus(UInt8)
+    
+    /// A method that changed the adapter's filter had en internal error, and unsuccessfully tried to restore the previous filter.
+    ///
+    /// First error is the method's error. Second is the error while trying to restore the filter
+    case CouldNotRestoreFilter(ErrorType, ErrorType)
 }
 
 // MARK: - Internal HCI Functions

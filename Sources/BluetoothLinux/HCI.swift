@@ -373,14 +373,22 @@ internal struct HCIFilter {
         
         let bit = type == .Event ? 0 : CInt(type.rawValue) & HCIFilter.Bits.Type
         
-        HCISetBit(bit, destination: &typeMask)
+        HCISetBit(bit, &typeMask)
+    }
+    
+    @inline(__always)
+    mutating func setEvent(event: UInt8) {
+        
+        let bit = (CInt(event) & HCIFilter.Bits.Event)
+        
+        HCISetBit(bit, &eventMask.0)
     }
 }
 
 // HCI Bit functions
 
 @inline(__always)
-internal func HCISetBit(bit: CInt, inout destination: UInt32) {
+internal func HCISetBit(bit: CInt, inout _ destination: UInt32) {
     
     let unsignedBit = UInt32(bit)
     

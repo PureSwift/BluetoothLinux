@@ -54,7 +54,7 @@ public extension Adapter {
         try self.deviceRequest(LowEnergyCommand.SetAdvertisingData, parameter: advertisingDataCommand, timeout: commandTimeout)
     }
     
-    func disableBeacon() throws {
+    func setAdvertising(enabled: Bool) throws {
         
         // stop advertising
         var enableAdvertise = le_set_advertise_enable_cp()

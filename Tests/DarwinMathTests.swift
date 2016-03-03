@@ -34,7 +34,7 @@
             swiftFilter.setPacketType(.Event)
             
             var cFilter = hci_filter()
-            hci_filter_set_ptype(CInt(HCIPacketType.Event.rawValue), &cFilter)
+            hci_filter_set_ptype(HCI_EVENT_PKT, &cFilter)
             
             XCTAssert(swiftFilter.typeMask == cFilter.type_mask, "\(swiftFilter.typeMask) == \(cFilter.type_mask)")
         }

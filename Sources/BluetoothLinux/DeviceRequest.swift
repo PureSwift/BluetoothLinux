@@ -15,7 +15,14 @@
 public extension Adapter {
 
     /// Sends a command to the device and waits for a response.
-    func deviceRequest<T: HCICommandParameter>(command: T, timeout: Int = 1000) throws {
+    @inline(__always)
+    func deviceRequest<T: HCICommand>(command: T, timeout: Int = 1000) throws {
+        
+        
+    }
+    
+    @inline(__always)
+    func deviceRequest<T: HCICommandParameter>(commandParameter: T, timeout: Int = 1000) throws {
         
         
     }
@@ -43,57 +50,67 @@ public extension Adapter {
 // MARK: - Internal HCI Functions
 
 /// int hci_send_req(int dd, struct hci_request *r, int to)
-internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), timeout: Int) throws {
+internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), commandParameterData: [UInt8] = [], event: UInt8 = 0, timeout: Int = 0) throws {
     
-    var eventBuffer = [UInt8](count: HCI.MaximumEventSize, repeatedValue: 0)
+    // assertions
+    assert(timeout >= 0, "Negative timeout value")
+    assert(timeout <= Int(Int32.max), "Timeout > Int32.max")
     
+    // initialize variables
     let opcodePacked = HCICommandOpcodePack(opcode.commandField, opcode.groupField).littleEndian
-    
-    var newFilter = HCIFilter()
-    
+    var eventBuffer = [UInt8](count: HCI.MaximumEventSize, repeatedValue: 0)
+    var eventHeader = HCIEventHeader()
     var oldFilter = HCIFilter()
-    
+    var newFilter = HCIFilter()
     let oldFilterPointer = withUnsafeMutablePointer(&oldFilter) { UnsafeMutablePointer<Void>($0) }
-    
+    let newFilterPointer = withUnsafeMutablePointer(&oldFilter) { UnsafeMutablePointer<Void>($0) }
     var filterLength = socklen_t(sizeof(HCIFilter))
     
+    // get old filter
     guard getsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, &filterLength) == 0
         else { throw POSIXError.fromErrorNumber! }
     
-    var eventHeader = HCIEventHeader()
+    // restore old filter in case of error
+    func restoreFilter(error: ErrorType) throws {
+        
+        guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, newFilterPointer, filterLength) == 0
+            else { throw POSIXError.fromErrorNumber! }
+        
+        
+    }
     
+    // configure new filter
+    newFilter.setPacketType(.Event)
+    newFilter.setEvent(HCIGeneralEvent.CommandStatus.rawValue)
+    newFilter.setEvent(HCIGeneralEvent.CommandComplete.rawValue)
+    newFilter.setEvent(HCIGeneralEvent.LowEnergyMeta.rawValue)
+    newFilter.setEvent(event)
+    newFilter.opcode = opcodePacked
     
+    // set new filter
+    guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, newFilterPointer, filterLength) == 0
+        else { throw POSIXError.fromErrorNumber! }
+    
+    // send command
+    try HCISendCommand(deviceDescriptor, opcode: opcode, parameterData: commandParameterData)
+    
+    // retrieve data...
+    
+    // wait for timeout
+    if timeout > 0 {
+        
+        var timeoutPoll = pollfd(fd: deviceDescriptor, events: Int16(POLLIN), revents: 0)
+        var pollStatus: CInt = 0
+        
+        repeat { pollStatus = poll(&timeoutPoll, 1, CInt(timeout)) }
+        
+        while (n = )
+        
+    }
 }
 
 // MARK: - Internal Constants
 
 let SOL_HCI: CInt = 0
 
-// MARK: - Darwin Stubs
 
-#if os(OSX) || os(iOS)
-
-    /// Sends command and waits for response.
-    func hci_send_req(dd: CInt, _ hcirequest: UnsafeMutablePointer<hci_request>, _ timeout: CInt) -> CInt { stub() }
-
-    struct hci_request {
-
-        var ogf: UInt16
-
-        var ocf: UInt16
-
-        /// The event code of the event to wait for.
-        var event: CInt
-
-        var cparam: UnsafeMutablePointer<Void>
-
-        var clen: CInt
-
-        var rparam: UnsafeMutablePointer<Void>
-
-        var rlen: CInt
-
-        init() { stub() }
-    }
-
-#endif
