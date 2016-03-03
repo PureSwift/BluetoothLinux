@@ -24,5 +24,10 @@ public extension LowEnergyEvent {
         public var masterClockAccuracy: UInt8 = 0
         
         public init() { }
+        
+        public init?(byteValue: [UInt8]) {
+            
+            
+        }
     }
 }

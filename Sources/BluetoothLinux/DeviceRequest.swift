@@ -12,6 +12,8 @@
     import Darwin.C
 #endif
 
+import SwiftFoundation
+
 public extension Adapter {
 
     /// Sends a command to the device and waits for a response.
@@ -50,7 +52,8 @@ public extension Adapter {
 // MARK: - Internal HCI Functions
 
 /// int hci_send_req(int dd, struct hci_request *r, int to)
-internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), commandParameterData: [UInt8] = [], event: UInt8 = 0, timeout: Int = 0) throws {
+/// Returns event parameter data.
+internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), commandParameterData: [UInt8] = [], event: UInt8 = 0, timeout: Int = 0) throws -> [UInt8] {
     
     // assertions
     assert(timeout >= 0, "Negative timeout value")
@@ -60,7 +63,6 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
     var timeout = timeout
     let opcodePacked = HCICommandOpcodePack(opcode.commandField, opcode.groupField).littleEndian
     var eventBuffer = [UInt8](count: HCI.MaximumEventSize, repeatedValue: 0)
-    var eventHeader = HCIEventHeader()
     var oldFilter = HCIFilter()
     var newFilter = HCIFilter()
     let oldFilterPointer = withUnsafeMutablePointer(&oldFilter) { UnsafeMutablePointer<Void>($0) }
@@ -105,8 +107,6 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
         // decrement attempts
         attempts -= 1
         
-        var length = 0
-        
         // wait for timeout
         if timeout > 0 {
             
@@ -147,8 +147,87 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
             }
         }
         
+        var actualBytesRead = 0
         
+        func doRead() { actualBytesRead = read(deviceDescriptor, &eventBuffer, eventBuffer.count) }
+        
+        doRead()
+        
+        while actualBytesRead < 0 {
+            
+            // ignore these errors
+            if (errno == EAGAIN || errno == EINTR) {
+                
+                // try again
+                doRead()
+                continue
+                
+            } else {
+                
+                // attempt to restore filter and throw
+                throw restoreFilter(POSIXError.fromErrorNumber!)
+            }
+        }
+        
+        let headerData = Array(eventBuffer[1 ..< HCIEventHeader.length])
+        let eventData = Array(eventBuffer[(1 + HCIEventHeader.length) ..< actualBytesRead])
+        //var length = actualBytesRead - (1 + HCIEventHeader.length)
+        
+        guard let eventHeader = HCIEventHeader(byteValue: headerData)
+            else { throw restoreFilter(AdapterError.GarbageResponse(Data(byteValue: eventBuffer))) }
+        
+        func done() throws {
+            
+            guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, newFilterPointer, filterLength) == 0
+                else { throw POSIXError.fromErrorNumber! }
+        }
+        
+        switch eventHeader.event {
+            
+        case HCIGeneralEvent.CommandStatus.rawValue:
+            
+            guard let parameter = HCIGeneralEvent.CommandStatusParameter(byteValue: eventData)
+                else { throw AdapterError.GarbageResponse(Data(byteValue: eventBuffer)) }
+            
+            guard parameter.opcode == opcodePacked else { continue }
+            
+            guard event == HCIGeneralEvent.CommandStatus.rawValue else {
+                
+                guard parameter.status == 0
+                    else { throw restoreFilter(POSIXError(rawValue: EIO)!) }
+                
+                break
+            }
+            
+            // success!
+            try done()
+            return eventData
+            
+        case HCIGeneralEvent.CommandComplete.rawValue:
+            
+            guard let parameter = HCIGeneralEvent.CommandCompleteParameter(byteValue: eventData)
+                else { throw AdapterError.GarbageResponse(Data(byteValue: eventBuffer)) }
+            
+            guard parameter.opcode == opcodePacked else { continue }
+            
+            
+            
+            // success!
+            try done()
+            return eventData
+            
+        // all other events
+        default:
+            
+            
+            
+            try done()
+            return eventData
+        }
     }
+    
+    // throw timeout error
+    throw POSIXError(rawValue: ETIMEDOUT)!
 }
 
 // MARK: - Internal Constants

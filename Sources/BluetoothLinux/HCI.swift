@@ -40,7 +40,7 @@ public struct HCI {
     public typealias IOCTL                  = HCIIOCTL
 }
 
-/// HCI Errors
+/// Bluetooth HCI Errors
 public enum HCIError: UInt8, ErrorType {
     
     case UnknownCommand                     = 0x01
@@ -401,6 +401,8 @@ internal protocol HCIPacketHeader {
     
     static var length: Int { get }
     
+    init?(byteValue: [UInt8])
+    
     var byteValue: [UInt8] { get }
 }
 
@@ -417,6 +419,15 @@ internal struct HCICommandHeader: HCIPacketHeader {
     var parameterLength: UInt8 = 0 // uint8_t plen;
     
     init() { }
+    
+    init?(byteValue: [UInt8]) {
+        
+        guard byteValue.count == HCICommandHeader.length
+            else { return nil }
+        
+        self.opcode = UInt16(littleEndian: (byteValue[0], byteValue[1]))
+        self.parameterLength = byteValue[2]
+    }
     
     var byteValue: [UInt8] {
         
@@ -436,6 +447,15 @@ internal struct HCIEventHeader: HCIPacketHeader {
     var parameterLength: UInt8 = 0
     
     init() { }
+    
+    init?(byteValue: [UInt8]) {
+        
+        guard byteValue.count == HCIEventHeader.length
+            else { return nil }
+        
+        self.event = byteValue[0]
+        self.parameterLength = byteValue[1]
+    }
     
     var byteValue: [UInt8] {
         

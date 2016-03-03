@@ -29,5 +29,8 @@ public protocol HCIEventParameter {
     
     /// Length of the event parameter when encoded to data.
     static var length: Int { get }
+    
+    /// Attempt to initialize event parameter from data. 
+    init?(byteValue: [UInt8])
 }
 

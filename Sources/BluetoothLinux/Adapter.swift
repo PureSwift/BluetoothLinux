@@ -73,6 +73,9 @@ public enum AdapterError: ErrorType {
     ///
     /// First error is the method's error. Second is the error while trying to restore the filter
     case CouldNotRestoreFilter(ErrorType, ErrorType)
+    
+    /// The recieved data could not be parsed correctly.
+    case GarbageResponse(Data)
 }
 
 // MARK: - Internal HCI Functions

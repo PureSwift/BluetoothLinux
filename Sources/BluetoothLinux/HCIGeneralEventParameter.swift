@@ -19,6 +19,11 @@ public extension HCIGeneralEvent {
         public var opcode: UInt16 = 0
         
         public init() { }
+        
+        public init?(byteValue: [UInt8]) {
+            
+            
+        }
     }
     
     public struct CommandStatusParameter: HCIEventParameter {
@@ -31,6 +36,11 @@ public extension HCIGeneralEvent {
         public var opcode: UInt16 = 0
         
         public init() { }
+        
+        public init?(byteValue: [UInt8]) {
+            
+            
+        }
     }
     
     public struct LowEnergyMetaParameter: HCIEventParameter {
@@ -42,5 +52,10 @@ public extension HCIGeneralEvent {
         public var data = [Int8]()
         
         public init() { }
+        
+        public init?(byteValue: [UInt8]) {
+            
+            
+        }
     }
 }
