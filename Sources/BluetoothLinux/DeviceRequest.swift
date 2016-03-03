@@ -57,6 +57,7 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
     assert(timeout <= Int(Int32.max), "Timeout > Int32.max")
     
     // initialize variables
+    var timeout = timeout
     let opcodePacked = HCICommandOpcodePack(opcode.commandField, opcode.groupField).littleEndian
     var eventBuffer = [UInt8](count: HCI.MaximumEventSize, repeatedValue: 0)
     var eventHeader = HCIEventHeader()
@@ -83,34 +84,69 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
         else { throw POSIXError.fromErrorNumber! }
     
     // restore old filter in case of error
-    func restoreFilter(error) -> ErrorType {
-        
-        assert(errno != 0, "errno == 0")
-        
-        let oldPOSIXError = errno
+    func restoreFilter(error: ErrorType) -> ErrorType {
         
         guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, newFilterPointer, filterLength) == 0
-            else { return AdapterError.CouldNotRestoreFilter(POSIXError(rawValue: oldPOSIXError)!, POSIXError.fromErrorNumber!) }
+            else { return AdapterError.CouldNotRestoreFilter(error, POSIXError.fromErrorNumber!) }
         
-        assert(oldPOSIXError == errno)
-        
-        return POSIXError.fromErrorNumber!
+        return error
     }
     
     // send command
-    try HCISendCommand(deviceDescriptor, opcode: opcode, parameterData: commandParameterData)
+    do { try HCISendCommand(deviceDescriptor, opcode: opcode, parameterData: commandParameterData) }
+    catch { throw restoreFilter(error) }
     
     // retrieve data...
     
-    // wait for timeout
-    if timeout > 0 {
+    var attempts = 10
+    
+    while attempts > 0 {
         
-        var timeoutPoll = pollfd(fd: deviceDescriptor, events: Int16(POLLIN), revents: 0)
-        var pollStatus: CInt = 0
+        // decrement attempts
+        attempts -= 1
         
-        repeat { pollStatus = poll(&timeoutPoll, 1, CInt(timeout)) }
+        var length = 0
         
-        while (n = )
+        // wait for timeout
+        if timeout > 0 {
+            
+            var timeoutPoll = pollfd(fd: deviceDescriptor, events: Int16(POLLIN), revents: 0)
+            var pollStatus: CInt = 0
+            
+            func doPoll() { pollStatus = poll(&timeoutPoll, 1, CInt(timeout)) }
+            
+            doPoll()
+            
+            while pollStatus < 0 {
+                
+                // ignore these errors
+                if (errno == EAGAIN || errno == EINTR) {
+                    
+                    // try again
+                    doPoll()
+                    continue
+                    
+                } else {
+                    
+                    // attempt to restore filter and throw
+                    throw restoreFilter(POSIXError.fromErrorNumber!)
+                }
+            }
+            
+            // poll timed out
+            guard pollStatus != 0
+                else { throw restoreFilter(POSIXError(rawValue: ETIMEDOUT)!) }
+            
+            // decrement timeout (why?)
+            timeout -= 10
+            
+            // make sure its not a negative number
+            if timeout < 0 {
+                
+                timeout = 0
+            }
+        }
+        
         
     }
 }
