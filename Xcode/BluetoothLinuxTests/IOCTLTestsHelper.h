@@ -6,7 +6,7 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-
+#import <stdint.h>
 
 /* HCI ioctl defines */
 #define HCIDEVUP	_IOW('H', 201, int)
@@ -34,3 +34,26 @@
 #define HCIUNBLOCKADDR	_IOW('H', 231, int)
 
 #define HCIINQUIRY	_IOR('H', 240, int)
+
+static inline bool hci_test_oictl_defines(int const * compareList, int listLength)
+{
+    static int defineList[] = { HCIDEVUP,
+        HCIDEVDOWN,
+        HCIDEVRESET,
+        HCIDEVRESTAT,
+        HCIGETDEVLIST,
+        HCIGETDEVINFO,
+        HCIGETCONNLIST,
+        HCIGETCONNINFO,
+        HCIGETAUTHINFO}; // TODO: Add rest of definitions
+    
+    for (int i = 0; i < listLength; i++) {
+        
+        if (compareList[i] != defineList[i]) {
+            
+            return false;
+        }
+    }
+    
+    return true;
+}

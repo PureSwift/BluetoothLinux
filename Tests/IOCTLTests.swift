@@ -13,9 +13,11 @@
     
     final class IOCTLTests: XCTestCase {
         
-        func testExample() {
+        func testConstants() {
             
+            var swiftDefinitionList = [HCI.IOCTL.DeviceUp, HCI.IOCTL.DeviceDown, HCI.IOCTL.DeviceReset, HCI.IOCTL.DeviceRestat]
             
+            XCTAssert(hci_test_oictl_defines(&swiftDefinitionList, CInt(swiftDefinitionList.count)), )
         }
         
     }
