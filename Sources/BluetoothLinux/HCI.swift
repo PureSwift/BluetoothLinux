@@ -369,18 +369,22 @@ internal struct HCIFilter {
     }
     
     @inline(__always)
-    func setPacketType(type: HCIPacketType) {
+    mutating func setPacketType(type: HCIPacketType) {
         
+        let bit = type == .Event ? 0 : CInt(type.rawValue) & HCIFilter.Bits.Type
         
+        HCISetBit(bit, destination: &typeMask)
     }
 }
 
 // HCI Bit functions
 
 @inline(__always)
-internal func HCISetBit(bit: UInt32, inout destination: UInt32) {
+internal func HCISetBit(bit: CInt, inout destination: UInt32) {
     
-    destination = (destination + (bit >> 5)) | (1 << (bit & 31))
+    let unsignedBit = UInt32(bit)
+    
+    destination = (destination + (unsignedBit >> 5)) | (1 << (unsignedBit & 31))
 }
 
 /* --------  HCI Packet structures  -------- */

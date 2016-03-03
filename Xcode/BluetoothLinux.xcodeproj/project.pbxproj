@@ -49,7 +49,7 @@
 		6ECB305D1C47613F004CCA68 /* LinkControlCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB305C1C47613F004CCA68 /* LinkControlCommand.swift */; };
 		6ECB30601C47618E004CCA68 /* HCICommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB305F1C47618E004CCA68 /* HCICommand.swift */; };
 		6EF928FB1C8830D200D9A103 /* BluetoothLinux.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E92A4241C15309B007BC4E9 /* BluetoothLinux.framework */; };
-		6EF929031C88316D00D9A103 /* MathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF929021C88316D00D9A103 /* MathTests.swift */; };
+		6EF929031C88316D00D9A103 /* DarwinMathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF929021C88316D00D9A103 /* DarwinMathTests.swift */; };
 		6EF929071C8832FF00D9A103 /* DarwinTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF929061C8832FF00D9A103 /* DarwinTests.m */; };
 		6EF929101C88379400D9A103 /* SwiftFoundation.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 6EF9290E1C88378B00D9A103 /* SwiftFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -127,7 +127,7 @@
 		6ECB305F1C47618E004CCA68 /* HCICommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCICommand.swift; sourceTree = "<group>"; };
 		6EF928F61C8830D100D9A103 /* BluetoothLinuxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BluetoothLinuxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EF928FA1C8830D200D9A103 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6EF929021C88316D00D9A103 /* MathTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MathTests.swift; sourceTree = "<group>"; };
+		6EF929021C88316D00D9A103 /* DarwinMathTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DarwinMathTests.swift; sourceTree = "<group>"; };
 		6EF929041C8831C700D9A103 /* MathTestsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathTestsHelper.h; sourceTree = "<group>"; };
 		6EF929051C8832FF00D9A103 /* BluetoothLinuxTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BluetoothLinuxTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		6EF929061C8832FF00D9A103 /* DarwinTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DarwinTests.m; sourceTree = "<group>"; };
@@ -303,7 +303,7 @@
 		6EF929011C88312A00D9A103 /* Unit Tests */ = {
 			isa = PBXGroup;
 			children = (
-				6EF929021C88316D00D9A103 /* MathTests.swift */,
+				6EF929021C88316D00D9A103 /* DarwinMathTests.swift */,
 			);
 			name = "Unit Tests";
 			path = ../Tests;
@@ -483,7 +483,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EF929071C8832FF00D9A103 /* DarwinTests.m in Sources */,
-				6EF929031C88316D00D9A103 /* MathTests.swift in Sources */,
+				6EF929031C88316D00D9A103 /* DarwinMathTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
