@@ -1,6 +1,7 @@
 .build/*
 Packages/*
-Xcode/BlueZ.xcodeproj/project.xcworkspace/xcuserdata/*
 Carthage/*
 
 Headers/*
+
+Xcode/BluetoothLinux.xcodeproj/project.xcworkspace/xcuserdata

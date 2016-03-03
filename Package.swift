@@ -1,22 +1,22 @@
 import PackageDescription
 
 let package = Package(
-    name: "BlueZ",
+    name: "BluetoothLinux",
     dependencies: [
-        .Package(url: "https://github.com/PureSwift/CBlueZ.git", majorVersion: 1),
+        .Package(url: "https://github.com/PureSwift/CSwiftBluetoothLinux", majorVersion: 1),
         .Package(url: "https://github.com/PureSwift/SwiftFoundation.git", majorVersion: 1),
     ],
     targets: [
         Target(
             name: "ScanTest",
-            dependencies: [.Target(name: "BlueZ")]),
+            dependencies: [.Target(name: "BluetoothLinux")]),
         Target(
             name: "iBeaconTest",
-            dependencies: [.Target(name: "BlueZ")]),
+            dependencies: [.Target(name: "BluetoothLinux")]),
         Target(
-            name: "PeripheralTest",
-            dependencies: [.Target(name: "BlueZ")]),
+            name: "L2CAPServerTest",
+            dependencies: [.Target(name: "BluetoothLinux")]),
         Target(
-            name: "BlueZ")
+            name: "BluetoothLinux")
     ]
 )

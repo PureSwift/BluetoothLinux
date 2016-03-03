@@ -1,14 +1,13 @@
 //
 //  ScanTest.swift
-//  BlueZ
+//  BluetoothLinux
 //
 //  Created by Alsey Coleman Miller on 1/2/16.
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
 #if os(Linux)
-    import BlueZ
-    import CBlueZ
+    import BluetoothLinux
     import Glibc
 #elseif os(OSX) || os(iOS)
     import Darwin.C
@@ -23,7 +22,7 @@ func ScanTest(adapter: Adapter, timeout: Int) {
     
     print("Scanning for ~\(timeout) seconds...")
     
-    let scanResults: [inquiry_info]
+    let scanResults: [Adapter.InquiryResult]
     
     do { scanResults = try adapter.scan(timeout) }
         
@@ -35,10 +34,11 @@ func ScanTest(adapter: Adapter, timeout: Int) {
     
     for (index, info) in scanResults.enumerate() {
         
-        let address = info.bdaddr
+        let address = info.address
         
         print("\(index + 1). " + address.rawValue)
         
+        /*
         let requestNameDate = Date()
         
         let name: String?
@@ -48,5 +48,6 @@ func ScanTest(adapter: Adapter, timeout: Int) {
         catch { name = nil; print("Error fetching name: \(error)"); break }
         
         print(name ?? "[No Name]" + " (\(Date() - requestNameDate)s)")
+        */
     }
 }
