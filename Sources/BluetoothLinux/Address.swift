@@ -111,19 +111,3 @@ public extension Adapter {
     }
 }
 
-// MARK: - Darwin Stubs
-
-#if os(OSX) || os(iOS)
-
-    public struct bdaddr_t {
-        
-        var b: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8) = (0,0,0,0,0,0)
-        
-        init() { }
-    }
-    
-    /// Attempts to get the device address.
-    func hci_devba(dev_id: CInt, _ bdaddr: UnsafeMutablePointer<bdaddr_t>) -> CInt { stub() }
-    
-#endif
-
