@@ -12,8 +12,6 @@
     import Darwin.C
 #endif
 
-import SwiftFoundation
-
 public extension Adapter {
 
     /// Sends a command to the device and waits for a response.
@@ -21,6 +19,35 @@ public extension Adapter {
         
         
     }
+    
+    /*
+    @inline(__always)
+    func deviceCommand<T: HCICommand>(command: T) throws {
+        
+        try HCISendCommand(internalSocket, opcode: (command.rawValue, T.opcodeGroupField.rawValue))
+    }
+    
+    @inline(__always)
+    func deviceCommand<T: HCICommandParameter>(commandParameter: T) throws {
+        
+        let command = T.command
+        
+        let opcodeGroupField = command.dynamicType.opcodeGroupField
+        
+        let parameterData = commandParameter.byteValue
+        
+        try HCISendCommand(internalSocket, opcode: (command.rawValue, opcodeGroupField.rawValue), parameterData: parameterData)
+    }*/
+}
+
+// MARK: - Internal HCI Functions
+
+/// int hci_send_req(int dd, struct hci_request *r, int to)
+internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), ) throws {
+    
+    var eventBuffer = [UInt8](count: HCI.MaximumEventSize, repeatedValue: 0)
+    
+    
 }
 
 // MARK: - Darwin Stubs

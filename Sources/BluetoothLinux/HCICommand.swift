@@ -6,7 +6,7 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-/// HCI Command that can be send to the Bluetooth Adapter.
+/// HCI Command.
 public protocol HCICommand: RawRepresentable {
     
     static var opcodeGroupField: HCIOpcodeGroupField { get }
@@ -34,3 +34,5 @@ public protocol HCICommandParameter {
     /// Initializes command paramter from raw bytes.
     init?(byteValue: [UInt8])
 }
+
+

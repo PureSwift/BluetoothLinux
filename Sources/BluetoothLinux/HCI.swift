@@ -28,9 +28,7 @@ public struct HCI {
     // MARK: - Typealiases
     
     public typealias Error                  = HCIError
-    
-    public typealias Event                  = HCIEvent
-    
+        
     public typealias DeviceFlag             = HCIDeviceFlag
     
     public typealias DeviceEvent            = HCIDeviceEvent
@@ -337,7 +335,7 @@ internal struct HCIDeviceStats {
 /* --------  HCI Packet structures  -------- */
 
 /// hci_command_hdr (packed)
-internal struct HCICommandHDR {
+internal struct HCICommandHeader {
     
     static let length = 3
     
