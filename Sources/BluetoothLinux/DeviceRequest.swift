@@ -53,7 +53,7 @@ public extension Adapter {
 
 /// int hci_send_req(int dd, struct hci_request *r, int to)
 /// Returns event parameter data.
-internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), commandParameterData: [UInt8] = [], event: UInt8 = 0, timeout: Int = 0) throws -> [UInt8] {
+internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), commandParameterData: [UInt8] = [], event: UInt8 = 0, eventParameterLength: Int = 0, timeout: Int = 0) throws -> [UInt8] {
     
     // assertions
     assert(timeout >= 0, "Negative timeout value")
@@ -176,6 +176,7 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
         guard let eventHeader = HCIEventHeader(byteValue: headerData)
             else { throw restoreFilter(AdapterError.GarbageResponse(Data(byteValue: eventBuffer))) }
         
+        /// restores the old filter option before exiting
         func done() throws {
             
             guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, newFilterPointer, filterLength) == 0
@@ -189,8 +190,10 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
             guard let parameter = HCIGeneralEvent.CommandStatusParameter(byteValue: eventData)
                 else { throw AdapterError.GarbageResponse(Data(byteValue: eventBuffer)) }
             
+            /// must be command status for sent command
             guard parameter.opcode == opcodePacked else { continue }
             
+            ///
             guard event == HCIGeneralEvent.CommandStatus.rawValue else {
                 
                 guard parameter.status == 0
@@ -201,7 +204,8 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
             
             // success!
             try done()
-            return eventData
+            let dataLength = min(eventData.count, eventParameterLength)
+            return  Array(eventData.suffix(dataLength))
             
         case HCIGeneralEvent.CommandComplete.rawValue:
             
@@ -210,11 +214,11 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
             
             guard parameter.opcode == opcodePacked else { continue }
             
-            
-            
             // success!
             try done()
-            return eventData
+            let commandParameterLength = HCIGeneralEvent.CommandCompleteParameter.length
+            let dataLength = min(eventData.count - commandParameterLength, eventParameterLength)
+            return Array(eventData[commandParameterLength ..< dataLength])
             
         // all other events
         default:

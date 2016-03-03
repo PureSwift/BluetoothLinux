@@ -23,7 +23,7 @@
             
             var swiftDestination: UInt32 = 0
             
-            HCISetBit(bit, destination: &swiftDestination)
+            HCISetBit(bit, &swiftDestination)
             
             XCTAssert(cDestination == swiftDestination, "\(cDestination) == \(swiftDestination)")
         }

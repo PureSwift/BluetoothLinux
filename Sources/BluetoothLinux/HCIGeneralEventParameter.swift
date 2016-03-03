@@ -22,7 +22,11 @@ public extension HCIGeneralEvent {
         
         public init?(byteValue: [UInt8]) {
             
+            guard byteValue.count == CommandCompleteParameter.length
+                else { return nil }
             
+            self.ncmd = byteValue[0]
+            self.opcode = UInt16(littleEndian: (byteValue[1], byteValue[2]))
         }
     }
     
@@ -39,7 +43,12 @@ public extension HCIGeneralEvent {
         
         public init?(byteValue: [UInt8]) {
             
+            guard byteValue.count == CommandStatusParameter.length
+                else { return nil }
             
+            self.status = byteValue[0]
+            self.ncmd = byteValue[1]
+            self.opcode = UInt16(littleEndian: (byteValue[2], byteValue[3]))
         }
     }
     
@@ -49,13 +58,25 @@ public extension HCIGeneralEvent {
         public static let length = 1 // Why?
         
         public var subevent: UInt8 = 0
-        public var data = [Int8]()
+        public var data = [UInt8]()
         
         public init() { }
         
         public init?(byteValue: [UInt8]) {
             
+            guard byteValue.count >= LowEnergyMetaParameter.length
+                else { return nil }
             
+            self.subevent = byteValue[0]
+            
+            if byteValue.count > 1 {
+                
+                self.data = Array(byteValue.suffixFrom(1))
+                
+            } else {
+                
+                self.data = []
+            }
         }
     }
 }
