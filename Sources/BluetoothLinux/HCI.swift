@@ -399,11 +399,15 @@ internal struct HCIFilter {
 // HCI Bit functions
 
 @inline(__always)
-internal func HCISetBit(bit: CInt, _ destination: inout UInt32) {
+internal func HCISetBit(bit: CInt, _ destination: UnsafeMutablePointer<Void>) {
     
-    let unsignedBit = UInt32(bit)
+    let addressPointer = UnsafeMutablePointer<UInt32>(destination)
     
-    destination = (destination + (unsignedBit >> 5)) | (1 << (unsignedBit & 31))
+    let destination = addressPointer.memory
+    
+    let unsignedBit = UInt32(bitPattern: bit)
+    
+    addressPointer.memory = (destination + (unsignedBit >> 5)) | (1 << (unsignedBit & 31))
 }
 
 /* --------  HCI Packet structures  -------- */
