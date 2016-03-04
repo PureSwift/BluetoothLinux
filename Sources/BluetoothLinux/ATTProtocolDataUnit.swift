@@ -6,10 +6,13 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
+import struct SwiftFoundation.UUID
+
 // MARK: - Protocol
 
 public protocol ATTProtocolDataUnit {
     
+    /// The PDU's attribute opcode.
     static var attributeOpcode: ATT.Opcode { get }
     
     /// The PDU length in bytes.
@@ -88,11 +91,11 @@ public struct ATTErrorResponse: ATTProtocolDataUnit, ErrorType {
 
 /// Exchange MTU Request
 ///
-/// The Exchange MTU Request is used by the client to inform the server of the client’s maximum receive MTU 
+/// The *Exchange MTU Request* is used by the client to inform the server of the client’s maximum receive MTU
 /// size and request the server to respond with its maximum receive MTU size.
 ///
 /// - Note: This request shall only be sent once during a connection by the client. 
-/// The Client Rx MTU parameter shall be set to the maximum size of the attribute protocol PDU that the client can receive.
+/// The *Client Rx MTU* parameter shall be set to the maximum size of the attribute protocol PDU that the client can receive.
 public struct ATTMaximumTransmissionUnitRequest: ATTProtocolDataUnit {
     
     public static let attributeOpcode = ATT.Opcode.MaximumTransmissionUnitRequest
@@ -136,7 +139,7 @@ public struct ATTMaximumTransmissionUnitRequest: ATTProtocolDataUnit {
 
 ///  Exchange MTU Response
 ///
-/// The Exchange MTU Response is sent in reply to a received Exchange MTU Request.
+/// The *Exchange MTU Response* is sent in reply to a received *Exchange MTU Request*.
 public struct ATTMaximumTranssmissionUnitResponse: ATTProtocolDataUnit {
     
     public static let attributeOpcode = ATT.Opcode.MaximumTransmissionUnitResponse
@@ -228,7 +231,103 @@ public struct ATTFindInformationRequest: ATTProtocolDataUnit {
     }
 }
 
-
+/// Find Information Response
+///
+/// The *Find Information Response* is sent in reply to a received *Find Information Request* 
+/// and contains information about this server.
+public struct ATTFindInformationResponse: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.FindInformationRequest
+    
+    /// Length ranges from 6, to the maximum MTU size.
+    public static let length = 8
+    
+    /// The information data whose format is determined by the Format field.
+    public var data: Data
+    
+    public init(data: Data) {
+        
+        self.data = data
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        guard byteValue.count >= ATTFindInformationResponse.length else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        let formatByte = byteValue[1]
+        let remainderData = Array(byteValue.suffixFrom(2))
+        
+        guard attributeOpcodeByte == self.dynamicType.attributeOpcode.rawValue,
+            let format = Format(rawValue: formatByte),
+            let data = Data(byteValue: remainderData, format: format)
+            else { return nil }
+        
+        self.data = data
+    }
+    
+    public enum Format: UInt8 {
+        
+        /// A list of 1 or more handles with their 16-bit Bluetooth UUIDs.
+        case Bit16      = 0x01
+        
+        /// A list of 1 or more handles with their 128-bit UUIDs.
+        case Bit128     = 0x02
+        
+        public var length: Int {
+            
+            switch self {
+            case .Bit16: return 2 + 2
+            case .Bit128: return 2 + 16
+            }
+        }
+    }
+    
+    public enum Data {
+        
+        /// Handle and 16-bit Bluetooth UUID
+        case Bit16([(UInt16, UInt16)])
+        
+        /// Handle and 128-bit UUIDs
+        case Bit128([(UInt16, SwiftFoundation.UUID)])
+        
+        /// The data's format.
+        public var format: Format {
+            
+            switch self {
+                
+            case .Bit16(_): return .Bit16
+            case .Bit128(_): return .Bit128
+                
+            }
+        }
+        
+        public init?(byteValue: [UInt8], format: Format) {
+            
+            let pairLength = format.length
+            
+            guard byteValue.count % pairLength == 0 else { return }
+            
+            let pairCount = byteValue.count / pairLength
+            
+            switch format {
+                
+            case .Bit16:
+                
+                
+                
+            case .Bit128:
+                
+                
+            }
+        }
+        
+        public var byteValue: [UInt8] {
+            
+            
+        }
+    }
+}
 
 
 
