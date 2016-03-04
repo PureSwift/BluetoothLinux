@@ -39,7 +39,7 @@ public final class GATTServer {
         connection.register(exchangeMTU)
         
         // Read By Group Type
-        connection.register(readByGroupType)
+        //connection.register(readByGroupType)
     }
     
     private func exchangeMTU(pdu: ATTMaximumTransmissionUnitRequest) {
@@ -57,8 +57,9 @@ public final class GATTServer {
         log("MTU exchange complete, with MTU: \(finalMTU)")
     }
     
+    /*
     private func readByGroupType(pdu: ATTReadByGroupTypeRequest) {
         
         
-    }
+    }*/
 }
