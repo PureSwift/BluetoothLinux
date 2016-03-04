@@ -6,3 +6,8 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
+/// GATT Database
+public final class GATTDatabase {
+    
+    
+}

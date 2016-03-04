@@ -1,5 +1,5 @@
 //
-//  DarwinMathTests.swift
+//  MathTests.swift
 //  BluetoothLinux
 //
 //  Created by Alsey Coleman Miller on 3/3/16.

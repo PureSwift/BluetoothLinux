@@ -8,6 +8,9 @@ let package = Package(
     ],
     targets: [
         Target(
+            name: "UnitTests",
+            dependencies: [.Target(name: "BluetoothLinux")]),
+        Target(
             name: "ScanTest",
             dependencies: [.Target(name: "BluetoothLinux")]),
         Target(
