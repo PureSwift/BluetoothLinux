@@ -16,7 +16,7 @@ public protocol ATTProtocolDataUnit {
     static var attributeOpcode: ATT.Opcode { get }
     
     /// The PDU length in bytes.
-    static var length: Int { get }
+    //static var length: Int { get }
     
     /// Converts PDU to raw bytes.
     var byteValue: [UInt8] { get }
@@ -266,6 +266,12 @@ public struct ATTFindInformationResponse: ATTProtocolDataUnit {
         self.data = data
     }
     
+    public var byteValue: [UInt8] {
+        
+        // first 2 bytes are opcode and format
+        return [self.dynamicType.attributeOpcode.rawValue, data.format.rawValue] + data.byteValue
+    }
+    
     public enum Format: UInt8 {
         
         /// A list of 1 or more handles with their 16-bit Bluetooth UUIDs.
@@ -306,25 +312,76 @@ public struct ATTFindInformationResponse: ATTProtocolDataUnit {
             
             let pairLength = format.length
             
-            guard byteValue.count % pairLength == 0 else { return }
+            guard byteValue.count % pairLength == 0 else { return nil }
             
             let pairCount = byteValue.count / pairLength
             
+            var bit16Pairs: [(UInt16, UInt16)] = []
+            
+            var bit128Pairs: [(UInt16, SwiftFoundation.UUID)] = []
+            
+            for pairIndex in 0 ..< pairCount {
+                
+                let byteIndex = pairIndex * pairLength
+                
+                let pairBytes = Array(byteValue[byteIndex ..< pairLength])
+                
+                let handle = UInt16(littleEndian: (pairBytes[0], pairBytes[1]))
+                
+                switch format {
+                    
+                case .Bit16:
+                    
+                    let uuid = UInt16(littleEndian: (pairBytes[2], pairBytes[3]))
+                    
+                    bit16Pairs.append((handle, uuid))
+                    
+                case .Bit128:
+                    
+                    let uuid = UUID(byteValue: (pairBytes[2], pairBytes[3], pairBytes[4], pairBytes[5], pairBytes[6], pairBytes[7], pairBytes[8], pairBytes[9], pairBytes[10], pairBytes[11], pairBytes[12], pairBytes[13], pairBytes[14], pairBytes[15], pairBytes[16], pairBytes[17]))
+                    
+                     bit128Pairs.append((handle, uuid))
+                }
+            }
+            
             switch format {
                 
-            case .Bit16:
+            case .Bit16: self = .Bit16(bit16Pairs)
                 
-                
-                
-            case .Bit128:
-                
-                
+            case .Bit128: self = .Bit128(bit128Pairs)
             }
         }
         
         public var byteValue: [UInt8] {
             
+            var bytes = [UInt8]()
             
+            switch self {
+                
+            case let .Bit16(value):
+                
+                for pair in value {
+                    
+                    let handleBytes = pair.0.littleEndianBytes
+                    
+                    let uuidBytes = pair.1.littleEndianBytes
+                    
+                    bytes += [handleBytes.0, handleBytes.1, uuidBytes.0, uuidBytes.1]
+                }
+                
+            case let .Bit128(value):
+                
+                for pair in value {
+                    
+                    let handleBytes = pair.0.littleEndianBytes
+                    
+                    let uuidBytes = pair.1.byteValue
+                    
+                    bytes += [handleBytes.0, handleBytes.1, uuidBytes.0, uuidBytes.1, uuidBytes.2, uuidBytes.3, uuidBytes.4, uuidBytes.5, uuidBytes.6, uuidBytes.7, uuidBytes.8, uuidBytes.9, uuidBytes.10, uuidBytes.11, uuidBytes.12, uuidBytes.13, uuidBytes.14, uuidBytes.15]
+                }
+            }
+            
+            return bytes
         }
     }
 }

@@ -243,7 +243,7 @@ public final class ATTConnection {
         let data = PDU.byteValue
         
         // actual PDU length
-        let length = T.length
+        let length = data.count
         
         /// MTU must be large enough to hold PDU. 
         guard length <= maximumTransmissionUnit else { return nil }
