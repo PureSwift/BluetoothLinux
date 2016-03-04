@@ -15,11 +15,9 @@
 import SwiftFoundation
 
 /// Manages a Bluetooth connection using the ATT protocol.
-public final class ATTConnection {
+public struct ATTConnection {
     
     // MARK: - Properties
-    
-    public let socket: L2CAPSocket
     
     /// Actual number of bytes for PDU ATT exchange.
     public var maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default {
@@ -66,17 +64,14 @@ public final class ATTConnection {
     
     // MARK: - Initialization
     
-    public init(socket: L2CAPSocket) {
-        
-        self.socket = socket
-    }
+    public init() { }
     
     // MARK: - Methods
     
     /// Performs the actual IO for recieving data.
-    public func read() throws {
+    public mutating func read(socket: L2CAPSocket) throws {
         
-        let recievedData = try self.socket.recieve(maximumTransmissionUnit)
+        let recievedData = try socket.recieve(maximumTransmissionUnit)
         
         // valid PDU data length
         guard recievedData.byteValue.count >= ATT.MinimumPDULength
@@ -111,7 +106,7 @@ public final class ATTConnection {
     }
     
     /// Performs the actual IO for sending data.
-    public func write() throws {
+    public mutating func write(socket: L2CAPSocket) throws {
         
         guard let sendOpcode = pickNextSendOpcode()
             else { return } // throw error?
@@ -149,7 +144,7 @@ public final class ATTConnection {
     }
     
     /// Registers a callback for an opcode and returns the ID associated with that callback.
-    public func register<T: ATTProtocolDataUnit>(callback: T -> ()) -> UInt {
+    public mutating func register<T: ATTProtocolDataUnit>(callback: T -> ()) -> UInt {
         
         let identifier = nextRegisterID
         
@@ -168,7 +163,7 @@ public final class ATTConnection {
     /// Unregisters the callback associated with the specified identifier.
     ///
     /// - Returns: Whether the callback was unregistered.
-    public func unregister(identifier: UInt) -> Bool {
+    public mutating func unregister(identifier: UInt) -> Bool {
         
         guard let index = notifyList.indexOf({ $0.identifier == identifier })
             else { return false }
@@ -179,7 +174,7 @@ public final class ATTConnection {
     }
     
     /// Registers all callbacks.
-    public func unregisterAll() {
+    public mutating func unregisterAll() {
         
         notifyList.removeAll()
         
@@ -189,7 +184,7 @@ public final class ATTConnection {
     /// Adds a PDU to the queue to send.
     ///
     /// - Returns: Identifier of queued send operation or `nil` if the PDU cannot be sent.
-    public func send<T: ATTProtocolDataUnit>(PDU: T, response: T -> ()) -> UInt? {
+    public mutating func send<T: ATTProtocolDataUnit>(PDU: T, response: T -> ()) -> UInt? {
         
         let attributeOpcode = T.attributeOpcode
         
@@ -253,7 +248,7 @@ public final class ATTConnection {
         return data
     }
     
-    private func handleResponse(data: Data, opcode: ATT.Opcode) throws {
+    private mutating func handleResponse(data: Data, opcode: ATT.Opcode) throws {
         
         // If no request is pending, then the response is unexpected. Disconnect the bearer.
         guard let sendOpcode = pendingRequest else {
@@ -280,7 +275,7 @@ public final class ATTConnection {
         //wakeup_writer(att);
     }
     
-    private func handleConfirmation(data: Data, opcode: ATT.Opcode) throws {
+    private mutating func handleConfirmation(data: Data, opcode: ATT.Opcode) throws {
         
         // Disconnect the bearer if the confirmation is unexpected or the PDU is invalid.
         
@@ -302,7 +297,7 @@ public final class ATTConnection {
         //wakeup_writer(att);
     }
     
-    private func handleRequest(data: Data, opcode: ATT.Opcode) throws {
+    private mutating func handleRequest(data: Data, opcode: ATT.Opcode) throws {
         
         /*
         * If a request is currently pending, then the sequential
@@ -320,7 +315,7 @@ public final class ATTConnection {
         try handleNotify(data, opcode: opcode)
     }
     
-    private func handleNotify(data: Data, opcode: ATT.Opcode) throws {
+    private mutating func handleNotify(data: Data, opcode: ATT.Opcode) throws {
         
         var foundPDU: ATTProtocolDataUnit?
         
@@ -351,7 +346,7 @@ public final class ATTConnection {
         
     }
     
-    private func pickNextSendOpcode() -> ATTSendOpcodeType? {
+    private mutating func pickNextSendOpcode() -> ATTSendOpcodeType? {
         
         // See if any operations are already in the write queue
         if let sendOpcode = writeQueue.popFirst() {

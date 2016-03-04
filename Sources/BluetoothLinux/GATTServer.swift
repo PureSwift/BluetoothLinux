@@ -6,22 +6,24 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-public final class GATTServer {
+public struct GATTServer {
     
     // MARK: - Properties
     
     public var log = false
     
-    public private(set) var database: GATTDatabase
+    public var database = GATTDatabase()
     
     public let connection: ATTConnection
     
     // MARK: - Initialization
     
-    public init(connection: ATTConnection, database: GATTDatabase) {
+    public init(connection: ATTConnection) {
         
         self.connection = connection
-        self.database = database
+        
+        // setup handlers
+        self.registerATTHandlers()
     }
     
     // MARK: - Private Methods
