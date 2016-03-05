@@ -15,9 +15,9 @@ public struct GATTDatabase {
     
     private var services = Deque<Service>()
     
-    private var notifyList = Deque<Notify>()
+    private var notificationList = Deque<Notification>()
     
-    private var nextNotifyID: UInt = 0
+    private var nextNotificationID: UInt = 0
     
     private var nextServiceID: UInt = 0
     
@@ -119,21 +119,33 @@ public struct GATTDatabase {
         return service.attributes[0]
     }
     
-    public mutating func register(serviceAdded: AttributeCallback, serviceRemoved: AttributeCallback) -> UInt {
-        
-        let notify = Notify(identifier: nextNotifyID, serviceAdded: serviceAdded, serviceRemoved: serviceRemoved)
-        
-        // increment
-        nextNotifyID += 1
-        
-        notifyList.append(notify)
-        
-        return notify.identifier
-    }
-    
     public mutating func removeService(attribute: Attribute) {
         
         
+    }
+    
+    /// Registers for notifications and returns the notification ID.
+    public mutating func register(serviceAdded: AttributeCallback, serviceRemoved: AttributeCallback) -> UInt {
+        
+        let notification = Notification(identifier: nextNotificationID, serviceAdded: serviceAdded, serviceRemoved: serviceRemoved)
+        
+        // increment
+        nextNotificationID += 1
+        
+        notificationList.append(notification)
+        
+        return notification.identifier
+    }
+    
+    /// Unregisters the notification with specified identifier.
+    public mutating func unregister(notificationIdentifier: UInt) -> Bool {
+        
+        guard let notificationIndex = notificationList.indexOf({ $0.identifier == notificationIdentifier })
+            else { return false }
+        
+        notificationList.removeAtIndex(notificationIndex)
+        
+        return true
     }
     
     // MARK: - Dynamic Properties
@@ -233,7 +245,7 @@ public extension GATTDatabase {
 
 private extension GATTDatabase {
     
-    struct Notify {
+    struct Notification {
         
         let identifier: UInt
         
