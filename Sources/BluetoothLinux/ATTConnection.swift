@@ -15,7 +15,7 @@
 import SwiftFoundation
 
 /// Manages a Bluetooth connection using the ATT protocol.
-public struct ATTConnection {
+public final class ATTConnection {
     
     // MARK: - Properties
     
@@ -69,7 +69,7 @@ public struct ATTConnection {
     // MARK: - Methods
     
     /// Performs the actual IO for recieving data.
-    public mutating func read(socket: L2CAPSocket) throws {
+    public func read(socket: L2CAPSocket) throws {
         
         let recievedData = try socket.recieve(maximumTransmissionUnit)
         
@@ -106,7 +106,7 @@ public struct ATTConnection {
     }
     
     /// Performs the actual IO for sending data.
-    public mutating func write(socket: L2CAPSocket) throws {
+    public func write(socket: L2CAPSocket) throws {
         
         guard let sendOpcode = pickNextSendOpcode()
             else { return } // throw error?
@@ -144,7 +144,7 @@ public struct ATTConnection {
     }
     
     /// Registers a callback for an opcode and returns the ID associated with that callback.
-    public mutating func register<T: ATTProtocolDataUnit>(callback: T -> ()) -> UInt {
+    public func register<T: ATTProtocolDataUnit>(callback: T -> ()) -> UInt {
         
         let identifier = nextRegisterID
         
@@ -163,7 +163,7 @@ public struct ATTConnection {
     /// Unregisters the callback associated with the specified identifier.
     ///
     /// - Returns: Whether the callback was unregistered.
-    public mutating func unregister(identifier: UInt) -> Bool {
+    public func unregister(identifier: UInt) -> Bool {
         
         guard let index = notifyList.indexOf({ $0.identifier == identifier })
             else { return false }
@@ -174,7 +174,7 @@ public struct ATTConnection {
     }
     
     /// Registers all callbacks.
-    public mutating func unregisterAll() {
+    public func unregisterAll() {
         
         notifyList.removeAll()
         
@@ -184,7 +184,7 @@ public struct ATTConnection {
     /// Adds a PDU to the queue to send.
     ///
     /// - Returns: Identifier of queued send operation or `nil` if the PDU cannot be sent.
-    public mutating func send<T: ATTProtocolDataUnit>(PDU: T, response: T -> ()) -> UInt? {
+    public func send<T: ATTProtocolDataUnit>(PDU: T, response: T -> ()) -> UInt? {
         
         let attributeOpcode = T.attributeOpcode
         
@@ -248,7 +248,7 @@ public struct ATTConnection {
         return data
     }
     
-    private mutating func handleResponse(data: Data, opcode: ATT.Opcode) throws {
+    private func handleResponse(data: Data, opcode: ATT.Opcode) throws {
         
         // If no request is pending, then the response is unexpected. Disconnect the bearer.
         guard let sendOpcode = pendingRequest else {
@@ -275,7 +275,7 @@ public struct ATTConnection {
         //wakeup_writer(att);
     }
     
-    private mutating func handleConfirmation(data: Data, opcode: ATT.Opcode) throws {
+    private func handleConfirmation(data: Data, opcode: ATT.Opcode) throws {
         
         // Disconnect the bearer if the confirmation is unexpected or the PDU is invalid.
         
@@ -297,7 +297,7 @@ public struct ATTConnection {
         //wakeup_writer(att);
     }
     
-    private mutating func handleRequest(data: Data, opcode: ATT.Opcode) throws {
+    private func handleRequest(data: Data, opcode: ATT.Opcode) throws {
         
         /*
         * If a request is currently pending, then the sequential
@@ -315,7 +315,7 @@ public struct ATTConnection {
         try handleNotify(data, opcode: opcode)
     }
     
-    private mutating func handleNotify(data: Data, opcode: ATT.Opcode) throws {
+    private func handleNotify(data: Data, opcode: ATT.Opcode) throws {
         
         var foundPDU: ATTProtocolDataUnit?
         
@@ -346,7 +346,7 @@ public struct ATTConnection {
         
     }
     
-    private mutating func pickNextSendOpcode() -> ATTSendOpcodeType? {
+    private func pickNextSendOpcode() -> ATTSendOpcodeType? {
         
         // See if any operations are already in the write queue
         if let sendOpcode = writeQueue.popFirst() {

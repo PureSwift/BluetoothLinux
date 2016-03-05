@@ -21,9 +21,6 @@ public struct GATTServer {
     public init(connection: ATTConnection) {
         
         self.connection = connection
-        
-        // setup handlers
-        self.registerATTHandlers()
     }
     
     // MARK: - Private Methods
@@ -34,16 +31,16 @@ public struct GATTServer {
     }
     
     /// gatt_server_register_att_handlers()
-    private mutating func registerATTHandlers() {
+    private func registerATTHandlers() {
         
         // Exchange MTU
-        connection.register { self.exchangeMTU($0) }
+        connection.register(exchangeMTU)
         
         // Read By Group Type
         //connection.register(readByGroupType)
     }
     
-    private mutating func exchangeMTU(pdu: ATTMaximumTransmissionUnitRequest) {
+    private func exchangeMTU(pdu: ATTMaximumTransmissionUnitRequest) {
         
         let serverMTU = UInt16(connection.maximumTransmissionUnit)
         
@@ -64,3 +61,4 @@ public struct GATTServer {
         
     }*/
 }
+
