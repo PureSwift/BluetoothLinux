@@ -15,9 +15,6 @@ public protocol ATTProtocolDataUnit {
     /// The PDU's attribute opcode.
     static var attributeOpcode: ATT.Opcode { get }
     
-    /// The PDU length in bytes.
-    //static var length: Int { get }
-    
     /// Converts PDU to raw bytes.
     var byteValue: [UInt8] { get }
     
@@ -535,7 +532,10 @@ public struct ATTFindByTypeResponse: ATTProtocolDataUnit {
     
     /// Handles Information
     ///
-    /// For each handle that matches the attribute type and attribute value in the *Find By Type Value Request* a *Handles Information* shall be returned. The Found Attribute Handle shall be set to the handle of the attribute that has the exact attribute type and attribute value from the Find By Type Value Request.
+    /// For each handle that matches the attribute type and attribute value in the *Find By Type Value Request*
+    /// a *Handles Information* shall be returned. 
+    /// The *Found Attribute Handle* shall be set to the handle of the attribute that has the exact attribute type 
+    /// and attribute value from the *Find By Type Value Request*.
     public struct HandlesInformation {
         
         public static let length = 2 + 2
@@ -570,5 +570,73 @@ public struct ATTFindByTypeResponse: ATTProtocolDataUnit {
         }
     }
 }
+
+/// Read By Type Request
+///
+/// The *Read By Type Request* is used to obtain the values of attributes where the
+/// attribute type is known but the handle is not known.
+public struct ATTReadByTypeRequest: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.ReadByTypeRequest
+    
+    public enum Length: Int {
+        
+        case UUID16     = 7
+        case UUID128    = 21
+    }
+    
+    /// First requested handle number
+    public var startHandle: UInt16
+    
+    /// Last requested handle number
+    public var endHandle: UInt16
+    
+    /// 2 or 16 octet UUID
+    public var attributeType: BluetoothUUID
+    
+    public init(startHandle: UInt16, endHandle: UInt16, attributeType: BluetoothUUID) {
+        
+        self.startHandle = startHandle
+        self.endHandle = endHandle
+        self.attributeType = attributeType
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        guard let length = Length(rawValue: byteValue.count)
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == self.dynamicType.attributeOpcode.rawValue
+            else { return nil }
+        
+        self.startHandle = UInt16(littleEndian: (byteValue[1], byteValue[2]))
+        
+        self.endHandle = UInt16(littleEndian: (byteValue[3], byteValue[4]))
+        
+        switch length {
+            
+        case .UUID16:
+            
+            let value = UInt16(littleEndian: (byteValue[5], byteValue[6]))
+            
+            self.attributeType = .Bit16(value)
+            
+        case .UUID128:
+            
+            let value = UUID(byteValue: (byteValue[5], byteValue[6], byteValue[7], byteValue[8], byteValue[9], byteValue[10], byteValue[11], byteValue[12], byteValue[13], byteValue[14], byteValue[15], byteValue[16], byteValue[17], byteValue[18], byteValue[19], byteValue[20]))
+            
+            self.attributeType = .Bit128(value)
+        }
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        
+    }
+}
+
+
 
 
