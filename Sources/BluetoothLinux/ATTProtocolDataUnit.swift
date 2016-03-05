@@ -579,12 +579,6 @@ public struct ATTReadByTypeRequest: ATTProtocolDataUnit {
     
     public static let attributeOpcode = ATT.Opcode.ReadByTypeRequest
     
-    public enum Length: Int {
-        
-        case UUID16     = 7
-        case UUID128    = 21
-    }
-    
     /// First requested handle number
     public var startHandle: UInt16
     
@@ -633,7 +627,26 @@ public struct ATTReadByTypeRequest: ATTProtocolDataUnit {
     
     public var byteValue: [UInt8] {
         
+        let startHandleBytes = startHandle.littleEndianBytes
         
+        let endHandleBytes = endHandle.littleEndianBytes
+        
+        return [self.dynamicType.attributeOpcode.rawValue, startHandleBytes.0, startHandleBytes.1, endHandleBytes.0, endHandleBytes.1] + attributeType.byteValue
+    }
+    
+    private enum Length: Int {
+        
+        case UUID16     = 7
+        case UUID128    = 21
+        
+        init(UUID: BluetoothUUID) {
+            
+            switch UUID {
+                
+            case .Bit16(_): self = .UUID16
+            case .Bit128(_): self = .UUID128
+            }
+        }
     }
 }
 
