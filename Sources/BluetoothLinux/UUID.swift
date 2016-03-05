@@ -9,7 +9,7 @@
 import struct SwiftFoundation.UUID
 
 /// Bluetooth UUID
-public enum BluetoothUUID {
+public enum BluetoothUUID: Equatable {
     
     /// Bluetooth Base UUID
     public static let BaseUUID = UUID(byteValue: (0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00,
@@ -57,3 +57,18 @@ public enum BluetoothUUID {
         }
     }
 }
+
+// MARK: - Equatable
+
+public func == (lhs: BluetoothUUID, rhs: BluetoothUUID) -> Bool {
+    
+    switch (lhs, rhs) {
+        
+    case let (.Bit16(lhsValue), .Bit16(rhsValue)): return lhsValue == rhsValue
+        
+    case let (.Bit128(lhsValue), .Bit128(rhsValue)): return lhsValue == rhsValue
+        
+    default: return false
+    }
+}
+
