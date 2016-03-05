@@ -53,16 +53,56 @@ public struct GATTDatabase {
         return true
     }
     
-    public func insertService(handle: UInt16, UUID: BluetoothUUID, primary: Bool, handleCount: UInt16) {
+    public mutating func insertService(handle: UInt16, UUID: BluetoothUUID, primary: Bool, handleCount: UInt16) -> Attribute? {
         
+        func findInsertLocation(start: UInt16, _ end: UInt16) -> (Service?, Service?) {
+            
+            var after: Service?
+            
+            for service in services {
+                
+                let (startHandle, endHandle) = service.handles
+                
+                guard (start >= startHandle && start <= endHandle) == false
+                    else { return (service, after) }
+                
+                guard (start >= startHandle && start <= endHandle) == false
+                    else { return (service, after) }
+                
+                guard (end < endHandle) == false
+                    else { return (nil, after) }
+                
+                after = service
+            }
+            
+            return (nil, after)
+        }
         
-    }
-    
-    public mutating func newAttribute(serviceIndex: UInt, handle: UInt16, type: BluetoothUUID, value: [UInt8]) {
+        let findInsertServices = findInsertLocation(handle, handle + handleCount - 1)
         
-        var attribute = Attribute(serviceIdentifier: serviceIndex, handle: handle, type: type, value: value)
+        if let foundService = findInsertServices.0 {
+            
+            // create new service
+            let type = GATT.UUID(primaryService: primary)
+            
+            let currentUUID = foundService.UUID
+            
+            // Check if service match
+            guard 
+        }
         
+        let service = Service(identifier: nextServiceID, UUID: UUID, handle: handle, primary: primary)
         
+        if let after = findInsertServices.1 {
+            
+            //if (!queue_push_after(db->services, after, service))
+            //  goto fail;
+        } else {
+            
+            services.prepend(service)
+        }
+        
+        service.attributes[0].handle = handle
     }
     
     public mutating func removeService(attribute: Attribute) {
@@ -91,25 +131,28 @@ public extension GATTDatabase {
     /// GATT Service
     public struct Service {
         
-        public private(set) var attributes = [Attribute]()
+        public private(set) var attributes: [Attribute]
         
-        public var active = false {
-            
-            didSet {
-                
-                
-            }
-        }
+        public var active = false
         
         public var claimed = false
         
-        public private(set) var handleCount: UInt16 = 0
+        public var UUID: BluetoothUUID {
+            
+            return attributes[0].type
+        }
         
         /// Internal identifier for lookup.
         private let identifier: UInt
         
+        /// Start and end identifiers.
+        private var handles: (UInt16, UInt16) {
+            
+            return (attributes[0].handle, attributes.last!.handle)
+        }
+        
         /// Create a new service and give it an attribute.
-        private init(identifier: UInt, UUID: BluetoothUUID, handle: UInt16, primary: Bool, handleCount: Int) {
+        private init(identifier: UInt, UUID: BluetoothUUID, handle: UInt16, primary: Bool) {
             
             self.identifier = identifier
             
@@ -117,8 +160,10 @@ public extension GATTDatabase {
             
             let newAttribute = Attribute(serviceIdentifier: identifier, handle: handle, type: .Bit16(type), value: UUID.byteValue)
             
-            self.attributes.append(newAttribute)
+            self.attributes = [newAttribute]
         }
+        
+        
     }
     
     /// GATT Attribute

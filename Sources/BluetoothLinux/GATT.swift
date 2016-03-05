@@ -16,6 +16,19 @@ public struct GATT {
         case SecondaryService       = 0x2801
         case Include                = 0x2802
         case Characteristic         = 0x2803
+        
+        /// Initializes a GATT UUID for service type.
+        public init(primaryService: Bool) {
+            
+            if primaryService {
+                
+                self = .PrimaryService
+                
+            } else {
+                
+                self = .SecondaryService
+            }
+        }
     }
     
     /// GATT Characteristic Descriptors
