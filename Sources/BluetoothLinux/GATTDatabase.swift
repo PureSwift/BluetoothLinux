@@ -99,6 +99,9 @@ public struct GATTDatabase {
         
         let service = Service(identifier: nextServiceID, UUID: UUID, handle: handle, primary: primary)
         
+        // increment
+        nextServiceID += 1
+        
         if let after = findInsertServices.1 {
             
             let afterIndex = self.services.indexOf({ $0.identifier == after.identifier })!
@@ -114,6 +117,18 @@ public struct GATTDatabase {
         nextHandle = max(handle + handleCount, nextHandle)
         
         return service.attributes[0]
+    }
+    
+    public mutating func register(serviceAdded: AttributeCallback, serviceRemoved: AttributeCallback) -> UInt {
+        
+        let notify = Notify(identifier: nextNotifyID, serviceAdded: serviceAdded, serviceRemoved: serviceRemoved)
+        
+        // increment
+        nextNotifyID += 1
+        
+        notifyList.append(notify)
+        
+        return notify.identifier
     }
     
     public mutating func removeService(attribute: Attribute) {
@@ -222,9 +237,9 @@ private extension GATTDatabase {
         
         let identifier: UInt
         
-        let serviceAdded: () -> ()
+        let serviceAdded: AttributeCallback
         
-        let serviceRemoved: () -> ()
+        let serviceRemoved: AttributeCallback
     }
     
     struct PendingRead {
