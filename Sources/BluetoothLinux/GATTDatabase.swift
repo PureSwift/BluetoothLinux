@@ -55,7 +55,7 @@ public struct GATTDatabase {
     
     public mutating func insertService(handle: UInt16, UUID: BluetoothUUID, primary: Bool, handleCount: UInt16) -> Attribute? {
         
-        func findInsertLocation(start: UInt16, _ end: UInt16) -> (Service?, Service?) {
+        func findInsertLocation(start: UInt16, _ end: UInt16) -> (service: Service?, after: Service?) {
             
             var after: Service?
             
@@ -80,12 +80,10 @@ public struct GATTDatabase {
         
         let findInsertServices = findInsertLocation(handle, handle + handleCount - 1)
         
-        if let foundService = findInsertServices.0 {
+        if let foundService = findInsertServices.service {
             
             // create new service
             let type = GATT.UUID(primaryService: primary)
-            
-            let currentUUID = foundService.UUID
             
             // Check if service match
             guard (foundService.UUID == UUID
@@ -103,8 +101,10 @@ public struct GATTDatabase {
         
         if let after = findInsertServices.1 {
             
-            //if (!queue_push_after(db->services, after, service))
-            //  goto fail;
+            let afterIndex = self.services.indexOf({ $0.identifier == after.identifier })!
+            
+            self.services.insert(service, atIndex: afterIndex)
+            
         } else {
             
             services.prepend(service)
