@@ -1,4 +1,6 @@
 # BluetoothLinux
+
+[![Join the chat at https://gitter.im/PureSwift/BluetoothLinux](https://badges.gitter.im/PureSwift/BluetoothLinux.svg)](https://gitter.im/PureSwift/BluetoothLinux?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Pure Swift Bluetooth Stack for Linux
 
 Does not require [BlueZ](https://www.bluez.org), communicates directly with the Linux kernel. 
