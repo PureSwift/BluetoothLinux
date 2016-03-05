@@ -324,7 +324,7 @@ public struct ATTFindInformationResponse: ATTProtocolDataUnit {
                 
                 let byteIndex = pairIndex * pairLength
                 
-                let pairBytes = Array(byteValue[byteIndex ..< pairLength])
+                let pairBytes = Array(byteValue[byteIndex ..< byteIndex + pairLength])
                 
                 let handle = UInt16(littleEndian: (pairBytes[0], pairBytes[1]))
                 
@@ -455,10 +455,120 @@ public struct ATTFindByTypeRequest: ATTProtocolDataUnit {
         
         let attributeTypeBytes = self.attributeType.littleEndianBytes
         
-        return [startHandleBytes.0, startHandleBytes.1, endHandleBytes.0, endHandleBytes.1, attributeTypeBytes.0, attributeTypeBytes.1] + attributeValue
+        return [self.dynamicType.attributeOpcode.rawValue, startHandleBytes.0, startHandleBytes.1, endHandleBytes.0, endHandleBytes.1, attributeTypeBytes.0, attributeTypeBytes.1] + attributeValue
     }
 }
 
-
+/// Find By Type Value Response
+///
+/// The *Find By Type Value Response* is sent in reply to a received *Find By Type Value Request*
+/// and contains information about this server.
+public struct ATTFindByTypeResponse: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.FindByTypeResponse
+    
+    /// Minimum length.
+    public static let length = 1 + HandlesInformation.length
+    
+    /// A list of 1 or more Handle Informations.
+    public var handlesInformationList: [HandlesInformation]
+    
+    public init(handlesInformationList: [HandlesInformation]) {
+        
+        assert(handlesInformationList.count >= 1, "Must have at least one HandlesInformation")
+        
+        self.handlesInformationList = handlesInformationList
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        guard byteValue.count >= ATTFindByTypeResponse.length
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == self.dynamicType.attributeOpcode.rawValue
+            else { return nil }
+        
+        let handleLength = HandlesInformation.length
+        
+        guard byteValue.count % handleLength == 0 else { return nil }
+        
+        let handleCount = byteValue.count / handleLength
+        
+        var handles = [HandlesInformation](count: handleCount, repeatedValue: HandlesInformation())
+        
+        for index in 0 ..< handleCount {
+            
+            let byteIndex = index * handleLength
+            
+            let handleBytes = Array(byteValue[byteIndex ..< byteIndex + handleLength])
+            
+            guard let handle = HandlesInformation(byteValue: handleBytes)
+                else { return nil }
+            
+            handles[index] = handle
+        }
+        
+        self.handlesInformationList = handles
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        // complex algorithm for better performance
+        let handlesDataByteCount = handlesInformationList.count * HandlesInformation.length
+        
+        // preallocate memory to avoid performance penalty by increasing buffer
+        var handlesData = [UInt8](count: handlesDataByteCount, repeatedValue: 0)
+        
+        for (handleIndex, handle) in handlesInformationList.enumerate() {
+            
+            let startByteIndex = handleIndex * HandlesInformation.length
+            
+            let byteRange = startByteIndex ..< startByteIndex + HandlesInformation.length
+            
+            handlesData.replaceRange(byteRange, with: handle.byteValue)
+        }
+        
+        return [self.dynamicType.attributeOpcode.rawValue] + handlesData
+    }
+    
+    /// Handles Information
+    ///
+    /// For each handle that matches the attribute type and attribute value in the *Find By Type Value Request* a *Handles Information* shall be returned. The Found Attribute Handle shall be set to the handle of the attribute that has the exact attribute type and attribute value from the Find By Type Value Request.
+    public struct HandlesInformation {
+        
+        public static let length = 2 + 2
+        
+        /// Found Attribute Handle
+        var foundAttribute: UInt16
+        
+        /// Group End Handle
+        var groupEnd: UInt16
+        
+        public init(foundAttribute: UInt16 = 0, groupEnd: UInt16 = 0) {
+            
+            self.foundAttribute = foundAttribute
+            self.groupEnd = groupEnd
+        }
+        
+        public init?(byteValue: [UInt8]) {
+         
+            guard byteValue.count == HandlesInformation.length
+                else { return nil }
+            
+            self.foundAttribute = UInt16(littleEndian: (byteValue[0], byteValue[1]))
+            self.groupEnd = UInt16(littleEndian: (byteValue[3], byteValue[4]))
+        }
+        
+        public var byteValue: [UInt8] {
+            
+            let foundAttributeBytes = foundAttribute.littleEndianBytes
+            let groupEndBytes = groupEnd.littleEndianBytes
+            
+            return [foundAttributeBytes.0, foundAttributeBytes.1, groupEndBytes.0, groupEndBytes.1]
+        }
+    }
+}
 
 
