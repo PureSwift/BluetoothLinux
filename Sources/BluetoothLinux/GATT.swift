@@ -29,6 +29,12 @@ public struct GATT {
                 self = .SecondaryService
             }
         }
+        
+        /// Returns a Bluetooth UUID initialized with the `rawValue` of this GATT UUID.
+        public var UUID: BluetoothUUID {
+            
+            return .Bit16(rawValue)
+        }
     }
     
     /// GATT Characteristic Descriptors

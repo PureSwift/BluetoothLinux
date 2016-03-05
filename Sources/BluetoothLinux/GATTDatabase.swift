@@ -88,8 +88,16 @@ public struct GATTDatabase {
             let currentUUID = foundService.UUID
             
             // Check if service match
-            guard 
+            guard (foundService.UUID == UUID
+                && foundService.UUID == type.UUID
+                && foundService.attributes.count == Int(handleCount)
+                && foundService.attributes[0].handle == handle) == false
+                else { return nil }
+            
+            return foundService.attributes[0]
         }
+        
+        // service not found, create new service
         
         let service = Service(identifier: nextServiceID, UUID: UUID, handle: handle, primary: primary)
         
@@ -102,7 +110,10 @@ public struct GATTDatabase {
             services.prepend(service)
         }
         
-        service.attributes[0].handle = handle
+        // Fast-forward nextHandle if the new service was added to the end
+        nextHandle = max(handle + handleCount, nextHandle)
+        
+        return service.attributes[0]
     }
     
     public mutating func removeService(attribute: Attribute) {
