@@ -38,21 +38,6 @@ public struct GATTDatabase {
         
     }
     
-    public mutating func addService() {
-        
-        
-    }
-    
-    public mutating func removeService(attribute: Attribute) -> Bool {
-        
-        guard let index = services.indexOf({ $0.identifier == attribute.serviceIdentifier })
-            else { return false }
-        
-        services.removeAtIndex(index)
-        
-        return true
-    }
-    
     public mutating func insertService(handle: UInt16, UUID: BluetoothUUID, primary: Bool, handleCount: UInt16) -> Attribute? {
         
         func findInsertLocation(start: UInt16, _ end: UInt16) -> (service: Service?, after: Service?) {
@@ -119,9 +104,14 @@ public struct GATTDatabase {
         return service.attributes[0]
     }
     
-    public mutating func removeService(attribute: Attribute) {
+    public mutating func removeService(attribute: Attribute) -> Bool {
         
+        guard let index = services.indexOf({ $0.identifier == attribute.serviceIdentifier })
+            else { return false }
         
+        services.removeAtIndex(index)
+        
+        return true
     }
     
     /// Registers for notifications and returns the notification ID.
