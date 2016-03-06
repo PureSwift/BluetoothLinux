@@ -6,7 +6,7 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-public struct GATTServer {
+public final class GATTServer {
     
     // MARK: - Properties
     
