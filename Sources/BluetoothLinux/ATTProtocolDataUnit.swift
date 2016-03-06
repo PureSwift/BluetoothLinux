@@ -47,7 +47,7 @@ public struct ATTErrorResponse: ATTProtocolDataUnit, ErrorType {
         self.error = error
     }
     
-    // MARK: ATTProtocolDataUnit
+    // ATTProtocolDataUnit
     
     public static let attributeOpcode = ATT.Opcode.ErrorResponse
     
@@ -1037,14 +1037,15 @@ public struct ATTReadMultipleRequest: ATTProtocolDataUnit {
     }
 }
 
-
 /// Read Multiple Response
+///
 /// The read response is sent in reply to a received *Read Multiple Request* and
 /// contains the values of the attributes that have been read.
 public struct ATTReadMultipleResponse: ATTProtocolDataUnit {
     
     public static let attributeOpcode = ATT.Opcode.ReadMultipleResponse
     
+    /// Minimum length
     public static let length = 1 + 0
     
     public var values: [UInt8]
@@ -1083,6 +1084,89 @@ public struct ATTReadMultipleResponse: ATTProtocolDataUnit {
         return [type.attributeOpcode.rawValue] + values
     }
 }
+
+
+/// Read by Group Type Request
+///
+/// The *Read By Group Type Request* is used to obtain the values of attributes where the attribute type is known,
+/// the type of a grouping attribute as defined by a higher layer specification, but the handle is not known.
+public struct ATTReadByGroupTypeRequest: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.ReadByGroupTypeRequest
+    
+    /// First requested handle number.
+    public var startHandle: UInt16
+    
+    /// Last requested handle number.
+    public var endHandle: UInt16
+    
+    /// Attribute Group Type
+    ///
+    /// 2 or 16 octet UUID
+    public var type: BluetoothUUID
+    
+    public init(startHandle: UInt16, endHandle: UInt16, type: BluetoothUUID) {
+        
+        self.startHandle = startHandle
+        self.endHandle = endHandle
+        self.type = type
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        guard let length = Length(rawValue: byteValue.count)
+        else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == self.dynamicType.attributeOpcode.rawValue
+            else { return nil }
+        
+        self.startHandle = UInt16(littleEndian: (byteValue[1], byteValue[2]))
+        
+        self.endHandle = UInt16(littleEndian: (byteValue[3], byteValue[4]))
+        
+        switch length {
+            
+        case .UUID16:
+            
+            let value = UInt16(littleEndian: (byteValue[5], byteValue[6]))
+        
+        self.type = .Bit16(value)
+            
+        case .UUID128:
+            
+            let value = UUID(byteValue: (byteValue[5], byteValue[6], byteValue[7], byteValue[8], byteValue[9], byteValue[10], byteValue[11], byteValue[12], byteValue[13], byteValue[14], byteValue[15], byteValue[16], byteValue[17], byteValue[18], byteValue[19], byteValue[20]))
+        
+        self.type = .Bit128(value)
+        }
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let startHandleBytes = startHandle.littleEndianBytes
+        
+        let endHandleBytes = endHandle.littleEndianBytes
+        
+        return [self.dynamicType.attributeOpcode.rawValue, startHandleBytes.0, startHandleBytes.1, endHandleBytes.0, endHandleBytes.1] + type.byteValue
+    }
+    
+    private enum Length: Int {
+        
+        case UUID16     = 7
+        case UUID128    = 21
+        
+        init(UUID: BluetoothUUID) {
+            
+            switch UUID {
+            
+        case .Bit16(_): self = .UUID16
+        case .Bit128(_): self = .UUID128
+            }
+        }
+    }
+}
+
 
 
 
