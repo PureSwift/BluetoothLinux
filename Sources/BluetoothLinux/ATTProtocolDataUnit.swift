@@ -10,6 +10,7 @@ import struct SwiftFoundation.UUID
 
 // MARK: - Protocol
 
+/// Data packet for the ATT protocol.
 public protocol ATTProtocolDataUnit {
     
     /// The PDU's attribute opcode.
@@ -489,15 +490,18 @@ public struct ATTFindByTypeResponse: ATTProtocolDataUnit {
         
         let handleLength = HandlesInformation.length
         
-        guard byteValue.count % handleLength == 0 else { return nil }
+        let handleBytesCount = byteValue.count - 1
         
-        let handleCount = byteValue.count / handleLength
+        guard handleBytesCount % handleLength == 0 else { return nil }
         
+        let handleCount = handleBytesCount / handleLength
+        
+        // preallocate handles for better performance
         var handles = [HandlesInformation](count: handleCount, repeatedValue: HandlesInformation())
         
         for index in 0 ..< handleCount {
             
-            let byteIndex = index * handleLength
+            let byteIndex = (index * handleLength) + 1
             
             let handleBytes = Array(byteValue[byteIndex ..< byteIndex + handleLength])
             
@@ -650,6 +654,152 @@ public struct ATTReadByTypeRequest: ATTProtocolDataUnit {
     }
 }
 
+/// Read By Type Response
+///
+/// The *Read By Type Response* is sent in reply to a received *Read By Type Request*
+/// and contains the handles and values of the attributes that have been read.
+public struct ATTReadByTypeResponse: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.ReadByTypeResponse
+    
+    /// Minimum length
+    public static let length = 1 + 1 + AttributeData.length
+    
+    /// A list of Attribute Data.
+    public let data: [AttributeData]
+    
+    public init?(length: UInt8, data: [AttributeData]) {
+        
+        // must have at least one attribute data
+        guard data.count > 0 else { return nil }
+        
+        // length must be at least 3 bytes
+        guard Int(length) >= AttributeData.length else { return nil }
+        
+        // validate the length of each pair
+        for pair in data {
+            
+            guard pair.value.count == (Int(length) - 2)
+                else { return nil }
+        }
+        
+        self.data = data
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        guard byteValue.count >= ATTReadByTypeResponse.length
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == self.dynamicType.attributeOpcode.rawValue
+            else { return nil }
+        
+        let attributeDataLength = Int(byteValue[1])
+        
+        let attributeDataByteCount = byteValue.count - 2
+        
+        guard attributeDataByteCount % attributeDataLength == 0 else { return nil }
+        
+        let attributeDataCount = attributeDataByteCount / attributeDataLength
+        
+        var attributeData = [AttributeData](count: attributeDataCount, repeatedValue: AttributeData())
+        
+        for index in 0 ..< attributeDataCount  {
+            
+            let byteIndex = 2 + (index * attributeDataLength)
+            
+            let dataBytes = Array(byteValue[byteIndex ..< byteIndex + attributeDataLength])
+            
+            guard let data = AttributeData(byteValue: dataBytes)
+                else { return nil }
+            
+            attributeData[index] = data
+        }
+        
+        self.data = attributeData
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let valueLength = UInt8(2 + data[0].value.count)
+        
+        var bytes = [self.dynamicType.attributeOpcode.rawValue, valueLength]
+        
+        for attributeData in data {
+            
+            bytes += attributeData.byteValue
+        }
+        
+        return bytes
+    }
+    
+    /// Attribute handle and value pair.
+    public struct AttributeData {
+        
+        /// Minimum length.
+        public static let length = 2
+        
+        /// Attribute Handle
+        public var handle: UInt16
+        
+        /// Attribute Value
+        public var value: [UInt8]
+        
+        public init(handle: UInt16 = 0, value: [UInt8] = []) {
+            
+            self.handle = handle
+            self.value = value
+        }
+        
+        public init?(byteValue: [UInt8] = []) {
+            
+            guard byteValue.count >= AttributeData.length
+                else { return nil }
+            
+            self.handle = UInt16(littleEndian: (byteValue[0], byteValue[1]))
+            
+            if byteValue.count > AttributeData.length {
+                
+                let startingIndex = AttributeData.length
+                
+                self.value = Array(byteValue.suffixFrom(startingIndex))
+                
+            } else {
+                
+                self.value = []
+            }
+        }
+        
+        public var byteValue: [UInt8] {
+            
+            let handleBytes = handle.littleEndianBytes
+            
+            return [handleBytes.0, handleBytes.1] + value
+        }
+    }
+}
 
-
+/// Read Request
+///
+/// The *Read Request* is used to request the server to read the value of an attribute 
+/// and return its value in a *Read Response*.
+public struct ATTReadRequest: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.ReadRequest
+    public static let length = 1 + 2
+    
+    public var handle: UInt16
+    
+    public init(handle: UInt16 = 0) {
+        
+        self.handle = handle
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        
+    }
+}
 
