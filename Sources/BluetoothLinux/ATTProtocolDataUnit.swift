@@ -799,7 +799,69 @@ public struct ATTReadRequest: ATTProtocolDataUnit {
     
     public init?(byteValue: [UInt8]) {
         
+        guard byteValue.count == ATTReadRequest.length
+            else { return nil }
         
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == ATTReadRequest.attributeOpcode.rawValue
+            else { return nil }
+        
+        self.handle = UInt16(littleEndian: (byteValue[1], byteValue[2]))
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let handleBytes = handle.littleEndianBytes
+        
+        return [ATTReadRequest.attributeOpcode.rawValue, handleBytes.0, handleBytes.1]
     }
 }
+
+/// Read Response
+///
+/// The *Read Response* is sent in reply to a received *Read Request* and contains
+/// the value of the attribute that has been read.
+public struct ATTReadResponse: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.ReadResponse
+    
+    /// Minimum length
+    public static let length = 1 + 0
+    
+    /// The value of the attribute with the handle given.
+    public var attributeValue: [UInt8]
+    
+    public init(attributeValue: [UInt8] = []) {
+        
+        self.attributeValue = attributeValue
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        guard byteValue.count >= ATTReadRequest.length
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == ATTReadResponse.attributeOpcode.rawValue
+            else { return nil }
+        
+        if byteValue.count > ATTReadRequest.length {
+            
+            self.attributeValue = Array(byteValue.suffixFrom(1))
+            
+        } else {
+            
+            self.attributeValue = []
+        }
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        return [ATTReadResponse.attributeOpcode.rawValue] + attributeValue
+    }
+}
+
+
 
