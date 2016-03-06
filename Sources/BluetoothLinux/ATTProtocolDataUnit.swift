@@ -822,6 +822,8 @@ public struct ATTReadRequest: ATTProtocolDataUnit {
 ///
 /// The *Read Response* is sent in reply to a received *Read Request* and contains
 /// the value of the attribute that has been read.
+///
+/// - Note: The *Read Blob Request* would be used to read the remaining octets of a long attribute value.
 public struct ATTReadResponse: ATTProtocolDataUnit {
     
     public static let attributeOpcode = ATT.Opcode.ReadResponse
@@ -860,6 +862,52 @@ public struct ATTReadResponse: ATTProtocolDataUnit {
     public var byteValue: [UInt8] {
         
         return [ATTReadResponse.attributeOpcode.rawValue] + attributeValue
+    }
+}
+
+/// Read Blob Request
+///
+/// The *Read Blob Request* is used to request the server to read part of the value of an attribute
+/// at a given offset and return a specific part of the value in a *Read Blob Response*.
+public struct ATTReadBlobRequest: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.ReadBlobRequest
+    public static let length = 1 + 2 + 2
+    
+    /// The handle of the attribute to be read.
+    public var handle: UInt16
+    
+    /// The offset of the first octet to be read.
+    public var offset: UInt16
+    
+    public init(handle: UInt16 = 0, offset: UInt16 = 0) {
+        
+        self.handle = handle
+        self.offset = offset
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        guard byteValue.count == ATTReadBlobRequest.length
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == ATTReadBlobRequest.attributeOpcode.rawValue
+            else { return nil }
+        
+        self.handle = UInt16(littleEndian: (byteValue[0], byteValue[1]))
+        
+        self.offset = UInt16(littleEndian: (byteValue[2], byteValue[3]))
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let handleBytes = handle.littleEndianBytes
+        
+        let offsetBytes = offset.littleEndianBytes
+        
+        return [ATTReadBlobRequest.attributeOpcode.rawValue, handleBytes.0, handleBytes.1, offsetBytes.0, offsetBytes.1]
     }
 }
 
