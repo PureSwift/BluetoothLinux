@@ -960,5 +960,81 @@ public struct ATTReadBlobResponse: ATTProtocolDataUnit {
     }
 }
 
+/// Read Multiple Request
+///
+/// The *Read Multiple Request* is used to request the server to read two or more values
+/// of a set of attributes and return their values in a *Read Multiple Response*.
+///
+/// Only values that have a known fixed size can be read, with the exception of the last value that can have a variable length.
+/// The knowledge of whether attributes have a known fixed size is defined in a higher layer specification.
+public struct ATTReadMultipleRequest: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.ReadMultipleRequest
+    
+    /// Minimum length
+    public static let length = 1 + 4
+    
+    public var handles: [UInt16]
+    
+    public init?(handles: [UInt16]) {
+        
+        guard handles.count >= 2
+            else { return nil }
+        
+        self.handles = handles
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        let type = ATTReadBlobResponse.self
+        
+        guard byteValue.count >= type.length
+        else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == type.attributeOpcode.rawValue
+            else { return nil }
+        
+        let handleCount = (byteValue.count - 1) / 2
+        
+        guard (byteValue.count - 1) % 2 == 0
+            else { return nil }
+        
+        // preallocate handle buffer
+        var handles = [UInt16](count: handleCount, repeatedValue: 0)
+        
+        for index in 0 ..< handleCount {
+            
+            let handleIndex = 1 + (index * 2)
+            
+            let handle = UInt16(littleEndian: (byteValue[handleIndex], byteValue[handleIndex + 1]))
+            
+            handles[index] = handle
+        }
+        
+        self.handles = handles
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let type = ATTReadBlobResponse.self
+        
+        var handlesBytes = [UInt8](count: handles.count * 2, repeatedValue: 0)
+        
+        for handle in handles {
+            
+            let handleBytes = handle.littleEndianBytes
+            
+            let handleByteIndex = handles.count * 2
+            
+            handlesBytes[handleByteIndex] = handleBytes.0
+            
+            handlesBytes[handleByteIndex + 1] = handleBytes.1
+        }
+        
+        return [type.attributeOpcode.rawValue] + handlesBytes
+    }
+}
 
 
