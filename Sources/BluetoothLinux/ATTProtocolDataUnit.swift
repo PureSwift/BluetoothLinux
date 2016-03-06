@@ -989,7 +989,7 @@ public struct ATTReadMultipleRequest: ATTProtocolDataUnit {
         let type = ATTReadBlobResponse.self
         
         guard byteValue.count >= type.length
-        else { return nil }
+            else { return nil }
         
         let attributeOpcodeByte = byteValue[0]
         
@@ -1036,5 +1036,56 @@ public struct ATTReadMultipleRequest: ATTProtocolDataUnit {
         return [type.attributeOpcode.rawValue] + handlesBytes
     }
 }
+
+
+/// Read Multiple Response
+/// The read response is sent in reply to a received *Read Multiple Request* and
+/// contains the values of the attributes that have been read.
+public struct ATTReadMultipleResponse: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.ReadMultipleResponse
+    
+    public static let length = 1 + 0
+    
+    public var values: [UInt8]
+    
+    public init(values: [UInt8] = []) {
+        
+        self.values = values
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        let type = ATTReadMultipleResponse.self
+            
+        guard byteValue.count >= type.length
+            else { return nil }
+            
+        let attributeOpcodeByte = byteValue[0]
+            
+        guard attributeOpcodeByte == type.attributeOpcode.rawValue
+            else { return nil }
+            
+        if byteValue.count > 1 {
+            
+            self.values = Array(byteValue.suffixFrom(1))
+            
+        } else {
+            
+            self.values = []
+        }
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let type = ATTReadBlobResponse.self
+        
+        return [type.attributeOpcode.rawValue] + values
+    }
+}
+
+
+
+
 
 
