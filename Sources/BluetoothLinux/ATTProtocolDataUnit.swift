@@ -1298,6 +1298,60 @@ public struct ATTReadByGroupTypeResponse: ATTProtocolDataUnit {
     }
 }
 
-
-
+/// Write Request
+///
+/// The *Write Request* is used to request the server to write the value of an attribute
+/// and acknowledge that this has been achieved in a *Write Response*.
+public struct ATTWriteRequest: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.WriteRequest
+    
+    /// Minimum length
+    public static let length = 3
+    
+    /// The handle of the attribute to be written.
+    public var handle: UInt16
+    
+    /// The value to be written to the attribute.
+    public var value: [UInt8]
+    
+    public init(handle: UInt16 = 0, value: [UInt8] = []) {
+        
+        self.handle = handle
+        self.value = value
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        let type = ATTWriteRequest.self
+        
+        guard byteValue.count >= type.length
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == type.attributeOpcode.rawValue
+            else { return nil }
+        
+        self.handle = UInt16(littleEndian: (byteValue[1], byteValue[2]))
+        
+        if byteValue.count > ATTWriteRequest.length {
+            
+            self.value = Array(byteValue.suffixFrom(4))
+            
+        } else {
+            
+            self.value = []
+        }
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let type = ATTWriteRequest.self
+        
+        let handleBytes = handle.littleEndianBytes
+        
+        return [type.attributeOpcode.rawValue, handleBytes.0, handleBytes.1] + value
+    }
+}
 
