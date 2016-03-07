@@ -1115,11 +1115,11 @@ public struct ATTReadByGroupTypeRequest: ATTProtocolDataUnit {
     public init?(byteValue: [UInt8]) {
         
         guard let length = Length(rawValue: byteValue.count)
-        else { return nil }
+            else { return nil }
         
         let attributeOpcodeByte = byteValue[0]
         
-        guard attributeOpcodeByte == self.dynamicType.attributeOpcode.rawValue
+        guard attributeOpcodeByte == ATTReadByGroupTypeRequest.attributeOpcode.rawValue
             else { return nil }
         
         self.startHandle = UInt16(littleEndian: (byteValue[1], byteValue[2]))
@@ -1148,7 +1148,7 @@ public struct ATTReadByGroupTypeRequest: ATTProtocolDataUnit {
         
         let endHandleBytes = endHandle.littleEndianBytes
         
-        return [self.dynamicType.attributeOpcode.rawValue, startHandleBytes.0, startHandleBytes.1, endHandleBytes.0, endHandleBytes.1] + type.byteValue
+        return [ATTReadByGroupTypeRequest.attributeOpcode.rawValue, startHandleBytes.0, startHandleBytes.1, endHandleBytes.0, endHandleBytes.1] + type.byteValue
     }
     
     private enum Length: Int {
@@ -1167,8 +1167,136 @@ public struct ATTReadByGroupTypeRequest: ATTProtocolDataUnit {
     }
 }
 
+/// Read By Group Type Response
+///
+/// The *Read By Group Type Response* is sent in reply to a received *Read By Group Type Request*
+/// and contains the handles and values of the attributes that have been read.
+/// 
+/// - Note: The *Read Blob Request* would be used to read the remaining octets of a long attribute value.
+public struct ATTReadByGroupTypeResponse: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.ReadByGroupTypeResponse
+    
+    /// Minimum length
+    public static let length = 1 + 1 + 4
+    
+    /// A list of Attribute Data
+    public let attributeDataList: [AttributeData]
+    
+    public init?(length: UInt8, attributeDataList: [AttributeData]) {
+        
+        for attributeData in attributeDataList {
+        
+            guard attributeData.value.count == (Int(length) - 4)
+                else { return nil }
+        }
+        
+        self.attributeDataList = attributeDataList
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        let type = ATTReadByGroupTypeResponse.self
+        
+        guard byteValue.count >= type.length
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == type.attributeOpcode.rawValue
+            else { return nil }
+        
+        let length = Int(byteValue[1])
+        
+        let attributeDataBytesCount = byteValue.count - 2
+        
+        let attributeCount = attributeDataBytesCount / length
+        
+        guard attributeDataBytesCount % length == 0
+            else { return nil }
+        
+        var attributeDataList = [AttributeData](count: attributeCount, repeatedValue: AttributeData())
+        
+        for index in 0 ..< attributeCount {
+                
+            let byteIndex = 2 + (index * length)
 
-
+            let data = Array(byteValue[byteIndex ..< byteIndex + length])
+                
+            guard let attributeData = AttributeData(byteValue: data)
+                else { return nil }
+                
+            attributeDataList[index] = attributeData
+        }
+        
+        self.attributeDataList = attributeDataList
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let type = ATTReadByGroupTypeResponse.self
+        
+        let length = UInt8(attributeDataList[0].value.count + 4)
+        
+        var attributeDataBytes = [UInt8]()
+        
+        for attributeData in attributeDataList {
+            
+            attributeDataBytes += attributeData.byteValue
+        }
+        
+        return [type.attributeOpcode.rawValue, length] + attributeDataBytes
+    }
+    
+    public struct AttributeData {
+        
+        /// Minimum length
+        public static let length = 4
+        
+        /// Attribute Handle
+        public var attributeHandle: UInt16
+        
+        /// End Group Handle
+        public var endGroupHandle: UInt16
+        
+        /// Attribute Value
+        public var value: [UInt8]
+        
+        public init(attributeHandle: UInt16 = 0, endGroupHandle: UInt16 = 0, value: [UInt8] = []) {
+            
+            self.attributeHandle = attributeHandle
+            self.endGroupHandle = endGroupHandle
+            self.value = value
+        }
+        
+        public init?(byteValue: [UInt8]) {
+            
+            guard byteValue.count >= AttributeData.length
+                else { return nil }
+            
+            self.attributeHandle = UInt16(littleEndian: (byteValue[0], byteValue[1]))
+            self.endGroupHandle = UInt16(littleEndian: (byteValue[2], byteValue[3]))
+            
+            if byteValue.count > 4 {
+                
+                self.value = Array(byteValue.suffixFrom(4))
+                
+            } else {
+                
+                self.value = []
+            }
+        }
+        
+        public var byteValue: [UInt8] {
+            
+            let attributeHandleBytes = attributeHandle.littleEndianBytes
+            
+            let endGroupHandleBytes = endGroupHandle.littleEndianBytes
+            
+            return [attributeHandleBytes.0, attributeHandleBytes.1, endGroupHandleBytes.0, endGroupHandleBytes.1] + value
+        }
+    }
+}
 
 
 
