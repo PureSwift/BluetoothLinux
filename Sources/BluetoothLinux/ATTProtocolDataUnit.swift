@@ -1337,7 +1337,7 @@ public struct ATTWriteRequest: ATTProtocolDataUnit {
         
         if byteValue.count > ATTWriteRequest.length {
             
-            self.value = Array(byteValue.suffixFrom(4))
+            self.value = Array(byteValue.suffixFrom(3))
             
         } else {
             
@@ -1354,4 +1354,39 @@ public struct ATTWriteRequest: ATTProtocolDataUnit {
         return [type.attributeOpcode.rawValue, handleBytes.0, handleBytes.1] + value
     }
 }
+
+/// Write Response
+/// 
+/// The *Write Response* is sent in reply to a valid *Write Request*
+/// and acknowledges that the attribute has been successfully written.
+public struct ATTWriteResponse: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.WriteResponse
+    public static let length = 1
+    
+    public init() { }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        let type = ATTWriteResponse.self
+        
+        guard byteValue.count == type.length
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == type.attributeOpcode.rawValue
+            else { return nil }
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let type = ATTWriteResponse.self
+        
+        return [type.attributeOpcode.rawValue]
+    }
+}
+
+
+
 
