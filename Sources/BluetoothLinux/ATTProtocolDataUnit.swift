@@ -1564,7 +1564,7 @@ public struct ATTPrepareWriteRequest: ATTProtocolDataUnit {
     
     public var byteValue: [UInt8] {
         
-        let type = ATTSignedWriteCommand.self
+        let type = ATTPrepareWriteRequest.self
         
         let handleBytes = handle.littleEndianBytes
         
@@ -1602,7 +1602,7 @@ public struct ATTPrepareWriteResponse: ATTProtocolDataUnit {
     
     public init?(byteValue: [UInt8]) {
             
-        let type = ATTPrepareWriteRequest.self
+        let type = ATTPrepareWriteResponse.self
             
         guard byteValue.count >= type.length
             else { return nil }
@@ -1628,13 +1628,93 @@ public struct ATTPrepareWriteResponse: ATTProtocolDataUnit {
     
     public var byteValue: [UInt8] {
         
-        let type = ATTSignedWriteCommand.self
+        let type = ATTPrepareWriteResponse.self
                 
         let handleBytes = handle.littleEndianBytes
                 
         let offsetBytes = offset.littleEndianBytes
                 
         return [type.attributeOpcode.rawValue, handleBytes.0, handleBytes.1, offsetBytes.0, offsetBytes.1] + partValue
+    }
+}
+
+/// Execute Write Request
+///
+/// The *Execute Write Request* is used to request the server to write or cancel the write 
+/// of all the prepared values currently held in the prepare queue from this client. 
+/// This request shall be handled by the server as an atomic operation.
+public struct ATTExecuteWriteRequest: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.ExecuteWriteRequest
+    public static let length = 1 + 1
+    
+    public var flag: Flag
+    
+    public init(flag: Flag = Flag()) {
+        
+        self.flag = flag
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        let type = ATTExecuteWriteRequest.self
+        
+        guard byteValue.count == type.length
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        let flagByte = byteValue[1]
+        
+        guard attributeOpcodeByte == type.attributeOpcode.rawValue,
+            let flag = Flag(rawValue: flagByte)
+            else { return nil }
+        
+        self.flag = flag
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let type = ATTPrepareWriteResponse.self
+        
+        return [type.attributeOpcode.rawValue, flag.rawValue]
+    }
+    
+    public enum Flag: UInt8 {
+        
+        /// Cancel all prepared writes.
+        case Cancel = 0x00
+        
+        /// Immediately write all pending prepared values.
+        case Write  = 0x01
+            
+        public init() { self = .Cancel }
+    }
+}
+
+/// The *Execute Write Response* is sent in response to a received *Execute Write Request*.
+public struct ATTExecuteWriteResponse: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.ExecuteWriteResponse
+    public static let length = 1
+    
+    public init() { }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        let type = ATTExecuteWriteResponse.self
+        
+        guard byteValue.count == type.length
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == type.attributeOpcode.rawValue
+            else { return nil }
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        return [ATT.Opcode.ExecuteWriteResponse.rawValue]
     }
 }
 
