@@ -1507,3 +1507,72 @@ public struct ATTSignedWriteCommand: ATTProtocolDataUnit {
         return [type.attributeOpcode.rawValue, handleBytes.0, handleBytes.1] + value + [signature.0, signature.1, signature.2, signature.3, signature.4, signature.5, signature.6, signature.7, signature.8, signature.9, signature.10, signature.11]
     }
 }
+
+/// Prepare Write Request
+///
+/// The *Prepare Write Request* is used to request the server to prepare to write the value of an attribute. 
+/// The server will respond to this request with a *Prepare Write Response*, 
+/// so that the client can verify that the value was received correctly.
+public struct ATTPrepareWriteRequest: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.PreparedWriteRequest
+    
+    /// Minimum length
+    public static let length = 1 + 2 + 2 + 0
+    
+    /// The handle of the attribute to be written.
+    public var handle: UInt16
+    
+    /// The offset of the first octet to be written. 
+    public var offset: UInt16
+    
+    /// The value of the attribute to be written.
+    public var partValue: [UInt8]
+    
+    public init(handle: UInt16 = 0, offset: UInt16 = 0, partValue: [UInt8] = []) {
+        
+        self.handle = handle
+        self.offset = offset
+        self.partValue = partValue
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        let type = ATTPrepareWriteRequest.self
+        
+        guard byteValue.count >= type.length
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == type.attributeOpcode.rawValue
+            else { return nil }
+        
+        self.handle = UInt16(littleEndian: (byteValue[1], byteValue[2]))
+        
+        self.offset = UInt16(littleEndian: (byteValue[3], byteValue[4]))
+        
+        if byteValue.count > type.length {
+            
+            self.partValue = Array(byteValue.suffixFrom(5))
+            
+        } else {
+            
+            self.partValue = []
+        }
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let type = ATTSignedWriteCommand.self
+        
+        let handleBytes = handle.littleEndianBytes
+        
+        let offsetBytes = offset.littleEndianBytes
+        
+        return [type.attributeOpcode.rawValue, handleBytes.0, handleBytes.1, offsetBytes.0, offsetBytes.1] + partValue
+    }
+}
+
+
+
