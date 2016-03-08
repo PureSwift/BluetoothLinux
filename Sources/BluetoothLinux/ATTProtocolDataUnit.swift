@@ -1387,6 +1387,59 @@ public struct ATTWriteResponse: ATTProtocolDataUnit {
     }
 }
 
-
-
+/// Write Command
+///
+/// The *Write Command* is used to request the server to write the value of an attribute, typically into a control-point attribute.
+public struct ATTWriteCommand: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.WriteCommand
+    
+    /// Minimum length
+    public static let length = 3
+    
+    /// The handle of the attribute to be set.
+    public var handle: UInt16
+    
+    /// The value of be written to the attribute.
+    public var value: [UInt8]
+    
+    public init(handle: UInt16 = 0, value: [UInt8] = []) {
+        
+        self.handle = handle
+        self.value = value
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        let type = ATTWriteCommand.self
+        
+        guard byteValue.count >= type.length
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == type.attributeOpcode.rawValue
+            else { return nil }
+        
+        self.handle = UInt16(littleEndian: (byteValue[1], byteValue[2]))
+        
+        if byteValue.count > type.length {
+            
+            self.value = Array(byteValue.suffixFrom(3))
+            
+        } else {
+            
+            self.value = []
+        }
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let type = ATTWriteCommand.self
+        
+        let handleBytes = handle.littleEndianBytes
+        
+        return [type.attributeOpcode.rawValue, handleBytes.0, handleBytes.1] + value
+    }
+}
 
