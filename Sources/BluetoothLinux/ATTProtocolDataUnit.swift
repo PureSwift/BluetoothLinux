@@ -1443,3 +1443,67 @@ public struct ATTWriteCommand: ATTProtocolDataUnit {
     }
 }
 
+/// Signed Write Command
+///
+/// The Signed Write Command is used to request the server to write the value of an attribute with an authentication signature, 
+/// typically into a control-point attribute.
+public struct ATTSignedWriteCommand: ATTProtocolDataUnit {
+    
+    public typealias Signature = (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
+    
+    public static let attributeOpcode = ATT.Opcode.SignedWriteCommand
+    
+    /// Minimum length
+    public static let length = 1 + 2 + 0 + 12
+    
+    /// The handle of the attribute to be set.
+    public var handle: UInt16
+    
+    /// The value to be written to the attribute
+    public var value: [UInt8]
+    
+    /// Authentication signature for the Attribute Upload, Attribute Handle and Attribute Value Parameters.
+    public var signature: Signature
+    
+    public init(handle: UInt16, value: [UInt8], signature: Signature) {
+        
+        self.handle = handle
+        self.value = value
+        self.signature = signature
+    }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        let type = ATTSignedWriteCommand.self
+        
+        guard byteValue.count >= type.length
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == type.attributeOpcode.rawValue
+            else { return nil }
+        
+        self.handle = UInt16(littleEndian: (byteValue[1], byteValue[2]))
+        
+        if byteValue.count > type.length {
+            
+            self.value = Array(byteValue[3 ..< byteValue.count - 12])
+            
+        } else {
+            
+            self.value = []
+        }
+        
+        self.signature = (byteValue[byteValue.count - 12], byteValue[byteValue.count - 11], byteValue[byteValue.count - 10], byteValue[byteValue.count - 9], byteValue[byteValue.count - 8], byteValue[byteValue.count - 7], byteValue[byteValue.count - 6], byteValue[byteValue.count - 5], byteValue[byteValue.count - 4], byteValue[byteValue.count - 3], byteValue[byteValue.count - 2], byteValue[byteValue.count - 1])
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let type = ATTSignedWriteCommand.self
+        
+        let handleBytes = handle.littleEndianBytes
+        
+        return [type.attributeOpcode.rawValue, handleBytes.0, handleBytes.1] + value + [signature.0, signature.1, signature.2, signature.3, signature.4, signature.5, signature.6, signature.7, signature.8, signature.9, signature.10, signature.11]
+    }
+}
