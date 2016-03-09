@@ -79,8 +79,40 @@ public enum ATTError: UInt8, ErrorType {
     /// Attribute server does not support the request received from the client.
     case RequestNotSupported                        = 0x06
     
-    // TODO: All Error Codes
+    /// Offset specified was past the end of the attribute.
+    case InvalidOffset                              = 0x07
     
+    /// The attribute requires authorization before it can be read or written.
+    case InsufficientAuthorization                  = 0x08
+    
+    /// Too many prepare writes have been queued.
+    case PrepareQueueFull                           = 0x09
+    
+    /// No attribute found within the given attribute handle range.
+    case AttributeNotFound                          = 0x0A
+    
+    /// The attribute cannot be read or written using the *Read Blob Request*. 
+    case AttributeNotLong                           = 0x0B
+    
+    /// The *Encryption Key Size* used for encrypting this link is insufficient.
+    case InsufficientEncryptionKeySize              = 0x0C
+    
+    /// The attribute value length is invalid for the operation.
+    case InvalidAttributeValueLength                = 0x0D
+    
+    /// The attribute request that was requested has encountered an error that was unlikely, 
+    /// and therefore could not be completed as requested.
+    case UnlikelyError                              = 0x0E
+    
+    /// The attribute requires encryption before it can be read or written.
+    case InsufficientEncryption                     = 0x0F
+    
+    /// The attribute type is not a supported grouping attribute as defined by a higher layer specification.
+    case UnsupportedGroupType                       = 0x10
+    
+    /// Insufficient Resources to complete the request.
+    case InsufficientResources                      = 0x11
+        
     /*
     public init(POSIXError: SwiftFoundation.POSIXError) {
         

@@ -38,13 +38,20 @@ public struct ATTErrorResponse: ATTProtocolDataUnit, ErrorType {
     public var attributeHandle: UInt16
     
     /// The reason why the request has generated an error response.
-    public var error: ATT.Error
+    public var errorCode: UInt8
     
     public init(requestOpcode: ATT.Opcode, attributeHandle: UInt16, error: ATT.Error) {
         
         self.requestOpcode = requestOpcode
         self.attributeHandle = attributeHandle
-        self.error = error
+        self.errorCode = error.rawValue
+    }
+    
+    public init(requestOpcode: ATT.Opcode, attributeHandle: UInt16, errorCode: UInt8) {
+        
+        self.requestOpcode = requestOpcode
+        self.attributeHandle = attributeHandle
+        self.errorCode = errorCode
     }
     
     // ATTProtocolDataUnit
@@ -64,12 +71,11 @@ public struct ATTErrorResponse: ATTProtocolDataUnit, ErrorType {
         let errorByte               = byteValue[4]
         
         guard attributeOpcodeByte == ATTErrorResponse.attributeOpcode.rawValue,
-            let requestOpcode = ATTOpcode(rawValue: requestOpcodeByte),
-            let error = ATTError(rawValue: errorByte)
+            let requestOpcode = ATTOpcode(rawValue: requestOpcodeByte)
             else { return nil }
         
         self.requestOpcode = requestOpcode
-        self.error = error
+        self.errorCode = errorByte
         self.attributeHandle = UInt16(littleEndian: (attributeHandleByte1, attributeHandleByte2))
     }
     
@@ -81,7 +87,7 @@ public struct ATTErrorResponse: ATTProtocolDataUnit, ErrorType {
         bytes[1] = requestOpcode.rawValue
         bytes[2] = attributeHandle.littleEndianBytes.0
         bytes[3] = attributeHandle.littleEndianBytes.1
-        bytes[4] = error.rawValue
+        bytes[4] = errorCode
         
         return bytes
     }
