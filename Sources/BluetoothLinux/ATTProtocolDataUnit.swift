@@ -8,7 +8,7 @@
 
 import struct SwiftFoundation.UUID
 
-// MARK: - Protocol
+// MARK: - Protocol Definition
 
 /// Data packet for the ATT protocol.
 public protocol ATTProtocolDataUnit {
@@ -23,7 +23,7 @@ public protocol ATTProtocolDataUnit {
     init?(byteValue: [UInt8])
 }
 
-// MARK: - ATT PDUs
+// MARK: - Error Handling
 
 /// The Error Response is used to state that a given request cannot be performed,
 /// and to provide the reason.
@@ -86,6 +86,8 @@ public struct ATTErrorResponse: ATTProtocolDataUnit, ErrorType {
         return bytes
     }
 }
+
+// MARK: - MTU Exchange
 
 /// Exchange MTU Request
 ///
@@ -179,6 +181,10 @@ public struct ATTMaximumTranssmissionUnitResponse: ATTProtocolDataUnit {
     }
 }
 
+// MARK: - Find Information
+
+/// Find Information Request
+///
 /// The *Find Information Request* is used to obtain the mapping of attribute handles with their associated types. 
 /// This allows a client to discover the list of attributes and their types on a server.
 public struct ATTFindInformationRequest: ATTProtocolDataUnit {
@@ -574,6 +580,8 @@ public struct ATTFindByTypeResponse: ATTProtocolDataUnit {
         }
     }
 }
+
+// MARK: - Reading Attributes
 
 /// Read By Type Request
 ///
@@ -1298,6 +1306,8 @@ public struct ATTReadByGroupTypeResponse: ATTProtocolDataUnit {
     }
 }
 
+// MARK: - Writing Attributes
+
 /// Write Request
 ///
 /// The *Write Request* is used to request the server to write the value of an attribute
@@ -1508,6 +1518,8 @@ public struct ATTSignedWriteCommand: ATTProtocolDataUnit {
     }
 }
 
+// MARK: - Queued Writes
+
 /// Prepare Write Request
 ///
 /// The *Prepare Write Request* is used to request the server to prepare to write the value of an attribute. 
@@ -1717,4 +1729,139 @@ public struct ATTExecuteWriteResponse: ATTProtocolDataUnit {
         return [ATT.Opcode.ExecuteWriteResponse.rawValue]
     }
 }
+
+// MARK: - Server Initiated
+
+/// Handle Value Notification
+/// 
+/// A server can send a notification of an attribute’s value at any time.
+public struct ATTHandleValueNotification: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.HandleValueNotification
+    
+    /// minimum length
+    public static let length = 1 + 2 + 0
+    
+    /// The handle of the attribute.
+    public var handle: UInt16
+    
+    /// The handle of the attribute.
+    public var value: [UInt8]
+    
+    public init?(byteValue: [UInt8]) {
+        
+        let type = ATTHandleValueNotification.self
+        
+        guard byteValue.count >= type.length
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == type.attributeOpcode.rawValue
+            else { return nil }
+        
+        self.handle = UInt16(littleEndian: (byteValue[1], byteValue[2]))
+        
+        if byteValue.count > type.length {
+            
+            self.value = Array(byteValue.suffixFrom(3))
+            
+        } else {
+            
+            self.value = []
+        }
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let type = ATTHandleValueNotification.self
+        
+        let handleBytes = handle.littleEndianBytes
+        
+        return [type.attributeOpcode.rawValue, handleBytes.0, handleBytes.1] + value
+    }
+}
+
+/// Handle Value Indication
+///
+/// A server can send an indication of an attribute’s value.
+public struct ATTHandleValueIndication: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.HandleValueIndication
+    
+    /// Minimum length
+    public static let length = 1 + 2 + 0
+    
+    /// The handle of the attribute.
+    public var handle: UInt16
+    
+    /// The handle of the attribute.
+    public var value: [UInt8]
+    
+    public init?(byteValue: [UInt8]) {
+        
+        let type = ATTHandleValueIndication.self
+        
+        guard byteValue.count >= type.length
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == type.attributeOpcode.rawValue
+            else { return nil }
+        
+        self.handle = UInt16(littleEndian: (byteValue[1], byteValue[2]))
+        
+        if byteValue.count > type.length {
+            
+            self.value = Array(byteValue.suffixFrom(3))
+            
+        } else {
+            
+            self.value = []
+        }
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let type = ATTHandleValueIndication.self
+        
+        let handleBytes = handle.littleEndianBytes
+        
+        return [type.attributeOpcode.rawValue, handleBytes.0, handleBytes.1] + value
+    }
+}
+
+/// Handle Value Confirmation
+///
+/// The *Handle Value Confirmation* is sent in response to a received *Handle Value Indication*
+/// and confirms that the client has received an indication of the given attribute.
+public struct ATTHandleValueConfirmation: ATTProtocolDataUnit {
+    
+    public static let attributeOpcode = ATT.Opcode.HandleValueConfirmation
+    public static let length = 1
+    
+    public init() { }
+    
+    public init?(byteValue: [UInt8]) {
+        
+        let type = ATTHandleValueConfirmation.self
+        
+        guard byteValue.count >= type.length
+            else { return nil }
+        
+        let attributeOpcodeByte = byteValue[0]
+        
+        guard attributeOpcodeByte == type.attributeOpcode.rawValue
+            else { return nil }
+    }
+    
+    public var byteValue: [UInt8] {
+        
+        let type = ATTHandleValueConfirmation.self
+        
+        return [type.attributeOpcode.rawValue]
+    }
+}
+
 
