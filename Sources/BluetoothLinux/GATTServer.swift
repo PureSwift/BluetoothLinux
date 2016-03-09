@@ -37,7 +37,7 @@ public final class GATTServer {
         connection.register(exchangeMTU)
         
         // Read By Group Type
-        //connection.register(readByGroupType)
+        connection.register(readByGroupType)
     }
     
     private func exchangeMTU(pdu: ATTMaximumTransmissionUnitRequest) {
@@ -55,10 +55,43 @@ public final class GATTServer {
         log("MTU exchange complete, with MTU: \(finalMTU)")
     }
     
-    /*
     private func readByGroupType(pdu: ATTReadByGroupTypeRequest) {
         
+        let opcode = pdu.dynamicType.attributeOpcode
         
-    }*/
+        log("Read by Group Type - start: \(pdu.startHandle.currentEndian), end: \(pdu.endHandle.currentEndian)")
+        
+        // validate handles
+        guard pdu.startHandle > 0 && pdu.endHandle > 0 else {
+            
+            let error = ATTErrorResponse(requestOpcode: opcode, attributeHandle: 0, error: .InvalidHandle)
+            
+            connection.send(error) { _ in }
+            
+            return
+        }
+        
+        guard pdu.startHandle <= pdu.endHandle else {
+            
+            let error = ATTErrorResponse(requestOpcode: opcode, attributeHandle: pdu.startHandle, error: .InvalidHandle)
+            
+            connection.send(error) { _ in }
+            
+            return
+        }
+        
+        // GATT defines that only the Primary Service and Secondary Service group types 
+        // can be used for the "Read By Group Type" request. Return an error if any other group type is given.
+        guard pdu.type == GATT.UUID.PrimaryService.UUID || pdu.type == GATT.UUID.SecondaryService.UUID else {
+            
+            let error = ATTErrorResponse(requestOpcode: opcode, attributeHandle: pdu.startHandle, error: .UnsupportedGroupType)
+            
+            connection.send(error) { _ in }
+            
+            return
+        }
+        
+        
+    }
 }
 
