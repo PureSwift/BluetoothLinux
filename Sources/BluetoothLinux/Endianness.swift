@@ -45,7 +45,7 @@ public extension UInt16 {
     /// Initializes value from two little endian ordered bytes. 
     public init(littleEndian value: (UInt8, UInt8)) {
         
-        self = UInt16(value.0).littleEndian + UInt16(value.1).bigEndian
+        self = (UInt16(value.0).littleEndian + UInt16(value.1).bigEndian).currentEndian
     }
     
     public var littleEndianBytes: (UInt8, UInt8) {
