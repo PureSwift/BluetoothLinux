@@ -9,6 +9,42 @@
 /// Bluetooth GATT protocol
 public struct GATT {
     
+    /// GATT UUIDs
+    public enum UUID: UInt16 {
+        
+        case PrimaryService         = 0x2800
+        case SecondaryService       = 0x2801
+        case Include                = 0x2802
+        case Characteristic         = 0x2803
+        
+        /// Initializes a GATT UUID for service type.
+        public init(primaryService: Bool) {
+            
+            if primaryService {
+                
+                self = .PrimaryService
+                
+            } else {
+                
+                self = .SecondaryService
+            }
+        }
+        
+        /// Returns a Bluetooth UUID initialized with the `rawValue` of this GATT UUID.
+        public var UUID: BluetoothUUID {
+            
+            return .Bit16(rawValue)
+        }
+    }
+    
+    /// GATT Characteristic Descriptors
+    public enum CharacteristicDescriptor: UInt16 {
+        
+        case ExtendedProperty       = 0x2900
+        
+        // TODO: All Characteristic Descriptors
+    }
+    
     /// GATT Characteristic Properties Bitfield valuess
     public enum CharacteristicProperty: UInt8 {
         

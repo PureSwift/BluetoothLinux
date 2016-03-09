@@ -19,8 +19,6 @@ public final class ATTConnection {
     
     // MARK: - Properties
     
-    public let socket: L2CAPSocket
-    
     /// Actual number of bytes for PDU ATT exchange.
     public var maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default {
         
@@ -66,17 +64,14 @@ public final class ATTConnection {
     
     // MARK: - Initialization
     
-    public init(socket: L2CAPSocket) {
-        
-        self.socket = socket
-    }
+    public init() { }
     
     // MARK: - Methods
     
     /// Performs the actual IO for recieving data.
-    public func read() throws {
+    public func read(socket: L2CAPSocket) throws {
         
-        let recievedData = try self.socket.recieve(maximumTransmissionUnit)
+        let recievedData = try socket.recieve(maximumTransmissionUnit)
         
         // valid PDU data length
         guard recievedData.byteValue.count >= ATT.MinimumPDULength
@@ -111,7 +106,7 @@ public final class ATTConnection {
     }
     
     /// Performs the actual IO for sending data.
-    public func write() throws {
+    public func write(socket: L2CAPSocket) throws {
         
         guard let sendOpcode = pickNextSendOpcode()
             else { return } // throw error?
@@ -243,7 +238,7 @@ public final class ATTConnection {
         let data = PDU.byteValue
         
         // actual PDU length
-        let length = T.length
+        let length = data.count
         
         /// MTU must be large enough to hold PDU. 
         guard length <= maximumTransmissionUnit else { return nil }
