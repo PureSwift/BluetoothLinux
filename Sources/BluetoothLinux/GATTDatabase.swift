@@ -138,6 +138,30 @@ public struct GATTDatabase {
         return true
     }
     
+    public func readByGroupType(handle handle: (start: UInt16, end: UInt16), type: BluetoothUUID) -> [Attribute] {
+        
+        var attributes = [Attribute]()
+        
+        for service in services {
+            
+            guard service.active else { continue }
+            
+            guard type == service.attributes[0].type else { continue }
+            
+            let groupStart = service.attributes[0].handle
+            
+            let groupEnd = groupStart + UInt16(service.attributes.count - 1)
+            
+            guard (groupEnd < handle.start || groupStart > handle.end) == false else { continue }
+            
+            guard (groupStart < handle.start || groupStart > handle.end) == false else { continue }
+            
+            attributes.append(service.attributes[0])
+        }
+        
+        return attributes
+    }
+    
     // MARK: - Dynamic Properties
     
     public var isEmpty: Bool {

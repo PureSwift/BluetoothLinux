@@ -21,10 +21,13 @@ public final class GATTServer {
     public init(connection: ATTConnection) {
         
         self.connection = connection
+        
+        self.registerATTHandlers()
     }
     
     // MARK: - Private Methods
     
+    @inline(__always)
     private func log(text: String) {
         
         if log { print(text) }
@@ -59,7 +62,7 @@ public final class GATTServer {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
-        log("Read by Group Type - start: \(pdu.startHandle.currentEndian), end: \(pdu.endHandle.currentEndian)")
+        log("Read by Group Type - start: \(pdu.startHandle), end: \(pdu.endHandle)")
         
         // validate handles
         guard pdu.startHandle > 0 && pdu.endHandle > 0 else {
@@ -85,6 +88,17 @@ public final class GATTServer {
         guard pdu.type == GATT.UUID.PrimaryService.UUID || pdu.type == GATT.UUID.SecondaryService.UUID else {
             
             let error = ATTErrorResponse(requestOpcode: opcode, attributeHandle: pdu.startHandle, error: .UnsupportedGroupType)
+            
+            connection.send(error) { _ in }
+            
+            return
+        }
+        
+        let attributes = database.readByGroupType(handle: (pdu.startHandle, pdu.endHandle), type: pdu.type)
+        
+        guard attributes.isEmpty == false else {
+            
+            let error = ATTErrorResponse(requestOpcode: opcode, attributeHandle: pdu.startHandle, error: .AttributeNotFound)
             
             connection.send(error) { _ in }
             
