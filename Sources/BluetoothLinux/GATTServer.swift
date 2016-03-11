@@ -43,6 +43,8 @@ public final class GATTServer {
         connection.register(readByGroupType)
     }
     
+    // MARK: Callbacks
+    
     private func exchangeMTU(pdu: ATTMaximumTransmissionUnitRequest) {
         
         let serverMTU = UInt16(connection.maximumTransmissionUnit)
@@ -105,7 +107,23 @@ public final class GATTServer {
             return
         }
         
+        // Use the first attribute to determine the length of each attribute data unit. 
+        // Stop when a different attribute value is seen.
         
+        //let attributeLength = min(min(connection.maximumTransmissionUnit - 6, 251),  attributes[0].value.count) + 4
+        
+        let attributeData = attributes.map { (attribute) in
+            
+            guard let service = database.service(ofAttribute: attribute)
+                else { fatalError("No service found for attribute in database. \(attribute)") }
+            
+            return ATTReadByGroupTypeResponse.AttributeData(attributeHandle: service.attributes[0], endGroupHandle: 0, value: [])
+        }
+        
+        guard let response = ATTReadByGroupTypeResponse(attributeDataList: attributeData)
+            else { fatalError("Could not create ATTReadByGroupTypeResponse") }
+        
+        connection.send(response) { _ in }
     }
 }
 

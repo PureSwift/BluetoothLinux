@@ -114,6 +114,19 @@ public struct GATTDatabase {
         return true
     }
     
+    public func service(ofAttribute attribute: Attribute) -> Service? {
+        
+        for service in services {
+            
+            if service.identifier == attribute.serviceIdentifier {
+                
+                return service
+            }
+        }
+        
+        return nil
+    }
+    
     /// Registers for notifications and returns the notification ID.
     public mutating func register(serviceAdded: AttributeCallback, serviceRemoved: AttributeCallback) -> UInt {
         
