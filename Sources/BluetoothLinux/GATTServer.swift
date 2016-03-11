@@ -107,17 +107,12 @@ public final class GATTServer {
             return
         }
         
-        // Use the first attribute to determine the length of each attribute data unit. 
-        // Stop when a different attribute value is seen.
-        
-        //let attributeLength = min(min(connection.maximumTransmissionUnit - 6, 251),  attributes[0].value.count) + 4
-        
-        let attributeData = attributes.map { (attribute) in
+        let attributeData = attributes.map { (attribute) -> ATTReadByGroupTypeResponse.AttributeData in
             
             guard let service = database.service(ofAttribute: attribute)
                 else { fatalError("No service found for attribute in database. \(attribute)") }
             
-            return ATTReadByGroupTypeResponse.AttributeData(attributeHandle: service.attributes[0], endGroupHandle: 0, value: [])
+            return ATTReadByGroupTypeResponse.AttributeData(attributeHandle: service.handles.0, endGroupHandle: service.handles.1, value: attribute.value)
         }
         
         guard let response = ATTReadByGroupTypeResponse(attributeDataList: attributeData)

@@ -207,14 +207,14 @@ public extension GATTDatabase {
             return attributes[0].type
         }
         
-        /// Internal identifier for lookup.
-        private let identifier: UInt
-        
         /// Start and end identifiers.
-        private var handles: (UInt16, UInt16) {
+        internal var handles: (UInt16, UInt16) {
             
             return (attributes[0].handle, attributes.last!.handle)
         }
+        
+        /// Internal identifier for lookup.
+        private let identifier: UInt
         
         /// Create a new service and give it an attribute.
         private init(identifier: UInt, UUID: BluetoothUUID, handle: UInt16, primary: Bool) {
