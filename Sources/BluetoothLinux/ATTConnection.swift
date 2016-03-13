@@ -181,6 +181,14 @@ public final class ATTConnection {
         disconnectList.removeAll()
     }
     
+    /// Sends an error.
+    public func sendError(opcode: ATTOpcode, error: ATT.Error, handle: UInt16 = 0, response: (ATTErrorResponse -> ())? = nil) {
+        
+        let error = ATTErrorResponse(requestOpcode: opcode, attributeHandle: handle, error: error)
+        
+        self.send(error) { response?($0) }
+    }
+    
     /// Adds a PDU to the queue to send.
     ///
     /// - Returns: Identifier of queued send operation or `nil` if the PDU cannot be sent.

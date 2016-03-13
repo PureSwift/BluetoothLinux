@@ -41,6 +41,12 @@ public final class GATTServer {
         
         // Read By Group Type
         connection.register(readByGroupType)
+        
+        // Read By Type
+        connection.register(readByType)
+        
+        // Find Information
+        
     }
     
     // MARK: Callbacks
@@ -119,6 +125,21 @@ public final class GATTServer {
             else { fatalError("Could not create ATTReadByGroupTypeResponse") }
         
         connection.send(response) { _ in }
+    }
+    
+    private func readByType(pdu: ATTReadByTypeRequest) {
+        
+        let opcode = pdu.dynamicType.attributeOpcode
+        
+        log("Read By Type - start: \(pdu.startHandle) end: \(pdu.endHandle)")
+        
+        guard (pdu.startHandle == 0 || pdu.endHandle == 0) == false
+            else { connection.sendError(opcode, error: .InvalidHandle); return }
+        
+        guard (pdu.startHandle > pdu.endHandle) == false
+            else { connection.sendError(opcode, error: .InvalidHandle, handle: pdu.startHandle); return }
+        
+        //database.readByType()
     }
 }
 
