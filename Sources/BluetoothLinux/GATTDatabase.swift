@@ -175,6 +175,25 @@ public struct GATTDatabase {
         return attributes
     }
     
+    public func readbyType(handle handle: (start: UInt16, end: UInt16), type: BluetoothUUID) -> [Attribute] {
+        
+        var attributes = [Attribute]()
+        
+        for service in services {
+            
+            for attribute in service.attributes {
+                
+                guard attribute.handle >= handle.start
+                    && attribute.handle <= handle.end
+                    && attribute.type == type else { continue }
+                
+                attributes.append(attribute)
+            }
+        }
+        
+        return attributes
+    }
+    
     // MARK: - Dynamic Properties
     
     public var isEmpty: Bool {

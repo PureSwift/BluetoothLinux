@@ -139,7 +139,12 @@ public final class GATTServer {
         guard (pdu.startHandle > pdu.endHandle) == false
             else { connection.sendError(opcode, error: .InvalidHandle, handle: pdu.startHandle); return }
         
-        //database.readByType()
+        let attributes = database.readbyType(handle: (pdu.startHandle, pdu.endHandle), type: pdu.attributeType)
+        
+        guard attributes.isEmpty == false
+            else { connection.sendError(opcode, error: .AttributeNotFound, handle: pdu.startHandle); return }
+        
+        
     }
 }
 
