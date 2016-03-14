@@ -12,15 +12,17 @@ public final class GATTServer {
     
     public var log = false
     
-    public var database = GATTDatabase()
+    public var database: GATTDatabase
     
-    public var connection: ATTConnection
+    public let connection: ATTConnection
     
     // MARK: - Initialization
     
-    public init(connection: ATTConnection) {
+    public init() {
         
-        self.connection = connection
+        self.database = GATTDatabase()
+        
+        self.connection = ATTConnection()
         
         self.registerATTHandlers()
     }
@@ -46,6 +48,11 @@ public final class GATTServer {
         connection.register(readByType)
         
         // Find Information
+        
+    }
+    
+    private func processReadByType() {
+        
         
     }
     
@@ -133,7 +140,7 @@ public final class GATTServer {
         
         log("Read By Type - start: \(pdu.startHandle) end: \(pdu.endHandle)")
         
-        guard (pdu.startHandle == 0 || pdu.endHandle == 0) == false
+        guard pdu.startHandle != 0 && pdu.endHandle != 0
             else { connection.sendError(opcode, error: .InvalidHandle); return }
         
         guard (pdu.startHandle > pdu.endHandle) == false

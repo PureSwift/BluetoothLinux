@@ -20,6 +20,9 @@ let package = Package(
             name: "L2CAPServerTest",
             dependencies: [.Target(name: "BluetoothLinux")]),
         Target(
+            name: "GATTServerTest",
+            dependencies: [.Target(name: "BluetoothLinux")]),
+        Target(
             name: "BluetoothLinux")
     ]
 )

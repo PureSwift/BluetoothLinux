@@ -50,6 +50,7 @@
 		6EA37EF81C84D6CE00A61969 /* GATT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA37EF71C84D6CE00A61969 /* GATT.swift */; };
 		6ECB305D1C47613F004CCA68 /* LinkControlCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB305C1C47613F004CCA68 /* LinkControlCommand.swift */; };
 		6ECB30601C47618E004CCA68 /* HCICommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB305F1C47618E004CCA68 /* HCICommand.swift */; };
+		6EF355211C965EB400730BAB /* GATTServerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF355201C965EB400730BAB /* GATTServerTest.swift */; };
 		6EF928FB1C8830D200D9A103 /* BluetoothLinux.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E92A4241C15309B007BC4E9 /* BluetoothLinux.framework */; };
 		6EF929031C88316D00D9A103 /* MathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF929021C88316D00D9A103 /* MathTests.swift */; };
 		6EF929071C8832FF00D9A103 /* DarwinTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF929061C8832FF00D9A103 /* DarwinTests.m */; };
@@ -130,6 +131,8 @@
 		6EA37EF71C84D6CE00A61969 /* GATT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATT.swift; sourceTree = "<group>"; };
 		6ECB305C1C47613F004CCA68 /* LinkControlCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkControlCommand.swift; sourceTree = "<group>"; };
 		6ECB305F1C47618E004CCA68 /* HCICommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCICommand.swift; sourceTree = "<group>"; };
+		6EF3551E1C965E8F00730BAB /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		6EF355201C965EB400730BAB /* GATTServerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTServerTest.swift; sourceTree = "<group>"; };
 		6EF928F61C8830D100D9A103 /* BluetoothLinuxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BluetoothLinuxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EF928FA1C8830D200D9A103 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EF929021C88316D00D9A103 /* MathTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MathTests.swift; sourceTree = "<group>"; };
@@ -162,6 +165,7 @@
 		6E0C5BBA1C83794700AF63E5 /* Tests Tools */ = {
 			isa = PBXGroup;
 			children = (
+				6EF3551D1C965E8F00730BAB /* GATTServerTest */,
 				6EA37EF01C84B4EA00A61969 /* L2CAPServerTest */,
 				6E0C5BBF1C837A9F00AF63E5 /* iBeaconTest */,
 				6E0C5BBC1C8379D100AF63E5 /* ScanTest */,
@@ -291,6 +295,16 @@
 				6E795E8F1C489FE7002377FE /* LowEnergyCommandParameter.swift */,
 			);
 			name = "HCI Commands";
+			sourceTree = "<group>";
+		};
+		6EF3551D1C965E8F00730BAB /* GATTServerTest */ = {
+			isa = PBXGroup;
+			children = (
+				6EF3551E1C965E8F00730BAB /* main.swift */,
+				6EF355201C965EB400730BAB /* GATTServerTest.swift */,
+			);
+			name = GATTServerTest;
+			path = ../Sources/GATTServerTest;
 			sourceTree = "<group>";
 		};
 		6EF928F71C8830D200D9A103 /* BluetoothLinuxTests */ = {
@@ -456,6 +470,7 @@
 				6E881D821C389F4B00E509A9 /* iBeacon.swift in Sources */,
 				6E196CD01C87BE63009FA9CF /* LowEnergyEventParameter.swift in Sources */,
 				6E92A4381C1530EF007BC4E9 /* Address.swift in Sources */,
+				6EF355211C965EB400730BAB /* GATTServerTest.swift in Sources */,
 				6E196CCE1C87BBE1009FA9CF /* LowEnergyEvent.swift in Sources */,
 				6E196CCB1C87B47E009FA9CF /* DeviceCommand.swift in Sources */,
 				6E53E1731C84FD8200AC8FCA /* GATTServer.swift in Sources */,
