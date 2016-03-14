@@ -10,7 +10,7 @@ public final class GATTServer {
     
     // MARK: - Properties
     
-    public var log = false
+    public var log: (String -> ())?
     
     public var database: GATTDatabase
     
@@ -29,13 +29,6 @@ public final class GATTServer {
     
     // MARK: - Private Methods
     
-    @inline(__always)
-    private func log(text: String) {
-        
-        if log { print(text) }
-    }
-    
-    /// gatt_server_register_att_handlers()
     private func registerATTHandlers() {
         
         // Exchange MTU
@@ -70,14 +63,14 @@ public final class GATTServer {
         /* Set MTU to be the minimum */
         connection.maximumTransmissionUnit = Int(finalMTU)
         
-        log("MTU exchange complete, with MTU: \(finalMTU)")
+        log?("MTU exchange complete, with MTU: \(finalMTU)")
     }
     
     private func readByGroupType(pdu: ATTReadByGroupTypeRequest) {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
-        log("Read by Group Type - start: \(pdu.startHandle), end: \(pdu.endHandle)")
+        log?("Read by Group Type - start: \(pdu.startHandle), end: \(pdu.endHandle)")
         
         // validate handles
         guard pdu.startHandle > 0 && pdu.endHandle > 0 else {
@@ -138,7 +131,7 @@ public final class GATTServer {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
-        log("Read By Type - start: \(pdu.startHandle) end: \(pdu.endHandle)")
+        log?("Read By Type - start: \(pdu.startHandle) end: \(pdu.endHandle)")
         
         guard pdu.startHandle != 0 && pdu.endHandle != 0
             else { connection.sendError(opcode, error: .InvalidHandle); return }

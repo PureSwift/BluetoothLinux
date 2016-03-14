@@ -17,6 +17,10 @@ import SwiftFoundation
 
 func GATTServerTest(adapter: Adapter) {
     
+    var database = GATTDatabase()
+    
+    database.insertService(1, UUID: BluetoothUUID.Bit128(UUID()), primary: true, handleCount: 1)
+    
     do {
         
         let address = adapter.address!
@@ -31,7 +35,9 @@ func GATTServerTest(adapter: Adapter) {
         
         let server = GATTServer()
         
-        server.log = true
+        server.log = { print("[\(newSocket.address)]: " + $0) }
+        
+        server.database = database
         
         while true {
             
