@@ -137,7 +137,7 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
     var oldFilter = HCIFilter()
     var newFilter = HCIFilter()
     let oldFilterPointer = withUnsafeMutablePointer(&oldFilter) { UnsafeMutablePointer<Void>($0) }
-    let newFilterPointer = withUnsafeMutablePointer(&oldFilter) { UnsafeMutablePointer<Void>($0) }
+    let newFilterPointer = withUnsafeMutablePointer(&newFilter) { UnsafeMutablePointer<Void>($0) }
     var filterLength = socklen_t(sizeof(HCIFilter))
 
     // get old filter
