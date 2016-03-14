@@ -37,7 +37,7 @@ public extension Adapter {
 
 internal func HCISendCommand(deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), parameterData: [UInt8] = []) throws {
     
-    var packetType = HCIPacketType.Command.rawValue
+    let packetType = HCIPacketType.Command.rawValue
     
     var header = HCICommandHeader()
     header.opcode = HCICommandOpcodePack(opcode.commandField, opcode.groupField).littleEndian
@@ -48,21 +48,16 @@ internal func HCISendCommand(deviceDescriptor: CInt, opcode: (commandField: UInt
     // build iovec
     var ioVectors = [iovec](count: 2, repeatedValue: iovec())
     
-    ioVectors[0].iov_base = withUnsafePointer(&packetType) { UnsafeMutablePointer<Void>($0) }
-    ioVectors[0].iov_len = 1
-    
-    ioVectors[1].iov_base = withUnsafePointer(&header) { UnsafeMutablePointer<Void>($0) }
-    ioVectors[1].iov_len = HCICommandHeader.length
+    ioVectors[0] = iovec(byteValue: [packetType])
+    ioVectors[1] = iovec(byteValue: header.byteValue)
     
     if parameterData.isEmpty == false {
         
-        var dataCopy = parameterData
-        var vector = iovec()
-        vector.iov_base = withUnsafePointer(&dataCopy) { UnsafeMutablePointer<Void>($0) }
-        vector.iov_len = parameterData.count
-        
-        ioVectors.append(vector)
+        ioVectors.append(iovec(byteValue: parameterData))
     }
+    
+    // free memory
+    defer { for index in 0 ..< ioVectors.count { ioVectors[index].dealloc() } }
     
     // write to device descriptor socket
     while writev(deviceDescriptor, &ioVectors, CInt(ioVectors.count)) < 0 {
