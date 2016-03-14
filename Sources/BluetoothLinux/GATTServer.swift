@@ -44,6 +44,13 @@ public final class GATTServer {
         
     }
     
+    private func errorResponse(opcode: ATTOpcode, _ error: ATTError, _ handle: UInt16 = 0) {
+        
+        log?("Error \(error) - \(opcode) (\(handle))")
+        
+        connection.sendError(opcode, error: error, handle: handle)
+    }
+    
     private func processReadByType() {
         
         
@@ -70,48 +77,24 @@ public final class GATTServer {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
-        log?("Read by Group Type - start: \(pdu.startHandle), end: \(pdu.endHandle)")
+        log?("Read by Group Type (\(pdu.startHandle) - \(pdu.endHandle))")
         
         // validate handles
-        guard pdu.startHandle > 0 && pdu.endHandle > 0 else {
-            
-            let error = ATTErrorResponse(requestOpcode: opcode, attributeHandle: 0, error: .InvalidHandle)
-            
-            connection.send(error) { _ in }
-            
-            return
-        }
+        guard pdu.startHandle != 0 && pdu.endHandle != 0
+            else { errorResponse(opcode, .InvalidHandle); return }
         
-        guard pdu.startHandle <= pdu.endHandle else {
-            
-            let error = ATTErrorResponse(requestOpcode: opcode, attributeHandle: pdu.startHandle, error: .InvalidHandle)
-            
-            connection.send(error) { _ in }
-            
-            return
-        }
+        guard pdu.startHandle <= pdu.endHandle
+            else { errorResponse(opcode, .InvalidHandle, pdu.startHandle); return }
         
         // GATT defines that only the Primary Service and Secondary Service group types 
         // can be used for the "Read By Group Type" request. Return an error if any other group type is given.
-        guard pdu.type == GATT.UUID.PrimaryService.UUID || pdu.type == GATT.UUID.SecondaryService.UUID else {
-            
-            let error = ATTErrorResponse(requestOpcode: opcode, attributeHandle: pdu.startHandle, error: .UnsupportedGroupType)
-            
-            connection.send(error) { _ in }
-            
-            return
-        }
+        guard pdu.type == GATT.UUID.PrimaryService.UUID || pdu.type == GATT.UUID.SecondaryService.UUID
+            else { errorResponse(opcode, .UnsupportedGroupType, pdu.startHandle); return }
         
         let attributes = database.readByGroupType(handle: (pdu.startHandle, pdu.endHandle), type: pdu.type)
         
-        guard attributes.isEmpty == false else {
-            
-            let error = ATTErrorResponse(requestOpcode: opcode, attributeHandle: pdu.startHandle, error: .AttributeNotFound)
-            
-            connection.send(error) { _ in }
-            
-            return
-        }
+        guard attributes.isEmpty == false
+            else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
         let attributeData = attributes.map { (attribute) -> ATTReadByGroupTypeResponse.AttributeData in
             
@@ -124,6 +107,8 @@ public final class GATTServer {
         guard let response = ATTReadByGroupTypeResponse(attributeDataList: attributeData)
             else { fatalError("Could not create ATTReadByGroupTypeResponse") }
         
+        log?("Response: \(response)")
+        
         connection.send(response) { _ in }
     }
     
@@ -131,19 +116,18 @@ public final class GATTServer {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
-        log?("Read By Type - start: \(pdu.startHandle) end: \(pdu.endHandle)")
+        log?("Read by Type (\(pdu.startHandle) - \(pdu.endHandle))")
         
         guard pdu.startHandle != 0 && pdu.endHandle != 0
-            else { connection.sendError(opcode, error: .InvalidHandle); return }
+            else { errorResponse(opcode, .InvalidHandle); return }
         
         guard (pdu.startHandle > pdu.endHandle) == false
-            else { connection.sendError(opcode, error: .InvalidHandle, handle: pdu.startHandle); return }
+            else { errorResponse(opcode, .InvalidHandle, pdu.startHandle); return }
         
         let attributes = database.readbyType(handle: (pdu.startHandle, pdu.endHandle), type: pdu.attributeType)
         
         guard attributes.isEmpty == false
-            else { connection.sendError(opcode, error: .AttributeNotFound, handle: pdu.startHandle); return }
-        
+            else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
     }
 }
