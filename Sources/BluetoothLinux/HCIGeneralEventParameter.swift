@@ -17,7 +17,8 @@ public extension HCIGeneralEvent {
         public static let event = HCIGeneralEvent.CommandComplete
         public static let length = 3
         
-        public var ncmd: UInt8 = 0
+        /// The Number of HCI command packets which are allowed to be sent to the Controller from the Host.
+        public var numberOfCommandPackets: UInt8 = 0
         public var opcode: UInt16 = 0
         
         public init() { }
@@ -27,7 +28,7 @@ public extension HCIGeneralEvent {
             guard byteValue.count == CommandCompleteParameter.length
                 else { return nil }
             
-            self.ncmd = byteValue[0]
+            self.numberOfCommandPackets = byteValue[0]
             self.opcode = UInt16(littleEndian: (byteValue[1], byteValue[2]))
         }
     }

@@ -111,7 +111,7 @@ public extension Adapter {
 
         let opcode = (CP.command.rawValue, CP.command.dynamicType.opcodeGroupField.rawValue)
 
-        let data = try HCISendRequest(internalSocket, opcode: opcode, event: HCIGeneralEvent.CommandComplete.rawValue, eventParameterLength: 1, timeout: timeout)
+        let data = try HCISendRequest(internalSocket, opcode: opcode, eventParameterLength: 1, timeout: timeout)
 
         guard let statusByte = data.first
             else { fatalError("Missing status byte!") }
@@ -154,7 +154,7 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
     newFilter.setEvent(event)
     //newFilter.setEvent(HCIGeneralEvent.CommandStatus.rawValue, HCIGeneralEvent.CommandComplete.rawValue, HCIGeneralEvent.LowEnergyMeta.rawValue, event)
     newFilter.opcode = opcodePacked
-
+    
     // set new filter
     guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, newFilterPointer, filterLength) == 0
         else { throw POSIXError.fromErrorNumber! }
@@ -181,15 +181,13 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
         // decrement attempts
         attempts -= 1
         
-        print("Attempts left: \(attempts)")
-
         // wait for timeout
         if timeout > 0 {
 
             var timeoutPoll = pollfd(fd: deviceDescriptor, events: Int16(POLLIN), revents: 0)
             var pollStatus: CInt = 0
 
-            func doPoll() { pollStatus = poll(&timeoutPoll, 1, CInt(timeout)); print("Poll Status: \(pollStatus) ") }
+            func doPoll() { pollStatus = poll(&timeoutPoll, 1, CInt(timeout)) }
 
             doPoll()
 
@@ -218,35 +216,35 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
 
             // make sure its not a negative number
             if timeout < 0 {
-
+                
                 timeout = 0
             }
         }
-
+        
         var actualBytesRead = 0
-
+        
         func doRead() { actualBytesRead = read(deviceDescriptor, &eventBuffer, eventBuffer.count) }
-
+        
         doRead()
-
+        
         while actualBytesRead < 0 {
-
+            
             // ignore these errors
             if (errno == EAGAIN || errno == EINTR) {
-
+                
                 // try again
                 doRead()
                 continue
-
+                
             } else {
 
                 // attempt to restore filter and throw
                 throw restoreFilter(POSIXError.fromErrorNumber!)
             }
         }
-
-        let headerData = Array(eventBuffer[0 ..< HCIEventHeader.length])
-        let eventData = Array(eventBuffer[(0 + HCIEventHeader.length) ..< actualBytesRead])
+        
+        let headerData = Array(eventBuffer[1 ..< 1 + HCIEventHeader.length])
+        let eventData = Array(eventBuffer[(1 + HCIEventHeader.length) ..< actualBytesRead])
         //var length = actualBytesRead - (1 + HCIEventHeader.length)
 
         guard let eventHeader = HCIEventHeader(byteValue: headerData)
@@ -263,7 +261,7 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
 
         case HCIGeneralEvent.CommandStatus.rawValue:
             
-            let parameterData = Array(eventData.suffix(min(eventData.count, HCIGeneralEvent.CommandStatusParameter.length)))
+            let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.CommandStatusParameter.length)))
             
             guard let parameter = HCIGeneralEvent.CommandStatusParameter(byteValue: parameterData)
                 else { throw AdapterError.GarbageResponse(Data(byteValue: parameterData)) }
@@ -287,24 +285,27 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
 
         case HCIGeneralEvent.CommandComplete.rawValue:
             
-            let parameterData = Array(eventData.suffix(min(eventData.count, HCIGeneralEvent.CommandCompleteParameter.length)))
+            let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.CommandCompleteParameter.length)))
 
             guard let parameter = HCIGeneralEvent.CommandCompleteParameter(byteValue: parameterData)
                 else { throw AdapterError.GarbageResponse(Data(byteValue: parameterData)) }
-
+            
             guard parameter.opcode == opcodePacked else { continue }
 
             // success!
             try done()
+            
             let commandParameterLength = HCIGeneralEvent.CommandCompleteParameter.length
-            let dataLength = min(eventData.count - commandParameterLength, eventParameterLength)
-            return Array(eventData[commandParameterLength ..< dataLength])
+            let data = eventData.suffixFrom(commandParameterLength)
+            
+            let dataLength = min(data.count, eventParameterLength)
+            return Array(data.suffix(dataLength))
 
         case HCIGeneralEvent.RemoteNameRequestComplete.rawValue:
 
             guard eventHeader.event == event else { break }
             
-            let parameterData = Array(eventData.suffix(min(eventData.count, HCIGeneralEvent.RemoteNameRequestCompleteParameter.length)))
+            let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.RemoteNameRequestCompleteParameter.length)))
 
             guard let parameter = HCIGeneralEvent.RemoteNameRequestCompleteParameter(byteValue: parameterData)
                 else { throw AdapterError.GarbageResponse(Data(byteValue: parameterData)) }
