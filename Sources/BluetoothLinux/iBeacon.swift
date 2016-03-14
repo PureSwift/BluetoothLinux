@@ -14,53 +14,51 @@
 
 import SwiftFoundation
 
-/// 31 Byte Advertising Data
-public typealias LowEnergyAdvertisingData = (Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte)
+/// 31 Byte LE Advertising Data
+public typealias LowEnergyAdvertisingData = (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
+
+public enum AdvertisingChannelHeader: UInt8 {
+    
+    /// Connectable undirected advertising event
+    case Undirected         = 0x00
+    
+    /// Connectable directed advertising event
+    case Directed           = 0x01
+    
+    /// Scannable undirected advertising event
+    case Scannable          = 0x02
+    
+    /// Non-connectable undirected advertising event
+    case NonConnectable     = 0x03
+    
+    public init() { self = .Undirected }
+}
 
 public extension Adapter {
     
     /// Enable iBeacon functionality.
-    func enableBeacon(UUID: SwiftFoundation.UUID = UUID(), mayor: UInt16, minor: UInt16, RSSI: Int8, interval: Int = 100, commandTimeout: Int = 1000) throws {
-        
-        assert(interval <= Int(UInt16.max), "interval > UInt16.max")
-        
+    func enableBeacon(UUID: SwiftFoundation.UUID = UUID(), mayor: UInt16, minor: UInt16, RSSI: Int8, interval: UInt16 = 100, commandTimeout: Int = 1000) throws {
+                
         // set advertising parameters
-        var advertisingParameters = le_set_advertising_parameters_cp()
-        memset(&advertisingParameters, 0, sizeof(le_set_advertising_parameters_cp))
+        let advertisingParameters = LowEnergyCommand.SetAdvertisingParametersParameter(interval: (interval, interval))
         
-        advertisingParameters.max_interval = UInt16(interval).littleEndian
-        advertisingParameters.min_interval = UInt16(interval).littleEndian
-        //advertisingParameters.advtype = 3  // advertising non-connectable
-        advertisingParameters.chan_map = 7 // // all three advertising channels
-        
-        try self.deviceRequest(LowEnergyCommand.SetAdvertisingParameters, parameter: advertisingParameters, timeout: commandTimeout)
+        try self.deviceRequest(advertisingParameters, timeout: commandTimeout)
         
         // start advertising
-        var enableAdvertise = le_set_advertise_enable_cp()
-        memset(&enableAdvertise, 0, sizeof(le_set_advertise_enable_cp.self))
-        
-        enableAdvertise.enable = 0x01 // true
-        
-        try self.deviceRequest(LowEnergyCommand.SetAdvertiseEnable, parameter: enableAdvertise, timeout: commandTimeout)
+        try enableAdvertising(timeout: commandTimeout)
         
         // set iBeacon data
-        var advertisingDataCommand = le_set_advertising_data_cp()
-        memset(&advertisingDataCommand, 0, sizeof(le_set_advertising_data_cp))
+        var advertisingDataCommand = LowEnergyCommand.SetAdvertisingDataParameter()
+        SetBeaconData(UUID, mayor: mayor, minor: minor, RSSI: UInt8(bitPattern: RSSI), parameter: &advertisingDataCommand)
         
-        let beaconData = GenerateBeaconData(UUID, mayor: mayor, minor: minor, RSSI: RSSI)
-        advertisingDataCommand.length = beaconData.length
-        advertisingDataCommand.data = beaconData.data
-        
-        try self.deviceRequest(LowEnergyCommand.SetAdvertisingData, parameter: advertisingDataCommand, timeout: commandTimeout)
+        try self.deviceRequest(advertisingDataCommand, timeout: commandTimeout)
     }
     
-    func setAdvertising(enabled: Bool) throws {
+    func enableAdvertising(enabled: Bool = true, timeout: Int = 1000) throws {
         
-        // stop advertising
-        var enableAdvertise = le_set_advertise_enable_cp()
-        enableAdvertise.enable = 0x00 // false
+        let parameter = LowEnergyCommand.SetAdvertiseEnableParameter(enabled: enabled)
         
-        try self.deviceRequest(LowEnergyCommand.SetAdvertiseEnable, parameter: enableAdvertise)
+        try self.deviceRequest(parameter, timeout: timeout)
     }
 }
 

@@ -70,7 +70,7 @@ public final class GATTServer {
         /* Set MTU to be the minimum */
         connection.maximumTransmissionUnit = Int(finalMTU)
         
-        log?("MTU exchange complete, with MTU: \(finalMTU)")
+        log?("MTU exchange: \(pdu.clientMTU) -> \(finalMTU)")
     }
     
     private func readByGroupType(pdu: ATTReadByGroupTypeRequest) {
