@@ -8,6 +8,7 @@
 
 #if os(Linux)
     import Glibc
+    import CSwiftBluetoothLinux
 #elseif os(OSX) || os(iOS)
     import Darwin.C
 #endif
@@ -401,6 +402,17 @@ internal struct HCIFilter {
 @inline(__always)
 internal func HCISetBit(bit: CInt, _ destination: UnsafeMutablePointer<Void>) {
     
+    #if os(OSX)
+        func swift_bluetooth_hci_set_bit(_: CInt, _: UnsafeMutablePointer<Void>) { stub() }
+    #endif
+    
+    swift_bluetooth_hci_set_bit(bit, destination)
+}
+
+/*
+@inline(__always)
+internal func HCISetBit(bit: CInt, _ destination: UnsafeMutablePointer<Void>) {
+    
     let addressPointer = UnsafeMutablePointer<UInt32>(destination)
     
     let destination = addressPointer.memory
@@ -408,7 +420,7 @@ internal func HCISetBit(bit: CInt, _ destination: UnsafeMutablePointer<Void>) {
     let unsignedBit = UInt32(bitPattern: bit)
     
     addressPointer.memory = (destination + (unsignedBit >> 5)) | (1 << (unsignedBit & 31))
-}
+}*/
 
 /* --------  HCI Packet structures  -------- */
 
