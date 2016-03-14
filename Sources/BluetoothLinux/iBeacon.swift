@@ -14,15 +14,15 @@
 
 import SwiftFoundation
 
-/// 31 Byte String
+/// 31 Byte Advertising Data
 public typealias LowEnergyAdvertisingData = (Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte, Byte)
-/*
+
 public extension Adapter {
     
     /// Enable iBeacon functionality.
-    func enableBeacon(UUID: SwiftFoundation.UUID = UUID(), mayor: UInt16, minor: UInt16, RSSI: Byte, interval: Int = 100, commandTimeout: Int = 1000) throws {
+    func enableBeacon(UUID: SwiftFoundation.UUID = UUID(), mayor: UInt16, minor: UInt16, RSSI: Int8, interval: Int = 100, commandTimeout: Int = 1000) throws {
         
-        assert(interval <= Int(UInt16.max), "Interval can only be 2 bytes long")
+        assert(interval <= Int(UInt16.max), "interval > UInt16.max")
         
         // set advertising parameters
         var advertisingParameters = le_set_advertising_parameters_cp()
@@ -66,48 +66,47 @@ public extension Adapter {
 
 // MARK: - Private
 
-private func GenerateBeaconData(UUID: SwiftFoundation.UUID, mayor: UInt16, minor: UInt16, RSSI: Byte) -> (data: LowEnergyAdvertisingData, length: Byte) {
+private func SetBeaconData(UUID: SwiftFoundation.UUID, mayor: UInt16, minor: UInt16, RSSI: UInt8, inout parameter: LowEnergyCommand.SetAdvertisingDataParameter) {
     
-    let length = 30
+    parameter.length = 30
     
-    var data: [UInt8] = [UInt8](count: length, repeatedValue: 0)
+    parameter.data.0 = 0x02  // length of flags
+    parameter.data.1 = 0x01  // flags type
+    parameter.data.2 = 0x1a  // Flags: 000011010
+    parameter.data.3 = 0x1a  // length
+    parameter.data.4 = 0xff  // vendor specific
+    parameter.data.5 = 0x4c  // Apple, Inc
+    parameter.data.6 = 0x00  // Apple, Inc
+    parameter.data.7 = 0x02  // iBeacon
+    parameter.data.8 = 0x15  // length: 16 byte UUID, 2 bytes major & minor, 1 byte RSSI
     
-    data[0] = 0x02  // length of flags
-    data[1] = 0x01  // flags type
-    data[2] = 0x1a  // Flags: 000011010
-    data[3] = 0x1a  // length
-    data[4] = 0xff  // vendor specific
-    data[5] = 0x4c  // Apple, Inc
-    data[6] = 0x00  // Apple, Inc
-    data[7] = 0x02  // iBeacon
-    data[8] = 0x15  // length: 16 byte UUID, 2 bytes major&minor, 1 byte RSSI
+    // set UUID bytes
+    parameter.data.9 = UUID.byteValue.0
+    parameter.data.10 = UUID.byteValue.1
+    parameter.data.12 = UUID.byteValue.2
+    parameter.data.13 = UUID.byteValue.3
+    parameter.data.14 = UUID.byteValue.4
+    parameter.data.15 = UUID.byteValue.5
+    parameter.data.16 = UUID.byteValue.6
+    parameter.data.17 = UUID.byteValue.7
+    parameter.data.18 = UUID.byteValue.8
+    parameter.data.19 = UUID.byteValue.9
+    parameter.data.20 = UUID.byteValue.10
+    parameter.data.21 = UUID.byteValue.11
+    parameter.data.22 = UUID.byteValue.12
+    parameter.data.23 = UUID.byteValue.13
+    parameter.data.24 = UUID.byteValue.14
     
-    var uuidBytes = UUID.byteValue
+    let mayorBytes = mayor.littleEndianBytes
     
-    memcpy(&data + 9, &uuidBytes, 16) // UUID
+    parameter.data.25 = mayorBytes.0
+    parameter.data.26 = mayorBytes.1
     
-    let littleMayor = mayor.littleEndian
+    let minorBytes = minor.littleEndianBytes
     
-    data[25] = Byte(truncatingBitPattern: UInt16(littleMayor >> 8) & UInt16(0x00ff))
-    data[26] = Byte(truncatingBitPattern: UInt16(littleMayor & 0x00ff))
+    parameter.data.27 = minorBytes.0
+    parameter.data.28 = minorBytes.1
     
-    let littleMinor = minor.littleEndian
-    
-    data[25] = Byte(truncatingBitPattern: UInt16(littleMinor >> 8) & UInt16(0x00ff))
-    data[26] = Byte(truncatingBitPattern: UInt16(littleMinor & 0x00ff))
-    
-    data[29] = RSSI
-    
-    let byteTuple: LowEnergyAdvertisingData = withUnsafePointer(&data) { (pointer) in
-        
-        let convertedPointer = UnsafePointer<LowEnergyAdvertisingData>(pointer)
-        
-        return convertedPointer.memory
-    }
-    
-    return (byteTuple, Byte(length))
+    parameter.data.29 = RSSI
 }
-
-
-*/
 
