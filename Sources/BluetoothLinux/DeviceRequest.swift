@@ -111,7 +111,7 @@ public extension Adapter {
 
         let opcode = (CP.command.rawValue, CP.command.dynamicType.opcodeGroupField.rawValue)
 
-        let data = try HCISendRequest(internalSocket, opcode: opcode, event: 0, eventParameterLength: 1, timeout: timeout)
+        let data = try HCISendRequest(internalSocket, opcode: opcode, event: HCIGeneralEvent.CommandComplete.rawValue, eventParameterLength: 1, timeout: timeout)
 
         guard let statusByte = data.first
             else { fatalError("Missing status byte!") }
@@ -145,12 +145,10 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
         else { throw POSIXError.fromErrorNumber! }
 
     // configure new filter
-    newFilter.clear()
-    newFilter.setPacketType(.Event)
-    newFilter.setEvent(HCIGeneralEvent.CommandStatus.rawValue)
-    newFilter.setEvent(HCIGeneralEvent.CommandComplete.rawValue)
-    newFilter.setEvent(HCIGeneralEvent.LowEnergyMeta.rawValue)
-    newFilter.setEvent(event)
+    //newFilter.clear()
+    //newFilter.setPacketType(.Event)
+    newFilter.typeMask = 16
+    newFilter.setEvent(HCIGeneralEvent.CommandStatus.rawValue, HCIGeneralEvent.CommandComplete.rawValue, HCIGeneralEvent.LowEnergyMeta.rawValue, event)
     newFilter.opcode = opcodePacked
 
     // set new filter
@@ -178,6 +176,8 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
 
         // decrement attempts
         attempts -= 1
+        
+        print("Attempts left: \(attempts)")
 
         // wait for timeout
         if timeout > 0 {
@@ -185,7 +185,7 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
             var timeoutPoll = pollfd(fd: deviceDescriptor, events: Int16(POLLIN), revents: 0)
             var pollStatus: CInt = 0
 
-            func doPoll() { pollStatus = poll(&timeoutPoll, 1, CInt(timeout)) }
+            func doPoll() { pollStatus = poll(&timeoutPoll, 1, CInt(timeout)); print("Poll Status: \(pollStatus) ") }
 
             doPoll()
 
@@ -204,8 +204,6 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
                     throw restoreFilter(POSIXError.fromErrorNumber!)
                 }
             }
-            
-            print("Poll Status: \(pollStatus) ")
             
             // poll timed out
             guard pollStatus != 0

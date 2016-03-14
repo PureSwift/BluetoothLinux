@@ -395,6 +395,16 @@ internal struct HCIFilter {
         
         HCISetBit(bit, &eventMask.0)
     }
+    
+    @inline(__always)
+    mutating func setEvent(event1: UInt8, _ event2: UInt8, _ event3: UInt8, _ event4: UInt8) {
+        
+        eventMask = (0, 0)
+        eventMask.0 += UInt32(event4) << 0o30
+        eventMask.0 += UInt32(event3) << 0o20
+        eventMask.0 += UInt32(event2) << 0o10
+        eventMask.0 += UInt32(event1) << 0o00
+    }
 }
 
 // HCI Bit functions
