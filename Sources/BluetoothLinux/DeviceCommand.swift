@@ -35,23 +35,41 @@ public extension Adapter {
 
 // MARK: - Internal HCI Function
 
-/// int hci_send_cmd(int dd, uint16_t ogf, uint16_t ocf, uint8_t plen, void *param)
 internal func HCISendCommand(deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), parameterData: [UInt8] = []) throws {
     
-    let packetType = HCIPacketType.Command.rawValue
+    var packetType = HCIPacketType.Command.rawValue
     
     var header = HCICommandHeader()
-    
     header.opcode = HCICommandOpcodePack(opcode.commandField, opcode.groupField).littleEndian
-    
     header.parameterLength = UInt8(parameterData.count)
     
-    /// data sent to host controller interface
-    var data = [packetType] + header.byteValue + parameterData
+    /// data sent to host controller interface...
+    
+    // build iovec
+    var ioVectors = [iovec](count: 2, repeatedValue: iovec())
+    
+    ioVectors[0].iov_base = withUnsafePointer(&packetType) { UnsafeMutablePointer<Void>($0) }
+    ioVectors[0].iov_len = 1
+    
+    ioVectors[1].iov_base = withUnsafePointer(&header) { UnsafeMutablePointer<Void>($0) }
+    ioVectors[1].iov_len = HCICommandHeader.length
+    
+    if parameterData.isEmpty == false {
+        
+        var dataCopy = parameterData
+        var vector = iovec()
+        vector.iov_base = withUnsafePointer(&dataCopy) { UnsafeMutablePointer<Void>($0) }
+        vector.iov_len = parameterData.count
+        
+        ioVectors.append(vector)
+    }
     
     // write to device descriptor socket
-    guard write(deviceDescriptor, &data, data.count) >= 0 // should we check if all data was written?
-        else { throw POSIXError.fromErrorNumber! }
+    while writev(deviceDescriptor, &ioVectors, CInt(ioVectors.count)) < 0 {
+        
+        guard (errno == EAGAIN || errno == EINTR)
+            else { throw POSIXError.fromErrorNumber! }
+    }
 }
 
 @inline(__always)
