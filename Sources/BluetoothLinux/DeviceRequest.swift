@@ -145,10 +145,14 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
         else { throw POSIXError.fromErrorNumber! }
 
     // configure new filter
-    //newFilter.clear()
-    //newFilter.setPacketType(.Event)
+    newFilter.clear()
     newFilter.typeMask = 16
-    newFilter.setEvent(HCIGeneralEvent.CommandStatus.rawValue, HCIGeneralEvent.CommandComplete.rawValue, HCIGeneralEvent.LowEnergyMeta.rawValue, event)
+    //newFilter.setPacketType(.Event)
+    newFilter.setEvent(HCIGeneralEvent.CommandStatus.rawValue)
+    newFilter.setEvent(HCIGeneralEvent.CommandComplete.rawValue)
+    newFilter.setEvent(HCIGeneralEvent.LowEnergyMeta.rawValue)
+    newFilter.setEvent(event)
+    //newFilter.setEvent(HCIGeneralEvent.CommandStatus.rawValue, HCIGeneralEvent.CommandComplete.rawValue, HCIGeneralEvent.LowEnergyMeta.rawValue, event)
     newFilter.opcode = opcodePacked
 
     // set new filter

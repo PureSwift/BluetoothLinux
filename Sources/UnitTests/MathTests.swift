@@ -63,6 +63,8 @@
             
             swiftFilter.clear()
             swiftFilter.setEvent(HCIGeneralEvent.CommandStatus.rawValue, HCIGeneralEvent.CommandComplete.rawValue, HCIGeneralEvent.LowEnergyMeta.rawValue, event)
+            
+            //XCTAssert(swiftFilter.eventMask.0 == cFilter.event_mask.0 && swiftFilter.eventMask.1 == cFilter.event_mask.1, "\(swiftFilter.eventMask) == \(cFilter.event_mask)")
         }
         
         func testIOCTLConstants() {
