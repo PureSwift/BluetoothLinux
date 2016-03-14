@@ -383,7 +383,7 @@ internal struct HCIFilter {
     @inline(__always)
     mutating func setPacketType(type: HCIPacketType) {
         
-        let bit = type == .Event ? 0 : CInt(type.rawValue) & HCIFilter.Bits.FilterType
+        let bit = type == .Vendor ? 0 : CInt(type.rawValue) & HCIFilter.Bits.FilterType
         
         HCISetBit(bit, &typeMask)
     }
@@ -403,10 +403,11 @@ internal struct HCIFilter {
 internal func HCISetBit(bit: CInt, _ destination: UnsafeMutablePointer<Void>) {
     
     #if os(OSX)
-        func swift_bluetooth_hci_set_bit(_: CInt, _: UnsafeMutablePointer<Void>) { stub() }
+        //func swift_bluetooth_hci_set_bit(_: CInt, _: UnsafeMutablePointer<Void>) { stub() }
+        hci_set_bit(bit, destination)
+    #elseif os(Linux)
+        swift_bluetooth_hci_set_bit(bit, destination)
     #endif
-    
-    swift_bluetooth_hci_set_bit(bit, destination)
 }
 
 /*
