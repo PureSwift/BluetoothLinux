@@ -119,7 +119,7 @@ public extension LowEnergyCommand {
     /// LE Set Advertise Enable Command
     public struct SetAdvertiseEnableParameter: HCICommandParameter {
         
-        public static let command = LowEnergyCommand.SetAdvertisingParameters
+        public static let command = LowEnergyCommand.SetAdvertiseEnable
         public static let length = 1
         
         public var enabled: Bool
