@@ -16,19 +16,13 @@ public extension iovec {
     
     public init(byteValue: [UInt8]) {
         
+        let length = byteValue.count
         var vector = iovec()
+        vector.iov_len = length
+        vector.iov_base = UnsafeMutablePointer<Void>.alloc(length)
         
-        memcpy(&vector.iov_base, byteValue, byteValue.count)
-        
-        vector.iov_len = byteValue.count
+        memcpy(vector.iov_base, byteValue, length)
         
         self = vector
-    }
-    
-    public mutating func dealloc() {
-        
-        iov_base.dealloc(iov_len)
-        iov_base = nil
-        iov_len = 0
     }
 }

@@ -44,7 +44,7 @@ public extension Adapter {
         
         print("Setting Advertising Parameters")
         
-        try self.deviceRequest(advertisingParameters, timeout: commandTimeout)
+        try deviceRequest(advertisingParameters, timeout: commandTimeout)
         
         print("Enabling Advertising")
         
@@ -57,14 +57,14 @@ public extension Adapter {
         var advertisingDataCommand = LowEnergyCommand.SetAdvertisingDataParameter()
         SetBeaconData(UUID, mayor: mayor, minor: minor, RSSI: UInt8(bitPattern: RSSI), parameter: &advertisingDataCommand)
         
-        try self.deviceRequest(advertisingDataCommand, timeout: commandTimeout)
+        try deviceRequest(advertisingDataCommand, timeout: commandTimeout)
     }
     
     func enableAdvertising(enabled: Bool = true, timeout: Int = 1000) throws {
         
         let parameter = LowEnergyCommand.SetAdvertiseEnableParameter(enabled: enabled)
         
-        try self.deviceRequest(parameter, timeout: timeout)
+        try deviceRequest(parameter, timeout: timeout)
     }
 }
 

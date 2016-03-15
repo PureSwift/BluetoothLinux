@@ -452,9 +452,9 @@ internal struct HCICommandHeader: HCIPacketHeader {
     static let length = 3
     
     /// OCF & OGF
-    var opcode: UInt16 = 0 // uint16_t opcode;
+    var opcode: UInt16 = 0
     
-    var parameterLength: UInt8 = 0 // uint8_t plen;
+    var parameterLength: UInt8 = 0
     
     init() { }
     

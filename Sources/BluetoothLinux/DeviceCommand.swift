@@ -51,13 +51,15 @@ internal func HCISendCommand(deviceDescriptor: CInt, opcode: (commandField: UInt
     ioVectors[0] = iovec(byteValue: [packetType])
     ioVectors[1] = iovec(byteValue: header.byteValue)
     
+    defer { ioVectors[0].iov_base.dealloc(ioVectors[0].iov_len) }
+    defer { ioVectors[1].iov_base.dealloc(ioVectors[1].iov_len) }
+    
     if parameterData.isEmpty == false {
         
         ioVectors.append(iovec(byteValue: parameterData))
+        
+        defer { ioVectors[2].iov_base.dealloc(ioVectors[2].iov_len) }
     }
-    
-    // free memory
-    defer { for index in 0 ..< ioVectors.count { ioVectors[index].dealloc() } }
     
     // write to device descriptor socket
     while writev(deviceDescriptor, &ioVectors, CInt(ioVectors.count)) < 0 {
