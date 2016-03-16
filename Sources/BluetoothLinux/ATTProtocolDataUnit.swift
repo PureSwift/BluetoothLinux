@@ -1197,11 +1197,16 @@ public struct ATTReadByGroupTypeResponse: ATTProtocolDataUnit {
     /// A list of Attribute Data
     public let attributeDataList: [AttributeData]
     
-    public init?(length: UInt8, attributeDataList: [AttributeData]) {
+    public init?(attributeDataList: [AttributeData]) {
+        
+        // must have at least one item
+        guard let valueLength = attributeDataList.first?.value.count
+            else { return nil }
         
         for attributeData in attributeDataList {
-        
-            guard attributeData.value.count == (Int(length) - 4)
+            
+            // all items must have same length
+            guard attributeData.value.count == valueLength
                 else { return nil }
         }
         

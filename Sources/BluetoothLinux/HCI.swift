@@ -8,6 +8,7 @@
 
 #if os(Linux)
     import Glibc
+    import CSwiftBluetoothLinux
 #elseif os(OSX) || os(iOS)
     import Darwin.C
 #endif
@@ -382,7 +383,7 @@ internal struct HCIFilter {
     @inline(__always)
     mutating func setPacketType(type: HCIPacketType) {
         
-        let bit = type == .Event ? 0 : CInt(type.rawValue) & HCIFilter.Bits.FilterType
+        let bit = type == .Vendor ? 0 : CInt(type.rawValue) & HCIFilter.Bits.FilterType
         
         HCISetBit(bit, &typeMask)
     }
@@ -394,10 +395,32 @@ internal struct HCIFilter {
         
         HCISetBit(bit, &eventMask.0)
     }
+    
+    @inline(__always)
+    mutating func setEvent(event1: UInt8, _ event2: UInt8, _ event3: UInt8, _ event4: UInt8) {
+        
+        eventMask.0 = 0
+        eventMask.0 += UInt32(event4) << 0o30
+        eventMask.0 += UInt32(event3) << 0o20
+        eventMask.0 += UInt32(event2) << 0o10
+        eventMask.0 += UInt32(event1) << 0o00
+    }
 }
 
 // HCI Bit functions
 
+@inline(__always)
+internal func HCISetBit(bit: CInt, _ destination: UnsafeMutablePointer<Void>) {
+    
+    #if os(OSX)
+        //func swift_bluetooth_hci_set_bit(_: CInt, _: UnsafeMutablePointer<Void>) { stub() }
+        hci_set_bit(bit, destination)
+    #elseif os(Linux)
+        swift_bluetooth_hci_set_bit(bit, destination)
+    #endif
+}
+
+/*
 @inline(__always)
 internal func HCISetBit(bit: CInt, _ destination: UnsafeMutablePointer<Void>) {
     
@@ -408,7 +431,7 @@ internal func HCISetBit(bit: CInt, _ destination: UnsafeMutablePointer<Void>) {
     let unsignedBit = UInt32(bitPattern: bit)
     
     addressPointer.memory = (destination + (unsignedBit >> 5)) | (1 << (unsignedBit & 31))
-}
+}*/
 
 /* --------  HCI Packet structures  -------- */
 
@@ -429,9 +452,9 @@ internal struct HCICommandHeader: HCIPacketHeader {
     static let length = 3
     
     /// OCF & OGF
-    var opcode: UInt16 = 0 // uint16_t opcode;
+    var opcode: UInt16 = 0
     
-    var parameterLength: UInt8 = 0 // uint8_t plen;
+    var parameterLength: UInt8 = 0
     
     init() { }
     

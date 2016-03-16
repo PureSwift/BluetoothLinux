@@ -114,6 +114,19 @@ public struct GATTDatabase {
         return true
     }
     
+    public func service(ofAttribute attribute: Attribute) -> Service? {
+        
+        for service in services {
+            
+            if service.identifier == attribute.serviceIdentifier {
+                
+                return service
+            }
+        }
+        
+        return nil
+    }
+    
     /// Registers for notifications and returns the notification ID.
     public mutating func register(serviceAdded: AttributeCallback, serviceRemoved: AttributeCallback) -> UInt {
         
@@ -136,6 +149,49 @@ public struct GATTDatabase {
         notificationList.removeAtIndex(notificationIndex)
         
         return true
+    }
+    
+    public func readByGroupType(handle handle: (start: UInt16, end: UInt16), type: BluetoothUUID) -> [Attribute] {
+        
+        var attributes = [Attribute]()
+        
+        for service in services {
+            
+            guard service.active else { continue }
+            
+            guard type == service.attributes[0].type else { continue }
+            
+            let groupStart = service.attributes[0].handle
+            
+            let groupEnd = groupStart + UInt16(service.attributes.count - 1)
+            
+            guard (groupEnd < handle.start || groupStart > handle.end) == false else { continue }
+            
+            guard (groupStart < handle.start || groupStart > handle.end) == false else { continue }
+            
+            attributes.append(service.attributes[0])
+        }
+        
+        return attributes
+    }
+    
+    public func readbyType(handle handle: (start: UInt16, end: UInt16), type: BluetoothUUID) -> [Attribute] {
+        
+        var attributes = [Attribute]()
+        
+        for service in services {
+            
+            for attribute in service.attributes {
+                
+                guard attribute.handle >= handle.start
+                    && attribute.handle <= handle.end
+                    && attribute.type == type else { continue }
+                
+                attributes.append(attribute)
+            }
+        }
+        
+        return attributes
     }
     
     // MARK: - Dynamic Properties
@@ -170,14 +226,14 @@ public extension GATTDatabase {
             return attributes[0].type
         }
         
-        /// Internal identifier for lookup.
-        private let identifier: UInt
-        
         /// Start and end identifiers.
-        private var handles: (UInt16, UInt16) {
+        internal var handles: (UInt16, UInt16) {
             
             return (attributes[0].handle, attributes.last!.handle)
         }
+        
+        /// Internal identifier for lookup.
+        private let identifier: UInt
         
         /// Create a new service and give it an attribute.
         private init(identifier: UInt, UUID: BluetoothUUID, handle: UInt16, primary: Bool) {

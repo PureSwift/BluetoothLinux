@@ -14,7 +14,8 @@
 #endif
 
 import SwiftFoundation
-/*
+
+/// Well known iBeacon UUID
 let iBeaconUUID = SwiftFoundation.UUID(rawValue: "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0")!
 
 /// Test iBeacon
@@ -22,15 +23,14 @@ func iBeaconTest(adapter: Adapter, timeout: Int) {
     
     print("Enabling iBeacon \(iBeaconUUID) for \(timeout) seconds")
     
-    do { try adapter.enableBeacon(iBeaconUUID, mayor: 1, minor: 1, RSSI: unsafeBitCast(Int8(-59), UInt8.self)) }
+    do { try adapter.enableBeacon(iBeaconUUID, mayor: 1, minor: 1, RSSI: -59) }
     
     catch { Error("Error enabling iBeacon: \(error)") }
     
     // sleep
     sleep(UInt32(timeout))
     
-    do { try adapter.disableBeacon() }
+    do { try adapter.enableAdvertising(false) }
     
     catch { Error("Error disabling iBeacon") }
 }
-*/
