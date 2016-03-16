@@ -42,16 +42,16 @@ public extension Adapter {
         // set advertising parameters
         let advertisingParameters = LowEnergyCommand.SetAdvertisingParametersParameter(interval: (interval, interval))
         
-        print("Setting Advertising Parameters")
+        //print("Setting Advertising Parameters")
         
         try deviceRequest(advertisingParameters, timeout: commandTimeout)
         
-        print("Enabling Advertising")
+        //print("Enabling Advertising")
         
         // start advertising
         try enableAdvertising(timeout: commandTimeout)
         
-        print("Setting iBeacon Data")
+        //print("Setting iBeacon Data")
         
         // set iBeacon data
         var advertisingDataCommand = LowEnergyCommand.SetAdvertisingDataParameter()

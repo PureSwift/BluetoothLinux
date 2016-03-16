@@ -84,7 +84,12 @@ public extension LowEnergyCommand {
             let minimumIntervalBytes = interval.minimum.littleEndianBytes
             let maximumIntervalBytes = interval.maximum.littleEndianBytes
             
-            return [minimumIntervalBytes.0, minimumIntervalBytes.1, maximumIntervalBytes.0, maximumIntervalBytes.1, advertisingType.rawValue, addressType.own.rawValue, addressType.direct.rawValue, directAddress.byteValue.0, directAddress.byteValue.1, directAddress.byteValue.2, directAddress.byteValue.3, directAddress.byteValue.4, directAddress.byteValue.5, channelMap.rawValue, filterPolicy.rawValue]
+            return [minimumIntervalBytes.0, minimumIntervalBytes.1,
+                maximumIntervalBytes.0, maximumIntervalBytes.1,
+                advertisingType.rawValue,
+                addressType.own.rawValue,
+                addressType.direct.rawValue,
+                directAddress.byteValue.0, directAddress.byteValue.1, directAddress.byteValue.2, directAddress.byteValue.3, directAddress.byteValue.4, directAddress.byteValue.5, channelMap.rawValue, filterPolicy.rawValue]
         }
         
         public enum ChannelMap: UInt8 {

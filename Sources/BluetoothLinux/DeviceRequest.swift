@@ -250,9 +250,9 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
         guard let eventHeader = HCIEventHeader(byteValue: headerData)
             else { throw restoreFilter(AdapterError.GarbageResponse(Data(byteValue: headerData))) }
         
-        print("Event header data: \(headerData)")
-        print("Event header: \(eventHeader)")
-        print("Event data: \(eventData)")
+        //print("Event header data: \(headerData)")
+        //print("Event header: \(eventHeader)")
+        //print("Event data: \(eventData)")
 
         /// restores the old filter option before exiting
         func done() throws {
