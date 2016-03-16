@@ -41,6 +41,7 @@
 		6E894C001C83EA2000109F45 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BBD1C8379D100AF63E5 /* main.swift */; };
 		6E894C021C83F1C500109F45 /* L2CAP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E894C011C83F1C500109F45 /* L2CAP.swift */; };
 		6E894C041C84092100109F45 /* Endianness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E894C031C84092100109F45 /* Endianness.swift */; };
+		6E927EC91C977D7D009AB500 /* IOVector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E927EC81C977D7D009AB500 /* IOVector.swift */; };
 		6E92A4281C15309B007BC4E9 /* BluetoothLinux.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E92A4271C15309B007BC4E9 /* BluetoothLinux.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E92A4371C1530EF007BC4E9 /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92A4321C1530EF007BC4E9 /* Adapter.swift */; };
 		6E92A4381C1530EF007BC4E9 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92A4331C1530EF007BC4E9 /* Address.swift */; };
@@ -118,6 +119,7 @@
 		6E894BF31C83B51B00109F45 /* AddressType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressType.swift; sourceTree = "<group>"; };
 		6E894C011C83F1C500109F45 /* L2CAP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = L2CAP.swift; sourceTree = "<group>"; };
 		6E894C031C84092100109F45 /* Endianness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Endianness.swift; sourceTree = "<group>"; };
+		6E927EC81C977D7D009AB500 /* IOVector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IOVector.swift; sourceTree = "<group>"; };
 		6E92A4241C15309B007BC4E9 /* BluetoothLinux.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BluetoothLinux.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E92A4271C15309B007BC4E9 /* BluetoothLinux.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BluetoothLinux.h; sourceTree = "<group>"; };
 		6E92A4291C15309B007BC4E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -255,6 +257,7 @@
 				6E196CC61C86A5EC009FA9CF /* BluetoothProtocol.swift */,
 				6E92A4361C1530EF007BC4E9 /* Scan.swift */,
 				6E881D811C389F4B00E509A9 /* iBeacon.swift */,
+				6E927EC81C977D7D009AB500 /* IOVector.swift */,
 				6E53E17A1C85645400AC8FCA /* PSM.swift */,
 				6E894C011C83F1C500109F45 /* L2CAP.swift */,
 				6EA37EF51C84D6C800A61969 /* ATT.swift */,
@@ -475,6 +478,7 @@
 				6E196CCB1C87B47E009FA9CF /* DeviceCommand.swift in Sources */,
 				6E53E1731C84FD8200AC8FCA /* GATTServer.swift in Sources */,
 				6E53E1831C859E8300AC8FCA /* ATTProtocolDataUnit.swift in Sources */,
+				6E927EC91C977D7D009AB500 /* IOVector.swift in Sources */,
 				6E739C8C1C884F3A00D4775B /* HCIGeneralEventParameter.swift in Sources */,
 				6E196CC51C869A2E009FA9CF /* IOCTL.swift in Sources */,
 				6E881DA21C39812F00E509A9 /* DeviceRequest.swift in Sources */,
