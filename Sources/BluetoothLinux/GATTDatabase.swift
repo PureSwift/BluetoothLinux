@@ -121,7 +121,12 @@ public struct GATTDatabase {
     
     public func readByType(handle: Range<UInt16>, type: BluetoothUUID) -> [Attribute] {
         
-        return self.attributes.filter { handle.contains($0.handle) && $0.type == type }
+        return attributes.filter { handle.contains($0.handle) && $0.type == type }
+    }
+    
+    public func findInformation(handle: Range<UInt16>) -> [Attribute] {
+        
+        return attributes.filter { handle.contains($0.handle) }
     }
 }
 

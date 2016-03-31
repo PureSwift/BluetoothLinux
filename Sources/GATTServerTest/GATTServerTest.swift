@@ -43,9 +43,9 @@ func GATTServerTest(adapter: Adapter) {
         
         while true {
             
-            try server.connection.read(newSocket)
+            try server.read(newSocket)
             
-            try server.connection.write(newSocket)
+            try server.write(newSocket)
         }
     }
         

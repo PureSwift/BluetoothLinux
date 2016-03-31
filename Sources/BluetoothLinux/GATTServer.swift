@@ -6,29 +6,46 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
+import struct SwiftFoundation.UUID
+
 public final class GATTServer {
     
     // MARK: - Properties
     
     public var log: (String -> ())?
     
-    public var database: GATTDatabase
+    public var database = GATTDatabase()
     
-    public let connection: ATTConnection
+    // MARK: - Private Properties
+    
+    private let connection = ATTConnection()
     
     // MARK: - Initialization
     
     public init() {
         
-        self.database = GATTDatabase()
-        
-        self.connection = ATTConnection()
-        
         self.registerATTHandlers()
+    }
+    
+    // MARK: - Methods
+    
+    /// Performs the actual IO for sending data.
+    @inline(__always)
+    public func read(socket: L2CAPSocket) throws {
+        
+        try connection.read(socket)
+    }
+    
+    /// Performs the actual IO for recieving data.
+    @inline(__always)
+    public func write(socket: L2CAPSocket) throws {
+        
+        try connection.write(socket)
     }
     
     // MARK: - Private Methods
     
+    @inline(__always)
     private func registerATTHandlers() {
         
         // Exchange MTU
@@ -41,14 +58,22 @@ public final class GATTServer {
         connection.register(readByType)
         
         // Find Information
-        
+        connection.register(findInformation)
     }
     
-    private func errorResponse(opcode: ATTOpcode, _ error: ATTError, _ handle: UInt16 = 0) {
+    private func errorResponse(opcode: ATT.Opcode, _ error: ATT.Error, _ handle: UInt16 = 0) {
         
         log?("Error \(error) - \(opcode) (\(handle))")
         
         connection.sendError(opcode, error: error, handle: handle)
+    }
+    
+    @noreturn @inline(__always)
+    private func fatalErrorResponse(message: String, _ opcode: ATT.Opcode, _ handle: UInt16 = 0) {
+        
+        errorResponse(opcode, ATT.Error.UnlikelyError, handle)
+        
+        fatalError(message)
     }
     
     private func respond<T: ATTProtocolDataUnit>(response: T) {
@@ -66,10 +91,10 @@ public final class GATTServer {
         
         let finalMTU = max(min(pdu.clientMTU, serverMTU), UInt16(ATT.MTU.LowEnergy.Default))
         
-        /* Respond with the server MTU */
+        // Respond with the server MTU
         connection.send(ATTMaximumTranssmissionUnitResponse(serverMTU: serverMTU)) { _ in }
         
-        /* Set MTU to be the minimum */
+        // Set MTU to minimum
         connection.maximumTransmissionUnit = Int(finalMTU)
         
         log?("MTU exchange: \(pdu.clientMTU) -> \(finalMTU)")
@@ -117,8 +142,8 @@ public final class GATTServer {
             attributeData[index].value = service.UUID.byteValue
         }
                 
-        guard let response = ATTReadByGroupTypeResponse(attributeDataList: attributeData)
-            else { fatalError("Could not create ATTReadByGroupTypeResponse. Attribute Data: \(attributeData)") }
+        guard let response = ATTReadByGroupTypeResponse(data: attributeData)
+            else { fatalErrorResponse("Could not create ATTReadByGroupTypeResponse. Attribute Data: \(attributeData)", opcode, pdu.startHandle) }
         
         respond(response)
     }
@@ -151,11 +176,71 @@ public final class GATTServer {
         }
         
         guard let response = ATTReadByTypeResponse(data: attributeData)
-            else { fatalError("Could not create ATTReadByTypeResponse. Attribute Data: \(attributeData)") }
+            else { fatalErrorResponse("Could not create ATTReadByTypeResponse. Attribute Data: \(attributeData)", opcode, pdu.startHandle) }
         
         respond(response)
     }
     
-    
+    private func findInformation(pdu: ATTFindInformationRequest) {
+        
+        typealias Data = ATTFindInformationResponse.Data
+        
+        typealias Format = ATTFindInformationResponse.Format
+        
+        let opcode = pdu.dynamicType.attributeOpcode
+        
+        log?("Find Information (\(pdu.startHandle) - \(pdu.endHandle))")
+        
+        guard pdu.startHandle != 0 && pdu.endHandle != 0
+            else { errorResponse(opcode, .InvalidHandle); return }
+        
+        guard pdu.startHandle <= pdu.endHandle
+            else { errorResponse(opcode, .InvalidHandle, pdu.startHandle); return }
+        
+        let attributes = database.findInformation(pdu.startHandle ..< pdu.endHandle)
+        
+        guard attributes.isEmpty == false
+            else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
+        
+        let format = Format(UUID: attributes[0].type)
+        
+        var bit16Pairs = [(UInt16, UInt16)]()
+        
+        var bit128Pairs = [(UInt16, UUID)]()
+        
+        for (index, attribute) in attributes.enumerate() {
+            
+            // truncate if bigger than MTU
+            let encodedLength = 2 + ((index + 1) * format.length)
+            
+            guard encodedLength <= connection.maximumTransmissionUnit
+                else { break }
+            
+            // encode attribute
+            switch (attribute.type, format) {
+                
+            case let (.Bit16(type), .Bit16):
+                
+                bit16Pairs.append((attribute.handle, type))
+                
+            case let (.Bit128(type), .Bit128):
+                
+                bit128Pairs.append((attribute.handle, type))
+                
+            default: break // mismatching types
+            }
+        }
+        
+        let data: Data
+        
+        switch format {
+        case .Bit16: data = .Bit16(bit16Pairs)
+        case .Bit128: data = .Bit128(bit128Pairs)
+        }
+        
+        let response = ATTFindInformationResponse(data: data)
+        
+        respond(response)
+    }
 }
 
