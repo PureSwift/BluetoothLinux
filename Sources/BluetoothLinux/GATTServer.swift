@@ -38,7 +38,7 @@ public final class GATTServer {
         connection.register(readByGroupType)
         
         // Read By Type
-        connection.register(readByType)
+        //connection.register(readByType)
         
         // Find Information
         
@@ -96,6 +96,8 @@ public final class GATTServer {
         // search for only primary services
         let primary = pdu.type == GATT.UUID.PrimaryService.UUID
         
+        print("Primary: \(primary)")
+        
         let services = database.readByGroupType(pdu.startHandle ..< pdu.endHandle, primary: primary)
         
         guard services.isEmpty == false
@@ -120,7 +122,7 @@ public final class GATTServer {
         
         connection.send(response) { _ in }
     }
-    
+    /*
     private func readByType(pdu: ATTReadByTypeRequest) {
         
         let opcode = pdu.dynamicType.attributeOpcode
@@ -130,14 +132,15 @@ public final class GATTServer {
         guard pdu.startHandle != 0 && pdu.endHandle != 0
             else { errorResponse(opcode, .InvalidHandle); return }
         
-        guard (pdu.startHandle > pdu.endHandle) == false
+        guard pdu.startHandle <= pdu.endHandle
             else { errorResponse(opcode, .InvalidHandle, pdu.startHandle); return }
         
-        let attributes = database.readbyType(handle: (pdu.startHandle, pdu.endHandle), type: pdu.attributeType)
+        let attributes = database.readByType(pdu.startHandle ..< pdu.endHandle, type: pdu.attributeType)
         
         guard attributes.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
-    }
+        
+    }*/
 }
 

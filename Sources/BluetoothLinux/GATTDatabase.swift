@@ -103,18 +103,15 @@ public struct GATTDatabase {
         
         var services = [Service]()
         
-        for (index, service) in services.enumerate() {
+        for (index, service) in self.services.enumerate() {
             
             guard service.primary == primary else { continue }
             
-            // service handle
-            let groupStart = UInt16(serviceHandle(index))
+            let serviceHandle = self.serviceHandle(index)
             
-            let groupEnd = groupStart + UInt16(service.characteristics.count)
+            let serviceRange = serviceHandle ... serviceHandle + UInt16(service.characteristics.count)
             
-            guard (groupEnd < handle.startIndex || groupStart > handle.endIndex) == false else { continue }
-            
-            guard (groupStart < handle.startIndex || groupStart > handle.endIndex) == false else { continue }
+            guard serviceRange.isSubset(handle) else { continue }
             
             services.append(service)
         }
@@ -124,12 +121,7 @@ public struct GATTDatabase {
     
     public func readByType(handle: Range<UInt16>, type: BluetoothUUID) -> [Attribute] {
         
-        return self.attributes.filter { (attribute) in
-            
-            return attribute.handle >= handle.startIndex
-                && attribute.handle <= handle.endIndex
-                && attribute.type == type
-        }
+        return self.attributes.filter { handle.contains($0.handle) && $0.type == type }
     }
 }
 

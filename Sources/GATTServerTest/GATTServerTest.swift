@@ -17,14 +17,11 @@ import SwiftFoundation
 
 func GATTServerTest(adapter: Adapter) {
     
-    var database = GATTDatabase()
+    let characteristic = GATTDatabase.Characteristic(UUID: BluetoothUUID.Bit128(UUID()), value: "Hey".toUTF8Data().byteValue)
     
-    let serviceUUID = BluetoothUUID.Bit128(UUID())
+    let database = GATTDatabase(services: [GATTDatabase.Service(characteristics: [characteristic], UUID: BluetoothUUID.Bit128(UUID()))])
     
-    guard let serviceAttribute = database.insertService(1, UUID: serviceUUID, primary: true, handleCount: 1)
-        else { Error("Could not insert service 1: \(serviceUUID)") }
-    
-    print("Service 1: \(serviceAttribute)")
+    print("GATT Database: \(database)")
     
     do {
         
