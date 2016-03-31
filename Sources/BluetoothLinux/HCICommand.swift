@@ -21,7 +21,7 @@ public typealias HCIOpcodeCommandField = UInt16
 /// HCI Command Parameter.
 public protocol HCICommandParameter {
     
-    typealias HCICommandType: HCICommand
+    associatedtype HCICommandType: HCICommand
     
     static var command: HCICommandType { get }
     

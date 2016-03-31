@@ -68,7 +68,7 @@ public func == (lhs: BluetoothUUID, rhs: BluetoothUUID) -> Bool {
         
     case let (.Bit128(lhsValue), .Bit128(rhsValue)): return lhsValue == rhsValue
         
-    default: return false
+    default: return lhs.byteValue == rhs.byteValue
     }
 }
 

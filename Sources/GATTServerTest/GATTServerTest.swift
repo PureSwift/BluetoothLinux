@@ -19,7 +19,12 @@ func GATTServerTest(adapter: Adapter) {
     
     var database = GATTDatabase()
     
-    database.insertService(1, UUID: BluetoothUUID.Bit128(UUID()), primary: true, handleCount: 1)
+    let serviceUUID = BluetoothUUID.Bit128(UUID())
+    
+    guard let serviceAttribute = database.insertService(1, UUID: serviceUUID, primary: true, handleCount: 1)
+        else { Error("Could not insert service 1: \(serviceUUID)") }
+    
+    print("Service 1: \(serviceAttribute)")
     
     do {
         
