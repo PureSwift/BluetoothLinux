@@ -91,7 +91,7 @@ public final class GATTServer {
         guard pdu.type == GATT.UUID.PrimaryService.UUID || pdu.type == GATT.UUID.SecondaryService.UUID
             else { errorResponse(opcode, .UnsupportedGroupType, pdu.startHandle); return }
         
-        let attributes = database.readByGroupType(handle: (pdu.startHandle, pdu.endHandle), type: pdu.type)
+        let attributes = database.readByGroupType(pdu.startHandle ..< pdu.endHandle, type: pdu.type)
         
         guard attributes.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }

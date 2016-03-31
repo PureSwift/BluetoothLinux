@@ -12,9 +12,6 @@ public struct GATTDatabase {
     /// GATT Services in this database.
     public var services: [Service]
     
-    /// Attribute representation of the database.
-    public private(set) var attributes: [Attribute]
-    
     // MARK: - Initialization
     
     public init(services: [Service] = []) {
@@ -29,69 +26,8 @@ public struct GATTDatabase {
         return services.isEmpty
     }
     
-    // MARK: - Methods
-    
-    /// Clear the database.
-    public mutating func clear() {
-        
-        self.services = []
-    }
-    
-    /*
-    /// Clear all ATT attributes in the specified range.
-    public mutating func clear(range: Range<UInt16>) {
-        
-        for handle in range {
-            
-            
-        }
-    }*/
-    
-    public func readByGroupType(handle: Range<UInt16>, type: BluetoothUUID) -> [Attribute] {
-        
-        var attributes = [Attribute]()
-        
-        for service in services {
-            
-            guard service.typeUUID == type else { continue }
-            
-            let groupStart = service.attributes[0].handle
-            
-            let groupEnd = groupStart + UInt16(service.attributes.count - 1)
-            
-            guard (groupEnd < handle.start || groupStart > handle.end) == false else { continue }
-            
-            guard (groupStart < handle.start || groupStart > handle.end) == false else { continue }
-            
-            attributes.append(service.attributes[0])
-        }
-        
-        return attributes
-    }
-    
-    public func readByType(handle: Range<UInt16>, type: BluetoothUUID) -> [Attribute] {
-        
-        var attributes = [Attribute]()
-        
-        for service in services {
-            
-            for attribute in service.attributes {
-                
-                guard attribute.handle >= handle.start
-                    && attribute.handle <= handle.end
-                    && attribute.type == type else { continue }
-                
-                attributes.append(attribute)
-            }
-        }
-        
-        return attributes
-    }
-    
-    // MARK: - Private Methods
-    
-    /*
-    private mutating func updateAttributes() {
+    /// Attribute representation of the database.
+    public var attributes: [Attribute] {
         
         var attributes = [Attribute]()
         
@@ -117,8 +53,51 @@ public struct GATTDatabase {
             }
         }
         
-        self.attributes = attributes
-    }*/
+        return attributes
+    }
+    
+    // MARK: - Methods
+    
+    /// Clear the database.
+    public mutating func clear() {
+        
+        self.services = []
+    }
+    
+    public func readByGroupType(handle: Range<UInt16>, type: BluetoothUUID) -> [Service] {
+        
+        var services = [Service]()
+        
+        for (index, service) in services.enumerate() {
+            
+            guard service.typeUUID == type else { continue }
+            
+            // service handle
+            let groupStart = UInt16(serviceHandle(index))
+            
+            let groupEnd = groupStart + UInt16(service.characteristics.count)
+            
+            guard (groupEnd < handle.startIndex || groupStart > handle.endIndex) == false else { continue }
+            
+            guard (groupStart < handle.startIndex || groupStart > handle.endIndex) == false else { continue }
+                        
+            services.append(service)
+        }
+        
+        return services
+    }
+    
+    public func readByType(handle: Range<UInt16>, type: BluetoothUUID) -> [Attribute] {
+        
+        return self.attributes.filter { (attribute) in
+            
+            return attribute.handle >= handle.startIndex
+                && attribute.handle <= handle.endIndex
+                && attribute.type == type
+        }
+    }
+    
+    // MARK: - Private Methods
     
     private func serviceHandle(index: Int) -> UInt16 {
         
@@ -126,15 +105,33 @@ public struct GATTDatabase {
         
         for (index, service) in services.enumerate() {
             
-            // increment handle
-            handle += 1
+            guard index != index else { return handle }
             
-            for characteristic in service.characteristics {
+            // increment handle
+            handle += 1 + UInt16(service.characteristics.count)
+        }
+        
+        fatalError("Invalid Service index: \(index)")
+    }
+    
+    private func characteristicHandle(index: (service: Int, characteristic: Int)) -> UInt16 {
+        
+        var handle: UInt16 = 0x0001
+        
+        for (serviceIndex, service) in services.enumerate() {
+            
+            for characteristicIndex in service.characteristics.indices {
                 
-                // increment handle
+                // found characteristic
+                guard (index.service == serviceIndex && index.characteristic == characteristicIndex) == false else { return handle }
+                
                 handle += 1
             }
+            
+            handle += 1
         }
+        
+        fatalError("Invalid Characteristic index: \(index)")
     }
 }
 
@@ -145,13 +142,13 @@ public extension GATTDatabase {
     /// GATT Service
     public struct Service {
         
+        public var UUID: BluetoothUUID
+        
         public var characteristics: [Characteristic]
         
         public var primary: Bool
         
-        public var UUID: BluetoothUUID
-        
-        public init(characteristics: [Characteristic], primary: Bool, UUID: BluetoothUUID) {
+        public init(characteristics: [Characteristic], UUID: BluetoothUUID, primary: Bool = true) {
             
             self.characteristics = characteristics
             self.primary = primary
