@@ -38,7 +38,7 @@ public final class GATTServer {
         connection.register(readByGroupType)
         
         // Read By Type
-        //connection.register(readByType)
+        connection.register(readByType)
         
         // Find Information
         
@@ -51,9 +51,11 @@ public final class GATTServer {
         connection.sendError(opcode, error: error, handle: handle)
     }
     
-    private func processReadByType() {
+    private func respond<T: ATTProtocolDataUnit>(response: T) {
         
+        log?("Response: \(response)")
         
+        connection.send(response) { _ in }
     }
     
     // MARK: Callbacks
@@ -118,11 +120,9 @@ public final class GATTServer {
         guard let response = ATTReadByGroupTypeResponse(attributeDataList: attributeData)
             else { fatalError("Could not create ATTReadByGroupTypeResponse. Attribute Data: \(attributeData)") }
         
-        log?("Response: \(response)")
-        
-        connection.send(response) { _ in }
+        respond(response)
     }
-    /*
+    
     private func readByType(pdu: ATTReadByTypeRequest) {
         
         let opcode = pdu.dynamicType.attributeOpcode
@@ -141,6 +141,6 @@ public final class GATTServer {
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
         
-    }*/
+    }
 }
 
