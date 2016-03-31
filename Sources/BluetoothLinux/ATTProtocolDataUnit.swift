@@ -682,18 +682,20 @@ public struct ATTReadByTypeResponse: ATTProtocolDataUnit {
     /// A list of Attribute Data.
     public let data: [AttributeData]
     
-    public init?(length: UInt8, data: [AttributeData]) {
+    public init?(data: [AttributeData]) {
         
         // must have at least one attribute data
         guard data.count > 0 else { return nil }
         
+        let length = data[0].value.count
+        
         // length must be at least 3 bytes
-        guard Int(length) >= AttributeData.length else { return nil }
+        guard length >= AttributeData.length else { return nil }
         
         // validate the length of each pair
         for pair in data {
             
-            guard pair.value.count == (Int(length) - 2)
+            guard pair.value.count == length - 2
                 else { return nil }
         }
         
