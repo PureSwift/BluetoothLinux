@@ -75,6 +75,8 @@ public final class GATTServer {
     
     private func readByGroupType(pdu: ATTReadByGroupTypeRequest) {
         
+        typealias Attribute = ATTReadByGroupTypeResponse.AttributeData
+        
         let opcode = pdu.dynamicType.attributeOpcode
         
         log?("Read by Group Type (\(pdu.startHandle) - \(pdu.endHandle))")
@@ -91,21 +93,28 @@ public final class GATTServer {
         guard pdu.type == GATT.UUID.PrimaryService.UUID || pdu.type == GATT.UUID.SecondaryService.UUID
             else { errorResponse(opcode, .UnsupportedGroupType, pdu.startHandle); return }
         
-        let attributes = database.readByGroupType(pdu.startHandle ..< pdu.endHandle, type: pdu.type)
+        // search for only primary services
+        let primary = pdu.type == GATT.UUID.PrimaryService.UUID
         
-        guard attributes.isEmpty == false
+        let services = database.readByGroupType(pdu.startHandle ..< pdu.endHandle, primary: primary)
+        
+        guard services.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
-        let attributeData = attributes.map { (attribute) -> ATTReadByGroupTypeResponse.AttributeData in
-            
-            guard let service = database.service(ofAttribute: attribute)
-                else { fatalError("No service found for attribute in database. \(attribute)") }
-            
-            return ATTReadByGroupTypeResponse.AttributeData(attributeHandle: service.handles.0, endGroupHandle: service.handles.1, value: attribute.value)
-        }
+        var attributeData = [Attribute](count: services.count, repeatedValue: Attribute())
         
+        for (index, service) in services.enumerate() {
+            
+            let serviceHandle = database.serviceHandle(index)
+            
+            // set values
+            attributeData[index].attributeHandle = serviceHandle
+            attributeData[index].endGroupHandle = serviceHandle + UInt16(service.characteristics.count)
+            attributeData[index].value = service.UUID.byteValue
+        }
+                
         guard let response = ATTReadByGroupTypeResponse(attributeDataList: attributeData)
-            else { fatalError("Could not create ATTReadByGroupTypeResponse") }
+            else { fatalError("Could not create ATTReadByGroupTypeResponse. Attribute Data: \(attributeData)") }
         
         log?("Response: \(response)")
         

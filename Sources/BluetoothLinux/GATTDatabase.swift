@@ -64,42 +64,7 @@ public struct GATTDatabase {
         self.services = []
     }
     
-    public func readByGroupType(handle: Range<UInt16>, type: BluetoothUUID) -> [Service] {
-        
-        var services = [Service]()
-        
-        for (index, service) in services.enumerate() {
-            
-            guard service.typeUUID == type else { continue }
-            
-            // service handle
-            let groupStart = UInt16(serviceHandle(index))
-            
-            let groupEnd = groupStart + UInt16(service.characteristics.count)
-            
-            guard (groupEnd < handle.startIndex || groupStart > handle.endIndex) == false else { continue }
-            
-            guard (groupStart < handle.startIndex || groupStart > handle.endIndex) == false else { continue }
-                        
-            services.append(service)
-        }
-        
-        return services
-    }
-    
-    public func readByType(handle: Range<UInt16>, type: BluetoothUUID) -> [Attribute] {
-        
-        return self.attributes.filter { (attribute) in
-            
-            return attribute.handle >= handle.startIndex
-                && attribute.handle <= handle.endIndex
-                && attribute.type == type
-        }
-    }
-    
-    // MARK: - Private Methods
-    
-    private func serviceHandle(index: Int) -> UInt16 {
+    public func serviceHandle(index: Int) -> UInt16 {
         
         var handle: UInt16 = 0x0001
         
@@ -114,7 +79,7 @@ public struct GATTDatabase {
         fatalError("Invalid Service index: \(index)")
     }
     
-    private func characteristicHandle(index: (service: Int, characteristic: Int)) -> UInt16 {
+    public func characteristicHandle(index: (service: Int, characteristic: Int)) -> UInt16 {
         
         var handle: UInt16 = 0x0001
         
@@ -132,6 +97,39 @@ public struct GATTDatabase {
         }
         
         fatalError("Invalid Characteristic index: \(index)")
+    }
+    
+    public func readByGroupType(handle: Range<UInt16>, primary: Bool) -> [Service] {
+        
+        var services = [Service]()
+        
+        for (index, service) in services.enumerate() {
+            
+            guard service.primary == primary else { continue }
+            
+            // service handle
+            let groupStart = UInt16(serviceHandle(index))
+            
+            let groupEnd = groupStart + UInt16(service.characteristics.count)
+            
+            guard (groupEnd < handle.startIndex || groupStart > handle.endIndex) == false else { continue }
+            
+            guard (groupStart < handle.startIndex || groupStart > handle.endIndex) == false else { continue }
+            
+            services.append(service)
+        }
+        
+        return services
+    }
+    
+    public func readByType(handle: Range<UInt16>, type: BluetoothUUID) -> [Attribute] {
+        
+        return self.attributes.filter { (attribute) in
+            
+            return attribute.handle >= handle.startIndex
+                && attribute.handle <= handle.endIndex
+                && attribute.type == type
+        }
     }
 }
 
