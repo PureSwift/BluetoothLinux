@@ -64,6 +64,30 @@ public struct GATTDatabase {
         self.services = []
     }
     
+    public func serviceOf(attributeHandle: UInt16) -> Service {
+        
+        var handle: UInt16 = 0x0000
+        
+        for service in services {
+            
+            // increment handle
+            handle += 1
+            
+            guard handle != attributeHandle else { return service }
+            
+            for _ in service.characteristics.indices {
+                
+                // increment handle
+                handle += 1
+                
+                guard handle != attributeHandle else { return service }
+                
+            }
+        }
+        
+        fatalError("Invalid attribute handle \(attributeHandle)")
+    }
+    
     public func serviceHandle(index: Int) -> UInt16 {
         
         var handle: UInt16 = 0x0001
@@ -99,6 +123,8 @@ public struct GATTDatabase {
         fatalError("Invalid Characteristic index: \(index)")
     }
     
+    // MARK: GATT Server Helpers
+    
     public func readByGroupType(handle: Range<UInt16>, primary: Bool) -> [Service] {
         
         var services = [Service]()
@@ -127,6 +153,25 @@ public struct GATTDatabase {
     public func findInformation(handle: Range<UInt16>) -> [Attribute] {
         
         return attributes.filter { handle.contains($0.handle) }
+    }
+    
+    public func findByTypeValue(handle: Range<UInt16>, type: UInt16, value: [UInt8]) -> [(UInt16, UInt16)] {
+        
+        let matchingAttributes = attributes.filter { handle.contains($0.handle) && $0.type == .Bit16(type) && $0.value == value }
+        
+        let services = matchingAttributes.map { serviceOf($0.handle) }
+        
+        var handles = [(UInt16, UInt16)](count: services.count, repeatedValue: (0,0))
+        
+        for (index, service) in services.enumerate() {
+            
+            let serviceHandle = self.serviceHandle(index)
+            
+            handles[index].0 = serviceHandle
+            handles[index].1 = serviceHandle + UInt16(service.characteristics.count)
+        }
+        
+        return handles
     }
 }
 

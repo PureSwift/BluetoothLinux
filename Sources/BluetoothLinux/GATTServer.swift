@@ -22,8 +22,10 @@ public final class GATTServer {
     
     // MARK: - Initialization
     
-    public init() {
+    public init(maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default) {
         
+        // set initial MTU and register handlers
+        self.connection.maximumTransmissionUnit = maximumTransmissionUnit
         self.registerATTHandlers()
     }
     
@@ -59,6 +61,9 @@ public final class GATTServer {
         
         // Find Information
         connection.register(findInformation)
+        
+        // Find By Type Value
+        connection.register(findByTypeValue)
     }
     
     private func errorResponse(opcode: ATT.Opcode, _ error: ATT.Error, _ handle: UInt16 = 0) {
@@ -239,6 +244,32 @@ public final class GATTServer {
         }
         
         let response = ATTFindInformationResponse(data: data)
+        
+        respond(response)
+    }
+    
+    private func findByTypeValue(pdu: ATTFindByTypeRequest) {
+        
+        typealias Handle = ATTFindByTypeResponse.HandlesInformation
+        
+        let opcode = pdu.dynamicType.attributeOpcode
+        
+        log?("Find By Type Value (\(pdu.startHandle) - \(pdu.endHandle)) (\(pdu.attributeType))")
+        
+        guard pdu.startHandle != 0 && pdu.endHandle != 0
+            else { errorResponse(opcode, .InvalidHandle); return }
+        
+        guard pdu.startHandle <= pdu.endHandle
+            else { errorResponse(opcode, .InvalidHandle, pdu.startHandle); return }
+        
+        let handles = database.findByTypeValue(pdu.startHandle ..< pdu.endHandle, type: pdu.attributeType, value: pdu.attributeValue)
+        
+        guard handles.isEmpty == false
+            else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
+        
+        let handlesInformation = handles.map { Handle(foundAttribute: $0.0, groupEnd: $0.1) }
+        
+        let response = ATTFindByTypeResponse(handlesInformationList: handlesInformation)
         
         respond(response)
     }
