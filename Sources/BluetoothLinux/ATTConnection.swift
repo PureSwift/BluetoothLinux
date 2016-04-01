@@ -203,11 +203,11 @@ public final class ATTConnection {
     }
     
     /// Sends an error.
-    public func sendError(opcode: ATTOpcode, error: ATT.Error, handle: UInt16 = 0, response: (ATTErrorResponse -> ())? = nil) {
+    public func sendError(opcode: ATTOpcode, error: ATT.Error, handle: UInt16 = 0, response: (ATTErrorResponse -> ())? = nil) -> UInt? {
         
         let error = ATTErrorResponse(requestOpcode: opcode, attributeHandle: handle, error: error)
         
-        self.send(error) { response?($0) }
+        return self.send(error) { response?($0) }
     }
     
     /// Adds a PDU to the queue to send.
@@ -268,6 +268,8 @@ public final class ATTConnection {
         
         // actual PDU length
         let length = data.count
+        
+        print("\(length) encoded bytes")
         
         /// MTU must be large enough to hold PDU. 
         guard length <= maximumTransmissionUnit else { return nil }

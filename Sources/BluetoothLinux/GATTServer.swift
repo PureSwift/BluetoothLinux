@@ -91,7 +91,8 @@ public final class GATTServer {
         
         log?("Error \(error) - \(opcode) (\(handle))")
         
-        connection.sendError(opcode, error: error, handle: handle)
+        guard let _ = connection.sendError(opcode, error: error, handle: handle)
+            else { fatalError("Could not add error PDU to queue: \(opcode) \(error) \(handle)") }
     }
     
     @noreturn @inline(__always)
@@ -111,7 +112,8 @@ public final class GATTServer {
         
         log?("Response: \(response)")
         
-        connection.send(response) { _ in }
+        guard let _ = connection.send(response, response: { _ in })
+            else { fatalError("Could not add PDU to queue: \(response)") }
     }
     
     private func checkPermissions(permissions: [ATT.AttributePermission], _ attribute: GATTDatabase.Attribute) -> ATT.Error? {
@@ -274,9 +276,38 @@ public final class GATTServer {
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
         let attributeData = data.map { AttributeData(attributeHandle: $0.start, endGroupHandle: $0.end, value: $0.UUID.byteValue) }
+        
+        var limitedAttributes = [attributeData[0]]
+        
+        var response = ATTReadByGroupTypeResponse(data: limitedAttributes)!
+        
+        // limit for MTU if first handle is too large
+        if response.byteValue.count > connection.maximumTransmissionUnit {
+            
+            let maxLength = min(min(connection.maximumTransmissionUnit - 6, 251), limitedAttributes[0].value.count)
+            
+            limitedAttributes[0].value = Array(limitedAttributes[0].value.prefix(maxLength))
+            
+            response = ATTReadByGroupTypeResponse(data: limitedAttributes)!
+            
+        } else {
+            
+            // limit for MTU for subsequential attribute handles
+            for data in attributeData[1 ..< attributeData.count] {
                 
-        guard let response = ATTReadByGroupTypeResponse(data: attributeData)
-            else { fatalErrorResponse("Could not create ATTReadByGroupTypeResponse. Attribute Data: \(attributeData)", opcode, pdu.startHandle) }
+                limitedAttributes.append(data)
+                
+                guard let limitedResponse = ATTReadByGroupTypeResponse(data: limitedAttributes)
+                    else { fatalErrorResponse("Could not create ATTReadByGroupTypeResponse. Attribute Data: \(attributeData)", opcode, pdu.startHandle) }
+                
+                guard limitedResponse.byteValue.count <= connection.maximumTransmissionUnit else { break }
+                
+                response = limitedResponse
+            }
+        }
+        
+        assert(response.byteValue.count <= connection.maximumTransmissionUnit,
+               "Response \(response.byteValue.count) bytes > MTU (\(connection.maximumTransmissionUnit))")
         
         respond(response)
     }
