@@ -347,8 +347,37 @@ public final class GATTServer {
         
         let attributeData = attributes.map { AttributeData(handle: $0.handle, value: $0.value) }
         
-        guard let response = ATTReadByTypeResponse(data: attributeData)
-            else { fatalErrorResponse("Could not create ATTReadByTypeResponse. Attribute Data: \(attributeData)", opcode, pdu.startHandle) }
+        var limitedAttributes = [attributeData[0]]
+        
+        var response = ATTReadByTypeResponse(data: limitedAttributes)!
+        
+        // limit for MTU if first handle is too large
+        if response.byteValue.count > connection.maximumTransmissionUnit {
+            
+            let maxLength = min(min(connection.maximumTransmissionUnit - 4, 253), limitedAttributes[0].value.count)
+            
+            limitedAttributes[0].value = Array(limitedAttributes[0].value.prefix(maxLength))
+            
+            response = ATTReadByTypeResponse(data: limitedAttributes)!
+            
+        } else {
+            
+            // limit for MTU for subsequential attribute handles
+            for data in attributeData[1 ..< attributeData.count] {
+                
+                limitedAttributes.append(data)
+                
+                guard let limitedResponse = ATTReadByTypeResponse(data: limitedAttributes)
+                    else { fatalErrorResponse("Could not create ATTReadByTypeResponse. Attribute Data: \(attributeData)", opcode, pdu.startHandle) }
+                
+                guard limitedResponse.byteValue.count <= connection.maximumTransmissionUnit else { break }
+                
+                response = limitedResponse
+            }
+        }
+        
+        assert(response.byteValue.count <= connection.maximumTransmissionUnit,
+               "Response \(response.byteValue.count) bytes > MTU (\(connection.maximumTransmissionUnit))")
         
         respond(response)
     }
