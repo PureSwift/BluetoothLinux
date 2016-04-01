@@ -290,6 +290,14 @@ public struct ATTFindInformationResponse: ATTProtocolDataUnit {
         /// A list of 1 or more handles with their 128-bit UUIDs.
         case Bit128     = 0x02
         
+        public init(UUID: BluetoothUUID) {
+            
+            switch UUID {
+            case .Bit16(_): self = .Bit16
+            case .Bit128(_): self = .Bit128
+            }
+        }
+        
         public var length: Int {
             
             switch self {
@@ -682,18 +690,20 @@ public struct ATTReadByTypeResponse: ATTProtocolDataUnit {
     /// A list of Attribute Data.
     public let data: [AttributeData]
     
-    public init?(length: UInt8, data: [AttributeData]) {
+    public init?(data: [AttributeData]) {
         
         // must have at least one attribute data
         guard data.count > 0 else { return nil }
         
+        let length = data[0].value.count
+        
         // length must be at least 3 bytes
-        guard Int(length) >= AttributeData.length else { return nil }
+        guard length >= AttributeData.length else { return nil }
         
         // validate the length of each pair
         for pair in data {
             
-            guard pair.value.count == (Int(length) - 2)
+            guard pair.value.count == length
                 else { return nil }
         }
         
@@ -1195,22 +1205,22 @@ public struct ATTReadByGroupTypeResponse: ATTProtocolDataUnit {
     public static let length = 1 + 1 + 4
     
     /// A list of Attribute Data
-    public let attributeDataList: [AttributeData]
+    public let data: [AttributeData]
     
-    public init?(attributeDataList: [AttributeData]) {
+    public init?(data: [AttributeData]) {
         
         // must have at least one item
-        guard let valueLength = attributeDataList.first?.value.count
+        guard let valueLength = data.first?.value.count
             else { return nil }
         
-        for attributeData in attributeDataList {
+        for attributeData in data {
             
             // all items must have same length
             guard attributeData.value.count == valueLength
                 else { return nil }
         }
         
-        self.attributeDataList = attributeDataList
+        self.data = data
     }
     
     public init?(byteValue: [UInt8]) {
@@ -1248,18 +1258,18 @@ public struct ATTReadByGroupTypeResponse: ATTProtocolDataUnit {
             attributeDataList[index] = attributeData
         }
         
-        self.attributeDataList = attributeDataList
+        self.data = attributeDataList
     }
     
     public var byteValue: [UInt8] {
         
         let type = ATTReadByGroupTypeResponse.self
         
-        let length = UInt8(attributeDataList[0].value.count + 4)
+        let length = UInt8(data[0].value.count + 4)
         
         var attributeDataBytes = [UInt8]()
         
-        for attributeData in attributeDataList {
+        for attributeData in data {
             
             attributeDataBytes += attributeData.byteValue
         }

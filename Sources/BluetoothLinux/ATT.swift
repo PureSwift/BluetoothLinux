@@ -240,12 +240,12 @@ public enum ATTAttributePermission: UInt8 {
     case Write                                      = 0x02
     
     // Encryption
-    case Encrypt                                    = 12 // ReadEncrypt | WriteEncrypt
+    public static let Encrypt                       = [ReadEncrypt, WriteEncrypt]
     case ReadEncrypt                                = 0x04
     case WriteEncrypt                               = 0x08
     
     // Authentication
-    case Authentication                             = 48 // ReadAuthentication | WriteAuthentication
+    public static let  Authentication               = [ReadAuthentication, WriteAuthentication]
     case ReadAuthentication                         = 0x10
     case WriteAuthentication                        = 0x20
     

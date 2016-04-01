@@ -30,6 +30,8 @@ public final class ATTConnection {
         }
     }
     
+    public let socket: L2CAPSocket
+    
     // MARK: - Private Properties
     
     /// There's a pending incoming request.
@@ -64,12 +66,15 @@ public final class ATTConnection {
     
     // MARK: - Initialization
     
-    public init() { }
+    public init(socket: L2CAPSocket) {
+        
+        self.socket = socket
+    }
     
     // MARK: - Methods
     
     /// Performs the actual IO for recieving data.
-    public func read(socket: L2CAPSocket) throws {
+    public func read() throws {
         
         let recievedData = try socket.recieve(maximumTransmissionUnit)
         
@@ -106,7 +111,7 @@ public final class ATTConnection {
     }
     
     /// Performs the actual IO for sending data.
-    public func write(socket: L2CAPSocket) throws {
+    public func write() throws {
         
         guard let sendOpcode = pickNextSendOpcode()
             else { return } // throw error?

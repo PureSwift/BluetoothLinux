@@ -22,7 +22,7 @@ public protocol HCIEvent: RawRepresentable {
 
 public protocol HCIEventParameter {
     
-    typealias HCIEventType: HCIEvent
+    associatedtype HCIEventType: HCIEvent
     
     /// Event Opcode
     static var event: HCIEventType { get }

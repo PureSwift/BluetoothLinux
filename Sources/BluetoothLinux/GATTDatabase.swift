@@ -9,189 +9,21 @@
 /// GATT Database
 public struct GATTDatabase {
     
-    // MARK: - Private Properties
+    /// GATT Services in this database.
+    public var services: [Service] = [] {
+        
+        didSet { updateAttributes() }
+    }
     
-    private var nextHandle: UInt16 = 0x0001
-    
-    private var services = Deque<Service>()
-    
-    private var notificationList = Deque<Notification>()
-    
-    private var nextNotificationID: UInt = 0
-    
-    private var nextServiceID: UInt = 0
+    /// Attribute representation of the database.
+    public private(set) var attributes: [Attribute] = []
     
     // MARK: - Initialization
     
-    public init() { }
-    
-    // MARK: - Methods
-    
-    public mutating func clear() {
+    public init(services: [Service] = []) {
         
-        self.nextHandle = 0
-        self.services.removeAll()
-    }
-    
-    public mutating func clear(range: (start: UInt16, end: UInt16)) {
-        
-        
-    }
-    
-    public mutating func insertService(handle: UInt16, UUID: BluetoothUUID, primary: Bool, handleCount: UInt16) -> Attribute? {
-        
-        func findInsertLocation(start: UInt16, _ end: UInt16) -> (service: Service?, after: Service?) {
-            
-            var after: Service?
-            
-            for service in services {
-                
-                let (startHandle, endHandle) = service.handles
-                
-                guard (start >= startHandle && start <= endHandle) == false
-                    else { return (service, after) }
-                
-                guard (start >= startHandle && start <= endHandle) == false
-                    else { return (service, after) }
-                
-                guard (end < endHandle) == false
-                    else { return (nil, after) }
-                
-                after = service
-            }
-            
-            return (nil, after)
-        }
-        
-        let findInsertServices = findInsertLocation(handle, handle + handleCount - 1)
-        
-        if let foundService = findInsertServices.service {
-            
-            // create new service
-            let type = GATT.UUID(primaryService: primary)
-            
-            // Check if service match
-            guard (foundService.UUID == UUID
-                && foundService.UUID == type.UUID
-                && foundService.attributes.count == Int(handleCount)
-                && foundService.attributes[0].handle == handle) == false
-                else { return nil }
-            
-            return foundService.attributes[0]
-        }
-        
-        // service not found, create new service
-        
-        let service = Service(identifier: nextServiceID, UUID: UUID, handle: handle, primary: primary)
-        
-        // increment
-        nextServiceID += 1
-        
-        if let after = findInsertServices.1 {
-            
-            let afterIndex = self.services.indexOf({ $0.identifier == after.identifier })!
-            
-            self.services.insert(service, atIndex: afterIndex)
-            
-        } else {
-            
-            services.prepend(service)
-        }
-        
-        // Fast-forward nextHandle if the new service was added to the end
-        nextHandle = max(handle + handleCount, nextHandle)
-        
-        return service.attributes[0]
-    }
-    
-    public mutating func removeService(attribute: Attribute) -> Bool {
-        
-        guard let index = services.indexOf({ $0.identifier == attribute.serviceIdentifier })
-            else { return false }
-        
-        services.removeAtIndex(index)
-        
-        return true
-    }
-    
-    public func service(ofAttribute attribute: Attribute) -> Service? {
-        
-        for service in services {
-            
-            if service.identifier == attribute.serviceIdentifier {
-                
-                return service
-            }
-        }
-        
-        return nil
-    }
-    
-    /// Registers for notifications and returns the notification ID.
-    public mutating func register(serviceAdded: AttributeCallback, serviceRemoved: AttributeCallback) -> UInt {
-        
-        let notification = Notification(identifier: nextNotificationID, serviceAdded: serviceAdded, serviceRemoved: serviceRemoved)
-        
-        // increment
-        nextNotificationID += 1
-        
-        notificationList.append(notification)
-        
-        return notification.identifier
-    }
-    
-    /// Unregisters the notification with specified identifier.
-    public mutating func unregister(notificationIdentifier: UInt) -> Bool {
-        
-        guard let notificationIndex = notificationList.indexOf({ $0.identifier == notificationIdentifier })
-            else { return false }
-        
-        notificationList.removeAtIndex(notificationIndex)
-        
-        return true
-    }
-    
-    public func readByGroupType(handle handle: (start: UInt16, end: UInt16), type: BluetoothUUID) -> [Attribute] {
-        
-        var attributes = [Attribute]()
-        
-        for service in services {
-            
-            guard service.active else { continue }
-            
-            guard type == service.attributes[0].type else { continue }
-            
-            let groupStart = service.attributes[0].handle
-            
-            let groupEnd = groupStart + UInt16(service.attributes.count - 1)
-            
-            guard (groupEnd < handle.start || groupStart > handle.end) == false else { continue }
-            
-            guard (groupStart < handle.start || groupStart > handle.end) == false else { continue }
-            
-            attributes.append(service.attributes[0])
-        }
-        
-        return attributes
-    }
-    
-    public func readbyType(handle handle: (start: UInt16, end: UInt16), type: BluetoothUUID) -> [Attribute] {
-        
-        var attributes = [Attribute]()
-        
-        for service in services {
-            
-            for attribute in service.attributes {
-                
-                guard attribute.handle >= handle.start
-                    && attribute.handle <= handle.end
-                    && attribute.type == type else { continue }
-                
-                attributes.append(attribute)
-            }
-        }
-        
-        return attributes
+        self.services = services
+        self.updateAttributes()
     }
     
     // MARK: - Dynamic Properties
@@ -200,120 +32,304 @@ public struct GATTDatabase {
         
         return services.isEmpty
     }
+    
+    // MARK: - Methods
+    
+    /// Clear the database.
+    public mutating func clear() {
+        
+        self.services = []
+    }
+    
+    /// Write the value to attribute specified by the handle.
+    public mutating func write(value: [UInt8], _ characteristicHandle: UInt16) {
+        
+        
+    }
+    
+    /// The handles of the service at the specified index.
+    public func serviceHandle(index: Int) -> UInt16 {
+        
+        var handle: UInt16 = 0x0000
+        
+        for (serviceIndex, service) in services.enumerate() {
+            
+            // increment handle
+            handle += 1
+            
+            guard serviceIndex != index
+                else { return handle }
+            
+            for characteristic in service.characteristics {
+                
+                handle += 2 + UInt16(characteristic.descriptors.count)
+            }
+        }
+        
+        fatalError("Invalid Service Index \(index)")
+    }
+    
+    /// The end group handle for the service at the specified handle.
+    public func serviceEndHandle(index: Int) -> UInt16 {
+        
+        let startHandle = serviceHandle(index)
+        
+        let service = services[index]
+        
+        var handle = startHandle
+        
+        for characteristic in service.characteristics {
+            
+            handle += 2 + UInt16(characteristic.descriptors.count)
+        }
+        
+        return handle
+    }
+    
+    public func serviceOf(attributeHandle: UInt16) -> Service {
+        
+        for (index, service) in services.enumerate() {
+            
+            let serviceHandleRange = serviceHandle(index) ... serviceEndHandle(index)
+            
+            if serviceHandleRange.contains(attributeHandle) {
+                
+                return service
+            }
+        }
+        
+        fatalError("Invalid attribute handle: \(attributeHandle)")
+    }
+    
+    // MARK: - Subscripting
+    
+    /// The attribute with the specified handle.
+    public subscript(handle: UInt16) -> Attribute {
+        
+        return attributes[Int(handle) - 1]
+    }
+    
+    // MARK: - Private Methods
+    
+    private mutating func updateAttributes() {
+        
+        var attributes = [Attribute]()
+        
+        var handle: UInt16 = 0x0000
+        
+        for service in services {
+            
+            // increment handle
+            handle += 1
+            
+            let attribute = Attribute(service: service, handle: handle)
+            
+            attributes.append(attribute)
+            
+            for characteristic in service.characteristics {
+                
+                // increment handle
+                handle += 1
+                
+                attributes += Attribute.fromCharacteristic(characteristic, handle: handle)
+                
+                handle = attributes.last!.handle
+            }
+        }
+        
+        self.attributes = attributes
+    }
 }
 
 // MARK: - Supporting Types
 
 public extension GATTDatabase {
     
-    public typealias Read = (Attribute) -> ()
-    
-    public typealias Write = (Attribute) -> ()
-    
-    public typealias AttributeCallback = (Attribute) -> ()
-    
     /// GATT Service
     public struct Service {
         
-        public private(set) var attributes: [Attribute]
+        public var UUID: BluetoothUUID
         
-        public var active = false
+        public var characteristics: [Characteristic]
         
-        public var claimed = false
+        public var primary: Bool
         
-        public var UUID: BluetoothUUID {
+        public init(characteristics: [Characteristic], UUID: BluetoothUUID, primary: Bool = true) {
             
-            return attributes[0].type
+            self.characteristics = characteristics
+            self.primary = primary
+            self.UUID = UUID
         }
-        
-        /// Start and end identifiers.
-        internal var handles: (UInt16, UInt16) {
-            
-            return (attributes[0].handle, attributes.last!.handle)
-        }
-        
-        /// Internal identifier for lookup.
-        private let identifier: UInt
-        
-        /// Create a new service and give it an attribute.
-        private init(identifier: UInt, UUID: BluetoothUUID, handle: UInt16, primary: Bool) {
-            
-            self.identifier = identifier
-            
-            let type = primary ? GATT.UUID.PrimaryService.rawValue : GATT.UUID.PrimaryService.rawValue
-            
-            let newAttribute = Attribute(serviceIdentifier: identifier, handle: handle, type: .Bit16(type), value: UUID.byteValue)
-            
-            self.attributes = [newAttribute]
-        }
-        
-        
     }
     
-    /// GATT Attribute
+    /// GATT Include Declaration
+    public struct Include {
+        
+        /// Included service handle
+        public var serviceHandle: UInt16
+        
+        /// End group handle
+        public var endGroupHandle: UInt16
+        
+        /// Included Service UUID
+        public var serviceUUID: BluetoothUUID
+        
+        public init(serviceHandle: UInt16, endGroupHandle: UInt16, serviceUUID: BluetoothUUID) {
+            
+            self.serviceHandle = serviceHandle
+            self.endGroupHandle = endGroupHandle
+            self.serviceUUID = serviceUUID
+        }
+        
+        /// ATT Attribute Value
+        private var value: [UInt8] {
+            
+            let handleBytes = serviceHandle.littleEndianBytes
+            
+            let endGroupBytes = endGroupHandle.littleEndianBytes
+            
+            return [handleBytes.0, handleBytes.1, endGroupBytes.0, endGroupBytes.1] + serviceUUID.byteValue
+        }
+    }
+    
+    /// GATT Characteristic
+    public struct Characteristic {
+        
+        public typealias Descriptor = GATTDatabase.Descriptor
+        public typealias Permission = ATT.AttributePermission
+        public typealias Property = GATT.CharacteristicProperty
+        
+        public var UUID: BluetoothUUID
+        
+        public var value: [UInt8]
+        
+        public var descriptors: [Descriptor]
+        
+        public var permissions: [Permission]
+        
+        public var properties: [Property]
+        
+        public init(UUID: BluetoothUUID,
+                    value: [UInt8] = [],
+                    permissions: [Permission] = [],
+                    properties: [Property] = [],
+                    descriptors: [Descriptor] = []) {
+            
+            self.UUID = UUID
+            self.value = value
+            self.permissions = permissions
+            self.descriptors = descriptors
+            self.properties = properties
+        }
+    }
+    
+    /// GATT Characteristic Descriptor
+    public struct Descriptor {
+        
+        public typealias Permission = ATT.AttributePermission
+        
+        public var UUID: BluetoothUUID
+        
+        public var permissions: [Permission]
+        
+        public var value: [UInt8]
+        
+        public init(UUID: BluetoothUUID, value: [UInt8] = [], permissions: [Permission] = []) {
+            
+            self.UUID = UUID
+            self.value = value
+            self.permissions = permissions
+        }
+    }
+    
+    /// ATT Attribute
     public struct Attribute {
         
-        // Public data
+        public typealias Permission = ATT.AttributePermission
         
         public let handle: UInt16
         
-        public let type: BluetoothUUID
+        public let UUID: BluetoothUUID
         
         public let value: [UInt8]
         
-        // Private Data
+        public let permissions: [Permission]
         
-        private let serviceIdentifier: UInt
-        
-        private let read: Read? = nil
-        
-        private let write: Write? = nil
-        
-        private let readID: UInt = 0
-        
-        private let writeID: UInt = 0
-        
-        private var pendingReads = Deque<PendingRead>()
-        
-        private var pendingWrites = Deque<PendingWrite>()
-        
-        private init(serviceIdentifier: UInt, handle: UInt16, type: BluetoothUUID, value: [UInt8]) {
+        /// Defualt initializer
+        private init(handle: UInt16, UUID: BluetoothUUID, value: [UInt8] = [], permissions: [Permission] = []) {
             
-            self.serviceIdentifier = serviceIdentifier
             self.handle = handle
-            self.type = type
+            self.UUID = UUID
             self.value = value
+            self.permissions = permissions
         }
-    }
-}
-
-// MARK: - Private Types
-
-private extension GATTDatabase {
-    
-    struct Notification {
         
-        let identifier: UInt
+        /// Initialize attribute with a `Service`.
+        private init(service: Service, handle: UInt16) {
+            
+            self.handle = handle
+            self.UUID = GATT.UUID(primaryService: service.primary).toUUID()
+            self.value = service.UUID.byteValue
+            self.permissions = [.Read] // Read only
+        }
         
-        let serviceAdded: AttributeCallback
+        /// Initialize attribute with an `Include Declaration`.
+        private init(include: Include, handle: UInt16) {
+            
+            self.handle = handle
+            self.UUID = GATT.UUID.Include.toUUID()
+            self.value = include.value
+            self.permissions = [.Read] // Read only
+        }
         
-        let serviceRemoved: AttributeCallback
-    }
-    
-    struct PendingRead {
+        /// Initialize attributes from a `Characteristic`.
+        private static func fromCharacteristic(characteristic: Characteristic, handle: UInt16) -> [Attribute] {
+            
+            var currentHandle = handle
+            
+            let declarationAttribute: Attribute = {
+                
+                let propertiesMask = characteristic.properties.optionsBitmask()
+                let valueHandleBytes = (handle + 1).littleEndianBytes
+                let value = [propertiesMask, valueHandleBytes.0, valueHandleBytes.1] + characteristic.UUID.byteValue
+                
+                return Attribute(handle: currentHandle, UUID: GATT.UUID.Characteristic.toUUID(), value: value, permissions: [.Read])
+            }()
+            
+            currentHandle += 1
+            
+            let valueAttribute = Attribute(handle: currentHandle, UUID: characteristic.UUID, value: characteristic.value, permissions: characteristic.permissions)
+            
+            var attributes = [declarationAttribute, valueAttribute]
+            
+            // add descriptors
+            if characteristic.descriptors.isEmpty == false {
+                
+                var descriptorAttributes = [Attribute]()
+                
+                for descriptor in characteristic.descriptors {
+                    
+                    currentHandle += 1
+                    
+                    let attribute = Attribute(descriptor: descriptor, handle: currentHandle)
+                    
+                    descriptorAttributes.append(attribute)
+                }
+                
+                attributes += descriptorAttributes
+            }
+            
+            return attributes
+        }
         
-        let identifier: UInt
-        
-        let timeoutIdentifier: UInt
-        
-        
-    }
-    
-    struct PendingWrite {
-        
-        let identifier: UInt
-        
-        let timeoutIdentifier: UInt
+        /// Initialize attribute with a `Characteristic Descriptor`.
+        private init(descriptor: Descriptor, handle: UInt16) {
+            
+            self.handle = handle
+            self.UUID = descriptor.UUID
+            self.value = descriptor.value
+            self.permissions = descriptor.permissions
+        }
     }
 }
 
