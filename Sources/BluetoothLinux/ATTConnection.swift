@@ -126,6 +126,8 @@ public final class ATTConnection {
         
         assert(sendOpcode.data.count <= maximumTransmissionUnit, "Trying to send \(sendOpcode.data.count) bytes when MTU is \(maximumTransmissionUnit)")
         
+        print("Sending data... (\(sendOpcode.data.count) bytes)")
+        
         try socket.send(Data(byteValue: sendOpcode.data))
         
         let opcode = sendOpcode.dynamicType.PDUType.attributeOpcode
