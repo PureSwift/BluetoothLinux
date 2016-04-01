@@ -138,7 +138,7 @@ public final class GATTServer {
         return nil
     }
     
-    private func write(opcode: ATT.Opcode, handle: UInt16, value: [UInt8], shouldRespond: Bool) {
+    private func handleWriteRequest(opcode: ATT.Opcode, handle: UInt16, value: [UInt8], shouldRespond: Bool) {
         
         /// Conditionally respond
         @inline(__always)
@@ -155,13 +155,14 @@ public final class GATTServer {
         guard attributes.isEmpty == false
             else { doResponse(errorResponse(opcode, .InvalidHandle, handle)); return }
         
-        // requsted handle must not exceed last handle
+        // validate handle
         guard (1 ... UInt16(attributes.count)).contains(handle)
             else { doResponse(errorResponse(opcode, .InvalidHandle, handle)); return }
         
         // get attribute
         let attribute = attributes[Int(handle)]
         
+        // validate permissions
         if let error = checkPermissions([.Write, .WriteAuthentication, .WriteEncrypt], attribute) {
             
             doResponse(errorResponse(opcode, error, handle))
@@ -171,6 +172,51 @@ public final class GATTServer {
         database.write(value, handle)
         
         doResponse(respond(ATTWriteResponse()))
+    }
+    
+    private func handleReadRequest(opcode: ATT.Opcode, handle: UInt16, offset: UInt16 = 0) -> [UInt8]? {
+        
+        let attributes = database.attributes
+        
+        // no attributes
+        guard attributes.isEmpty == false
+            else { errorResponse(opcode, .InvalidHandle, handle); return nil }
+        
+        // validate handle
+        guard (1 ... UInt16(attributes.count)).contains(handle)
+            else { errorResponse(opcode, .InvalidHandle, handle); return nil }
+        
+        // get attribute
+        let attribute = attributes[Int(handle)]
+        
+        // validate permissions
+        if let error = checkPermissions([.Read, .ReadAuthentication, .ReadEncrypt], attribute) {
+            
+            errorResponse(opcode, error, handle)
+            return nil
+        }
+        
+        // check boundary
+        guard offset <= UInt16(attribute.value.count)
+            else { errorResponse(opcode, .InvalidOffset, handle); return nil }
+        
+        let value: [UInt8]
+        
+        // Guard against invalid access if offset equals to value length
+        if offset == UInt16(attribute.value.count) {
+            
+            value = []
+            
+        } else if offset > 0 {
+            
+            value = Array(attribute.value.suffixFrom(Int(offset)))
+            
+        } else {
+            
+            value = attribute.value
+        }
+        
+        return value
     }
     
     // MARK: Callbacks
@@ -363,14 +409,38 @@ public final class GATTServer {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
-        write(opcode, handle: pdu.handle, value: pdu.value, shouldRespond: true)
+        handleWriteRequest(opcode, handle: pdu.handle, value: pdu.value, shouldRespond: true)
     }
     
     private func writeCommand(pdu: ATTWriteCommand) {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
-        write(opcode, handle: pdu.handle, value: pdu.value, shouldRespond: false)
+        handleWriteRequest(opcode, handle: pdu.handle, value: pdu.value, shouldRespond: false)
+    }
+    
+    private func readRequest(pdu: ATTReadRequest) {
+        
+        let opcode = pdu.dynamicType.attributeOpcode
+        
+        log?("Read (\(pdu.handle))")
+        
+        if let value = handleReadRequest(opcode, handle: pdu.handle) {
+            
+            respond(ATTReadResponse(attributeValue: value))
+        }
+    }
+    
+    private func readBlobRequest(pdu: ATTReadBlobRequest) {
+        
+        let opcode = pdu.dynamicType.attributeOpcode
+        
+        log?("Read Blob (\(pdu.handle))")
+        
+        if let value = handleReadRequest(opcode, handle: pdu.handle, offset: pdu.offset) {
+            
+            respond(ATTReadBlobResponse(partAttributeValue: value))
+        }
     }
 }
 
