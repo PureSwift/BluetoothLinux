@@ -44,6 +44,12 @@ public struct GATTDatabase {
     /// Write the value to attribute specified by the handle.
     public mutating func write(value: [UInt8], _ characteristicHandle: UInt16) {
         
+        
+    }
+    
+    /// The handles of the service at the specified index.
+    public func serviceHandle(index: Int) -> UInt16 {
+        
         var handle: UInt16 = 0x0000
         
         for (serviceIndex, service) in services.enumerate() {
@@ -51,48 +57,48 @@ public struct GATTDatabase {
             // increment handle
             handle += 1
             
-            guard handle != characteristicHandle
-                else { fatalError("Handle \(characteristicHandle) is assigned to a Service. Can only write to a Characteristic.") }
+            guard serviceIndex != index
+                else { return handle }
             
-            for characteristicIndex in service.characteristics.indices {
+            for characteristic in service.characteristics {
                 
-                // increment handle
-                handle += 1
-                
-                guard handle != characteristicHandle else {
-                    
-                    services[serviceIndex].characteristics[characteristicIndex].value = value
-                    return
-                }
+                handle += 2 + UInt16(characteristic.descriptors.count)
             }
         }
         
-        fatalError("Invalid Characteristic handle \(characteristicHandle)")
+        fatalError("Invalid Service Index \(index)")
     }
     
-    /// The service of the specified attribute.
+    /// The end group handle for the service at the specified handle.
+    public func serviceEndHandle(index: Int) -> UInt16 {
+        
+        let startHandle = serviceHandle(index)
+        
+        let service = services[index]
+        
+        var handle = startHandle
+        
+        for characteristic in service.characteristics {
+            
+            handle += 2 + UInt16(characteristic.descriptors.count)
+        }
+        
+        return handle
+    }
+    
     public func serviceOf(attributeHandle: UInt16) -> Service {
         
-        var handle: UInt16 = 0x0000
-        
-        for service in services {
+        for (index, service) in services.enumerate() {
             
-            // increment handle
-            handle += 1
+            let serviceHandleRange = serviceHandle(index) ... serviceEndHandle(index)
             
-            guard handle != attributeHandle else { return service }
-            
-            for _ in service.characteristics.indices {
+            if serviceHandleRange.contains(attributeHandle) {
                 
-                // increment handle
-                handle += 1
-                
-                guard handle != attributeHandle else { return service }
-                
+                return service
             }
         }
         
-        fatalError("Invalid attribute handle \(attributeHandle)")
+        fatalError("Invalid attribute handle: \(attributeHandle)")
     }
     
     // MARK: - Subscripting
