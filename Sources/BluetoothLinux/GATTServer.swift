@@ -68,8 +68,12 @@ public final class GATTServer {
         
         // Write Request
         connection.register(writeRequest)
+        
+        // Write Command
+        connection.register(writeCommand)
     }
     
+    @inline(__always)
     private func errorResponse(opcode: ATT.Opcode, _ error: ATT.Error, _ handle: UInt16 = 0) {
         
         log?("Error \(error) - \(opcode) (\(handle))")
@@ -78,13 +82,18 @@ public final class GATTServer {
     }
     
     @noreturn @inline(__always)
-    private func fatalErrorResponse(message: String, _ opcode: ATT.Opcode, _ handle: UInt16 = 0) {
+    private func fatalErrorResponse(message: String, _ opcode: ATT.Opcode, _ handle: UInt16 = 0, line: UInt = #line) {
         
         errorResponse(opcode, ATT.Error.UnlikelyError, handle)
         
-        fatalError(message)
+        do { try connection.write() }
+        
+        catch { print("Could not send UnlikelyError to client. (\(error))") }
+        
+        fatalError(message, line: line)
     }
     
+    @inline(__always)
     private func respond<T: ATTProtocolDataUnit>(response: T) {
         
         log?("Response: \(response)")
@@ -92,9 +101,11 @@ public final class GATTServer {
         connection.send(response) { _ in }
     }
     
-    private func checkPermissions(permissions: [ATT.AttributePermission], attribute: GATTDatabase.Attribute) -> ATT.Error? {
+    private func checkPermissions(permissions: [ATT.AttributePermission], _ attribute: GATTDatabase.Attribute) -> ATT.Error? {
         
         guard attribute.permissions != permissions else { return nil }
+        
+        // check permissions
         
         if permissions.contains(.Read) && !attribute.permissions.contains(.Read) {
             
@@ -106,19 +117,60 @@ public final class GATTServer {
             return .WriteNotPermitted
         }
         
+        // check security
+        
         let security = connection.socket.securityLevel
         
-        if permissions.contains(.ReadAuthentication) || permissions.contains(.WriteAuthentication) && security < .High {
+        if attribute.permissions.contains(.ReadAuthentication)
+            || attribute.permissions.contains(.WriteAuthentication)
+            && security < .High {
             
             return .Authentication
         }
         
-        if permissions.contains(.ReadEncrypt) || permissions.contains(.WriteEncrypt) && security < .Medium {
+        if attribute.permissions.contains(.ReadEncrypt)
+            || attribute.permissions.contains(.WriteEncrypt)
+            && security < .Medium {
             
             return .InsufficientEncryption
         }
         
         return nil
+    }
+    
+    private func write(opcode: ATT.Opcode, handle: UInt16, value: [UInt8], shouldRespond: Bool) {
+        
+        /// Conditionally respond
+        @inline(__always)
+        func doResponse(@autoclosure block: () -> ()) {
+            
+            if shouldRespond { block() }
+        }
+        
+        log?("Write \(shouldRespond ? "Request" : "Command") (\(handle)) \(value)")
+        
+        let attributes = database.attributes
+        
+        // no attributes, impossible to write
+        guard attributes.isEmpty == false
+            else { doResponse(errorResponse(opcode, .InvalidHandle, handle)); return }
+        
+        // requsted handle must not exceed last handle
+        guard (1 ... UInt16(attributes.count)).contains(handle)
+            else { doResponse(errorResponse(opcode, .InvalidHandle, handle)); return }
+        
+        // get attribute
+        let attribute = attributes[Int(handle)]
+        
+        if let error = checkPermissions([.Write, .WriteAuthentication, .WriteEncrypt], attribute) {
+            
+            doResponse(errorResponse(opcode, error, handle))
+            return
+        }
+        
+        database.write(value, handle)
+        
+        doResponse(respond(ATTWriteResponse()))
     }
     
     // MARK: Callbacks
@@ -311,22 +363,14 @@ public final class GATTServer {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
-        log?("Write (\(pdu.handle) \(pdu.value))")
+        write(opcode, handle: pdu.handle, value: pdu.value, shouldRespond: true)
+    }
+    
+    private func writeCommand(pdu: ATTWriteCommand) {
         
-        let attributes = database.attributes
+        let opcode = pdu.dynamicType.attributeOpcode
         
-        // no attributes, impossible to write
-        guard attributes.isEmpty == false
-            else { errorResponse(opcode, .AttributeNotFound, pdu.handle); return }
-        
-        // requsted handle must not exceed last handle
-        guard (1 ... UInt16(attributes.count)).contains(pdu.handle)
-            else { errorResponse(opcode, .AttributeNotFound, pdu.handle); return }
-        
-        // get attribute
-        let attribute = database[pdu.handle]
-        
-        
+        write(opcode, handle: pdu.handle, value: pdu.value, shouldRespond: false)
     }
 }
 

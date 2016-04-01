@@ -64,6 +64,36 @@ public struct GATTDatabase {
         self.services = []
     }
     
+    /// Write the value to attribute specified by the handle.
+    public mutating func write(value: [UInt8], _ characteristicHandle: UInt16) {
+        
+        var handle: UInt16 = 0x0000
+        
+        for (serviceIndex, service) in services.enumerate() {
+            
+            // increment handle
+            handle += 1
+            
+            guard handle != characteristicHandle
+                else { fatalError("Handle \(characteristicHandle) is assigned to a Service. Can only write to a Characteristic.") }
+            
+            for characteristicIndex in service.characteristics.indices {
+                
+                // increment handle
+                handle += 1
+                
+                guard handle != characteristicHandle else {
+                    
+                    services[serviceIndex].characteristics[characteristicIndex].value = value
+                    return
+                }
+            }
+        }
+        
+        fatalError("Invalid Characteristic handle \(characteristicHandle)")
+    }
+    
+    /// The service of the specified attribute.
     public func serviceOf(attributeHandle: UInt16) -> Service {
         
         var handle: UInt16 = 0x0000
@@ -88,6 +118,7 @@ public struct GATTDatabase {
         fatalError("Invalid attribute handle \(attributeHandle)")
     }
     
+    /// The handle of the service with the specified index.
     public func serviceHandle(index: Int) -> UInt16 {
         
         var handle: UInt16 = 0x0001
@@ -103,6 +134,7 @@ public struct GATTDatabase {
         fatalError("Invalid Service index: \(index)")
     }
     
+    /// The handle of the service with the specified indices.
     public func characteristicHandle(index: (service: Int, characteristic: Int)) -> UInt16 {
         
         var handle: UInt16 = 0x0001
@@ -125,6 +157,7 @@ public struct GATTDatabase {
     
     // MARK: - Subscripting
     
+    /// The attribute with the specified handle.
     public subscript(handle: UInt16) -> Attribute {
         
         return attributes[Int(handle)]
@@ -144,14 +177,11 @@ public extension GATTDatabase {
         
         public var primary: Bool
         
-        public var permissions: [ATT.AttributePermission]
-        
-        public init(characteristics: [Characteristic], UUID: BluetoothUUID, primary: Bool = true, permissions: [ATT.AttributePermission] = []) {
+        public init(characteristics: [Characteristic], UUID: BluetoothUUID, primary: Bool = true) {
             
             self.characteristics = characteristics
             self.primary = primary
             self.UUID = UUID
-            self.permissions = permissions
         }
         
         /// Primary or secondary service UUID.
@@ -195,7 +225,7 @@ public extension GATTDatabase {
             self.handle = handle
             self.type = service.typeUUID
             self.value = service.UUID.byteValue
-            self.permissions = service.permissions
+            self.permissions = [.Read] // cannot write to service
         }
         
         /// Initialize attribute with a Characteristic.
