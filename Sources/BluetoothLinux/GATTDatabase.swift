@@ -123,55 +123,11 @@ public struct GATTDatabase {
         fatalError("Invalid Characteristic index: \(index)")
     }
     
-    // MARK: GATT Server Helpers
+    // MARK: - Subscripting
     
-    public func readByGroupType(handle: Range<UInt16>, primary: Bool) -> [Service] {
+    public subscript(handle: UInt16) -> Attribute {
         
-        var services = [Service]()
-        
-        for (index, service) in self.services.enumerate() {
-            
-            guard service.primary == primary else { continue }
-            
-            let serviceHandle = self.serviceHandle(index)
-            
-            let serviceRange = serviceHandle ... serviceHandle + UInt16(service.characteristics.count)
-            
-            guard serviceRange.isSubset(handle) else { continue }
-            
-            services.append(service)
-        }
-        
-        return services
-    }
-    
-    public func readByType(handle: Range<UInt16>, type: BluetoothUUID) -> [Attribute] {
-        
-        return attributes.filter { handle.contains($0.handle) && $0.type == type }
-    }
-    
-    public func findInformation(handle: Range<UInt16>) -> [Attribute] {
-        
-        return attributes.filter { handle.contains($0.handle) }
-    }
-    
-    public func findByTypeValue(handle: Range<UInt16>, type: UInt16, value: [UInt8]) -> [(UInt16, UInt16)] {
-        
-        let matchingAttributes = attributes.filter { handle.contains($0.handle) && $0.type == .Bit16(type) && $0.value == value }
-        
-        let services = matchingAttributes.map { serviceOf($0.handle) }
-        
-        var handles = [(UInt16, UInt16)](count: services.count, repeatedValue: (0,0))
-        
-        for (index, service) in services.enumerate() {
-            
-            let serviceHandle = self.serviceHandle(index)
-            
-            handles[index].0 = serviceHandle
-            handles[index].1 = serviceHandle + UInt16(service.characteristics.count)
-        }
-        
-        return handles
+        return attributes[Int(handle)]
     }
 }
 
@@ -188,19 +144,20 @@ public extension GATTDatabase {
         
         public var primary: Bool
         
-        public init(characteristics: [Characteristic], UUID: BluetoothUUID, primary: Bool = true) {
+        public var permissions: [ATT.AttributePermission]
+        
+        public init(characteristics: [Characteristic], UUID: BluetoothUUID, primary: Bool = true, permissions: [ATT.AttributePermission] = []) {
             
             self.characteristics = characteristics
             self.primary = primary
             self.UUID = UUID
+            self.permissions = permissions
         }
         
         /// Primary or secondary service UUID.
         public var typeUUID: BluetoothUUID {
             
-            let type = primary ? GATT.UUID.PrimaryService.rawValue : GATT.UUID.SecondaryService.rawValue
-            
-            return .Bit16(type)
+            return GATT.UUID(primaryService: primary).UUID
         }
     }
     
@@ -211,10 +168,13 @@ public extension GATTDatabase {
         
         public var value: [UInt8]
         
-        public init(UUID: BluetoothUUID, value: [UInt8] = []) {
+        public var permissions: [ATT.AttributePermission]
+        
+        public init(UUID: BluetoothUUID, value: [UInt8] = [], permissions: [ATT.AttributePermission] = []) {
             
             self.UUID = UUID
             self.value = value
+            self.permissions = permissions
         }
     }
     
@@ -227,12 +187,15 @@ public extension GATTDatabase {
         
         public let value: [UInt8]
         
+        public let permissions: [ATT.AttributePermission]
+        
         /// Initialize attribute with a Service.
         public init(handle: UInt16, service: Service) {
             
             self.handle = handle
             self.type = service.typeUUID
             self.value = service.UUID.byteValue
+            self.permissions = service.permissions
         }
         
         /// Initialize attribute with a Characteristic.
@@ -241,6 +204,7 @@ public extension GATTDatabase {
             self.handle = handle
             self.type = characteristic.UUID
             self.value = characteristic.value
+            self.permissions = characteristic.permissions
         }
     }
 }

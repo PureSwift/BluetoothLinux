@@ -7,7 +7,7 @@
 //
 
 /// Bluetooth security level.
-public enum SecurityLevel: UInt8 {
+public enum SecurityLevel: UInt8, Comparable {
     
     case SDP        = 0
     case Low        = 1
@@ -15,4 +15,11 @@ public enum SecurityLevel: UInt8 {
     case High       = 3
     
     public init() { self = .SDP }
+}
+
+// MARK: - Comparable
+
+public func < (lhs: SecurityLevel, rhs: SecurityLevel) -> Bool {
+    
+    return lhs.rawValue < rhs.rawValue
 }

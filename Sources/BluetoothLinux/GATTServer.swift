@@ -18,13 +18,14 @@ public final class GATTServer {
     
     // MARK: - Private Properties
     
-    private let connection = ATTConnection()
+    private let connection: ATTConnection
     
     // MARK: - Initialization
     
-    public init(maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default) {
+    public init(socket: L2CAPSocket, maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default) {
         
         // set initial MTU and register handlers
+        self.connection = ATTConnection(socket: socket)
         self.connection.maximumTransmissionUnit = maximumTransmissionUnit
         self.registerATTHandlers()
     }
@@ -33,16 +34,16 @@ public final class GATTServer {
     
     /// Performs the actual IO for sending data.
     @inline(__always)
-    public func read(socket: L2CAPSocket) throws {
+    public func read() throws {
         
-        try connection.read(socket)
+        try connection.read()
     }
     
     /// Performs the actual IO for recieving data.
     @inline(__always)
-    public func write(socket: L2CAPSocket) throws {
+    public func write() throws {
         
-        try connection.write(socket)
+        try connection.write()
     }
     
     // MARK: - Private Methods
@@ -64,6 +65,9 @@ public final class GATTServer {
         
         // Find By Type Value
         connection.register(findByTypeValue)
+        
+        // Write Request
+        connection.register(writeRequest)
     }
     
     private func errorResponse(opcode: ATT.Opcode, _ error: ATT.Error, _ handle: UInt16 = 0) {
@@ -86,6 +90,35 @@ public final class GATTServer {
         log?("Response: \(response)")
         
         connection.send(response) { _ in }
+    }
+    
+    private func checkPermissions(permissions: [ATT.AttributePermission], attribute: GATTDatabase.Attribute) -> ATT.Error? {
+        
+        guard attribute.permissions != permissions else { return nil }
+        
+        if permissions.contains(.Read) && !attribute.permissions.contains(.Read) {
+            
+            return .ReadNotPermitted
+        }
+        
+        if permissions.contains(.Write) && !attribute.permissions.contains(.Write) {
+            
+            return .WriteNotPermitted
+        }
+        
+        let security = connection.socket.securityLevel
+        
+        if permissions.contains(.ReadAuthentication) || permissions.contains(.WriteAuthentication) && security < .High {
+            
+            return .Authentication
+        }
+        
+        if permissions.contains(.ReadEncrypt) || permissions.contains(.WriteEncrypt) && security < .Medium {
+            
+            return .InsufficientEncryption
+        }
+        
+        return nil
     }
     
     // MARK: Callbacks
@@ -272,6 +305,82 @@ public final class GATTServer {
         let response = ATTFindByTypeResponse(handlesInformationList: handlesInformation)
         
         respond(response)
+    }
+    
+    private func writeRequest(pdu: ATTWriteRequest) {
+        
+        let opcode = pdu.dynamicType.attributeOpcode
+        
+        log?("Write (\(pdu.handle) \(pdu.value))")
+        
+        let attributes = database.attributes
+        
+        // no attributes, impossible to write
+        guard attributes.isEmpty == false
+            else { errorResponse(opcode, .AttributeNotFound, pdu.handle); return }
+        
+        // requsted handle must not exceed last handle
+        guard (1 ... UInt16(attributes.count)).contains(pdu.handle)
+            else { errorResponse(opcode, .AttributeNotFound, pdu.handle); return }
+        
+        // get attribute
+        let attribute = database[pdu.handle]
+        
+        
+    }
+}
+
+// MARK: - GATTDatabase Extensions
+
+internal extension GATTDatabase {
+    
+    func readByGroupType(handle: Range<UInt16>, primary: Bool) -> [Service] {
+        
+        var services = [Service]()
+        
+        for (index, service) in self.services.enumerate() {
+            
+            guard service.primary == primary else { continue }
+            
+            let serviceHandle = self.serviceHandle(index)
+            
+            let serviceRange = serviceHandle ... serviceHandle + UInt16(service.characteristics.count)
+            
+            guard serviceRange.isSubset(handle) else { continue }
+            
+            services.append(service)
+        }
+        
+        return services
+    }
+    
+    func readByType(handle: Range<UInt16>, type: BluetoothUUID) -> [Attribute] {
+        
+        return attributes.filter { handle.contains($0.handle) && $0.type == type }
+    }
+    
+    func findInformation(handle: Range<UInt16>) -> [Attribute] {
+        
+        return attributes.filter { handle.contains($0.handle) }
+    }
+    
+    func findByTypeValue(handle: Range<UInt16>, type: UInt16, value: [UInt8]) -> [(UInt16, UInt16)] {
+        
+        let matchingAttributes = attributes.filter { handle.contains($0.handle) && $0.type == .Bit16(type) && $0.value == value }
+        
+        let services = matchingAttributes.map { serviceOf($0.handle) }
+        
+        var handles = [(UInt16, UInt16)](count: services.count, repeatedValue: (0,0))
+        
+        for (index, service) in services.enumerate() {
+            
+            let serviceHandle = self.serviceHandle(index)
+            
+            handles[index].0 = serviceHandle
+            handles[index].1 = serviceHandle + UInt16(service.characteristics.count)
+        }
+        
+        return handles
     }
 }
 

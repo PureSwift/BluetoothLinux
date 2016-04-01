@@ -35,7 +35,7 @@ func GATTServerTest(adapter: Adapter) {
         
         print("New \(newSocket.addressType) connection from \(newSocket.address)")
         
-        let server = GATTServer()
+        let server = GATTServer(socket: newSocket)
         
         server.log = { print("[\(newSocket.address)]: " + $0) }
         
@@ -43,9 +43,9 @@ func GATTServerTest(adapter: Adapter) {
         
         while true {
             
-            try server.read(newSocket)
+            try server.read()
             
-            try server.write(newSocket)
+            try server.write()
         }
     }
         
