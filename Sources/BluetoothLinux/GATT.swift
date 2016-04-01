@@ -6,6 +6,8 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
+import protocol SwiftFoundation.BitMaskOption
+
 /// Bluetooth GATT protocol
 public struct GATT {
     
@@ -55,7 +57,7 @@ public struct GATT {
     }
     
     /// GATT Characteristic Properties Bitfield valuess
-    public enum CharacteristicProperty: UInt8 {
+    public enum CharacteristicProperty: UInt8, BitMaskOption {
         
         case Broadcast              = 0x01
         case Read                   = 0x02

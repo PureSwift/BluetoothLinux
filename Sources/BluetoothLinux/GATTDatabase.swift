@@ -185,23 +185,6 @@ public extension GATTDatabase {
         }
     }
     
-    /// GATT Characteristic
-    public struct Characteristic {
-        
-        public var UUID: BluetoothUUID
-        
-        public var value: [UInt8]
-        
-        public var permissions: [ATT.AttributePermission]
-        
-        public init(UUID: BluetoothUUID, value: [UInt8] = [], permissions: [ATT.AttributePermission] = []) {
-            
-            self.UUID = UUID
-            self.value = value
-            self.permissions = permissions
-        }
-    }
-    
     /// GATT Include Declaration
     public struct Include {
         
@@ -221,7 +204,8 @@ public extension GATTDatabase {
             self.serviceUUID = serviceUUID
         }
         
-        public var value: [UInt8] {
+        /// ATT Attribute Value
+        private var value: [UInt8] {
             
             let handleBytes = serviceHandle.littleEndianBytes
             
@@ -229,6 +213,42 @@ public extension GATTDatabase {
             
             return [handleBytes.0, handleBytes.1, endGroupBytes.0, endGroupBytes.1] + serviceUUID.byteValue
         }
+    }
+    
+    /// GATT Characteristic
+    public struct Characteristic {
+        
+        public typealias Property = GATT.CharacteristicProperty
+        public typealias Permission = ATT.AttributePermission
+        
+        public var UUID: BluetoothUUID
+        
+        public var value: [UInt8]
+        
+        public var descriptors: [Descriptor]
+        
+        public var permissions: [Permission]
+        
+        public var properties: [Property]
+        
+        public init(UUID: BluetoothUUID,
+                    value: [UInt8] = [],
+                    permissions: [Permission] = [],
+                    properties: [Property] = [],
+                    descriptors: [Descriptor] = []) {
+            
+            self.UUID = UUID
+            self.value = value
+            self.permissions = permissions
+            self.descriptors = descriptors
+            self.properties = properties
+        }
+    }
+    
+    /// GATT Descriptor
+    public struct Descriptor {
+        
+        
     }
     
     /// ATT Attribute
@@ -242,8 +262,8 @@ public extension GATTDatabase {
         
         public let permissions: [ATT.AttributePermission]
         
-        /// Initialize attribute with a Service.
-        public init(handle: UInt16, service: Service) {
+        /// Initialize attribute with a `Service`.
+        private init(service: Service, handle: UInt16) {
             
             self.handle = handle
             self.UUID = GATT.UUID(primaryService: service.primary).toUUID()
@@ -251,8 +271,8 @@ public extension GATTDatabase {
             self.permissions = [.Read] // Read only
         }
         
-        /// Initialize attribute with an Include Declaration.
-        public init(handle: UInt16, include: Include) {
+        /// Initialize attribute with an `Include Declaration`.
+        private init(include: Include, handle: UInt16) {
             
             self.handle = handle
             self.UUID = GATT.UUID.Include.toUUID()
@@ -260,13 +280,23 @@ public extension GATTDatabase {
             self.permissions = [.Read] // Read only
         }
         
-        /// Initialize attribute with a Characteristic.
-        public init(handle: UInt16, characteristic: Characteristic) {
+        /// Initialize attributes from a `Characteristic`.
+        private static func fromCharacteristic(characteristic: Characteristic, handle: UInt16) -> [Attribute] {
+            
+            
+        }
+        
+        private init(characteristicDeclaration: Characteristic, handle: UInt16) {
             
             self.handle = handle
             self.UUID = GATT.UUID.Characteristic.toUUID()
-            self.value = characteristic.value
-            self.permissions = characteristic.permissions
+            self.permissions = [.Read] // Read only
+            
+            let propertiesMask: UInt8 = 0 // TODO: Characteristic Properties
+            
+            let value = 
+            
+            self.value
         }
     }
 }
