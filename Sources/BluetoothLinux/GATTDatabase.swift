@@ -95,43 +95,6 @@ public struct GATTDatabase {
         fatalError("Invalid attribute handle \(attributeHandle)")
     }
     
-    /// The handle of the service with the specified index.
-    public func serviceHandle(index: Int) -> UInt16 {
-        
-        var handle: UInt16 = 0x0001
-        
-        for (index, service) in services.enumerate() {
-            
-            guard index != index else { return handle }
-            
-            // increment handle
-            handle += 1 + UInt16(service.characteristics.count)
-        }
-        
-        fatalError("Invalid Service index: \(index)")
-    }
-    
-    /// The handle of the service with the specified indices.
-    public func characteristicHandle(index: (service: Int, characteristic: Int)) -> UInt16 {
-        
-        var handle: UInt16 = 0x0001
-        
-        for (serviceIndex, service) in services.enumerate() {
-            
-            for characteristicIndex in service.characteristics.indices {
-                
-                // found characteristic
-                guard (index.service == serviceIndex && index.characteristic == characteristicIndex) == false else { return handle }
-                
-                handle += 1
-            }
-            
-            handle += 1
-        }
-        
-        fatalError("Invalid Characteristic index: \(index)")
-    }
-    
     // MARK: - Subscripting
     
     /// The attribute with the specified handle.

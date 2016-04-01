@@ -472,7 +472,8 @@ public final class GATTServer {
 
 internal extension GATTDatabase {
     
-    func readByGroupType(handle: Range<UInt16>, primary: Bool) -> [Service] {
+    /// Used for Service discovery. Should return tuples with the Service start handle, end handle and UUID.
+    func readByGroupType(handle: Range<UInt16>, primary: Bool) -> [(start: UInt16, end: UInt16, UUID: BluetoothUUID)] {
         
         var services = [Service]()
         

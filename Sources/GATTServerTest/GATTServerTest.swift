@@ -17,9 +17,13 @@ import SwiftFoundation
 
 func GATTServerTest(adapter: Adapter) {
     
-    let characteristic = GATTDatabase.Characteristic(UUID: BluetoothUUID.Bit128(UUID()), value: "Hey".toUTF8Data().byteValue, permissions: [.Read, .Write], properties: [.Read, .Write])
+    let uuid = { BluetoothUUID.Bit128(UUID()) }
     
-    let database = GATTDatabase(services: [GATTDatabase.Service(characteristics: [characteristic], UUID: BluetoothUUID.Bit128(UUID()))])
+    let characteristic = GATTDatabase.Characteristic(UUID: uuid(), value: "Hey".toUTF8Data().byteValue, permissions: [.Read, .Write], properties: [.Read, .Write])
+    
+    let characteristic2 = GATTDatabase.Characteristic(UUID: uuid(), value: "Hola".toUTF8Data().byteValue, permissions: [.Read, .Write], properties: [.Read, .Write])
+    
+    let database = GATTDatabase(services: [GATTDatabase.Service(characteristics: [characteristic, characteristic2], UUID: uuid())])
     
     print("GATT Database:")
     
