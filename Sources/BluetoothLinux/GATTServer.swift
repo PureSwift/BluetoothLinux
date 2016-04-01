@@ -271,9 +271,7 @@ public final class GATTServer {
         
         // search for only primary services
         let primary = pdu.type == GATT.UUID.PrimaryService.toUUID()
-        
-        print("Primary: \(primary)")
-        
+                
         let services = database.readByGroupType(pdu.startHandle ..< pdu.endHandle, primary: primary)
         
         guard services.isEmpty == false
