@@ -1325,6 +1325,11 @@ public struct ATTReadByGroupTypeResponse: ATTProtocolDataUnit {
             return [attributeHandleBytes.0, attributeHandleBytes.1, endGroupHandleBytes.0, endGroupHandleBytes.1] + value
         }
     }
+    
+    public mutating func adjust(maximumTransmissionUnit: UInt16) {
+        
+        
+    }
 }
 
 // MARK: - Writing Attributes
