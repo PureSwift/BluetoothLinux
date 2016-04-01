@@ -183,12 +183,6 @@ public extension GATTDatabase {
             self.primary = primary
             self.UUID = UUID
         }
-        
-        /// Primary or secondary service UUID.
-        public var typeUUID: BluetoothUUID {
-            
-            return GATT.UUID(primaryService: primary).UUID
-        }
     }
     
     /// GATT Characteristic
@@ -208,12 +202,41 @@ public extension GATTDatabase {
         }
     }
     
-    /// GATT Attribute
+    /// GATT Include Declaration
+    public struct Include {
+        
+        /// Included service handle
+        public var serviceHandle: UInt16
+        
+        /// End group handle
+        public var endGroupHandle: UInt16
+        
+        /// Included Service UUID
+        public var serviceUUID: BluetoothUUID
+        
+        public init(serviceHandle: UInt16, endGroupHandle: UInt16, serviceUUID: BluetoothUUID) {
+            
+            self.serviceHandle = serviceHandle
+            self.endGroupHandle = endGroupHandle
+            self.serviceUUID = serviceUUID
+        }
+        
+        public var value: [UInt8] {
+            
+            let handleBytes = serviceHandle.littleEndianBytes
+            
+            let endGroupBytes = endGroupHandle.littleEndianBytes
+            
+            return [handleBytes.0, handleBytes.1, endGroupBytes.0, endGroupBytes.1] + serviceUUID.byteValue
+        }
+    }
+    
+    /// ATT Attribute
     public struct Attribute {
         
         public let handle: UInt16
         
-        public let type: BluetoothUUID
+        public let UUID: BluetoothUUID
         
         public let value: [UInt8]
         
@@ -223,16 +246,25 @@ public extension GATTDatabase {
         public init(handle: UInt16, service: Service) {
             
             self.handle = handle
-            self.type = service.typeUUID
+            self.UUID = GATT.UUID(primaryService: service.primary).toUUID()
             self.value = service.UUID.byteValue
-            self.permissions = [.Read] // cannot write to service
+            self.permissions = [.Read] // Read only
+        }
+        
+        /// Initialize attribute with an Include Declaration.
+        public init(handle: UInt16, include: Include) {
+            
+            self.handle = handle
+            self.UUID = GATT.UUID.Include.toUUID()
+            self.value = include.value
+            self.permissions = [.Read] // Read only
         }
         
         /// Initialize attribute with a Characteristic.
         public init(handle: UInt16, characteristic: Characteristic) {
             
             self.handle = handle
-            self.type = characteristic.UUID
+            self.UUID = GATT.UUID.Characteristic.toUUID()
             self.value = characteristic.value
             self.permissions = characteristic.permissions
         }

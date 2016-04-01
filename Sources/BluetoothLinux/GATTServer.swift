@@ -71,6 +71,19 @@ public final class GATTServer {
         
         // Write Command
         connection.register(writeCommand)
+        
+        // Read Request
+        connection.register(readRequest)
+        
+        // Read Blob Request
+        connection.register(readBlobRequest)
+        
+        // Read Multiple Request
+        
+        
+        // Prepare Write Request
+        
+        // Execute Write Request
     }
     
     @inline(__always)
@@ -253,11 +266,11 @@ public final class GATTServer {
         
         // GATT defines that only the Primary Service and Secondary Service group types 
         // can be used for the "Read By Group Type" request. Return an error if any other group type is given.
-        guard pdu.type == GATT.UUID.PrimaryService.UUID || pdu.type == GATT.UUID.SecondaryService.UUID
+        guard pdu.type == GATT.UUID.PrimaryService.toUUID() || pdu.type == GATT.UUID.SecondaryService.toUUID()
             else { errorResponse(opcode, .UnsupportedGroupType, pdu.startHandle); return }
         
         // search for only primary services
-        let primary = pdu.type == GATT.UUID.PrimaryService.UUID
+        let primary = pdu.type == GATT.UUID.PrimaryService.toUUID()
         
         print("Primary: \(primary)")
         
@@ -290,7 +303,21 @@ public final class GATTServer {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
-        log?("Read by Type (\(pdu.startHandle) - \(pdu.endHandle))")
+        if let log = self.log {
+            
+            let typeText: String
+            
+            if let gatt = GATT.UUID(UUID: pdu.attributeType) {
+                
+                typeText = "\(gatt)"
+                
+            } else {
+                
+                typeText = "\(pdu.attributeType)"
+            }
+            
+            log("Read by Type (\(typeText)) (\(pdu.startHandle) - \(pdu.endHandle))")
+        }
         
         guard pdu.startHandle != 0 && pdu.endHandle != 0
             else { errorResponse(opcode, .InvalidHandle); return }
@@ -298,7 +325,7 @@ public final class GATTServer {
         guard pdu.startHandle <= pdu.endHandle
             else { errorResponse(opcode, .InvalidHandle, pdu.startHandle); return }
         
-        let attributes = database.readByType(pdu.startHandle ..< pdu.endHandle, type: pdu.attributeType)
+        let attributes = database.readByType(pdu.startHandle ... pdu.endHandle, type: pdu.attributeType)
         
         guard attributes.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
@@ -333,12 +360,12 @@ public final class GATTServer {
         guard pdu.startHandle <= pdu.endHandle
             else { errorResponse(opcode, .InvalidHandle, pdu.startHandle); return }
         
-        let attributes = database.findInformation(pdu.startHandle ..< pdu.endHandle)
+        let attributes = database.findInformation(pdu.startHandle ... pdu.endHandle)
         
         guard attributes.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
-        let format = Format(UUID: attributes[0].type)
+        let format = Format(UUID: attributes[0].UUID)
         
         var bit16Pairs = [(UInt16, UInt16)]()
         
@@ -353,7 +380,7 @@ public final class GATTServer {
                 else { break }
             
             // encode attribute
-            switch (attribute.type, format) {
+            switch (attribute.UUID, format) {
                 
             case let (.Bit16(type), .Bit16):
                 
@@ -393,7 +420,7 @@ public final class GATTServer {
         guard pdu.startHandle <= pdu.endHandle
             else { errorResponse(opcode, .InvalidHandle, pdu.startHandle); return }
         
-        let handles = database.findByTypeValue(pdu.startHandle ..< pdu.endHandle, type: pdu.attributeType, value: pdu.attributeValue)
+        let handles = database.findByTypeValue(pdu.startHandle ... pdu.endHandle, type: pdu.attributeType, value: pdu.attributeValue)
         
         guard handles.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
@@ -442,6 +469,15 @@ public final class GATTServer {
             respond(ATTReadBlobResponse(partAttributeValue: value))
         }
     }
+    
+    private func readMultipleRequest(pdu: ATTReadMultipleRequest) {
+        
+        let opcode = pdu.dynamicType.attributeOpcode
+        
+        log?("Read Multiple Request \(pdu.handles)")
+        
+        
+    }
 }
 
 // MARK: - GATTDatabase Extensions
@@ -470,7 +506,7 @@ internal extension GATTDatabase {
     
     func readByType(handle: Range<UInt16>, type: BluetoothUUID) -> [Attribute] {
         
-        return attributes.filter { handle.contains($0.handle) && $0.type == type }
+        return attributes.filter { handle.contains($0.handle) && $0.UUID == type }
     }
     
     func findInformation(handle: Range<UInt16>) -> [Attribute] {
@@ -480,7 +516,7 @@ internal extension GATTDatabase {
     
     func findByTypeValue(handle: Range<UInt16>, type: UInt16, value: [UInt8]) -> [(UInt16, UInt16)] {
         
-        let matchingAttributes = attributes.filter { handle.contains($0.handle) && $0.type == .Bit16(type) && $0.value == value }
+        let matchingAttributes = attributes.filter { handle.contains($0.handle) && $0.UUID == .Bit16(type) && $0.value == value }
         
         let services = matchingAttributes.map { serviceOf($0.handle) }
         
