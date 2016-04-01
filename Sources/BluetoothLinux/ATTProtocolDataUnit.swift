@@ -703,7 +703,7 @@ public struct ATTReadByTypeResponse: ATTProtocolDataUnit {
         // validate the length of each pair
         for pair in data {
             
-            guard pair.value.count == length - 2
+            guard pair.value.count == length
                 else { return nil }
         }
         

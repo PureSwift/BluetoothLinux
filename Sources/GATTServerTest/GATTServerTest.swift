@@ -21,7 +21,25 @@ func GATTServerTest(adapter: Adapter) {
     
     let database = GATTDatabase(services: [GATTDatabase.Service(characteristics: [characteristic], UUID: BluetoothUUID.Bit128(UUID()))])
     
-    print("GATT Database: \(database)")
+    print("GATT Database:")
+    
+    for attribute in database.attributes {
+        
+        let typeText: String
+        
+        if let gatt = GATT.UUID(UUID: attribute.UUID) {
+            
+            typeText = "\(gatt)"
+            
+        } else {
+            
+            typeText = "\(attribute.UUID)"
+        }
+        
+        print("\(attribute.handle) - \(typeText)")
+        print("Permissions: \(attribute.permissions)")
+        print("Value: \(attribute.value)")
+    }
     
     do {
         

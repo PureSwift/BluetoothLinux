@@ -23,6 +23,7 @@ public struct GATTDatabase {
     public init(services: [Service] = []) {
         
         self.services = services
+        self.updateAttributes()
     }
     
     // MARK: - Dynamic Properties
@@ -141,7 +142,7 @@ public struct GATTDatabase {
     
     // MARK: - Private Methods
     
-    private func updateAttributes() {
+    private mutating func updateAttributes() {
         
         var attributes = [Attribute]()
         
@@ -166,7 +167,8 @@ public struct GATTDatabase {
                 handle = attributes.last!.handle
             }
         }
-
+        
+        self.attributes = attributes
     }
 }
 
