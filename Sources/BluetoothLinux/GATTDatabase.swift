@@ -10,7 +10,13 @@
 public struct GATTDatabase {
     
     /// GATT Services in this database.
-    public var services: [Service]
+    public var services: [Service] = [] {
+        
+        didSet { updateAttributes() }
+    }
+    
+    /// Attribute representation of the database.
+    public private(set) var attributes: [Attribute] = []
     
     // MARK: - Initialization
     
@@ -24,36 +30,6 @@ public struct GATTDatabase {
     public var isEmpty: Bool {
         
         return services.isEmpty
-    }
-    
-    /// Attribute representation of the database.
-    public var attributes: [Attribute] {
-        
-        var attributes = [Attribute]()
-        
-        var handle: UInt16 = 0x0001
-        
-        for service in services {
-            
-            let attribute = Attribute(handle: handle, service: service)
-            
-            attributes.append(attribute)
-            
-            // increment handle
-            handle += 1
-            
-            for characteristic in service.characteristics {
-                
-                let attribute = Attribute(handle: handle, characteristic: characteristic)
-                
-                attributes.append(attribute)
-                
-                // increment handle
-                handle += 1
-            }
-        }
-        
-        return attributes
     }
     
     // MARK: - Methods
@@ -160,7 +136,37 @@ public struct GATTDatabase {
     /// The attribute with the specified handle.
     public subscript(handle: UInt16) -> Attribute {
         
-        return attributes[Int(handle)]
+        return attributes[Int(handle) - 1]
+    }
+    
+    // MARK: - Private Methods
+    
+    private func updateAttributes() {
+        
+        var attributes = [Attribute]()
+        
+        var handle: UInt16 = 0x0000
+        
+        for service in services {
+            
+            // increment handle
+            handle += 1
+            
+            let attribute = Attribute(service: service, handle: handle)
+            
+            attributes.append(attribute)
+            
+            for characteristic in service.characteristics {
+                
+                // increment handle
+                handle += 1
+                
+                attributes += Attribute.fromCharacteristic(characteristic, handle: handle)
+                
+                handle = attributes.last!.handle
+            }
+        }
+
     }
 }
 
@@ -218,8 +224,9 @@ public extension GATTDatabase {
     /// GATT Characteristic
     public struct Characteristic {
         
-        public typealias Property = GATT.CharacteristicProperty
+        public typealias Descriptor = GATTDatabase.Descriptor
         public typealias Permission = ATT.AttributePermission
+        public typealias Property = GATT.CharacteristicProperty
         
         public var UUID: BluetoothUUID
         
@@ -245,14 +252,29 @@ public extension GATTDatabase {
         }
     }
     
-    /// GATT Descriptor
+    /// GATT Characteristic Descriptor
     public struct Descriptor {
         
+        public typealias Permission = ATT.AttributePermission
         
+        public var UUID: BluetoothUUID
+        
+        public var permissions: [Permission]
+        
+        public var value: [UInt8]
+        
+        public init(UUID: BluetoothUUID, value: [UInt8] = [], permissions: [Permission] = []) {
+            
+            self.UUID = UUID
+            self.value = value
+            self.permissions = permissions
+        }
     }
     
     /// ATT Attribute
     public struct Attribute {
+        
+        public typealias Permission = ATT.AttributePermission
         
         public let handle: UInt16
         
@@ -260,7 +282,16 @@ public extension GATTDatabase {
         
         public let value: [UInt8]
         
-        public let permissions: [ATT.AttributePermission]
+        public let permissions: [Permission]
+        
+        /// Defualt initializer
+        private init(handle: UInt16, UUID: BluetoothUUID, value: [UInt8] = [], permissions: [Permission] = []) {
+            
+            self.handle = handle
+            self.UUID = UUID
+            self.value = value
+            self.permissions = permissions
+        }
         
         /// Initialize attribute with a `Service`.
         private init(service: Service, handle: UInt16) {
@@ -283,20 +314,50 @@ public extension GATTDatabase {
         /// Initialize attributes from a `Characteristic`.
         private static func fromCharacteristic(characteristic: Characteristic, handle: UInt16) -> [Attribute] {
             
+            var currentHandle = handle
             
+            let declarationAttribute: Attribute = {
+                
+                let propertiesMask = characteristic.properties.optionsBitmask()
+                let valueHandleBytes = (handle + 1).littleEndianBytes
+                let value = [propertiesMask, valueHandleBytes.0, valueHandleBytes.1] + characteristic.UUID.byteValue
+                
+                return Attribute(handle: currentHandle, UUID: GATT.UUID.Characteristic.toUUID(), value: value, permissions: [.Read])
+            }()
+            
+            currentHandle += 1
+            
+            let valueAttribute = Attribute(handle: currentHandle, UUID: characteristic.UUID, value: characteristic.value, permissions: characteristic.permissions)
+            
+            var attributes = [declarationAttribute, valueAttribute]
+            
+            // add descriptors
+            if characteristic.descriptors.isEmpty == false {
+                
+                var descriptorAttributes = [Attribute]()
+                
+                for descriptor in characteristic.descriptors {
+                    
+                    currentHandle += 1
+                    
+                    let attribute = Attribute(descriptor: descriptor, handle: currentHandle)
+                    
+                    descriptorAttributes.append(attribute)
+                }
+                
+                attributes += descriptorAttributes
+            }
+            
+            return attributes
         }
         
-        private init(characteristicDeclaration: Characteristic, handle: UInt16) {
+        /// Initialize attribute with a `Characteristic Descriptor`.
+        private init(descriptor: Descriptor, handle: UInt16) {
             
             self.handle = handle
-            self.UUID = GATT.UUID.Characteristic.toUUID()
-            self.permissions = [.Read] // Read only
-            
-            let propertiesMask: UInt8 = 0 // TODO: Characteristic Properties
-            
-            let value = 
-            
-            self.value
+            self.UUID = descriptor.UUID
+            self.value = descriptor.value
+            self.permissions = descriptor.permissions
         }
     }
 }

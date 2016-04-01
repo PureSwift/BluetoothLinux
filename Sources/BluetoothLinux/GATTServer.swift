@@ -299,7 +299,7 @@ public final class GATTServer {
     
     private func readByType(pdu: ATTReadByTypeRequest) {
         
-        typealias Attribute = ATTReadByTypeResponse.AttributeData
+        typealias AttributeData = ATTReadByTypeResponse.AttributeData
         
         let opcode = pdu.dynamicType.attributeOpcode
         
@@ -330,13 +330,7 @@ public final class GATTServer {
         guard attributes.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
-        var attributeData = [Attribute](count: attributes.count, repeatedValue: Attribute())
-        
-        for (index, attribute) in attributes.enumerate() {
-            
-            attributeData[index].handle = UInt16(index)
-            attributeData[index].value = attribute.value
-        }
+        let attributeData = attributes.map { AttributeData(handle: $0.handle, value: $0.value) }
         
         guard let response = ATTReadByTypeResponse(data: attributeData)
             else { fatalErrorResponse("Could not create ATTReadByTypeResponse. Attribute Data: \(attributeData)", opcode, pdu.startHandle) }
