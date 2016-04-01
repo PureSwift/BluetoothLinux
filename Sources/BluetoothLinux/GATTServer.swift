@@ -162,18 +162,16 @@ public final class GATTServer {
         
         log?("Write \(shouldRespond ? "Request" : "Command") (\(handle)) \(value)")
         
-        let attributes = database.attributes
-        
         // no attributes, impossible to write
-        guard attributes.isEmpty == false
+        guard database.attributes.isEmpty == false
             else { doResponse(errorResponse(opcode, .InvalidHandle, handle)); return }
         
         // validate handle
-        guard (1 ... UInt16(attributes.count)).contains(handle)
+        guard (1 ... UInt16(database.attributes.count)).contains(handle)
             else { doResponse(errorResponse(opcode, .InvalidHandle, handle)); return }
         
         // get attribute
-        let attribute = attributes[Int(handle)]
+        let attribute = database[handle]
         
         // validate permissions
         if let error = checkPermissions([.Write, .WriteAuthentication, .WriteEncrypt], attribute) {
@@ -189,18 +187,16 @@ public final class GATTServer {
     
     private func handleReadRequest(opcode: ATT.Opcode, handle: UInt16, offset: UInt16 = 0) -> [UInt8]? {
         
-        let attributes = database.attributes
-        
         // no attributes
-        guard attributes.isEmpty == false
+        guard database.attributes.isEmpty == false
             else { errorResponse(opcode, .InvalidHandle, handle); return nil }
         
         // validate handle
-        guard (1 ... UInt16(attributes.count)).contains(handle)
+        guard (1 ... UInt16(database.attributes.count)).contains(handle)
             else { errorResponse(opcode, .InvalidHandle, handle); return nil }
         
         // get attribute
-        let attribute = attributes[Int(handle)]
+        let attribute = database[handle]
         
         // validate permissions
         if let error = checkPermissions([.Read, .ReadAuthentication, .ReadEncrypt], attribute) {
@@ -246,7 +242,7 @@ public final class GATTServer {
         // Set MTU to minimum
         connection.maximumTransmissionUnit = Int(finalMTU)
         
-        log?("MTU exchange: \(pdu.clientMTU) -> \(finalMTU)")
+        log?("MTU Exchange (\(pdu.clientMTU) -> \(finalMTU))")
     }
     
     private func readByGroupType(pdu: ATTReadByGroupTypeRequest) {
@@ -271,7 +267,7 @@ public final class GATTServer {
         
         // search for only primary services
         let primary = pdu.type == GATT.UUID.PrimaryService.toUUID()
-                
+        
         let services = database.readByGroupType(pdu.startHandle ..< pdu.endHandle, primary: primary)
         
         guard services.isEmpty == false

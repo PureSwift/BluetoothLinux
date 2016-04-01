@@ -17,7 +17,7 @@ import SwiftFoundation
 
 func GATTServerTest(adapter: Adapter) {
     
-    let characteristic = GATTDatabase.Characteristic(UUID: BluetoothUUID.Bit128(UUID()), value: "Hey".toUTF8Data().byteValue)
+    let characteristic = GATTDatabase.Characteristic(UUID: BluetoothUUID.Bit128(UUID()), value: "Hey".toUTF8Data().byteValue, permissions: [.Read, .Write], properties: [.Read, .Write])
     
     let database = GATTDatabase(services: [GATTDatabase.Service(characteristics: [characteristic], UUID: BluetoothUUID.Bit128(UUID()))])
     
