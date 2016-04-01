@@ -41,9 +41,9 @@ public final class GATTServer {
     
     /// Performs the actual IO for recieving data.
     @inline(__always)
-    public func write() throws {
+    public func write() throws -> Bool {
         
-        try connection.write()
+        return try connection.write()
     }
     
     // MARK: - Private Methods
@@ -454,7 +454,27 @@ public final class GATTServer {
         
         log?("Read Multiple Request \(pdu.handles)")
         
+        // no attributes, impossible to write
+        guard database.attributes.isEmpty == false
+            else { errorResponse(opcode, .InvalidHandle, pdu.handles[0]); return }
         
+        var values = [UInt8]()
+        
+        for handle in pdu.handles {
+            
+            // validate handle
+            guard (1 ... UInt16(database.attributes.count)).contains(handle)
+                else { errorResponse(opcode, .InvalidHandle, handle); return }
+            
+            // get attribute
+            let attribute = database[handle]
+            
+            values += attribute.value
+        }
+        
+        let response = ATTReadMultipleResponse(values: values)
+        
+        respond(response)
     }
 }
 

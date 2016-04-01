@@ -76,7 +76,11 @@ public final class ATTConnection {
     /// Performs the actual IO for recieving data.
     public func read() throws {
         
+        print("Will read")
+        
         let recievedData = try socket.recieve(maximumTransmissionUnit)
+        
+        print("Recieved data")
         
         // valid PDU data length
         guard recievedData.byteValue.count >= ATT.MinimumPDULength
@@ -87,6 +91,8 @@ public final class ATTConnection {
         // valid opcode
         guard let opcode = ATT.Opcode(rawValue: opcodeByte)
             else { throw Error.GarbageResponse(recievedData) }
+        
+        print("Recieved opcode \(opcode)")
         
         // Act on the received PDU based on the opcode type
         switch opcode.type {
@@ -111,14 +117,20 @@ public final class ATTConnection {
     }
     
     /// Performs the actual IO for sending data.
-    public func write() throws {
+    public func write() throws -> Bool {
+        
+        print("Will write")
         
         guard let sendOpcode = pickNextSendOpcode()
-            else { return } // throw error?
+            else { return false }
+        
+        assert(sendOpcode.data.count <= maximumTransmissionUnit, "Trying to send \(sendOpcode.data.count) bytes when MTU is \(maximumTransmissionUnit)")
         
         try socket.send(Data(byteValue: sendOpcode.data))
         
         let opcode = sendOpcode.dynamicType.PDUType.attributeOpcode
+        
+        print("Did write \(opcode)")
         
         /* Based on the operation type, set either the pending request or the
         * pending indication. If it came from the write queue, then there is
@@ -146,6 +158,8 @@ public final class ATTConnection {
             
             break
         }
+        
+        return true
     }
     
     /// Registers a callback for an opcode and returns the ID associated with that callback.
