@@ -14,6 +14,7 @@
 #endif
 
 import SwiftFoundation
+import Bluetooth
 
 func PeripheralTest(adapter: Adapter) {
 

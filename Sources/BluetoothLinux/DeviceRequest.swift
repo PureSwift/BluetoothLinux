@@ -13,6 +13,7 @@
 #endif
 
 import SwiftFoundation
+import Bluetooth
 
 public extension Adapter {
 

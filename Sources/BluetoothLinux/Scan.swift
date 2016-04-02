@@ -14,6 +14,7 @@
 #endif
 
 import SwiftFoundation
+import Bluetooth
 
 // MARK: - Methods
 

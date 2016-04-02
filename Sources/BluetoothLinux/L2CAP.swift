@@ -13,6 +13,7 @@
 #endif
 
 import SwiftFoundation
+import Bluetooth
 
 /// L2CAP Bluetooth socket
 public final class L2CAPSocket {
@@ -35,7 +36,7 @@ public final class L2CAPSocket {
         
         return internalAddress.l2_psm.currentEndian
     }
-
+    
     /// Channel Identifier (CID)
     /// 
     /// L2CAP channel endpoints are identified to their clients by a Channel Identifier (CID). 

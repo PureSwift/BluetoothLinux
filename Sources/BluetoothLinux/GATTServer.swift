@@ -7,6 +7,7 @@
 //
 
 import struct SwiftFoundation.UUID
+import Bluetooth
 
 public final class GATTServer {
     
@@ -275,7 +276,7 @@ public final class GATTServer {
         guard data.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
-        let attributeData = data.map { AttributeData(attributeHandle: $0.start, endGroupHandle: $0.end, value: $0.UUID.byteValue) }
+        let attributeData = data.map { AttributeData(attributeHandle: $0.start, endGroupHandle: $0.end, value: $0.UUID.toData().byteValue) }
         
         var limitedAttributes = [attributeData[0]]
         
@@ -543,9 +544,9 @@ public final class GATTServer {
 internal extension GATTDatabase {
     
     /// Used for Service discovery. Should return tuples with the Service start handle, end handle and UUID.
-    func readByGroupType(handle: Range<UInt16>, primary: Bool) -> [(start: UInt16, end: UInt16, UUID: BluetoothUUID)] {
+    func readByGroupType(handle: Range<UInt16>, primary: Bool) -> [(start: UInt16, end: UInt16, UUID: Bluetooth.UUID)] {
         
-        var data = [(start: UInt16, end: UInt16, UUID: BluetoothUUID)]()
+        var data: [(start: UInt16, end: UInt16, UUID: Bluetooth.UUID)] = []
         
         for (index, service) in self.services.enumerate() {
             
@@ -565,7 +566,7 @@ internal extension GATTDatabase {
         return data
     }
     
-    func readByType(handle: Range<UInt16>, type: BluetoothUUID) -> [Attribute] {
+    func readByType(handle: Range<UInt16>, type: Bluetooth.UUID) -> [Attribute] {
         
         return attributes.filter { handle.contains($0.handle) && $0.UUID == type }
     }

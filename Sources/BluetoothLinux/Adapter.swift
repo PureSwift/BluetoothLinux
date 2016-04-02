@@ -13,6 +13,7 @@
     import Darwin.C
 #endif
 
+import Bluetooth
 import SwiftFoundation
 
 /// Manages connection / communication to the underlying Bluetooth hardware.
@@ -51,6 +52,28 @@ public final class Adapter {
         
         self.identifier = identifier
         self.internalSocket = internalSocket
+    }
+}
+
+// MARK: - Address Extensions
+
+public extension Address {
+    
+    /// Extracts the Bluetooth address from the device ID.
+    public init(deviceIdentifier: CInt) throws {
+        
+        self = try HCIDeviceAddress(deviceIdentifier)
+    }
+}
+
+public extension Adapter {
+    
+    /// Attempts to get the address from the underlying Bluetooth hardware.
+    ///
+    /// Fails if the Bluetooth adapter was disconnected or hardware failure.
+    public var address: Address? {
+        
+        return try? Address(deviceIdentifier: identifier)
     }
 }
 

@@ -6,6 +6,9 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
+import SwiftFoundation
+import Bluetooth
+
 /// GATT Database
 public struct GATTDatabase {
     
@@ -42,9 +45,9 @@ public struct GATTDatabase {
     }
     
     /// Write the value to attribute specified by the handle.
-    public mutating func write(value: [UInt8], _ characteristicHandle: UInt16) {
+    public mutating func write(value: [UInt8], _ handle: UInt16) {
         
-        
+        fatalError("Write to GATTDatabase not implemented")
     }
     
     /// The handles of the service at the specified index.
@@ -145,23 +148,6 @@ public struct GATTDatabase {
 
 public extension GATTDatabase {
     
-    /// GATT Service
-    public struct Service {
-        
-        public var UUID: BluetoothUUID
-        
-        public var characteristics: [Characteristic]
-        
-        public var primary: Bool
-        
-        public init(characteristics: [Characteristic], UUID: BluetoothUUID, primary: Bool = true) {
-            
-            self.characteristics = characteristics
-            self.primary = primary
-            self.UUID = UUID
-        }
-    }
-    
     /// GATT Include Declaration
     public struct Include {
         
@@ -172,9 +158,9 @@ public extension GATTDatabase {
         public var endGroupHandle: UInt16
         
         /// Included Service UUID
-        public var serviceUUID: BluetoothUUID
+        public var serviceUUID: Bluetooth.UUID
         
-        public init(serviceHandle: UInt16, endGroupHandle: UInt16, serviceUUID: BluetoothUUID) {
+        public init(serviceHandle: UInt16, endGroupHandle: UInt16, serviceUUID: Bluetooth.UUID) {
             
             self.serviceHandle = serviceHandle
             self.endGroupHandle = endGroupHandle
@@ -188,75 +174,23 @@ public extension GATTDatabase {
             
             let endGroupBytes = endGroupHandle.littleEndianBytes
             
-            return [handleBytes.0, handleBytes.1, endGroupBytes.0, endGroupBytes.1] + serviceUUID.byteValue
-        }
-    }
-    
-    /// GATT Characteristic
-    public struct Characteristic {
-        
-        public typealias Descriptor = GATTDatabase.Descriptor
-        public typealias Permission = ATT.AttributePermission
-        public typealias Property = GATT.CharacteristicProperty
-        
-        public var UUID: BluetoothUUID
-        
-        public var value: [UInt8]
-        
-        public var descriptors: [Descriptor]
-        
-        public var permissions: [Permission]
-        
-        public var properties: [Property]
-        
-        public init(UUID: BluetoothUUID,
-                    value: [UInt8] = [],
-                    permissions: [Permission] = [],
-                    properties: [Property] = [],
-                    descriptors: [Descriptor] = []) {
-            
-            self.UUID = UUID
-            self.value = value
-            self.permissions = permissions
-            self.descriptors = descriptors
-            self.properties = properties
-        }
-    }
-    
-    /// GATT Characteristic Descriptor
-    public struct Descriptor {
-        
-        public typealias Permission = ATT.AttributePermission
-        
-        public var UUID: BluetoothUUID
-        
-        public var permissions: [Permission]
-        
-        public var value: [UInt8]
-        
-        public init(UUID: BluetoothUUID, value: [UInt8] = [], permissions: [Permission] = []) {
-            
-            self.UUID = UUID
-            self.value = value
-            self.permissions = permissions
+            return [handleBytes.0, handleBytes.1, endGroupBytes.0, endGroupBytes.1] + serviceUUID.toData().byteValue
         }
     }
     
     /// ATT Attribute
     public struct Attribute {
         
-        public typealias Permission = ATT.AttributePermission
-        
         public let handle: UInt16
         
-        public let UUID: BluetoothUUID
+        public let UUID: Bluetooth.UUID
         
         public let value: [UInt8]
         
         public let permissions: [Permission]
         
         /// Defualt initializer
-        private init(handle: UInt16, UUID: BluetoothUUID, value: [UInt8] = [], permissions: [Permission] = []) {
+        private init(handle: UInt16, UUID: Bluetooth.UUID, value: [UInt8] = [], permissions: [Permission] = []) {
             
             self.handle = handle
             self.UUID = UUID
@@ -265,11 +199,11 @@ public extension GATTDatabase {
         }
         
         /// Initialize attribute with a `Service`.
-        private init(service: Service, handle: UInt16) {
+        private init(service: GATT.Service, handle: UInt16) {
             
             self.handle = handle
             self.UUID = GATT.UUID(primaryService: service.primary).toUUID()
-            self.value = service.UUID.byteValue
+            self.value = service.UUID.toData().byteValue
             self.permissions = [.Read] // Read only
         }
         
@@ -291,14 +225,14 @@ public extension GATTDatabase {
                 
                 let propertiesMask = characteristic.properties.optionsBitmask()
                 let valueHandleBytes = (handle + 1).littleEndianBytes
-                let value = [propertiesMask, valueHandleBytes.0, valueHandleBytes.1] + characteristic.UUID.byteValue
+                let value = [propertiesMask, valueHandleBytes.0, valueHandleBytes.1] + characteristic.UUID.toData().byteValue
                 
                 return Attribute(handle: currentHandle, UUID: GATT.UUID.Characteristic.toUUID(), value: value, permissions: [.Read])
             }()
             
             currentHandle += 1
             
-            let valueAttribute = Attribute(handle: currentHandle, UUID: characteristic.UUID, value: characteristic.value, permissions: characteristic.permissions)
+            let valueAttribute = Attribute(handle: currentHandle, UUID: characteristic.UUID, value: characteristic.value.byteValue, permissions: characteristic.permissions)
             
             var attributes = [declarationAttribute, valueAttribute]
             
@@ -333,4 +267,17 @@ public extension GATTDatabase {
     }
 }
 
+// MARK: - Typealiases
 
+public extension GATT {
+    
+    public typealias Database = GATTDatabase
+}
+
+public extension GATTDatabase {
+    
+    public typealias Service = GATT.Service
+    public typealias Characteristic = GATT.Characteristic
+    public typealias Descriptor = GATT.Descriptor
+    public typealias Permission = GATT.Permission
+}

@@ -3,8 +3,8 @@ import PackageDescription
 let package = Package(
     name: "BluetoothLinux",
     dependencies: [
-        .Package(url: "https://github.com/PureSwift/CSwiftBluetoothLinux", majorVersion: 1),
-        .Package(url: "https://github.com/PureSwift/SwiftFoundation.git", majorVersion: 1),
+        .Package(url: "https://github.com/PureSwift/Bluetooth.git", majorVersion: 1),
+        .Package(url: "https://github.com/PureSwift/CSwiftBluetoothLinux", majorVersion: 1)
     ],
     targets: [
         Target(

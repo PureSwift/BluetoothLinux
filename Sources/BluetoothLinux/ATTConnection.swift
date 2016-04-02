@@ -12,7 +12,8 @@
     import Darwin.C
 #endif
 
-import SwiftFoundation
+import struct SwiftFoundation.Data
+import Bluetooth
 
 /// Manages a Bluetooth connection using the ATT protocol.
 public final class ATTConnection {
