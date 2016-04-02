@@ -261,7 +261,7 @@ public extension GATTDatabase {
             
             self.handle = handle
             self.UUID = descriptor.UUID
-            self.value = descriptor.value
+            self.value = descriptor.value.byteValue
             self.permissions = descriptor.permissions
         }
     }
