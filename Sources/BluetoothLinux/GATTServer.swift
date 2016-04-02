@@ -80,7 +80,7 @@ public final class GATTServer {
         connection.register(readBlobRequest)
         
         // Read Multiple Request
-        
+        connection.register(readMultipleRequest)
         
         // Prepare Write Request
         
