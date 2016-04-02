@@ -12,8 +12,6 @@
     import Darwin.C
 #endif
 
-import SwiftFoundation
-
 internal struct IOC {
     
     static let NRBITS       = CInt(8)

@@ -14,26 +14,6 @@
 
 import SwiftFoundation
 
-/// 31 Byte LE Advertising Data
-public typealias LowEnergyAdvertisingData = (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
-
-public enum AdvertisingChannelHeader: UInt8 {
-    
-    /// Connectable undirected advertising event
-    case Undirected         = 0x00
-    
-    /// Connectable directed advertising event
-    case Directed           = 0x01
-    
-    /// Scannable undirected advertising event
-    case Scannable          = 0x02
-    
-    /// Non-connectable undirected advertising event
-    case NonConnectable     = 0x03
-    
-    public init() { self = .Undirected }
-}
-
 public extension Adapter {
     
     /// Enable iBeacon functionality.

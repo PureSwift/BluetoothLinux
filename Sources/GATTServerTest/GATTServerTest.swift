@@ -75,7 +75,7 @@ func GATTServerTest(adapter: Adapter) {
 
 private func generateDB() -> GATTDatabase {
     
-    let uuid = { BluetoothUUID.Bit128(UUID()) }
+    let uuid = { Bluetooth.UUID.Bit128(SwiftFoundation.UUID()) }
     
     var services: [GATTDatabase.Service] = []
     

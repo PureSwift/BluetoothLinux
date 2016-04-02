@@ -15,29 +15,10 @@
 
 import SwiftFoundation
 
-/// Bluetooth HCI
-public struct HCI {
-    
-    // MARK: - Constants
-    
-    public static let MaximumDeviceCount    = 16
-    
-    public static let MaximumACLSize        = (1492 + 4)
-    
-    public static let MaximumSCOSize        = 255
-    
-    public static let MaximumEventSize      = 260
-    
-    public static let MaximumFrameSize      = MaximumACLSize + 4
-    
-    public static let MaximumNameLength     = 248
-    
-    public static let TypeLength            = 1
+public extension HCI {
     
     // MARK: - Typealiases
     
-    public typealias Error                  = HCIError
-        
     public typealias DeviceFlag             = HCIDeviceFlag
     
     public typealias DeviceEvent            = HCIDeviceEvent
@@ -47,44 +28,6 @@ public struct HCI {
     public typealias BusType                = HCIBusType
     
     public typealias IOCTL                  = HCIIOCTL
-}
-
-/// Bluetooth HCI Errors
-public enum HCIError: UInt8, ErrorType {
-    
-    case UnknownCommand                     = 0x01
-    case NoConnection
-    case HardwareFailure
-    case PageTimeout
-    case AuthenticationFailure
-    case KeyMissing
-    case MemoryFull
-    case ConnectionTimeout
-    case MaxConnections
-    case MaxSCOConnections
-    case ACLConnectionExists
-    case CommandDisallowed
-    case RejectedLimitedResources
-    case RejectedSecurity
-    case RejectedPersonal
-    case HostTimeout
-    case UnsupportedFeature
-    case InvalidParameters
-    case OEUserEndedConnection
-    case OELowResources
-    case OEPowerOff
-    case ConnectionTerminated
-    case RepeatedAttempts
-    case PairingNotAllowed
-    
-    // ... Add More
-    
-    case TransactionCollision               = 0x2a
-    case QOSUnacceptableParameter           = 0x2c
-    
-    // TODO: Add all errors
-    
-    case HostBusyPairing                    = 0x38
 }
 
 /// HCI device flags

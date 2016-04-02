@@ -35,7 +35,7 @@ public final class L2CAPSocket {
         
         return internalAddress.l2_psm.currentEndian
     }
-
+    
     /// Channel Identifier (CID)
     /// 
     /// L2CAP channel endpoints are identified to their clients by a Channel Identifier (CID). 

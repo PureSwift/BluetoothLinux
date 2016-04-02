@@ -31,12 +31,3 @@ public enum AddressType: UInt8 {
         }
     }
 }
-
-/// Bluetooth Low Energy Address type
-public enum LowEnergyAddressType: UInt8 {
-    
-    case Public = 0x00
-    case Random = 0x01
-    
-    public init() { self = .Public }
-}

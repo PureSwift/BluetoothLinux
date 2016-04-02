@@ -6,7 +6,7 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-import Bluetooth
+import SwiftFoundation
 
 /// GATT Database
 public struct GATTDatabase {
@@ -147,23 +147,7 @@ public struct GATTDatabase {
 
 public extension GATTDatabase {
     
-    /// GATT Service
-    public struct Service {
-        
-        public var UUID: BluetoothUUID
-        
-        public var characteristics: [Characteristic]
-        
-        public var primary: Bool
-        
-        public init(characteristics: [Characteristic], UUID: BluetoothUUID, primary: Bool = true) {
-            
-            self.characteristics = characteristics
-            self.primary = primary
-            self.UUID = UUID
-        }
-    }
-    
+    /*
     /// GATT Include Declaration
     public struct Include {
         
@@ -174,9 +158,9 @@ public extension GATTDatabase {
         public var endGroupHandle: UInt16
         
         /// Included Service UUID
-        public var serviceUUID: BluetoothUUID
+        public var serviceUUID: Bluetooth.UUID
         
-        public init(serviceHandle: UInt16, endGroupHandle: UInt16, serviceUUID: BluetoothUUID) {
+        public init(serviceHandle: UInt16, endGroupHandle: UInt16, serviceUUID: Bluetooth.UUID) {
             
             self.serviceHandle = serviceHandle
             self.endGroupHandle = endGroupHandle
@@ -192,73 +176,21 @@ public extension GATTDatabase {
             
             return [handleBytes.0, handleBytes.1, endGroupBytes.0, endGroupBytes.1] + serviceUUID.byteValue
         }
-    }
-    
-    /// GATT Characteristic
-    public struct Characteristic {
-        
-        public typealias Descriptor = GATTDatabase.Descriptor
-        public typealias Permission = ATT.AttributePermission
-        public typealias Property = GATT.CharacteristicProperty
-        
-        public var UUID: BluetoothUUID
-        
-        public var value: [UInt8]
-        
-        public var descriptors: [Descriptor]
-        
-        public var permissions: [Permission]
-        
-        public var properties: [Property]
-        
-        public init(UUID: BluetoothUUID,
-                    value: [UInt8] = [],
-                    permissions: [Permission] = [],
-                    properties: [Property] = [],
-                    descriptors: [Descriptor] = []) {
-            
-            self.UUID = UUID
-            self.value = value
-            self.permissions = permissions
-            self.descriptors = descriptors
-            self.properties = properties
-        }
-    }
-    
-    /// GATT Characteristic Descriptor
-    public struct Descriptor {
-        
-        public typealias Permission = ATT.AttributePermission
-        
-        public var UUID: Bluetooth.UUID
-        
-        public var permissions: [Permission]
-        
-        public var value: [UInt8]
-        
-        public init(UUID: Bluetooth.UUID, value: [UInt8] = [], permissions: [Permission] = []) {
-            
-            self.UUID = UUID
-            self.value = value
-            self.permissions = permissions
-        }
-    }
+    }*/
     
     /// ATT Attribute
     public struct Attribute {
         
-        public typealias Permission = ATT.AttributePermission
-        
         public let handle: UInt16
         
-        public let UUID: BluetoothUUID
+        public let UUID: Bluetooth.UUID
         
         public let value: [UInt8]
         
         public let permissions: [Permission]
         
         /// Defualt initializer
-        private init(handle: UInt16, UUID: BluetoothUUID, value: [UInt8] = [], permissions: [Permission] = []) {
+        private init(handle: UInt16, UUID: Bluetooth.UUID, value: [UInt8] = [], permissions: [Permission] = []) {
             
             self.handle = handle
             self.UUID = UUID
