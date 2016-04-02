@@ -14,6 +14,7 @@
 #endif
 
 import SwiftFoundation
+import Bluetooth
 
 func GATTServerTest(adapter: Adapter) {
     
@@ -81,33 +82,33 @@ private func generateDB() -> GATTDatabase {
     
     do {
         
-        let characteristic = GATTDatabase.Characteristic(UUID: uuid(), value: "Hey".toUTF8Data().byteValue, permissions: [.Read, .Write], properties: [.Read, .Write])
+        let characteristic = GATTDatabase.Characteristic(UUID: uuid(), value: "Hey".toUTF8Data(), permissions: [.Read, .Write], properties: [.Read, .Write])
         
-        let characteristic2 = GATTDatabase.Characteristic(UUID: uuid(), value: "Hola".toUTF8Data().byteValue, permissions: [.Read, .Write], properties: [.Read, .Write])
+        let characteristic2 = GATTDatabase.Characteristic(UUID: uuid(), value: "Hola".toUTF8Data(), permissions: [.Read, .Write], properties: [.Read, .Write])
         
-        let service = GATTDatabase.Service(characteristics: [characteristic, characteristic2], UUID: uuid())
-        
-        services.append(service)
-    }
-    
-    do {
-        
-        let characteristic = GATTDatabase.Characteristic(UUID: uuid(), value: "Bye".toUTF8Data().byteValue, permissions: [.Read, .Write], properties: [.Read, .Write])
-        
-        let characteristic2 = GATTDatabase.Characteristic(UUID: uuid(), value: "Chau".toUTF8Data().byteValue, permissions: [.Read, .Write], properties: [.Read, .Write])
-        
-        let service = GATTDatabase.Service(characteristics: [characteristic, characteristic2], UUID: uuid())
+        let service = GATTDatabase.Service(UUID: uuid(), characteristics: [characteristic, characteristic2])
         
         services.append(service)
     }
     
     do {
         
-        let characteristic = GATTDatabase.Characteristic(UUID: uuid(), value: "Read Only".toUTF8Data().byteValue, permissions: [.Read], properties: [.Read])
+        let characteristic = GATTDatabase.Characteristic(UUID: uuid(), value: "Bye".toUTF8Data(), permissions: [.Read, .Write], properties: [.Read, .Write])
         
-        let characteristic2 = GATTDatabase.Characteristic(UUID: uuid(), value: "Write Only".toUTF8Data().byteValue, permissions: [.Write], properties: [.Write])
+        let characteristic2 = GATTDatabase.Characteristic(UUID: uuid(), value: "Chau".toUTF8Data(), permissions: [.Read, .Write], properties: [.Read, .Write])
         
-        let service = GATTDatabase.Service(characteristics: [characteristic, characteristic2], UUID: uuid())
+        let service = GATTDatabase.Service(UUID: uuid(), characteristics: [characteristic, characteristic2])
+        
+        services.append(service)
+    }
+    
+    do {
+        
+        let characteristic = GATTDatabase.Characteristic(UUID: uuid(), value: "Read Only".toUTF8Data(), permissions: [.Read], properties: [.Read])
+        
+        let characteristic2 = GATTDatabase.Characteristic(UUID: uuid(), value: "Write Only".toUTF8Data(), permissions: [.Write], properties: [.Write])
+        
+        let service = GATTDatabase.Service(UUID: uuid(), characteristics: [characteristic, characteristic2])
         
         services.append(service)
     }

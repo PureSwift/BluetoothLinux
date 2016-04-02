@@ -13,6 +13,7 @@
 #endif
 
 import SwiftFoundation
+import Bluetooth
 
 /// L2CAP Bluetooth socket
 public final class L2CAPSocket {

@@ -7,6 +7,7 @@
 //
 
 import SwiftFoundation
+import Bluetooth
 
 /// GATT Database
 public struct GATTDatabase {
@@ -147,7 +148,6 @@ public struct GATTDatabase {
 
 public extension GATTDatabase {
     
-    /*
     /// GATT Include Declaration
     public struct Include {
         
@@ -174,9 +174,9 @@ public extension GATTDatabase {
             
             let endGroupBytes = endGroupHandle.littleEndianBytes
             
-            return [handleBytes.0, handleBytes.1, endGroupBytes.0, endGroupBytes.1] + serviceUUID.byteValue
+            return [handleBytes.0, handleBytes.1, endGroupBytes.0, endGroupBytes.1] + serviceUUID.toData().byteValue
         }
-    }*/
+    }
     
     /// ATT Attribute
     public struct Attribute {
@@ -199,11 +199,11 @@ public extension GATTDatabase {
         }
         
         /// Initialize attribute with a `Service`.
-        private init(service: Service, handle: UInt16) {
+        private init(service: GATT.Service, handle: UInt16) {
             
             self.handle = handle
             self.UUID = GATT.UUID(primaryService: service.primary).toUUID()
-            self.value = service.UUID.byteValue
+            self.value = service.UUID.toData().byteValue
             self.permissions = [.Read] // Read only
         }
         
@@ -225,14 +225,14 @@ public extension GATTDatabase {
                 
                 let propertiesMask = characteristic.properties.optionsBitmask()
                 let valueHandleBytes = (handle + 1).littleEndianBytes
-                let value = [propertiesMask, valueHandleBytes.0, valueHandleBytes.1] + characteristic.UUID.byteValue
+                let value = [propertiesMask, valueHandleBytes.0, valueHandleBytes.1] + characteristic.UUID.toData().byteValue
                 
                 return Attribute(handle: currentHandle, UUID: GATT.UUID.Characteristic.toUUID(), value: value, permissions: [.Read])
             }()
             
             currentHandle += 1
             
-            let valueAttribute = Attribute(handle: currentHandle, UUID: characteristic.UUID, value: characteristic.value, permissions: characteristic.permissions)
+            let valueAttribute = Attribute(handle: currentHandle, UUID: characteristic.UUID, value: characteristic.value.byteValue, permissions: characteristic.permissions)
             
             var attributes = [declarationAttribute, valueAttribute]
             
@@ -267,4 +267,17 @@ public extension GATTDatabase {
     }
 }
 
+// MARK: - Typealiases
 
+public extension GATT {
+    
+    public typealias Database = GATTDatabase
+}
+
+public extension GATTDatabase {
+    
+    public typealias Service = GATT.Service
+    public typealias Characteristic = GATT.Characteristic
+    public typealias Descriptor = GATT.Descriptor
+    public typealias Permission = GATT.Permission
+}
