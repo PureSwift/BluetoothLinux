@@ -7,6 +7,7 @@
 //
 
 import struct SwiftFoundation.UUID
+import SwiftFoundation
 
 /// Bluetooth UUID
 public enum BluetoothUUID: Equatable {

@@ -16,7 +16,6 @@
 		6E196CC31C8659DA009FA9CF /* HCI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E196CC21C8659DA009FA9CF /* HCI.swift */; };
 		6E196CC51C869A2E009FA9CF /* IOCTL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E196CC41C869A2E009FA9CF /* IOCTL.swift */; };
 		6E196CC71C86A5EC009FA9CF /* BluetoothProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E196CC61C86A5EC009FA9CF /* BluetoothProtocol.swift */; };
-		6E196CC91C86E797009FA9CF /* Hexadecimal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E196CC81C86E797009FA9CF /* Hexadecimal.swift */; };
 		6E196CCB1C87B47E009FA9CF /* DeviceCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E196CCA1C87B47E009FA9CF /* DeviceCommand.swift */; };
 		6E196CCC1C87BA9F009FA9CF /* LinkControlCommandParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E795E911C48A186002377FE /* LinkControlCommandParameter.swift */; };
 		6E196CCE1C87BBE1009FA9CF /* LowEnergyEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E196CCD1C87BBE1009FA9CF /* LowEnergyEvent.swift */; };
@@ -40,7 +39,6 @@
 		6E894BF41C83B51B00109F45 /* AddressType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E894BF31C83B51B00109F45 /* AddressType.swift */; };
 		6E894C001C83EA2000109F45 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BBD1C8379D100AF63E5 /* main.swift */; };
 		6E894C021C83F1C500109F45 /* L2CAP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E894C011C83F1C500109F45 /* L2CAP.swift */; };
-		6E894C041C84092100109F45 /* Endianness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E894C031C84092100109F45 /* Endianness.swift */; };
 		6E927EC91C977D7D009AB500 /* IOVector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E927EC81C977D7D009AB500 /* IOVector.swift */; };
 		6E92A4281C15309B007BC4E9 /* BluetoothLinux.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E92A4271C15309B007BC4E9 /* BluetoothLinux.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E92A4371C1530EF007BC4E9 /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92A4321C1530EF007BC4E9 /* Adapter.swift */; };
@@ -94,7 +92,6 @@
 		6E196CC21C8659DA009FA9CF /* HCI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCI.swift; sourceTree = "<group>"; };
 		6E196CC41C869A2E009FA9CF /* IOCTL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IOCTL.swift; sourceTree = "<group>"; };
 		6E196CC61C86A5EC009FA9CF /* BluetoothProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothProtocol.swift; sourceTree = "<group>"; };
-		6E196CC81C86E797009FA9CF /* Hexadecimal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hexadecimal.swift; sourceTree = "<group>"; };
 		6E196CCA1C87B47E009FA9CF /* DeviceCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceCommand.swift; sourceTree = "<group>"; };
 		6E196CCD1C87BBE1009FA9CF /* LowEnergyEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyEvent.swift; sourceTree = "<group>"; };
 		6E196CCF1C87BE63009FA9CF /* LowEnergyEventParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyEventParameter.swift; sourceTree = "<group>"; };
@@ -118,7 +115,6 @@
 		6E881DAB1C3996A200E509A9 /* HCIOpcodeGroupField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCIOpcodeGroupField.swift; sourceTree = "<group>"; };
 		6E894BF31C83B51B00109F45 /* AddressType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressType.swift; sourceTree = "<group>"; };
 		6E894C011C83F1C500109F45 /* L2CAP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = L2CAP.swift; sourceTree = "<group>"; };
-		6E894C031C84092100109F45 /* Endianness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Endianness.swift; sourceTree = "<group>"; };
 		6E927EC81C977D7D009AB500 /* IOVector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IOVector.swift; sourceTree = "<group>"; };
 		6E92A4241C15309B007BC4E9 /* BluetoothLinux.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BluetoothLinux.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E92A4271C15309B007BC4E9 /* BluetoothLinux.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BluetoothLinux.h; sourceTree = "<group>"; };
@@ -243,8 +239,6 @@
 			isa = PBXGroup;
 			children = (
 				6E0C5BB81C8373DB00AF63E5 /* Darwin.swift */,
-				6E894C031C84092100109F45 /* Endianness.swift */,
-				6E196CC81C86E797009FA9CF /* Hexadecimal.swift */,
 				6E92A4321C1530EF007BC4E9 /* Adapter.swift */,
 				6E92A4331C1530EF007BC4E9 /* Address.swift */,
 				6E434C2C1C89984A0069045A /* UUID.swift */,
@@ -459,7 +453,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E795E891C47EC90002377FE /* LowEnergyCommand.swift in Sources */,
-				6E894C041C84092100109F45 /* Endianness.swift in Sources */,
 				6E53E17B1C85645400AC8FCA /* PSM.swift in Sources */,
 				6E196CCC1C87BA9F009FA9CF /* LinkControlCommandParameter.swift in Sources */,
 				6E53E1771C8503AC00AC8FCA /* GATTDatabase.swift in Sources */,
@@ -488,7 +481,6 @@
 				6E0C5BC21C837AA700AF63E5 /* ScanTest.swift in Sources */,
 				6E739C8A1C884F1200D4775B /* HCIGeneralEvent.swift in Sources */,
 				6ECB305D1C47613F004CCA68 /* LinkControlCommand.swift in Sources */,
-				6E196CC91C86E797009FA9CF /* Hexadecimal.swift in Sources */,
 				6EA37EF81C84D6CE00A61969 /* GATT.swift in Sources */,
 				6ECB30601C47618E004CCA68 /* HCICommand.swift in Sources */,
 				6E1552461C39A045002CC322 /* HCIEvent.swift in Sources */,

@@ -6,6 +6,8 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
+import Bluetooth
+
 /// GATT Database
 public struct GATTDatabase {
     
@@ -42,9 +44,9 @@ public struct GATTDatabase {
     }
     
     /// Write the value to attribute specified by the handle.
-    public mutating func write(value: [UInt8], _ characteristicHandle: UInt16) {
+    public mutating func write(value: [UInt8], _ handle: UInt16) {
         
-        
+        fatalError("Write to GATTDatabase not implemented")
     }
     
     /// The handles of the service at the specified index.
@@ -228,13 +230,13 @@ public extension GATTDatabase {
         
         public typealias Permission = ATT.AttributePermission
         
-        public var UUID: BluetoothUUID
+        public var UUID: Bluetooth.UUID
         
         public var permissions: [Permission]
         
         public var value: [UInt8]
         
-        public init(UUID: BluetoothUUID, value: [UInt8] = [], permissions: [Permission] = []) {
+        public init(UUID: Bluetooth.UUID, value: [UInt8] = [], permissions: [Permission] = []) {
             
             self.UUID = UUID
             self.value = value
