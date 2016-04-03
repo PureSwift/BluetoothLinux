@@ -12,135 +12,124 @@ import Bluetooth
 /// GATT Database
 public struct GATTDatabase {
     
-    /// GATT Services in this database.
-    public var services: [Service] = [] {
-        
-        didSet { updateAttributes() }
-    }
+    // MARK: - Internal Properties
     
-    /// Attribute representation of the database.
-    public private(set) var attributes: [Attribute] = []
+    /// Do not access directly, use `newHandle()`
+    internal var lastHandle: UInt16 = 0x0000
+    
+    internal var attributeGroups = [AttributeGroup]()
     
     // MARK: - Initialization
     
-    public init(services: [Service] = []) {
-        
-        self.services = services
-        self.updateAttributes()
-    }
+    public init() { }
     
     // MARK: - Dynamic Properties
     
+    /// Whether the database contains any attributes. 
     public var isEmpty: Bool {
         
-        return services.isEmpty
+        return attributeGroups.isEmpty
+    }
+    
+    /// Attribute representation of the database.
+    public var attributes: [Attribute] {
+        
+        var attributes = [Attribute]()
+        
+        for group in attributeGroups {
+            
+            attributes += group.attributes
+        }
+        
+        return attributes
     }
     
     // MARK: - Methods
     
-    /// Clear the database.
-    public mutating func clear() {
+    public mutating func add(service: Service) {
         
-        self.services = []
-    }
-    
-    /// Write the value to attribute specified by the handle.
-    public mutating func write(value: [UInt8], _ handle: UInt16) {
+        let serviceAttribute = Attribute(service: service, handle: newHandle())
         
-        fatalError("Write to GATTDatabase not implemented")
-    }
-    
-    /// The handles of the service at the specified index.
-    public func serviceHandle(index: Int) -> UInt16 {
-        
-        var handle: UInt16 = 0x0000
-        
-        for (serviceIndex, service) in services.enumerate() {
-            
-            // increment handle
-            handle += 1
-            
-            guard serviceIndex != index
-                else { return handle }
-            
-            for characteristic in service.characteristics {
-                
-                handle += 2 + UInt16(characteristic.descriptors.count)
-            }
-        }
-        
-        fatalError("Invalid Service Index \(index)")
-    }
-    
-    /// The end group handle for the service at the specified handle.
-    public func serviceEndHandle(index: Int) -> UInt16 {
-        
-        let startHandle = serviceHandle(index)
-        
-        let service = services[index]
-        
-        var handle = startHandle
+        var attributes = [serviceAttribute]
         
         for characteristic in service.characteristics {
             
-            handle += 2 + UInt16(characteristic.descriptors.count)
+            attributes += Attribute.fromCharacteristic(characteristic, handle: newHandle())
+            
+            lastHandle = attributes.last!.handle
         }
         
-        return handle
+        let group = AttributeGroup(attributes: attributes)
+        
+        attributeGroups.append(group)
     }
     
-    public func serviceOf(attributeHandle: UInt16) -> Service {
+    /// Clear the database.
+    public mutating func clear() {
         
-        for (index, service) in services.enumerate() {
-            
-            let serviceHandleRange = serviceHandle(index) ... serviceEndHandle(index)
-            
-            if serviceHandleRange.contains(attributeHandle) {
-                
-                return service
-            }
-        }
+        self.attributeGroups = []
+    }
+    
+    /// Write the value to attribute specified by the handle.
+    public mutating func write(value: Data, forAttribute handle: UInt16) {
         
-        fatalError("Invalid attribute handle: \(attributeHandle)")
+        self[handle].value = value
+    }
+    
+    /// The handle of the service at the specified index.
+    public func serviceHandles(ofService index: Int) -> (start: UInt16, end: UInt16) {
+        
+        let service = attributeGroups[index]
+        
+        return (service.startHandle, service.endHandle)
     }
     
     // MARK: - Subscripting
     
     /// The attribute with the specified handle.
-    public subscript(handle: UInt16) -> Attribute {
+    public private(set) subscript(handle: UInt16) -> Attribute {
         
-        return attributes[Int(handle) - 1]
+        get {
+            
+            for group in attributeGroups {
+                
+                for attribute in group.attributes {
+                    
+                    guard attribute.handle != handle
+                        else { return attribute }
+                }
+            }
+            
+            fatalError("Invalid handle \(handle)")
+        }
+        
+        mutating set {
+            
+            for (groupIndex, group) in attributeGroups.enumerate() {
+                
+                for (attributeIndex, attribute) in group.attributes.enumerate() {
+                    
+                    guard attribute.handle != handle else {
+                        
+                        attributeGroups[groupIndex].attributes[attributeIndex] = newValue
+                        
+                        return
+                    }
+                }
+            }
+            
+            fatalError("Invalid handle \(handle)")
+        }
     }
     
     // MARK: - Private Methods
     
-    private mutating func updateAttributes() {
+    private mutating func newHandle() -> UInt16 {
         
-        var attributes = [Attribute]()
+        // starts at 0x0001
+        lastHandle += 1
         
-        var handle: UInt16 = 0x0000
-        
-        for service in services {
-            
-            // increment handle
-            handle += 1
-            
-            let attribute = Attribute(service: service, handle: handle)
-            
-            attributes.append(attribute)
-            
-            for characteristic in service.characteristics {
-                
-                // increment handle
-                handle += 1
-                
-                attributes += Attribute.fromCharacteristic(characteristic, handle: handle)
-                
-                handle = attributes.last!.handle
-            }
-        }
-        
-        self.attributes = attributes
+        return lastHandle
     }
 }
 
@@ -168,13 +157,13 @@ public extension GATTDatabase {
         }
         
         /// ATT Attribute Value
-        private var value: [UInt8] {
+        private func toData() -> Data {
             
             let handleBytes = serviceHandle.littleEndianBytes
             
             let endGroupBytes = endGroupHandle.littleEndianBytes
             
-            return [handleBytes.0, handleBytes.1, endGroupBytes.0, endGroupBytes.1] + serviceUUID.toData().byteValue
+            return Data(byteValue: [handleBytes.0, handleBytes.1, endGroupBytes.0, endGroupBytes.1] + serviceUUID.toData().byteValue)
         }
     }
     
@@ -185,12 +174,12 @@ public extension GATTDatabase {
         
         public let UUID: Bluetooth.UUID
         
-        public let value: [UInt8]
-        
         public let permissions: [Permission]
         
+        public var value: Data
+        
         /// Defualt initializer
-        private init(handle: UInt16, UUID: Bluetooth.UUID, value: [UInt8] = [], permissions: [Permission] = []) {
+        private init(handle: UInt16, UUID: Bluetooth.UUID, value: Data = Data(), permissions: [Permission] = []) {
             
             self.handle = handle
             self.UUID = UUID
@@ -203,7 +192,7 @@ public extension GATTDatabase {
             
             self.handle = handle
             self.UUID = GATT.UUID(primaryService: service.primary).toUUID()
-            self.value = service.UUID.toData().byteValue
+            self.value = service.UUID.toData()
             self.permissions = [.Read] // Read only
         }
         
@@ -212,7 +201,7 @@ public extension GATTDatabase {
             
             self.handle = handle
             self.UUID = GATT.UUID.Include.toUUID()
-            self.value = include.value
+            self.value = include.toData()
             self.permissions = [.Read] // Read only
         }
         
@@ -227,12 +216,12 @@ public extension GATTDatabase {
                 let valueHandleBytes = (handle + 1).littleEndianBytes
                 let value = [propertiesMask, valueHandleBytes.0, valueHandleBytes.1] + characteristic.UUID.toData().byteValue
                 
-                return Attribute(handle: currentHandle, UUID: GATT.UUID.Characteristic.toUUID(), value: value, permissions: [.Read])
+                return Attribute(handle: currentHandle, UUID: GATT.UUID.Characteristic.toUUID(), value: Data(byteValue: value), permissions: [.Read])
             }()
             
             currentHandle += 1
             
-            let valueAttribute = Attribute(handle: currentHandle, UUID: characteristic.UUID, value: characteristic.value.byteValue, permissions: characteristic.permissions)
+            let valueAttribute = Attribute(handle: currentHandle, UUID: characteristic.UUID, value: characteristic.value, permissions: characteristic.permissions)
             
             var attributes = [declarationAttribute, valueAttribute]
             
@@ -261,8 +250,42 @@ public extension GATTDatabase {
             
             self.handle = handle
             self.UUID = descriptor.UUID
-            self.value = descriptor.value.byteValue
+            self.value = descriptor.value
             self.permissions = descriptor.permissions
+        }
+    }
+}
+
+// MARK: - Private Supporting Types
+
+internal extension GATTDatabase {
+    
+    /// Internal Representation of a GATT Service. 
+    ///
+    ///- Note: For use with `GATTDatabase` only.
+    internal struct AttributeGroup {
+        
+        var attributes: [Attribute] {
+            
+            willSet {
+                
+                assert(attributes.count == newValue.count, "Cannot modify Service structure")
+            }
+        }
+        
+        var startHandle: UInt16 {
+            
+            return attributes[0].handle
+        }
+        
+        var endHandle: UInt16 {
+            
+            return attributes.last!.handle
+        }
+        
+        var service: Attribute {
+            
+            return attributes[0]
         }
     }
 }

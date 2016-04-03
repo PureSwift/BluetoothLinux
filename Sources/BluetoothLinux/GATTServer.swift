@@ -7,6 +7,7 @@
 //
 
 import struct SwiftFoundation.UUID
+import struct SwiftFoundation.Data
 import Bluetooth
 
 public final class GATTServer {
@@ -183,7 +184,7 @@ public final class GATTServer {
             return
         }
         
-        database.write(value, handle)
+        database.write(Data(byteValue: value), forAttribute: handle)
         
         doResponse(respond(ATTWriteResponse()))
     }
@@ -209,23 +210,23 @@ public final class GATTServer {
         }
         
         // check boundary
-        guard offset <= UInt16(attribute.value.count)
+        guard offset <= UInt16(attribute.value.byteValue.count)
             else { errorResponse(opcode, .InvalidOffset, handle); return nil }
         
         let value: [UInt8]
         
         // Guard against invalid access if offset equals to value length
-        if offset == UInt16(attribute.value.count) {
+        if offset == UInt16(attribute.value.byteValue.count) {
             
             value = []
             
         } else if offset > 0 {
             
-            value = Array(attribute.value.suffixFrom(Int(offset)))
+            value = Array(attribute.value.byteValue.suffixFrom(Int(offset)))
             
         } else {
             
-            value = attribute.value
+            value = attribute.value.byteValue
         }
         
         return value
@@ -268,10 +269,7 @@ public final class GATTServer {
         guard pdu.type == GATT.UUID.PrimaryService.toUUID() || pdu.type == GATT.UUID.SecondaryService.toUUID()
             else { errorResponse(opcode, .UnsupportedGroupType, pdu.startHandle); return }
         
-        // search for only primary services
-        let primary = pdu.type == GATT.UUID.PrimaryService.toUUID()
-        
-        let data = database.readByGroupType(pdu.startHandle ..< pdu.endHandle, primary: primary)
+        let data = database.readByGroupType(pdu.startHandle ..< pdu.endHandle, type: pdu.type)
         
         guard data.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
@@ -346,7 +344,7 @@ public final class GATTServer {
         guard attributes.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
-        let attributeData = attributes.map { AttributeData(handle: $0.handle, value: $0.value) }
+        let attributeData = attributes.map { AttributeData(handle: $0.handle, value: $0.value.byteValue) }
         
         var limitedAttributes = [attributeData[0]]
         
@@ -530,7 +528,7 @@ public final class GATTServer {
             // get attribute
             let attribute = database[handle]
             
-            values += attribute.value
+            values += attribute.value.byteValue
         }
         
         let response = ATTReadMultipleResponse(values: values)
@@ -544,23 +542,21 @@ public final class GATTServer {
 internal extension GATTDatabase {
     
     /// Used for Service discovery. Should return tuples with the Service start handle, end handle and UUID.
-    func readByGroupType(handle: Range<UInt16>, primary: Bool) -> [(start: UInt16, end: UInt16, UUID: Bluetooth.UUID)] {
+    func readByGroupType(handle: Range<UInt16>, type: Bluetooth.UUID) -> [(start: UInt16, end: UInt16, UUID: Bluetooth.UUID)] {
         
         var data: [(start: UInt16, end: UInt16, UUID: Bluetooth.UUID)] = []
         
-        for (index, service) in self.services.enumerate() {
+        for group in attributeGroups {
             
-            guard service.primary == primary else { continue }
+            guard group.service.UUID == type else { continue }
             
-            let serviceHandle = self.serviceHandle(index)
+            let groupRange = group.startHandle ... group.endHandle
             
-            let endGroupHandle = self.serviceEndHandle(index)
+            guard groupRange.isSubset(handle) else { continue }
             
-            let serviceRange = serviceHandle ... endGroupHandle
+            let serviceUUID = Bluetooth.UUID(data: group.service.value)!
             
-            guard serviceRange.isSubset(handle) else { continue }
-            
-            data.append((serviceHandle, endGroupHandle, service.UUID))
+            data.append((group.startHandle, group.endHandle, serviceUUID))
         }
         
         return data
@@ -578,24 +574,21 @@ internal extension GATTDatabase {
     
     func findByTypeValue(handle: Range<UInt16>, type: UInt16, value: [UInt8]) -> [(UInt16, UInt16)] {
         
-        fatalError("Not Implemented")
+        var results = [(UInt16, UInt16)]()
         
-        /*
-        let matchingAttributes = attributes.filter { handle.contains($0.handle) && $0.UUID == .Bit16(type) && $0.value == value }
-        
-        let services = matchingAttributes.map { serviceOf($0.handle) }
-        
-        var handles = [(UInt16, UInt16)](count: services.count, repeatedValue: (0,0))
-        
-        for (index, service) in services.enumerate() {
+        for group in attributeGroups {
             
-            let serviceHandle = self.serviceHandle(index)
-            
-            handles[index].0 = serviceHandle
-            handles[index].1 = serviceHandle + UInt16(service.characteristics.count)
+            for attribute in group.attributes {
+                
+                let match = handle.contains(attribute.handle) && attribute.UUID == .Bit16(type) && attribute.value.byteValue == value
+                
+                guard match else { continue }
+                
+                results.append((group.startHandle, group.endHandle))
+            }
         }
         
-        return handles*/
+        return results
     }
 }
 
