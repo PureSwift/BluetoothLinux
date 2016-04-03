@@ -44,9 +44,15 @@ public struct GATTDatabase {
         return attributes
     }
     
+    /// UUIDs of Services in this database.
+    public var services: [Bluetooth.UUID] {
+        
+        return attributeGroups.map { Bluetooth.UUID(data: $0.service.value)! }
+    }
+    
     // MARK: - Methods
     
-    public mutating func add(service: Service) {
+    public mutating func add(service: Service) -> Int {
         
         let serviceAttribute = Attribute(service: service, handle: newHandle())
         
@@ -62,12 +68,20 @@ public struct GATTDatabase {
         let group = AttributeGroup(attributes: attributes)
         
         attributeGroups.append(group)
+        
+        return attributeGroups.endIndex
     }
     
     /// Clear the database.
     public mutating func clear() {
         
         self.attributeGroups = []
+    }
+    
+    /// Remove the Service at the specified index.
+    public mutating func remove(service index: Int) {
+        
+        attributeGroups.removeAtIndex(index)
     }
     
     /// Write the value to attribute specified by the handle.
