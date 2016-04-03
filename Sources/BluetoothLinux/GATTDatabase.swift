@@ -14,10 +14,10 @@ public struct GATTDatabase {
     
     // MARK: - Internal Properties
     
-    /// Do not access directly, use `newHandle()`
-    internal var lastHandle: UInt16 = 0x0000
+    internal private(set) var attributeGroups = [AttributeGroup]()
     
-    internal var attributeGroups = [AttributeGroup]()
+    /// Do not access directly, use `newHandle()`
+    private var lastHandle: UInt16 = 0x0000
     
     // MARK: - Initialization
     
