@@ -9,6 +9,7 @@
 #if os(OSX)
 
     import XCTest
+    import Bluetooth
     @testable import BluetoothLinux
     
     final class MathTests: XCTestCase {
