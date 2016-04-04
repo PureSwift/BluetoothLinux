@@ -339,7 +339,7 @@ public final class GATTServer {
         guard pdu.startHandle <= pdu.endHandle
             else { errorResponse(opcode, .InvalidHandle, pdu.startHandle); return }
         
-        let attributes = database.readByType(pdu.startHandle ... pdu.endHandle, type: pdu.attributeType)
+        let attributes = database.readByType(handle: (pdu.startHandle, pdu.endHandle), type: pdu.attributeType)
         
         guard attributes.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
@@ -397,7 +397,7 @@ public final class GATTServer {
         guard pdu.startHandle <= pdu.endHandle
             else { errorResponse(opcode, .InvalidHandle, pdu.startHandle); return }
         
-        let attributes = database.findInformation(pdu.startHandle ... pdu.endHandle)
+        let attributes = database.findInformation(handle: (pdu.startHandle, pdu.endHandle))
         
         guard attributes.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
@@ -457,7 +457,7 @@ public final class GATTServer {
         guard pdu.startHandle <= pdu.endHandle
             else { errorResponse(opcode, .InvalidHandle, pdu.startHandle); return }
         
-        let handles = database.findByTypeValue(pdu.startHandle ... pdu.endHandle, type: pdu.attributeType, value: pdu.attributeValue)
+        let handles = database.findByTypeValue(handle: (pdu.startHandle, pdu.endHandle), type: pdu.attributeType, value: pdu.attributeValue)
         
         guard handles.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
@@ -562,17 +562,23 @@ internal extension GATTDatabase {
         return data
     }
     
-    func readByType(handle: Range<UInt16>, type: Bluetooth.UUID) -> [Attribute] {
+    func readByType(handle handle: (start: UInt16, end: UInt16), type: Bluetooth.UUID) -> [Attribute] {
         
-        return attributes.filter { handle.contains($0.handle) && $0.UUID == type }
+        let range = handle.end < UInt16.max ? handle.start ... handle.end : handle.start ..< handle.end
+        
+        return attributes.filter { range.contains($0.handle) && $0.UUID == type }
     }
     
-    func findInformation(handle: Range<UInt16>) -> [Attribute] {
+    func findInformation(handle handle: (start: UInt16, end: UInt16)) -> [Attribute] {
         
-        return attributes.filter { handle.contains($0.handle) }
+        let range = handle.end < UInt16.max ? handle.start ... handle.end : handle.start ..< handle.end
+        
+        return attributes.filter { range.contains($0.handle) }
     }
     
-    func findByTypeValue(handle: Range<UInt16>, type: UInt16, value: [UInt8]) -> [(UInt16, UInt16)] {
+    func findByTypeValue(handle handle: (start: UInt16, end: UInt16), type: UInt16, value: [UInt8]) -> [(UInt16, UInt16)] {
+        
+        let range = handle.end < UInt16.max ? handle.start ... handle.end : handle.start ..< handle.end
         
         var results = [(UInt16, UInt16)]()
         
@@ -580,7 +586,7 @@ internal extension GATTDatabase {
             
             for attribute in group.attributes {
                 
-                let match = handle.contains(attribute.handle) && attribute.UUID == .Bit16(type) && attribute.value.byteValue == value
+                let match = range.contains(attribute.handle) && attribute.UUID == .Bit16(type) && attribute.value.byteValue == value
                 
                 guard match else { continue }
                 
