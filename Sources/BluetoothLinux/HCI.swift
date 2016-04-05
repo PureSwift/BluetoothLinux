@@ -406,13 +406,13 @@ internal struct HCICommandHeader: HCIPacketHeader {
         guard byteValue.count == HCICommandHeader.length
             else { return nil }
         
-        self.opcode = UInt16(littleEndian: (byteValue[0], byteValue[1]))
+        self.opcode = UInt16(bytes: (byteValue[0], byteValue[1])).littleEndian
         self.parameterLength = byteValue[2]
     }
     
     var byteValue: [UInt8] {
         
-        let opcodeBytes = opcode.littleEndianBytes
+        let opcodeBytes = opcode.littleEndian.bytes
         
         return [opcodeBytes.0, opcodeBytes.1, parameterLength]
     }

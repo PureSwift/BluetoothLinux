@@ -66,28 +66,31 @@ private func SetBeaconData(UUID: SwiftFoundation.UUID, mayor: UInt16, minor: UIn
     parameter.data.8 = 0x15  // length: 16 byte UUID, 2 bytes major & minor, 1 byte RSSI
     
     // set UUID bytes
-    parameter.data.9 = UUID.byteValue.0
-    parameter.data.10 = UUID.byteValue.1
-    parameter.data.12 = UUID.byteValue.2
-    parameter.data.13 = UUID.byteValue.3
-    parameter.data.14 = UUID.byteValue.4
-    parameter.data.15 = UUID.byteValue.5
-    parameter.data.16 = UUID.byteValue.6
-    parameter.data.17 = UUID.byteValue.7
-    parameter.data.18 = UUID.byteValue.8
-    parameter.data.19 = UUID.byteValue.9
-    parameter.data.20 = UUID.byteValue.10
-    parameter.data.21 = UUID.byteValue.11
-    parameter.data.22 = UUID.byteValue.12
-    parameter.data.23 = UUID.byteValue.13
-    parameter.data.24 = UUID.byteValue.14
     
-    let mayorBytes = mayor.littleEndianBytes
+    let littleUUIDBytes = isBigEndian ? UUID.toData().byteValue.reverse() : UUID.toData().byteValue
+    
+    parameter.data.9 = littleUUIDBytes[0]
+    parameter.data.10 = littleUUIDBytes[1]
+    parameter.data.12 = littleUUIDBytes[2]
+    parameter.data.13 = littleUUIDBytes[3]
+    parameter.data.14 = littleUUIDBytes[4]
+    parameter.data.15 = littleUUIDBytes[5]
+    parameter.data.16 = littleUUIDBytes[6]
+    parameter.data.17 = littleUUIDBytes[7]
+    parameter.data.18 = littleUUIDBytes[8]
+    parameter.data.19 = littleUUIDBytes[9]
+    parameter.data.20 = littleUUIDBytes[10]
+    parameter.data.21 = littleUUIDBytes[11]
+    parameter.data.22 = littleUUIDBytes[12]
+    parameter.data.23 = littleUUIDBytes[13]
+    parameter.data.24 = littleUUIDBytes[14]
+    
+    let mayorBytes = mayor.littleEndian.bytes
     
     parameter.data.25 = mayorBytes.0
     parameter.data.26 = mayorBytes.1
     
-    let minorBytes = minor.littleEndianBytes
+    let minorBytes = minor.littleEndian.bytes
     
     parameter.data.27 = minorBytes.0
     parameter.data.28 = minorBytes.1

@@ -44,7 +44,6 @@ public struct GATTDatabase {
         return attributes
     }
     
-    
     // MARK: - Methods
     
     public mutating func add(service: Service) -> Int {
@@ -168,9 +167,9 @@ public extension GATTDatabase {
         /// ATT Attribute Value
         private var littleEndian: [UInt8] {
             
-            let handleBytes = serviceHandle.littleEndianBytes
+            let handleBytes = serviceHandle.littleEndian.bytes
             
-            let endGroupBytes = endGroupHandle.littleEndianBytes
+            let endGroupBytes = endGroupHandle.littleEndian.bytes
             
             return [handleBytes.0, handleBytes.1, endGroupBytes.0, endGroupBytes.1] + serviceUUID.littleEndian
         }
@@ -222,7 +221,7 @@ public extension GATTDatabase {
             let declarationAttribute: Attribute = {
                 
                 let propertiesMask = characteristic.properties.optionsBitmask()
-                let valueHandleBytes = (handle + 1).littleEndianBytes
+                let valueHandleBytes = (handle + 1).littleEndian.bytes
                 let value = [propertiesMask, valueHandleBytes.0, valueHandleBytes.1] + characteristic.UUID.littleEndian
                 
                 return Attribute(handle: currentHandle, UUID: GATT.UUID.Characteristic.toUUID(), value: Data(byteValue: value), permissions: [.Read])
