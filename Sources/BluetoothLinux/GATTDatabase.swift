@@ -75,7 +75,7 @@ public struct GATTDatabase {
     /// Remove the Service at the specified index.
     public mutating func remove(service index: Int) {
         
-        attributeGroups.removeAtIndex(index)
+        attributeGroups.remove(at: index)
     }
     
     /// Write the value to attribute specified by the handle.
@@ -113,9 +113,9 @@ public struct GATTDatabase {
         
         mutating set {
             
-            for (groupIndex, group) in attributeGroups.enumerate() {
+            for (groupIndex, group) in attributeGroups.enumerated() {
                 
-                for (attributeIndex, attribute) in group.attributes.enumerate() {
+                for (attributeIndex, attribute) in group.attributes.enumerated() {
                     
                     guard attribute.handle != handle else {
                         

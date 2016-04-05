@@ -83,7 +83,7 @@
             
             let cListPointer = withUnsafeMutablePointer(&cListCopy) { UnsafeMutablePointer<Int32>($0) }
             
-            for (index, swiftDefinition) in swiftDefinitionList.enumerate() {
+            for (index, swiftDefinition) in swiftDefinitionList.enumerated() {
                 
                 let cDefinition = cListPointer[index]
                 

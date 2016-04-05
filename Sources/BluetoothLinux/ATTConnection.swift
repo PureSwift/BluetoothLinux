@@ -187,7 +187,7 @@ public final class ATTConnection {
     /// - Returns: Whether the callback was unregistered.
     public func unregister(identifier: UInt) -> Bool {
         
-        guard let index = notifyList.indexOf({ $0.identifier == identifier })
+        guard let index = notifyList.index(where: { $0.identifier == identifier })
             else { return false }
         
         notifyList.removeAtIndex(index)
@@ -410,7 +410,7 @@ public extension ATTConnection {
 }
 
 /// ATT Connection Error
-public enum ATTConnectionError: ErrorType {
+public enum ATTConnectionError: ErrorProtocol {
     
     /// The recieved data could not be parsed correctly.
     case GarbageResponse(Data)

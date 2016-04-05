@@ -48,8 +48,8 @@ public extension Adapter {
         
         var address = bdaddr_t()
         
-        let nameBuffer = UnsafeMutablePointer<CChar>.alloc(maxNameLength)
-        defer { nameBuffer.dealloc(maxNameLength) }
+        let nameBuffer = UnsafeMutablePointer<CChar>.init(allocatingCapacity: maxNameLength)
+        defer { nameBuffer.deallocateCapacity(maxNameLength) }
         
         guard hci_read_remote_name(internalSocket, &address, CInt(maxNameLength), nameBuffer, CInt(timeout)) == CInt(0)
             else { throw POSIXError.fromErrorNumber! }
@@ -107,30 +107,30 @@ internal func HCIInquiry(deviceIdentifier: CInt, duration: Int, scanLimit: Int, 
     
     let bufferSize = sizeof(HCIInquiryRequest) + (sizeof(InquiryResult) * scanLimit)
     
-    let buffer = UnsafeMutablePointer<UInt8>.alloc(bufferSize)
+    let buffer = UnsafeMutablePointer<UInt8>.init(allocatingCapacity: bufferSize)
     
-    defer { buffer.dealloc(bufferSize) }
+    defer { buffer.deallocateCapacity(bufferSize) }
     
     let deviceClass = deviceClass ?? (0x33, 0x8b, 0x9e)
     
     let inquiryRequest = UnsafeMutablePointer<HCIInquiryRequest>(buffer)
     
-    inquiryRequest.memory.identifier = UInt16(deviceIdentifier)
-    inquiryRequest.memory.responseCount = UInt8(scanLimit)
-    inquiryRequest.memory.length = UInt8(duration)
-    inquiryRequest.memory.flags = UInt16(flags)
-    inquiryRequest.memory.lap = deviceClass
+    inquiryRequest.pointee.identifier = UInt16(deviceIdentifier)
+    inquiryRequest.pointee.responseCount = UInt8(scanLimit)
+    inquiryRequest.pointee.length = UInt8(duration)
+    inquiryRequest.pointee.flags = UInt16(flags)
+    inquiryRequest.pointee.lap = deviceClass
     
     guard swift_bluetooth_ioctl(deviceDescriptor, HCI.IOCTL.Inquiry, buffer) >= 0
         else { throw POSIXError.fromErrorNumber! }
     
-    let resultCount = Int(inquiryRequest.memory.responseCount)
+    let resultCount = Int(inquiryRequest.pointee.responseCount)
     
     let resultBufferSize = sizeof(InquiryResult) * resultCount
     
-    var results = [InquiryResult](count: resultCount, repeatedValue: InquiryResult())
+    var results = [InquiryResult](repeating: InquiryResult(), count: resultCount)
     
-    memcpy(&results, buffer.advancedBy(sizeof(HCIInquiryRequest)), resultBufferSize)
+    memcpy(&results, buffer.advanced(by: sizeof(HCIInquiryRequest)), resultBufferSize)
     
     return results
 }

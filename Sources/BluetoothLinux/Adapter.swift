@@ -84,7 +84,7 @@ public extension Adapter {
     public typealias Error = AdapterError
 }
 
-public enum AdapterError: ErrorType {
+public enum AdapterError: ErrorProtocol {
     
     /// The specified adapter could not be found.
     case AdapterNotFound
@@ -95,7 +95,7 @@ public enum AdapterError: ErrorType {
     /// A method that changed the adapter's filter had en internal error, and unsuccessfully tried to restore the previous filter.
     ///
     /// First error is the method's error. Second is the error while trying to restore the filter
-    case CouldNotRestoreFilter(ErrorType, ErrorType)
+    case CouldNotRestoreFilter(ErrorProtocol, ErrorProtocol)
     
     /// The recieved data could not be parsed correctly.
     case GarbageResponse(Data)

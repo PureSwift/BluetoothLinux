@@ -134,7 +134,7 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
     // initialize variables
     var timeout = timeout
     let opcodePacked = HCICommandOpcodePack(opcode.commandField, opcode.groupField).littleEndian
-    var eventBuffer = [UInt8](count: HCI.MaximumEventSize, repeatedValue: 0)
+    var eventBuffer = [UInt8](repeating: 0, count: HCI.MaximumEventSize)
     var oldFilter = HCIFilter()
     var newFilter = HCIFilter()
     let oldFilterPointer = withUnsafeMutablePointer(&oldFilter) { UnsafeMutablePointer<Void>($0) }
@@ -161,7 +161,7 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
         else { throw POSIXError.fromErrorNumber! }
 
     // restore old filter in case of error
-    func restoreFilter(error: ErrorType) -> ErrorType {
+    func restoreFilter(error: ErrorProtocol) -> ErrorProtocol {
 
         guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, filterLength) == 0
             else { return AdapterError.CouldNotRestoreFilter(error, POSIXError.fromErrorNumber!) }
@@ -301,7 +301,7 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
             try done()
             
             let commandParameterLength = HCIGeneralEvent.CommandCompleteParameter.length
-            let data = eventData.suffixFrom(commandParameterLength)
+            let data = eventData.suffix(commandParameterLength)
             
             let dataLength = min(data.count, eventParameterLength)
             return Array(data.suffix(dataLength))

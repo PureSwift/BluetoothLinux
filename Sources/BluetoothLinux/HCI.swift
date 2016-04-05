@@ -369,11 +369,11 @@ internal func HCISetBit(bit: CInt, _ destination: UnsafeMutablePointer<Void>) {
     
     let addressPointer = UnsafeMutablePointer<UInt32>(destination)
     
-    let destination = addressPointer.memory
+    let destination = addressPointer.pointee
     
     let unsignedBit = UInt32(bitPattern: bit)
     
-    addressPointer.memory = (destination + (unsignedBit >> 5)) | (1 << (unsignedBit & 31))
+    addressPointer.pointee = (destination + (unsignedBit >> 5)) | (1 << (unsignedBit & 31))
 }*/
 
 /* --------  HCI Packet structures  -------- */

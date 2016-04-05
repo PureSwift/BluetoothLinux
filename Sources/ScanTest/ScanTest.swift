@@ -32,7 +32,7 @@ func ScanTest(adapter: Adapter, timeout: Int) {
     
     print("Finished scanning (\(scanDuration)s)")
     
-    for (index, info) in scanResults.enumerate() {
+    for (index, info) in scanResults.enumerated() {
         
         let address = info.address
         

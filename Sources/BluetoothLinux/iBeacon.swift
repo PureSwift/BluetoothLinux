@@ -51,7 +51,7 @@ public extension Adapter {
 
 // MARK: - Private
 
-private func SetBeaconData(UUID: SwiftFoundation.UUID, mayor: UInt16, minor: UInt16, RSSI: UInt8, inout parameter: LowEnergyCommand.SetAdvertisingDataParameter) {
+private func SetBeaconData(UUID: SwiftFoundation.UUID, mayor: UInt16, minor: UInt16, RSSI: UInt8, parameter: inout LowEnergyCommand.SetAdvertisingDataParameter) {
     
     parameter.length = 30
     
@@ -67,7 +67,7 @@ private func SetBeaconData(UUID: SwiftFoundation.UUID, mayor: UInt16, minor: UIn
     
     // set UUID bytes
     
-    let littleUUIDBytes = isBigEndian ? UUID.toData().byteValue.reverse() : UUID.toData().byteValue
+    let littleUUIDBytes = isBigEndian ? UUID.toData().byteValue : UUID.toData().byteValue.reversed()
     
     parameter.data.9 = littleUUIDBytes[0]
     parameter.data.10 = littleUUIDBytes[1]

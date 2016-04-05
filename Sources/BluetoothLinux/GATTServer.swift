@@ -222,7 +222,7 @@ public final class GATTServer {
             
         } else if offset > 0 {
             
-            value = Array(attribute.value.byteValue.suffixFrom(Int(offset)))
+            value = Array(attribute.value.byteValue.suffix(Int(offset)))
             
         } else {
             
@@ -408,7 +408,7 @@ public final class GATTServer {
         
         var bit128Pairs = [(UInt16, UUID)]()
         
-        for (index, attribute) in attributes.enumerate() {
+        for (index, attribute) in attributes.enumerated() {
             
             // truncate if bigger than MTU
             let encodedLength = 2 + ((index + 1) * format.length)

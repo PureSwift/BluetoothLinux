@@ -152,7 +152,7 @@ public final class L2CAPSocket {
     /// Reads from the socket.
     public func recieve(bufferSize: Int = 1024) throws -> Data {
 
-        var buffer = [UInt8](count: bufferSize, repeatedValue: 0)
+        var buffer = [UInt8](repeating: 0, count: bufferSize)
 
         let actualByteCount = read(internalSocket, &buffer, bufferSize)
 
@@ -174,7 +174,7 @@ public final class L2CAPSocket {
             else { throw POSIXError.fromErrorNumber! }
         
         guard actualByteCount == buffer.count
-            else { throw Error.SentLessBytes(actualByteCount) }
+            else { throw L2CAPSocketError.SentLessBytes(actualByteCount) }
     }
 }
 
@@ -182,10 +182,10 @@ public final class L2CAPSocket {
     
 public extension L2CAPSocket {
     
-    public typealias Error = L2CAPConnectionError
+    public typealias Error = L2CAPSocket
 }
 
-public enum L2CAPConnectionError: ErrorType {
+public enum L2CAPSocketError: ErrorProtocol {
     
     /// Sent less bytes than expected.
     case SentLessBytes(Int)

@@ -19,7 +19,7 @@ public extension iovec {
         let length = byteValue.count
         var vector = iovec()
         vector.iov_len = length
-        vector.iov_base = UnsafeMutablePointer<Void>.alloc(length)
+        vector.iov_base = UnsafeMutablePointer<Void>.init(allocatingCapacity: length)
         
         memcpy(vector.iov_base, byteValue, length)
         

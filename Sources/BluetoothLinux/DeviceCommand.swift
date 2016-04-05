@@ -47,19 +47,19 @@ internal func HCISendCommand(deviceDescriptor: CInt, opcode: (commandField: UInt
     /// data sent to host controller interface...
     
     // build iovec
-    var ioVectors = [iovec](count: 2, repeatedValue: iovec())
+    var ioVectors = [iovec](repeating: iovec(), count: 2)
     
     ioVectors[0] = iovec(byteValue: [packetType])
     ioVectors[1] = iovec(byteValue: header.byteValue)
     
-    defer { ioVectors[0].iov_base.dealloc(ioVectors[0].iov_len) }
-    defer { ioVectors[1].iov_base.dealloc(ioVectors[1].iov_len) }
+    defer { ioVectors[0].iov_base.deallocateCapacity(ioVectors[0].iov_len) }
+    defer { ioVectors[1].iov_base.deallocateCapacity(ioVectors[1].iov_len) }
     
     if parameterData.isEmpty == false {
         
         ioVectors.append(iovec(byteValue: parameterData))
         
-        defer { ioVectors[2].iov_base.dealloc(ioVectors[2].iov_len) }
+        defer { ioVectors[2].iov_base.deallocateCapacity(ioVectors[2].iov_len) }
     }
     
     // write to device descriptor socket
