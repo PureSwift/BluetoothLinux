@@ -26,7 +26,7 @@ func GATTServerTest(adapter: Adapter) {
         
         let type: Any = GATT.UUID(UUID: attribute.UUID) ?? attribute.UUID
         
-        let value: Any = Bluetooth.UUID(data: attribute.value) ?? String(UTF8Data: attribute.value) ?? attribute.value
+        let value: Any = Bluetooth.UUID(littleEndian: attribute.value.byteValue) ?? String(UTF8Data: attribute.value) ?? attribute.value
         
         print("\(attribute.handle) - \(type)")
         print("Permissions: \(attribute.permissions)")

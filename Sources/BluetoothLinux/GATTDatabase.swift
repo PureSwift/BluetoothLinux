@@ -44,11 +44,6 @@ public struct GATTDatabase {
         return attributes
     }
     
-    /// UUIDs of Services in this database.
-    public var services: [Bluetooth.UUID] {
-        
-        return attributeGroups.map { Bluetooth.UUID(data: $0.service.value)! }
-    }
     
     // MARK: - Methods
     
@@ -171,13 +166,13 @@ public extension GATTDatabase {
         }
         
         /// ATT Attribute Value
-        private func toData() -> Data {
+        private var littleEndian: [UInt8] {
             
             let handleBytes = serviceHandle.littleEndianBytes
             
             let endGroupBytes = endGroupHandle.littleEndianBytes
             
-            return Data(byteValue: [handleBytes.0, handleBytes.1, endGroupBytes.0, endGroupBytes.1] + serviceUUID.toData().byteValue)
+            return [handleBytes.0, handleBytes.1, endGroupBytes.0, endGroupBytes.1] + serviceUUID.littleEndian
         }
     }
     
@@ -206,7 +201,7 @@ public extension GATTDatabase {
             
             self.handle = handle
             self.UUID = GATT.UUID(primaryService: service.primary).toUUID()
-            self.value = service.UUID.toData()
+            self.value = Data(byteValue: service.UUID.littleEndian)
             self.permissions = [.Read] // Read only
         }
         
@@ -215,7 +210,7 @@ public extension GATTDatabase {
             
             self.handle = handle
             self.UUID = GATT.UUID.Include.toUUID()
-            self.value = include.toData()
+            self.value = Data(byteValue: include.littleEndian)
             self.permissions = [.Read] // Read only
         }
         
@@ -228,7 +223,7 @@ public extension GATTDatabase {
                 
                 let propertiesMask = characteristic.properties.optionsBitmask()
                 let valueHandleBytes = (handle + 1).littleEndianBytes
-                let value = [propertiesMask, valueHandleBytes.0, valueHandleBytes.1] + characteristic.UUID.toData().byteValue
+                let value = [propertiesMask, valueHandleBytes.0, valueHandleBytes.1] + characteristic.UUID.littleEndian
                 
                 return Attribute(handle: currentHandle, UUID: GATT.UUID.Characteristic.toUUID(), value: Data(byteValue: value), permissions: [.Read])
             }()
