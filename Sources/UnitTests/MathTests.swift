@@ -85,7 +85,7 @@
             
             for (index, swiftDefinition) in swiftDefinitionList.enumerated() {
                 
-                let cDefinition = cListPointer[index]
+                let cDefinition = CUnsignedLong(bitPattern: CLong(cListPointer[index]))
                 
                 guard swiftDefinition == cDefinition else {
                     

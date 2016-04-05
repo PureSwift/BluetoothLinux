@@ -55,21 +55,21 @@ internal struct IOC {
     /// ((type) << _IOC_TYPESHIFT) | \
     /// ((nr)   << _IOC_NRSHIFT) | \
     /// ((size) << _IOC_SIZESHIFT))
-    static func IOC(direction: CUnsignedInt, _ type: CInt,  _ nr: CInt, _ size: CInt) -> CInt {
+    static func IOC(direction: CUnsignedInt, _ type: CInt,  _ nr: CInt, _ size: CInt) -> CUnsignedLong {
         
         let dir = CInt(direction)
         
-        return (((dir) << DIRSHIFT) | ((type) << TYPESHIFT) | ((nr) << NRSHIFT) | ((size) << SIZESHIFT))
+        return CUnsignedLong(bitPattern: CLong(((dir) << DIRSHIFT) | ((type) << TYPESHIFT) | ((nr) << NRSHIFT) | ((size) << SIZESHIFT)))
     }
     
     @inline(__always)
-    static func IOW<T>(type: CInt, _ nr: CInt, _ size: T.Type) -> CInt {
+    static func IOW<T>(type: CInt, _ nr: CInt, _ size: T.Type) -> CUnsignedLong {
         
         return IOC(WRITE, type, nr, TYPECHECK(size))
     }
     
     @inline(__always)
-    static func IOR<T>(type: CInt, _ nr: CInt, _ size: T.Type) -> CInt {
+    static func IOR<T>(type: CInt, _ nr: CInt, _ size: T.Type) -> CUnsignedLong {
         
         return IOC(READ, type, nr, TYPECHECK(size))
     }
@@ -78,9 +78,7 @@ internal struct IOC {
 // MARK: - Darwin Stubs
 
 #if os(OSX) || os(iOS)
-    
-    func ioctl(d: CInt, _ request: UInt, _ varargs: Any...) -> CInt { stub() }
-    
-    func swift_bluetooth_ioctl(d: CInt, _ command: CInt, _ pointer: UnsafeMutablePointer<Void>) -> CInt { stub() }
+        
+    func swift_bluetooth_ioctl(fd: Int32, _ request: UInt, _ pointer: UnsafeMutablePointer<Void>) -> CInt { stub() }
 
 #endif
