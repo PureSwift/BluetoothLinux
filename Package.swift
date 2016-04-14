@@ -24,5 +24,6 @@ let package = Package(
             dependencies: [.Target(name: "BluetoothLinux")]),
         Target(
             name: "BluetoothLinux")
-    ]
+    ],
+    exclude: ["Xcode", "Sources/UnitTests"]
 )
