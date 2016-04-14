@@ -36,12 +36,12 @@ public extension Adapter {
         
         // set iBeacon data
         var advertisingDataCommand = LowEnergyCommand.SetAdvertisingDataParameter()
-        SetBeaconData(UUID, mayor: mayor, minor: minor, RSSI: UInt8(bitPattern: RSSI), parameter: &advertisingDataCommand)
+        SetBeaconData(UUID: UUID, mayor: mayor, minor: minor, RSSI: UInt8(bitPattern: RSSI), parameter: &advertisingDataCommand)
         
         try deviceRequest(advertisingDataCommand, timeout: commandTimeout)
     }
     
-    func enableAdvertising(enabled: Bool = true, timeout: Int = 1000) throws {
+    func enableAdvertising(_ enabled: Bool = true, timeout: Int = 1000) throws {
         
         let parameter = LowEnergyCommand.SetAdvertiseEnableParameter(enabled: enabled)
         

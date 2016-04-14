@@ -15,7 +15,7 @@
 
 import SwiftFoundation
 
-@noreturn func Error(text: String) {
+@noreturn func Error(_ text: String) {
     print(text)
     exit(1)
 }
@@ -30,4 +30,4 @@ print("Found Bluetooth adapter with device ID: \(adapter.identifier)")
 print("Address: \(adapter.address!)")
 
 /// Perform Test
-GATTServerTest(adapter)
+GATTServerTest(adapter: adapter)

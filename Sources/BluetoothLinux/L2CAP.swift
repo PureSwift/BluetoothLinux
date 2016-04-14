@@ -123,7 +123,7 @@ public final class L2CAPSocket {
     // MARK: - Methods
     
     /// Attempts to change the socket's security level.
-    public func setSecurityLevel(securityLevel: SecurityLevel) throws {
+    public func setSecurityLevel(_ securityLevel: SecurityLevel) throws {
         
         // set security level
         var security = bt_security()
@@ -150,7 +150,7 @@ public final class L2CAPSocket {
     }
 
     /// Reads from the socket.
-    public func recieve(bufferSize: Int = 1024) throws -> Data {
+    public func recieve(_ bufferSize: Int = 1024) throws -> Data {
 
         var buffer = [UInt8](repeating: 0, count: bufferSize)
 
@@ -164,7 +164,7 @@ public final class L2CAPSocket {
     }
 
     /// Write to the socket.
-    public func send(data: Data) throws {
+    public func send(_ data: Data) throws {
         
         var buffer = data.byteValue
         

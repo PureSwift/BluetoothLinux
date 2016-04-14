@@ -29,15 +29,15 @@ public extension Adapter {
     /// - Parameter deviceClass: Device class to filter results by.
     ///
     /// - Parameter options: Array of ```ScanOption```.
-    func scan(duration: Int = 8, scanLimit: Int = 255, deviceClass: DeviceClass? = nil, options: [ScanOption] = []) throws -> [InquiryResult] {
+    func scan(duration: Int = 8, limit: Int = 255, deviceClass: DeviceClass? = nil, options: [ScanOption] = []) throws -> [InquiryResult] {
         
         assert(duration > 0, "Scan must be longer than 0 seconds")
-        assert(scanLimit > 0, "Must scan at least one device")
-        assert(scanLimit <= 255, "Cannot be larger than UInt8.max")
+        assert(limit > 0, "Must scan at least one device")
+        assert(limit <= 255, "Cannot be larger than UInt8.max")
         
         let flags = options.optionsBitmask()
         
-        return try HCIInquiry(identifier, duration: duration, scanLimit: scanLimit, deviceClass: deviceClass, flags: flags)
+        return try HCIInquiry(identifier, duration: duration, scanLimit: limit, deviceClass: deviceClass, flags: flags)
     }
     
     /*
@@ -95,7 +95,7 @@ public extension Adapter {
 
 // MARK: - Internal HCI Functions
 
-internal func HCIInquiry(deviceIdentifier: CInt, duration: Int, scanLimit: Int, deviceClass: Adapter.DeviceClass? = nil, flags: CInt) throws -> [Adapter.InquiryResult] {
+internal func HCIInquiry(_ deviceIdentifier: CInt, duration: Int, scanLimit: Int, deviceClass: Adapter.DeviceClass? = nil, flags: CInt) throws -> [Adapter.InquiryResult] {
     
     typealias InquiryResult = Adapter.InquiryResult
     

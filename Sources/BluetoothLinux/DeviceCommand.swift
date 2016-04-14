@@ -17,12 +17,12 @@ import Bluetooth
 
 public extension Adapter {
     
-    func deviceCommand<T: HCICommand>(command: T) throws {
+    func deviceCommand<T: HCICommand>(_ command: T) throws {
         
         try HCISendCommand(internalSocket, opcode: (command.rawValue, T.opcodeGroupField.rawValue))
     }
     
-    func deviceCommand<T: HCICommandParameter>(commandParameter: T) throws {
+    func deviceCommand<T: HCICommandParameter>(_ commandParameter: T) throws {
         
         let command = T.command
         
@@ -36,7 +36,7 @@ public extension Adapter {
 
 // MARK: - Internal HCI Function
 
-internal func HCISendCommand(deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), parameterData: [UInt8] = []) throws {
+internal func HCISendCommand(_ deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), parameterData: [UInt8] = []) throws {
     
     let packetType = HCIPacketType.Command.rawValue
     
@@ -71,7 +71,7 @@ internal func HCISendCommand(deviceDescriptor: CInt, opcode: (commandField: UInt
 }
 
 @inline(__always)
-internal func HCICommandOpcodePack(commandField: UInt16, _ groupField: UInt16) -> UInt16 {
+internal func HCICommandOpcodePack(_ commandField: UInt16, _ groupField: UInt16) -> UInt16 {
     
     return (commandField & 0x03ff) | (groupField << 10)
 }

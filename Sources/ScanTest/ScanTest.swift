@@ -24,7 +24,7 @@ func ScanTest(adapter: Adapter, timeout: Int) {
     
     let scanResults: [Adapter.InquiryResult]
     
-    do { scanResults = try adapter.scan(timeout) }
+    do { scanResults = try adapter.scan(duration: timeout) }
         
     catch { Error("Could not scan: \(error)") }
     

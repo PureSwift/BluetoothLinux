@@ -103,8 +103,7 @@ public enum AdapterError: ErrorProtocol {
 
 // MARK: - Internal HCI Functions
 
-/// int hci_open_dev(int dev_id)
-internal func HCIOpenDevice(deviceIdentifier: CInt) throws -> CInt {
+internal func HCIOpenDevice(_ deviceIdentifier: CInt) throws -> CInt {
     
     // Create HCI socket
     let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.HCI.rawValue)
@@ -124,8 +123,7 @@ internal func HCIOpenDevice(deviceIdentifier: CInt) throws -> CInt {
     return hciSocket
 }
 
-/// int hci_for_each_dev(int flag, int (*func)(int dd, int dev_id, long arg)
-internal func HCIIdentifierOfDevice(flagFilter: HCIDeviceFlag = HCIDeviceFlag(), _ predicate: (deviceDescriptor: CInt, deviceIdentifier: CInt) throws -> Bool) throws -> CInt? {
+internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(), _ predicate: (deviceDescriptor: CInt, deviceIdentifier: CInt) throws -> Bool) throws -> CInt? {
 
     // open HCI socket
 
@@ -169,7 +167,7 @@ internal func HCIIdentifierOfDevice(flagFilter: HCIDeviceFlag = HCIDeviceFlag(),
     return nil
 }
 
-internal func HCIGetRoute(address: Address? = nil) throws -> CInt? {
+internal func HCIGetRoute(_ address: Address? = nil) throws -> CInt? {
 
     return try HCIIdentifierOfDevice { (dd, deviceIdentifier) in
 
@@ -185,8 +183,7 @@ internal func HCIGetRoute(address: Address? = nil) throws -> CInt? {
     }
 }
 
-/// int hci_devinfo(int dev_id, struct hci_dev_info *di)
-internal func HCIDeviceInfo(deviceIdentifier: CInt) throws -> HCIDeviceInformation {
+internal func HCIDeviceInfo(_ deviceIdentifier: CInt) throws -> HCIDeviceInformation {
     
     // open HCI socket
     
@@ -204,8 +201,7 @@ internal func HCIDeviceInfo(deviceIdentifier: CInt) throws -> HCIDeviceInformati
     return deviceInfo
 }
 
-/// int hci_devba(int dev_id, bdaddr_t *bdaddr)
-internal func HCIDeviceAddress(deviceIdentifier: CInt) throws -> Address {
+internal func HCIDeviceAddress(_ deviceIdentifier: CInt) throws -> Address {
     
     let deviceInfo = try HCIDeviceInfo(deviceIdentifier)
     
@@ -216,13 +212,13 @@ internal func HCIDeviceAddress(deviceIdentifier: CInt) throws -> Address {
 }
 
 @inline (__always)
-internal func HCITestBit(flag: CInt,  _ options: UInt32) -> Bool {
+internal func HCITestBit(_ flag: CInt,  _ options: UInt32) -> Bool {
 
     return (options + (UInt32(bitPattern: flag) >> 5)) & (1 << (UInt32(bitPattern: flag) & 31)) != 0
 }
 
 @inline (__always)
-internal func HCITestBit(flag: HCI.DeviceFlag, _ options: UInt32) -> Bool {
+internal func HCITestBit(_ flag: HCI.DeviceFlag, _ options: UInt32) -> Bool {
     
     return HCITestBit(flag.rawValue, options)
 }

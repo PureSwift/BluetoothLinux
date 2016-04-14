@@ -108,7 +108,7 @@ public extension Adapter {
     }*/
     
     @inline(__always)
-    func deviceRequest<CP: HCICommandParameter>(commandParameter: CP, timeout: Int = 1000) throws {
+    func deviceRequest<CP: HCICommandParameter>(_ commandParameter: CP, timeout: Int = 1000) throws {
 
         let opcode = (CP.command.rawValue, CP.command.dynamicType.opcodeGroupField.rawValue)
 
@@ -125,7 +125,7 @@ public extension Adapter {
 // MARK: - Internal HCI Functions
 
 /// Returns event parameter data.
-internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), commandParameterData: [UInt8] = [], event: UInt8 = 0, eventParameterLength: Int = 0, timeout: Int = 1000) throws -> [UInt8] {
+internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), commandParameterData: [UInt8] = [], event: UInt8 = 0, eventParameterLength: Int = 0, timeout: Int = 1000) throws -> [UInt8] {
 
     // assertions
     assert(timeout >= 0, "Negative timeout value")
@@ -161,7 +161,7 @@ internal func HCISendRequest(deviceDescriptor: CInt, opcode: (commandField: UInt
         else { throw POSIXError.fromErrorNumber! }
 
     // restore old filter in case of error
-    func restoreFilter(error: ErrorProtocol) -> ErrorProtocol {
+    func restoreFilter(_ error: ErrorProtocol) -> ErrorProtocol {
 
         guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, filterLength) == 0
             else { return AdapterError.CouldNotRestoreFilter(error, POSIXError.fromErrorNumber!) }

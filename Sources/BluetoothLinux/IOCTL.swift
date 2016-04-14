@@ -45,7 +45,7 @@ internal struct IOC {
     static let READ         = CUnsignedInt(2)
     
     @inline(__always)
-    static func TYPECHECK<T>(type: T.Type) -> CInt {
+    static func TYPECHECK<T>(_ type: T.Type) -> CInt {
         
         return CInt(sizeof(type))
     }
@@ -55,7 +55,7 @@ internal struct IOC {
     /// ((type) << _IOC_TYPESHIFT) | \
     /// ((nr)   << _IOC_NRSHIFT) | \
     /// ((size) << _IOC_SIZESHIFT))
-    static func IOC(direction: CUnsignedInt, _ type: CInt,  _ nr: CInt, _ size: CInt) -> CUnsignedLong {
+    static func IOC(_ direction: CUnsignedInt, _ type: CInt,  _ nr: CInt, _ size: CInt) -> CUnsignedLong {
         
         let dir = CInt(direction)
         
@@ -63,13 +63,13 @@ internal struct IOC {
     }
     
     @inline(__always)
-    static func IOW<T>(type: CInt, _ nr: CInt, _ size: T.Type) -> CUnsignedLong {
+    static func IOW<T>(_ type: CInt, _ nr: CInt, _ size: T.Type) -> CUnsignedLong {
         
         return IOC(WRITE, type, nr, TYPECHECK(size))
     }
     
     @inline(__always)
-    static func IOR<T>(type: CInt, _ nr: CInt, _ size: T.Type) -> CUnsignedLong {
+    static func IOR<T>(_ type: CInt, _ nr: CInt, _ size: T.Type) -> CUnsignedLong {
         
         return IOC(READ, type, nr, TYPECHECK(size))
     }
@@ -79,6 +79,6 @@ internal struct IOC {
 
 #if os(OSX) || os(iOS)
         
-    func swift_bluetooth_ioctl(fd: Int32, _ request: UInt, _ pointer: UnsafeMutablePointer<Void>) -> CInt { stub() }
+    func swift_bluetooth_ioctl(_ fd: Int32, _ request: UInt, _ pointer: UnsafeMutablePointer<Void>) -> CInt { stub() }
 
 #endif

@@ -324,7 +324,7 @@ internal struct HCIFilter {
     }
     
     @inline(__always)
-    mutating func setPacketType(type: HCIPacketType) {
+    mutating func setPacketType(_ type: HCIPacketType) {
         
         let bit = type == .Vendor ? 0 : CInt(type.rawValue) & HCIFilter.Bits.FilterType
         
@@ -332,7 +332,7 @@ internal struct HCIFilter {
     }
     
     @inline(__always)
-    mutating func setEvent(event: UInt8) {
+    mutating func setEvent(_ event: UInt8) {
         
         let bit = (CInt(event) & HCIFilter.Bits.Event)
         
@@ -340,7 +340,7 @@ internal struct HCIFilter {
     }
     
     @inline(__always)
-    mutating func setEvent(event1: UInt8, _ event2: UInt8, _ event3: UInt8, _ event4: UInt8) {
+    mutating func setEvent(_ event1: UInt8, _ event2: UInt8, _ event3: UInt8, _ event4: UInt8) {
         
         eventMask.0 = 0
         eventMask.0 += UInt32(event4) << 0o30
@@ -353,7 +353,7 @@ internal struct HCIFilter {
 // HCI Bit functions
 
 @inline(__always)
-internal func HCISetBit(bit: CInt, _ destination: UnsafeMutablePointer<Void>) {
+internal func HCISetBit(_ bit: CInt, _ destination: UnsafeMutablePointer<Void>) {
     
     #if os(OSX)
         //func swift_bluetooth_hci_set_bit(_: CInt, _: UnsafeMutablePointer<Void>) { stub() }

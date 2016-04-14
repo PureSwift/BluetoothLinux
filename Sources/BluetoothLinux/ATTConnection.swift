@@ -100,20 +100,20 @@ public final class ATTConnection {
             
         case .Response:
             
-            try handleResponse(recievedData, opcode: opcode)
+            try handle(response: recievedData, opcode: opcode)
             
         case .Confirmation:
             
-            try handleConfirmation(recievedData, opcode: opcode)
+            try handle(confirmation: recievedData, opcode: opcode)
             
         case .Request:
             
-            try handleRequest(recievedData, opcode: opcode)
+            try handle(request: recievedData, opcode: opcode)
             
         case .Command, .Notification, .Indication:
             
             // For all other opcodes notify the upper layer of the PDU and let them act on it.
-            try handleNotify(recievedData, opcode: opcode)
+            try handle(notify: recievedData, opcode: opcode)
         }
     }
     
@@ -166,7 +166,7 @@ public final class ATTConnection {
     }
     
     /// Registers a callback for an opcode and returns the ID associated with that callback.
-    public func register<T: ATTProtocolDataUnit>(callback: T -> ()) -> UInt {
+    public func register<T: ATTProtocolDataUnit>(_ callback: T -> ()) -> UInt {
         
         let identifier = nextRegisterID
         
@@ -185,12 +185,12 @@ public final class ATTConnection {
     /// Unregisters the callback associated with the specified identifier.
     ///
     /// - Returns: Whether the callback was unregistered.
-    public func unregister(identifier: UInt) -> Bool {
+    public func unregister(_ identifier: UInt) -> Bool {
         
         guard let index = notifyList.index(where: { $0.identifier == identifier })
             else { return false }
         
-        notifyList.removeAtIndex(index)
+        notifyList.remove(at: index)
         
         return true
     }
@@ -204,11 +204,11 @@ public final class ATTConnection {
     }
     
     /// Sends an error.
-    public func sendError(opcode: ATTOpcode, error: ATT.Error, handle: UInt16 = 0, response: (ATTErrorResponse -> ())? = nil) -> UInt? {
+    public func send(error: ATT.Error, opcode: ATTOpcode, handle: UInt16 = 0, response: (ATTErrorResponse -> ())? = nil) -> UInt? {
         
         let error = ATTErrorResponse(requestOpcode: opcode, attributeHandle: handle, error: error)
         
-        return self.send(error) { response?($0) }
+        return self.send(PDU: error) { response?($0) }
     }
     
     /// Adds a PDU to the queue to send.
@@ -220,7 +220,7 @@ public final class ATTConnection {
         
         let type = attributeOpcode.type
         
-        guard let encodedPDU = encodePDU(PDU)
+        guard let encodedPDU = encode(PDU: PDU)
             else { return nil }
         
         let identifier = nextSendOpcodeID
@@ -251,7 +251,7 @@ public final class ATTConnection {
         return sendOpcode.identifier
     }
     
-    public func cancel(identifier: UInt) {
+    public func cancel(_ identifier: UInt) {
         
         //wakeup_writer(att);
     }
@@ -263,7 +263,7 @@ public final class ATTConnection {
     
     // MARK: - Private Methods
     
-    private func encodePDU<T: ATTProtocolDataUnit>(PDU: T) -> [UInt8]? {
+    private func encode<T: ATTProtocolDataUnit>(PDU: T) -> [UInt8]? {
         
         let data = PDU.byteValue
         
@@ -280,7 +280,7 @@ public final class ATTConnection {
         return data
     }
     
-    private func handleResponse(data: Data, opcode: ATT.Opcode) throws {
+    private func handle(response data: Data, opcode: ATT.Opcode) throws {
         
         // If no request is pending, then the response is unexpected. Disconnect the bearer.
         guard let sendOpcode = pendingRequest else {
@@ -307,7 +307,7 @@ public final class ATTConnection {
         //wakeup_writer(att);
     }
     
-    private func handleConfirmation(data: Data, opcode: ATT.Opcode) throws {
+    private func handle(confirmation data: Data, opcode: ATT.Opcode) throws {
         
         // Disconnect the bearer if the confirmation is unexpected or the PDU is invalid.
         
@@ -329,7 +329,7 @@ public final class ATTConnection {
         //wakeup_writer(att);
     }
     
-    private func handleRequest(data: Data, opcode: ATT.Opcode) throws {
+    private func handle(request data: Data, opcode: ATT.Opcode) throws {
         
         /*
         * If a request is currently pending, then the sequential
@@ -344,10 +344,10 @@ public final class ATTConnection {
         incomingRequest = true
         
         // notify
-        try handleNotify(data, opcode: opcode)
+        try handle(notify: data, opcode: opcode)
     }
     
-    private func handleNotify(data: Data, opcode: ATT.Opcode) throws {
+    private func handle(notify data: Data, opcode: ATT.Opcode) throws {
         
         var foundPDU: ATTProtocolDataUnit?
         
@@ -373,7 +373,7 @@ public final class ATTConnection {
             
             let errorResponse = ATTErrorResponse(requestOpcode: opcode, attributeHandle: 0x00, error: .RequestNotSupported)
             
-            send(errorResponse) { _ in }
+            send(PDU: errorResponse) { _ in }
         }
         
     }

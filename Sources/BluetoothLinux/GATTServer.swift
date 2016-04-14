@@ -89,16 +89,16 @@ public final class GATTServer {
     }
     
     @inline(__always)
-    private func errorResponse(opcode: ATT.Opcode, _ error: ATT.Error, _ handle: UInt16 = 0) {
+    private func errorResponse(_ opcode: ATT.Opcode, _ error: ATT.Error, _ handle: UInt16 = 0) {
         
         log?("Error \(error) - \(opcode) (\(handle))")
         
-        guard let _ = connection.sendError(opcode, error: error, handle: handle)
+        guard let _ = connection.send(error: error, opcode: opcode, handle: handle)
             else { fatalError("Could not add error PDU to queue: \(opcode) \(error) \(handle)") }
     }
     
     @noreturn @inline(__always)
-    private func fatalErrorResponse(message: String, _ opcode: ATT.Opcode, _ handle: UInt16 = 0, line: UInt = #line) {
+    private func fatalErrorResponse(_ message: String, _ opcode: ATT.Opcode, _ handle: UInt16 = 0, line: UInt = #line) {
         
         errorResponse(opcode, ATT.Error.UnlikelyError, handle)
         
@@ -110,15 +110,15 @@ public final class GATTServer {
     }
     
     @inline(__always)
-    private func respond<T: ATTProtocolDataUnit>(response: T) {
+    private func respond<T: ATTProtocolDataUnit>(_ response: T) {
         
         log?("Response: \(response)")
         
-        guard let _ = connection.send(response, response: { _ in })
+        guard let _ = connection.send(PDU: response, response: { _ in })
             else { fatalError("Could not add PDU to queue: \(response)") }
     }
     
-    private func checkPermissions(permissions: [ATT.AttributePermission], _ attribute: GATTDatabase.Attribute) -> ATT.Error? {
+    private func checkPermissions(_ permissions: [ATT.AttributePermission], _ attribute: GATTDatabase.Attribute) -> ATT.Error? {
         
         guard attribute.permissions != permissions else { return nil }
         
@@ -159,7 +159,7 @@ public final class GATTServer {
         
         /// Conditionally respond
         @inline(__always)
-        func doResponse(@autoclosure block: () -> ()) {
+        func doResponse(@autoclosure _ block: () -> ()) {
             
             if shouldRespond { block() }
         }
@@ -241,7 +241,7 @@ public final class GATTServer {
         let finalMTU = max(min(pdu.clientMTU, serverMTU), UInt16(ATT.MTU.LowEnergy.Default))
         
         // Respond with the server MTU
-        connection.send(ATTMaximumTranssmissionUnitResponse(serverMTU: serverMTU)) { _ in }
+        connection.send(PDU: ATTMaximumTranssmissionUnitResponse(serverMTU: serverMTU)) { _ in }
         
         // Set MTU to minimum
         connection.maximumTransmissionUnit = Int(finalMTU)
@@ -269,7 +269,7 @@ public final class GATTServer {
         guard pdu.type == GATT.UUID.PrimaryService.toUUID() || pdu.type == GATT.UUID.SecondaryService.toUUID()
             else { errorResponse(opcode, .UnsupportedGroupType, pdu.startHandle); return }
         
-        let data = database.readByGroupType(pdu.startHandle ..< pdu.endHandle, type: pdu.type)
+        let data = database.readByGroupType(handle: (pdu.startHandle, pdu.endHandle), type: pdu.type)
         
         guard data.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
@@ -469,45 +469,45 @@ public final class GATTServer {
         respond(response)
     }
     
-    private func writeRequest(pdu: ATTWriteRequest) {
+    private func writeRequest(_ pdu: ATTWriteRequest) {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
-        handleWriteRequest(opcode, handle: pdu.handle, value: pdu.value, shouldRespond: true)
+        handleWriteRequest(opcode: opcode, handle: pdu.handle, value: pdu.value, shouldRespond: true)
     }
     
-    private func writeCommand(pdu: ATTWriteCommand) {
+    private func writeCommand(_ pdu: ATTWriteCommand) {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
-        handleWriteRequest(opcode, handle: pdu.handle, value: pdu.value, shouldRespond: false)
+        handleWriteRequest(opcode: opcode, handle: pdu.handle, value: pdu.value, shouldRespond: false)
     }
     
-    private func readRequest(pdu: ATTReadRequest) {
+    private func readRequest(_ pdu: ATTReadRequest) {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
         log?("Read (\(pdu.handle))")
         
-        if let value = handleReadRequest(opcode, handle: pdu.handle) {
+        if let value = handleReadRequest(opcode: opcode, handle: pdu.handle) {
             
             respond(ATTReadResponse(attributeValue: value))
         }
     }
     
-    private func readBlobRequest(pdu: ATTReadBlobRequest) {
+    private func readBlobRequest(_ pdu: ATTReadBlobRequest) {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
         log?("Read Blob (\(pdu.handle))")
         
-        if let value = handleReadRequest(opcode, handle: pdu.handle, offset: pdu.offset) {
+        if let value = handleReadRequest(opcode: opcode, handle: pdu.handle, offset: pdu.offset) {
             
             respond(ATTReadBlobResponse(partAttributeValue: value))
         }
     }
     
-    private func readMultipleRequest(pdu: ATTReadMultipleRequest) {
+    private func readMultipleRequest(_ pdu: ATTReadMultipleRequest) {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
@@ -542,7 +542,9 @@ public final class GATTServer {
 internal extension GATTDatabase {
     
     /// Used for Service discovery. Should return tuples with the Service start handle, end handle and UUID.
-    func readByGroupType(handle: Range<UInt16>, type: Bluetooth.UUID) -> [(start: UInt16, end: UInt16, UUID: Bluetooth.UUID)] {
+    func readByGroupType(handle: (start: UInt16, end: UInt16), type: Bluetooth.UUID) -> [(start: UInt16, end: UInt16, UUID: Bluetooth.UUID)] {
+        
+        let handleRange = handle.end < UInt16.max ? handle.start ... handle.end : handle.start ..< handle.end
         
         var data: [(start: UInt16, end: UInt16, UUID: Bluetooth.UUID)] = []
         
@@ -552,7 +554,7 @@ internal extension GATTDatabase {
             
             let groupRange = group.startHandle ... group.endHandle
             
-            guard groupRange.isSubset(handle) else { continue }
+            guard groupRange.isSubset(handleRange) else { continue }
             
             let serviceUUID = Bluetooth.UUID(littleEndian: group.service.value.byteValue)!
             
@@ -562,21 +564,21 @@ internal extension GATTDatabase {
         return data
     }
     
-    func readByType(handle handle: (start: UInt16, end: UInt16), type: Bluetooth.UUID) -> [Attribute] {
+    func readByType(handle: (start: UInt16, end: UInt16), type: Bluetooth.UUID) -> [Attribute] {
         
         let range = handle.end < UInt16.max ? handle.start ... handle.end : handle.start ..< handle.end
         
         return attributes.filter { range.contains($0.handle) && $0.UUID == type }
     }
     
-    func findInformation(handle handle: (start: UInt16, end: UInt16)) -> [Attribute] {
+    func findInformation(handle: (start: UInt16, end: UInt16)) -> [Attribute] {
         
         let range = handle.end < UInt16.max ? handle.start ... handle.end : handle.start ..< handle.end
         
         return attributes.filter { range.contains($0.handle) }
     }
     
-    func findByTypeValue(handle handle: (start: UInt16, end: UInt16), type: UInt16, value: [UInt8]) -> [(UInt16, UInt16)] {
+    func findByTypeValue(handle: (start: UInt16, end: UInt16), type: UInt16, value: [UInt8]) -> [(UInt16, UInt16)] {
         
         let range = handle.end < UInt16.max ? handle.start ... handle.end : handle.start ..< handle.end
         

@@ -46,7 +46,7 @@ public struct GATTDatabase {
     
     // MARK: - Methods
     
-    public mutating func add(service: Service) -> Int {
+    public mutating func add(_ service: Service) -> Int {
         
         let serviceAttribute = Attribute(service: service, handle: newHandle())
         
@@ -54,7 +54,7 @@ public struct GATTDatabase {
         
         for characteristic in service.characteristics {
             
-            attributes += Attribute.fromCharacteristic(characteristic, handle: newHandle())
+            attributes += Attribute.from(characteristic: characteristic, handle: newHandle())
             
             lastHandle = attributes.last!.handle
         }
@@ -79,7 +79,7 @@ public struct GATTDatabase {
     }
     
     /// Write the value to attribute specified by the handle.
-    public mutating func write(value: Data, forAttribute handle: UInt16) {
+    public mutating func write(_ value: Data, forAttribute handle: UInt16) {
         
         self[handle].value = value
     }
@@ -214,7 +214,7 @@ public extension GATTDatabase {
         }
         
         /// Initialize attributes from a `Characteristic`.
-        private static func fromCharacteristic(characteristic: Characteristic, handle: UInt16) -> [Attribute] {
+        private static func from(characteristic: Characteristic, handle: UInt16) -> [Attribute] {
             
             var currentHandle = handle
             
