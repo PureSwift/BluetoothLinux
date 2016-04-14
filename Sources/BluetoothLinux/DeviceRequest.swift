@@ -107,7 +107,6 @@ public extension Adapter {
             else { throw AdapterError.DeviceRequestStatus(statusByte) }
     }*/
     
-    @inline(__always)
     func deviceRequest<CP: HCICommandParameter>(_ commandParameter: CP, timeout: Int = 1000) throws {
 
         let opcode = (CP.command.rawValue, CP.command.dynamicType.opcodeGroupField.rawValue)
