@@ -18,6 +18,10 @@ public final class GATTServer {
     
     public var database = GATTDatabase()
     
+    public var willRead: ((UUID: Bluetooth.UUID, value: Data, offset: Int) -> ATT.Error?)?
+    
+    public var willWrite: ((UUID: Bluetooth.UUID, value: Data, newValue: (newValue: Data, newBytes: Data, offset: Int)) -> ATT.Error?)?
+    
     // MARK: - Private Properties
     
     private let connection: ATTConnection
@@ -155,6 +159,7 @@ public final class GATTServer {
         return nil
     }
     
+    /// Handler for Write Request and Command
     private func handleWriteRequest(opcode: ATT.Opcode, handle: UInt16, value: [UInt8], shouldRespond: Bool) {
         
         /// Conditionally respond
@@ -184,7 +189,16 @@ public final class GATTServer {
             return
         }
         
-        database.write(Data(byteValue: value), forAttribute: handle)
+        let newData = Data(byteValue: value)
+        
+        // validate application errors with write callback
+        if let error = willWrite?(UUID: attribute.UUID, value: attribute.value, newValue: (newData, newData, 0)) {
+            
+            doResponse(errorResponse(opcode, error, handle))
+            return
+        }
+        
+        database.write(newData, forAttribute: handle)
         
         doResponse(respond(ATTWriteResponse()))
     }
@@ -227,6 +241,13 @@ public final class GATTServer {
         } else {
             
             value = attribute.value.byteValue
+        }
+        
+        // validate application errors with read callback
+        if let error = willRead?(UUID: attribute.UUID, value: Data(byteValue: value), offset: Int(offset)) {
+            
+            errorResponse(opcode, error, handle)
+            return nil
         }
         
         return value
@@ -469,21 +490,21 @@ public final class GATTServer {
         respond(response)
     }
     
-    private func writeRequest(_ pdu: ATTWriteRequest) {
+    private func writeRequest(pdu: ATTWriteRequest) {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
         handleWriteRequest(opcode: opcode, handle: pdu.handle, value: pdu.value, shouldRespond: true)
     }
     
-    private func writeCommand(_ pdu: ATTWriteCommand) {
+    private func writeCommand(pdu: ATTWriteCommand) {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
         handleWriteRequest(opcode: opcode, handle: pdu.handle, value: pdu.value, shouldRespond: false)
     }
     
-    private func readRequest(_ pdu: ATTReadRequest) {
+    private func readRequest(pdu: ATTReadRequest) {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
@@ -495,7 +516,7 @@ public final class GATTServer {
         }
     }
     
-    private func readBlobRequest(_ pdu: ATTReadBlobRequest) {
+    private func readBlobRequest(pdu: ATTReadBlobRequest) {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
@@ -507,7 +528,7 @@ public final class GATTServer {
         }
     }
     
-    private func readMultipleRequest(_ pdu: ATTReadMultipleRequest) {
+    private func readMultipleRequest(pdu: ATTReadMultipleRequest) {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
@@ -527,6 +548,13 @@ public final class GATTServer {
             
             // get attribute
             let attribute = database[handle]
+            
+            // validate application errors with read callback
+            if let error = willRead?(UUID: attribute.UUID, value: attribute.value, offset: 0) {
+                
+                errorResponse(opcode, error, handle)
+                return
+            }
             
             values += attribute.value.byteValue
         }
