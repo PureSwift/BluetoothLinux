@@ -46,7 +46,7 @@ public struct GATTDatabase {
     
     // MARK: - Methods
     
-    public mutating func add(_ service: Service) -> Int {
+    public mutating func add(service: Service) -> Int {
         
         let serviceAttribute = Attribute(service: service, handle: newHandle())
         

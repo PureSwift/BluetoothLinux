@@ -73,7 +73,7 @@ private func generateDB() -> GATTDatabase {
     
     for service in TestData.services {
         
-        database.add(service)
+        database.add(service: service)
     }
     
     return database

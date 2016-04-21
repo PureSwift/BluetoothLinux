@@ -22,15 +22,20 @@ public final class GATTServer {
     
     public var willWrite: ((UUID: Bluetooth.UUID, value: Data, newValue: (newValue: Data, newBytes: Data, offset: Int)) -> ATT.Error?)?
     
+    public let maximumPreparedWrites: Int
+    
     // MARK: - Private Properties
     
     private let connection: ATTConnection
     
+    private var preparedWrites = [PreparedWrite]()
+    
     // MARK: - Initialization
     
-    public init(socket: L2CAPSocket, maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default) {
+    public init(socket: L2CAPSocket, maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default, maximumPreparedWrites: Int = 50) {
         
         // set initial MTU and register handlers
+        self.maximumPreparedWrites = maximumPreparedWrites
         self.connection = ATTConnection(socket: socket)
         self.connection.maximumTransmissionUnit = maximumTransmissionUnit
         self.registerATTHandlers()
@@ -88,8 +93,10 @@ public final class GATTServer {
         connection.register(readMultipleRequest)
         
         // Prepare Write Request
+        connection.register(prepareWriteRequest)
         
         // Execute Write Request
+        connection.register(executeWriteRequest)
     }
     
     @inline(__always)
@@ -251,6 +258,19 @@ public final class GATTServer {
         }
         
         return value
+    }
+    
+    private func prepareNewValue(currentValue: [UInt8], newBytes: [UInt8], offset: UInt16) -> [UInt8] {
+        
+        let offsetIndex = Int(offset)
+        
+        let prefixBytes = currentValue.isEmpty ? [] : Array(currentValue[0 ... offsetIndex])
+        
+        let suffixIndex = offsetIndex + newBytes.count
+        
+        let suffixBytes = currentValue.endIndex < suffixIndex ? [] : Array(currentValue[suffixIndex ... currentValue.endIndex])
+        
+        return prefixBytes + newBytes + suffixBytes
     }
     
     // MARK: Callbacks
@@ -562,6 +582,113 @@ public final class GATTServer {
         let response = ATTReadMultipleResponse(values: values)
         
         respond(response)
+    }
+    
+    private func prepareWriteRequest(_ pdu: ATTPrepareWriteRequest) {
+        
+        let opcode = pdu.dynamicType.attributeOpcode
+        
+        log?("Prepare Write Request (\(pdu.handle))")
+        
+        // no attributes, impossible to write
+        guard database.attributes.isEmpty == false
+            else { errorResponse(opcode, .InvalidHandle, pdu.handle); return }
+        
+        // validate handle
+        guard (1 ... UInt16(database.attributes.count)).contains(pdu.handle)
+            else { errorResponse(opcode, .InvalidHandle, pdu.handle); return }
+        
+        // validate that the prepared writes queue is not full
+        guard preparedWrites.count <= maximumPreparedWrites
+            else { errorResponse(opcode, .PrepareQueueFull); return }
+        
+        // validate handle
+        guard (1 ... UInt16(database.attributes.count)).contains(pdu.handle)
+            else { errorResponse(opcode, .InvalidHandle, pdu.handle); return }
+        
+        // get attribute
+        let attribute = database[pdu.handle]
+        
+        // validate permissions
+        if let error = checkPermissions([.Write, .WriteAuthentication, .WriteEncrypt], attribute) {
+            
+            errorResponse(opcode, error, pdu.handle)
+            return
+        }
+        
+        // The Attribute Value validation is done when an Execute Write Request is received.
+        // Hence, any Invalid Offset or Invalid Attribute Value Length errors are generated 
+        // when an Execute Write Request is received.
+        
+        // add queued write
+        let preparedWrite = PreparedWrite(handle: pdu.handle, value: pdu.partValue, offset: pdu.offset)
+        
+        preparedWrites.append(preparedWrite)
+        
+        let response = ATTPrepareWriteResponse(handle: pdu.handle, offset: pdu.offset, partValue: pdu.partValue)
+        
+        respond(response)
+    }
+    
+    private func executeWriteRequest(_ pdu: ATTExecuteWriteRequest) {
+        
+        let opcode = pdu.dynamicType.attributeOpcode
+        
+        log?("Execute Write Request (\(pdu.flag))")
+        
+        switch pdu.flag {
+            
+        case .Cancel:
+            
+            preparedWrites = []
+            
+            respond(ATTExecuteWriteRequest())
+            
+        case .Write:
+            
+            var newValues = [Data](repeating: Data(), count: preparedWrites.count)
+            
+            // validate
+            for (index, write) in preparedWrites.enumerated() {
+                
+                let attribute = database[write.handle]
+                
+                let newData = prepareNewValue(currentValue: attribute.value.byteValue, newBytes: write.value, offset: write.offset)
+                
+                // validate application errors with write callback
+                if let error = willWrite?(UUID: attribute.UUID, value: attribute.value, newValue: (Data(byteValue: newData), Data(byteValue: write.value), Int(write.offset))) {
+                    
+                    errorResponse(opcode, error, write.handle)
+                    return
+                }
+                
+                newValues[index] = Data(byteValue: newData)
+            }
+            
+            // write
+            for (index, write) in preparedWrites.enumerated() {
+                
+                let newValue = newValues[index]
+                
+                database.write(newValue, forAttribute: write.handle)
+            }
+            
+            respond(ATTExecuteWriteRequest())
+        }
+    }
+}
+
+// MARK: - Supporting Types
+
+private extension GATTServer {
+    
+    struct PreparedWrite {
+        
+        let handle: UInt16
+        
+        let value: [UInt8]
+        
+        let offset: UInt16
     }
 }
 
