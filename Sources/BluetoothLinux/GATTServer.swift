@@ -638,12 +638,6 @@ public final class GATTServer {
         
         switch pdu.flag {
             
-        case .Cancel:
-            
-            preparedWrites = []
-            
-            respond(ATTExecuteWriteRequest())
-            
         case .Write:
             
             var newValues = [Data](repeating: Data(), count: preparedWrites.count)
@@ -673,8 +667,12 @@ public final class GATTServer {
                 database.write(newValue, forAttribute: write.handle)
             }
             
-            respond(ATTExecuteWriteRequest())
+        case .Cancel: break // queue always cleared
         }
+        
+        preparedWrites = []
+        
+        respond(ATTExecuteWriteRequest())
     }
 }
 
