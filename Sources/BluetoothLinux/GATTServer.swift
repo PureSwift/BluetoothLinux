@@ -264,11 +264,11 @@ public final class GATTServer {
         
         let offsetIndex = Int(offset)
         
-        let prefixBytes = currentValue.isEmpty ? [] : Array(currentValue[0 ... offsetIndex])
+        let prefixBytes = offsetIndex > currentValue.endIndex ? [] : Array(currentValue.prefix(offsetIndex))
         
-        let suffixIndex = offsetIndex + newBytes.count
+        let suffixIndex = prefixBytes.count + newBytes.count - 1
         
-        let suffixBytes = currentValue.endIndex < suffixIndex ? [] : Array(currentValue[suffixIndex ... currentValue.endIndex])
+        let suffixBytes = suffixIndex > currentValue.endIndex ? [] : Array(currentValue.suffix(from: suffixIndex))
         
         return prefixBytes + newBytes + suffixBytes
     }
@@ -672,7 +672,7 @@ public final class GATTServer {
         
         preparedWrites = []
         
-        respond(ATTExecuteWriteRequest())
+        respond(ATTExecuteWriteResponse())
     }
 }
 
