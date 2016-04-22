@@ -46,7 +46,7 @@ public struct GATTDatabase {
     
     // MARK: - Methods
     
-    public mutating func add(service: Service) -> Int {
+    public mutating func add(service: Service) -> UInt16 {
         
         let serviceAttribute = Attribute(service: service, handle: newHandle())
         
@@ -63,7 +63,7 @@ public struct GATTDatabase {
         
         attributeGroups.append(group)
         
-        return attributeGroups.endIndex
+        return serviceAttribute.handle
     }
     
     /// Clear the database.
@@ -73,9 +73,12 @@ public struct GATTDatabase {
     }
     
     /// Remove the Service at the specified index.
-    public mutating func remove(service index: Int) {
+    public mutating func remove(service handle: UInt16) {
         
-        attributeGroups.remove(at: index)
+        guard let serviceIndex = attributeGroups.index(where: { $0.service.handle == handle })
+            else { fatalError("Service with handle \(handle) doesnt exist") }
+        
+        attributeGroups.remove(at: serviceIndex)
     }
     
     /// Write the value to attribute specified by the handle.
