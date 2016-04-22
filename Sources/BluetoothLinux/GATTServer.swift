@@ -20,7 +20,7 @@ public final class GATTServer {
     
     public var willRead: ((UUID: Bluetooth.UUID, value: Data, offset: Int) -> ATT.Error?)?
     
-    public var willWrite: ((UUID: Bluetooth.UUID, value: Data, newValue: (newValue: Data, newBytes: Data, offset: Int)) -> ATT.Error?)?
+    public var willWrite: ((UUID: Bluetooth.UUID, value: Data, newValue: Data) -> ATT.Error?)?
     
     public let maximumPreparedWrites: Int
     
@@ -199,7 +199,7 @@ public final class GATTServer {
         let newData = Data(byteValue: value)
         
         // validate application errors with write callback
-        if let error = willWrite?(UUID: attribute.UUID, value: attribute.value, newValue: (newData, newData, 0)) {
+        if let error = willWrite?(UUID: attribute.UUID, value: attribute.value, newValue: newData) {
             
             doResponse(errorResponse(opcode, error, handle))
             return
@@ -258,19 +258,6 @@ public final class GATTServer {
         }
         
         return value
-    }
-    
-    private func prepareNewValue(currentValue: [UInt8], newBytes: [UInt8], offset: UInt16) -> [UInt8] {
-        
-        let offsetIndex = Int(offset)
-        
-        let prefixBytes = offsetIndex > currentValue.endIndex ? [] : Array(currentValue.prefix(offsetIndex))
-        
-        let suffixIndex = prefixBytes.count + newBytes.count - 1
-        
-        let suffixBytes = suffixIndex > currentValue.endIndex ? [] : Array(currentValue.suffix(from: suffixIndex))
-        
-        return prefixBytes + newBytes + suffixBytes
     }
     
     // MARK: Callbacks
@@ -584,7 +571,7 @@ public final class GATTServer {
         respond(response)
     }
     
-    private func prepareWriteRequest(_ pdu: ATTPrepareWriteRequest) {
+    private func prepareWriteRequest(pdu: ATTPrepareWriteRequest) {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
@@ -630,7 +617,7 @@ public final class GATTServer {
         respond(response)
     }
     
-    private func executeWriteRequest(_ pdu: ATTExecuteWriteRequest) {
+    private func executeWriteRequest(pdu: ATTExecuteWriteRequest) {
         
         let opcode = pdu.dynamicType.attributeOpcode
         
@@ -640,31 +627,37 @@ public final class GATTServer {
             
         case .Write:
             
-            var newValues = [Data](repeating: Data(), count: preparedWrites.count)
+            var newValues = [UInt16: Data]()
             
             // validate
-            for (index, write) in preparedWrites.enumerated() {
+            for write in preparedWrites {
                 
-                let attribute = database[write.handle]
+                let previousValue = newValues[write.handle] ?? Data()
                 
-                let newData = prepareNewValue(currentValue: attribute.value.byteValue, newBytes: write.value, offset: write.offset)
+                let newValue = previousValue.byteValue + write.value
                 
-                // validate application errors with write callback
-                if let error = willWrite?(UUID: attribute.UUID, value: attribute.value, newValue: (Data(byteValue: newData), Data(byteValue: write.value), Int(write.offset))) {
-                    
-                    errorResponse(opcode, error, write.handle)
-                    return
-                }
+                // validate offset?
                 
-                newValues[index] = Data(byteValue: newData)
+                newValues[write.handle] = Data(byteValue: newValue)
             }
             
-            // write
-            for (index, write) in preparedWrites.enumerated() {
+            // validate new values
+            for (handle, newValue) in newValues {
                 
-                let newValue = newValues[index]
+                let attribute = database[handle]
                 
-                database.write(newValue, forAttribute: write.handle)
+                // validate application errors with write callback
+                if let error = willWrite?(UUID: attribute.UUID, value: attribute.value, newValue: newValue) {
+                    
+                    errorResponse(opcode, error, handle)
+                    return
+                }
+            }
+            
+            // write new values
+            for (handle, newValue) in newValues {
+                
+                database.write(newValue, forAttribute: handle)
             }
             
         case .Cancel: break // queue always cleared
