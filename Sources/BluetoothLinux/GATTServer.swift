@@ -234,7 +234,7 @@ public final class GATTServer {
         guard offset <= UInt16(attribute.value.byteValue.count)
             else { errorResponse(opcode, .InvalidOffset, handle); return nil }
         
-        let value: [UInt8]
+        var value: [UInt8]
         
         // Guard against invalid access if offset equals to value length
         if offset == UInt16(attribute.value.byteValue.count) {
@@ -249,6 +249,9 @@ public final class GATTServer {
             
             value = attribute.value.byteValue
         }
+        
+        // adjust value for MTU
+        value = Array(value.prefix(connection.maximumTransmissionUnit - 1))
         
         // validate application errors with read callback
         if let error = willRead?(UUID: attribute.UUID, value: Data(byteValue: value), offset: Int(offset)) {
