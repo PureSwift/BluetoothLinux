@@ -243,7 +243,7 @@ public final class GATTServer {
             
         } else if offset > 0 {
             
-            value = Array(attribute.value.byteValue.suffix(Int(offset)))
+            value = Array(attribute.value.byteValue.suffix(from: Int(offset)))
             
         } else {
             
