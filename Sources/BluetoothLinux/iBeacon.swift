@@ -63,7 +63,7 @@ private func SetBeaconData(UUID: SwiftFoundation.UUID, mayor: UInt16, minor: UIn
     parameter.data.5 = 0x4c  // Apple, Inc
     parameter.data.6 = 0x00  // Apple, Inc
     parameter.data.7 = 0x02  // iBeacon
-    parameter.data.8 = 0x15  // length: 16 byte UUID, 2 bytes major & minor, 1 byte RSSI
+    parameter.data.8 = 0x15  // length: 21 = 16 byte UUID + 2 bytes major + 2 bytes minor + 1 byte RSSI
     
     // set UUID bytes
     

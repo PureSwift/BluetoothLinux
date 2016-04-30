@@ -41,33 +41,17 @@ internal func HCISendCommand(_ deviceDescriptor: CInt, opcode: (commandField: UI
     let packetType = HCIPacketType.Command.rawValue
     
     var header = HCICommandHeader()
+    
     header.opcode = HCICommandOpcodePack(opcode.commandField, opcode.groupField).littleEndian
+    
     header.parameterLength = UInt8(parameterData.count)
     
-    /// data sent to host controller interface...
-    
-    // build iovec
-    var ioVectors = [iovec](repeating: iovec(), count: 2)
-    
-    ioVectors[0] = iovec(byteValue: [packetType])
-    ioVectors[1] = iovec(byteValue: header.byteValue)
-    
-    defer { ioVectors[0].iov_base.deallocateCapacity(ioVectors[0].iov_len) }
-    defer { ioVectors[1].iov_base.deallocateCapacity(ioVectors[1].iov_len) }
-    
-    if parameterData.isEmpty == false {
-        
-        ioVectors.append(iovec(byteValue: parameterData))
-        
-        defer { ioVectors[2].iov_base.deallocateCapacity(ioVectors[2].iov_len) }
-    }
+    /// data sent to host controller interface
+    var data = [packetType] + header.byteValue + parameterData
     
     // write to device descriptor socket
-    while writev(deviceDescriptor, &ioVectors, CInt(ioVectors.count)) < 0 {
-        
-        guard (errno == EAGAIN || errno == EINTR)
-            else { throw POSIXError.fromErrorNumber! }
-    }
+    guard write(deviceDescriptor, &data, data.count) >= 0 // should we check if all data was written?
+        else { throw POSIXError.fromErrorNumber! }
 }
 
 @inline(__always)

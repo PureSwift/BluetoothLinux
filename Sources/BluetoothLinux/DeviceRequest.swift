@@ -111,7 +111,7 @@ public extension Adapter {
 
         let opcode = (CP.command.rawValue, CP.command.dynamicType.opcodeGroupField.rawValue)
 
-        let data = try HCISendRequest(internalSocket, opcode: opcode, eventParameterLength: 1, timeout: timeout)
+        let data = try HCISendRequest(internalSocket, opcode: opcode, commandParameterData: commandParameter.byteValue, eventParameterLength: 1, timeout: timeout)
 
         guard let statusByte = data.first
             else { fatalError("Missing status byte!") }
@@ -143,7 +143,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
     // get old filter
     guard getsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, &filterLength) == 0
         else { throw POSIXError.fromErrorNumber! }
-
+    
     // configure new filter
     newFilter.clear()
     newFilter.typeMask = 16
