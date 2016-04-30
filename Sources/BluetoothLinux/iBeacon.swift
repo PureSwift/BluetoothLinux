@@ -36,7 +36,7 @@ public extension Adapter {
         
         // set iBeacon data
         var advertisingDataCommand = LowEnergyCommand.SetAdvertisingDataParameter()
-        SetBeaconData(UUID: UUID, mayor: mayor, minor: minor, RSSI: UInt8(bitPattern: RSSI), parameter: &advertisingDataCommand)
+        SetBeaconData(UUID: UUID, major: mayor, minor: minor, RSSI: UInt8(bitPattern: RSSI), parameter: &advertisingDataCommand)
         
         try deviceRequest(advertisingDataCommand, timeout: commandTimeout)
     }
@@ -51,7 +51,7 @@ public extension Adapter {
 
 // MARK: - Private
 
-private func SetBeaconData(UUID: SwiftFoundation.UUID, mayor: UInt16, minor: UInt16, RSSI: UInt8, parameter: inout LowEnergyCommand.SetAdvertisingDataParameter) {
+internal func SetBeaconData(UUID: SwiftFoundation.UUID, major: UInt16, minor: UInt16, RSSI: UInt8, parameter: inout LowEnergyCommand.SetAdvertisingDataParameter) {
     
     parameter.length = 30
     
@@ -85,10 +85,10 @@ private func SetBeaconData(UUID: SwiftFoundation.UUID, mayor: UInt16, minor: UIn
     parameter.data.23 = littleUUIDBytes[13]
     parameter.data.24 = littleUUIDBytes[14]
     
-    let mayorBytes = mayor.littleEndian.bytes
+    let majorBytes = major.littleEndian.bytes
     
-    parameter.data.25 = mayorBytes.0
-    parameter.data.26 = mayorBytes.1
+    parameter.data.25 = majorBytes.0
+    parameter.data.26 = majorBytes.1
     
     let minorBytes = minor.littleEndian.bytes
     

@@ -798,7 +798,7 @@ final class DequeBuffer<Element>: NonObjectiveCBase {
 //MARK: 
 
 extension DequeBuffer {
-    internal func forEach(@noescape body: (Element) throws -> ()) rethrows {
+    internal func forEach( body: @noescape(Element) throws -> ()) rethrows {
         if start + count <= capacity {
             var p = elements + start
             for _ in 0 ..< count {
@@ -822,19 +822,19 @@ extension DequeBuffer {
 }
 
 extension Deque {
-    public func forEach(@noescape body: (Element) throws -> ()) rethrows {
+    public func forEach( body: @noescape(Element) throws -> ()) rethrows {
         
         try withExtendedLifetime(buffer) { try $0.forEach { try body($0) } }
     }
 
-    public func map<T>(@noescape transform: (Element) throws -> T) rethrows -> [T] {
+    public func map<T>( transform: @noescape(Element) throws -> T) rethrows -> [T] {
         var result: [T] = []
         result.reserveCapacity(self.count)
         try self.forEach { result.append(try transform($0)) }
         return result
     }
 
-    public func flatMap<T>(@noescape transform: (Element) throws -> T?) rethrows -> [T] {
+    public func flatMap<T>( transform: @noescape(Element) throws -> T?) rethrows -> [T] {
         var result: [T] = []
         try self.forEach {
             if let r = try transform($0) {
@@ -852,7 +852,7 @@ extension Deque {
         return result
     }
 
-    public func filter(@noescape includeElement: (Element) throws -> Bool) rethrows -> [Element] {
+    public func filter( includeElement: @noescape(Element) throws -> Bool) rethrows -> [Element] {
         var result: [Element] = []
         try self.forEach {
             if try includeElement($0) {
@@ -862,7 +862,7 @@ extension Deque {
         return result
     }
 
-    public func reduce<T>(initial: T, @noescape combine: (T, Element) throws -> T) rethrows -> T {
+    public func reduce<T>(initial: T, combine: @noescape(T, Element) throws -> T) rethrows -> T {
         var result = initial
         try self.forEach {
             result = try combine(result, $0)

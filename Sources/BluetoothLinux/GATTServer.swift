@@ -171,7 +171,7 @@ public final class GATTServer {
         
         /// Conditionally respond
         @inline(__always)
-        func doResponse(@autoclosure _ block: () -> ()) {
+        func doResponse( _ block: @autoclosure() -> ()) {
             
             if shouldRespond { block() }
         }
