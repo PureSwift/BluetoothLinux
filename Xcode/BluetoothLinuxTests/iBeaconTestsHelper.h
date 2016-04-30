@@ -81,7 +81,7 @@ static inline le_set_advertising_data_cp beaconAdvertisementData(const unsigned 
     int i;
     for(i = 0; i < 16; i++)
     {
-        adv_data_cp.data[adv_data_cp.length + segment_length]  = htobs((unsigned char)uuid[i]); segment_length++;
+        adv_data_cp.data[adv_data_cp.length + segment_length]  = (unsigned char)uuid[i]; segment_length++;
     }
     
     // Major number

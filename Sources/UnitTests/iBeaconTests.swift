@@ -19,13 +19,13 @@
             
             let identifier = UUID()
             
-            let major: UInt16 = 0
+            let major: UInt16 = 1
             
             let minor: UInt16 = 1
             
-            let rssi: Int8 = -59
+            let rssi: Int8 = -29
             
-            var adverstisementDataParameter = beaconAdvertisementData(identifier.toData().byteValue, CInt(major), CInt(minor), CInt(rssi))
+            var adverstisementDataParameter = beaconAdvertisementData(identifier.toData().byteValue, CInt(major).littleEndian, CInt(minor).littleEndian, CInt(rssi).littleEndian)
             
             var parameterBytes = [UInt8].init(repeating: 0, count: Int(adverstisementDataParameter.length))
             
@@ -37,7 +37,10 @@
             
             XCTAssert(adverstisementDataParameter.length == advertisingDataCommand.length, "Invalid Length: \(adverstisementDataParameter.length) == \(advertisingDataCommand.length)")
             
-            //XCTAssert(memcmp(<#T##UnsafePointer<Void>!#>, <#T##UnsafePointer<Void>!#>, <#T##Int#>))
+            let dataPointer1 = withUnsafePointer(&adverstisementDataParameter.data) { return UnsafePointer<Void>($0) }
+            let dataPointer2 = withUnsafePointer(&advertisingDataCommand.data) { return UnsafePointer<Void>($0) }
+            
+            XCTAssert(memcmp(dataPointer1, dataPointer2, Int(advertisingDataCommand.length)) == 0, "Invalid generated data: \n\(adverstisementDataParameter.data)\n == \n\(advertisingDataCommand.data))")
         }
     }
     

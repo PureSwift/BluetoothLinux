@@ -67,33 +67,34 @@ internal func SetBeaconData(UUID: SwiftFoundation.UUID, major: UInt16, minor: UI
     
     // set UUID bytes
     
-    let littleUUIDBytes = isBigEndian ? UUID.toData().byteValue : UUID.toData().byteValue.reversed()
+    let littleUUIDBytes = isBigEndian ? UUID.toData().byteValue.reversed() : UUID.toData().byteValue
     
     parameter.data.9 = littleUUIDBytes[0]
     parameter.data.10 = littleUUIDBytes[1]
-    parameter.data.12 = littleUUIDBytes[2]
-    parameter.data.13 = littleUUIDBytes[3]
-    parameter.data.14 = littleUUIDBytes[4]
-    parameter.data.15 = littleUUIDBytes[5]
-    parameter.data.16 = littleUUIDBytes[6]
-    parameter.data.17 = littleUUIDBytes[7]
-    parameter.data.18 = littleUUIDBytes[8]
-    parameter.data.19 = littleUUIDBytes[9]
-    parameter.data.20 = littleUUIDBytes[10]
-    parameter.data.21 = littleUUIDBytes[11]
-    parameter.data.22 = littleUUIDBytes[12]
-    parameter.data.23 = littleUUIDBytes[13]
-    parameter.data.24 = littleUUIDBytes[14]
+    parameter.data.11 = littleUUIDBytes[2]
+    parameter.data.12 = littleUUIDBytes[3]
+    parameter.data.13 = littleUUIDBytes[4]
+    parameter.data.14 = littleUUIDBytes[5]
+    parameter.data.15 = littleUUIDBytes[6]
+    parameter.data.16 = littleUUIDBytes[7]
+    parameter.data.17 = littleUUIDBytes[8]
+    parameter.data.18 = littleUUIDBytes[9]
+    parameter.data.19 = littleUUIDBytes[10]
+    parameter.data.20 = littleUUIDBytes[11]
+    parameter.data.21 = littleUUIDBytes[12]
+    parameter.data.22 = littleUUIDBytes[13]
+    parameter.data.23 = littleUUIDBytes[14]
+    parameter.data.24 = littleUUIDBytes[15]
     
-    let majorBytes = major.littleEndian.bytes
+    let majorBytes = major.bytes
     
-    parameter.data.25 = majorBytes.0
-    parameter.data.26 = majorBytes.1
+    parameter.data.25 = majorBytes.1
+    parameter.data.26 = majorBytes.0
     
-    let minorBytes = minor.littleEndian.bytes
+    let minorBytes = minor.bytes
     
-    parameter.data.27 = minorBytes.0
-    parameter.data.28 = minorBytes.1
+    parameter.data.27 = minorBytes.1
+    parameter.data.28 = minorBytes.0
     
     parameter.data.29 = RSSI
 }
