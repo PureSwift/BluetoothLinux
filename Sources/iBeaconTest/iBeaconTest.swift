@@ -23,7 +23,7 @@ func iBeaconTest(adapter: Adapter, timeout: Int) {
     
     print("Enabling iBeacon \(iBeaconUUID) for \(timeout) seconds")
     
-    do { try adapter.enableBeacon(UUID: iBeaconUUID, mayor: 1, minor: 1, RSSI: -29) }
+    do { try adapter.enableBeacon(UUID: iBeaconUUID, major: 1, minor: 1, RSSI: -29) }
     
     catch { Error("Error enabling iBeacon: \(error)") }
     
