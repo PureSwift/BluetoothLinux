@@ -21,7 +21,6 @@
 		6E53E1751C84FD8C00AC8FCA /* GATTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */; };
 		6E53E1771C8503AC00AC8FCA /* GATTDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */; };
 		6E53E1791C8503CA00AC8FCA /* ATTConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1781C8503CA00AC8FCA /* ATTConnection.swift */; };
-		6E53E17F1C85945E00AC8FCA /* Deque.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E17E1C85945E00AC8FCA /* Deque.swift */; };
 		6E66A8E51CD44D70005F922F /* BluetoothLinux.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E92A4271C15309B007BC4E9 /* BluetoothLinux.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E66A8E71CD44E2F005F922F /* iBeaconTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E66A8E31CD44A61005F922F /* iBeaconTests.swift */; };
 		6E795E9B1C49821B002377FE /* LinkMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E795E9A1C49821B002377FE /* LinkMode.swift */; };
@@ -83,7 +82,6 @@
 		6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTClient.swift; sourceTree = "<group>"; };
 		6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTDatabase.swift; sourceTree = "<group>"; };
 		6E53E1781C8503CA00AC8FCA /* ATTConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ATTConnection.swift; sourceTree = "<group>"; };
-		6E53E17E1C85945E00AC8FCA /* Deque.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Deque.swift; sourceTree = "<group>"; };
 		6E66A8E31CD44A61005F922F /* iBeaconTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iBeaconTests.swift; sourceTree = "<group>"; };
 		6E66A8E61CD44DD2005F922F /* iBeaconTestsHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iBeaconTestsHelper.h; sourceTree = "<group>"; };
 		6E739C8D1C88EE4C00D4775B /* ioctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioctl.h; sourceTree = "<group>"; };
@@ -214,7 +212,6 @@
 				6E53E1721C84FD8200AC8FCA /* GATTServer.swift */,
 				6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */,
 				6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */,
-				6E53E17E1C85945E00AC8FCA /* Deque.swift */,
 				6E196CC41C869A2E009FA9CF /* IOCTL.swift */,
 				6E196CC21C8659DA009FA9CF /* HCI.swift */,
 			);
@@ -409,7 +406,6 @@
 				6E196CC51C869A2E009FA9CF /* IOCTL.swift in Sources */,
 				6E881DA21C39812F00E509A9 /* DeviceRequest.swift in Sources */,
 				6E795E9B1C49821B002377FE /* LinkMode.swift in Sources */,
-				6E53E17F1C85945E00AC8FCA /* Deque.swift in Sources */,
 				6E0C5BC21C837AA700AF63E5 /* ScanTest.swift in Sources */,
 				6E894C001C83EA2000109F45 /* main.swift in Sources */,
 				6E196CC31C8659DA009FA9CF /* HCI.swift in Sources */,

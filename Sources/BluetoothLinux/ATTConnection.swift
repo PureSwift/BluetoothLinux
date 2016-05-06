@@ -51,19 +51,19 @@ public final class ATTConnection {
     private var pendingIndication: ATTSendOpcodeType?
     
     /// Queued ATT protocol requests
-    private var requestQueue = Deque<ATTSendOpcodeType>()
+    private var requestQueue = [ATTSendOpcodeType]()
     
     /// Queued ATT protocol indications
-    private var indicationQueue = Deque<ATTSendOpcodeType>()
+    private var indicationQueue = [ATTSendOpcodeType]()
     
     /// Queue of PDUs ready to send
-    private var writeQueue = Deque<ATTSendOpcodeType>()
+    private var writeQueue = [ATTSendOpcodeType]()
     
     /// List of registered callbacks.
-    private var notifyList = Deque<ATTNotifyType>()
+    private var notifyList = [ATTNotifyType]()
     
     /// List of disconnect handlers.
-    private var disconnectList = Deque<() -> ()>()
+    private var disconnectList = [() -> ()]()
     
     // MARK: - Initialization
     
@@ -475,5 +475,17 @@ private struct ATTNotify<PDU: ATTProtocolDataUnit>: ATTNotifyType {
         
         self.identifier = identifier
         self.notify = notify
+    }
+}
+
+extension Array {
+    
+    mutating func popFirst() -> Element? {
+        
+        guard let first = self.first else { return nil }
+        
+        self.removeFirst()
+        
+        return first
     }
 }

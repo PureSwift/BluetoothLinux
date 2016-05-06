@@ -693,7 +693,7 @@ internal extension GATTDatabase {
     /// Used for Service discovery. Should return tuples with the Service start handle, end handle and UUID.
     func readByGroupType(handle: (start: UInt16, end: UInt16), type: Bluetooth.UUID) -> [(start: UInt16, end: UInt16, UUID: Bluetooth.UUID)] {
         
-        let handleRange = handle.end < UInt16.max ? handle.start ... handle.end : handle.start ..< handle.end
+        let handleRange = handle.end < UInt16.max ? Range(handle.start ... handle.end) : Range(handle.start ..< handle.end)
         
         var data: [(start: UInt16, end: UInt16, UUID: Bluetooth.UUID)] = []
         
@@ -701,7 +701,7 @@ internal extension GATTDatabase {
             
             guard group.service.UUID == type else { continue }
             
-            let groupRange = group.startHandle ... group.endHandle
+            let groupRange = Range(group.startHandle ... group.endHandle)
             
             guard groupRange.isSubset(handleRange) else { continue }
             
@@ -715,21 +715,21 @@ internal extension GATTDatabase {
     
     func readByType(handle: (start: UInt16, end: UInt16), type: Bluetooth.UUID) -> [Attribute] {
         
-        let range = handle.end < UInt16.max ? handle.start ... handle.end : handle.start ..< handle.end
+        let range = handle.end < UInt16.max ? Range(handle.start ... handle.end) : Range(handle.start ..< handle.end)
         
         return attributes.filter { range.contains($0.handle) && $0.UUID == type }
     }
     
     func findInformation(handle: (start: UInt16, end: UInt16)) -> [Attribute] {
         
-        let range = handle.end < UInt16.max ? handle.start ... handle.end : handle.start ..< handle.end
+        let range = handle.end < UInt16.max ? Range(handle.start ... handle.end) : Range(handle.start ..< handle.end)
         
         return attributes.filter { range.contains($0.handle) }
     }
     
     func findByTypeValue(handle: (start: UInt16, end: UInt16), type: UInt16, value: [UInt8]) -> [(UInt16, UInt16)] {
         
-        let range = handle.end < UInt16.max ? handle.start ... handle.end : handle.start ..< handle.end
+        let range = handle.end < UInt16.max ? Range(handle.start ... handle.end) : Range(handle.start ..< handle.end)
         
         var results = [(UInt16, UInt16)]()
         
