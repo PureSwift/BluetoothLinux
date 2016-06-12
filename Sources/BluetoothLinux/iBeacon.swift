@@ -30,7 +30,8 @@ public extension Adapter {
         //print("Enabling Advertising")
         
         // start advertising
-        try enableAdvertising(timeout: commandTimeout)
+        do { try enableAdvertising(timeout: commandTimeout) }
+        catch HCIError.CommandDisallowed { /* ignore, means already turned on */ }
         
         //print("Setting iBeacon Data")
         

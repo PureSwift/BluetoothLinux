@@ -166,7 +166,7 @@ public final class ATTConnection {
     }
     
     /// Registers a callback for an opcode and returns the ID associated with that callback.
-    public func register<T: ATTProtocolDataUnit>(_ callback: T -> ()) -> UInt {
+    public func register<T: ATTProtocolDataUnit>(_ callback: (T) -> ()) -> UInt {
         
         let identifier = nextRegisterID
         
@@ -204,7 +204,7 @@ public final class ATTConnection {
     }
     
     /// Sends an error.
-    public func send(error: ATT.Error, opcode: ATTOpcode, handle: UInt16 = 0, response: (ATTErrorResponse -> ())? = nil) -> UInt? {
+    public func send(error: ATT.Error, opcode: ATTOpcode, handle: UInt16 = 0, response: ((ATTErrorResponse) -> ())? = nil) -> UInt? {
         
         let error = ATTErrorResponse(requestOpcode: opcode, attributeHandle: handle, error: error)
         
@@ -214,7 +214,7 @@ public final class ATTConnection {
     /// Adds a PDU to the queue to send.
     ///
     /// - Returns: Identifier of queued send operation or `nil` if the PDU cannot be sent.
-    public func send<T: ATTProtocolDataUnit>(PDU: T, response: T -> ()) -> UInt? {
+    public func send<T: ATTProtocolDataUnit>(PDU: T, response: (T) -> ()) -> UInt? {
         
         let attributeOpcode = T.attributeOpcode
         
@@ -373,7 +373,7 @@ public final class ATTConnection {
             
             let errorResponse = ATTErrorResponse(requestOpcode: opcode, attributeHandle: 0x00, error: .RequestNotSupported)
             
-            send(PDU: errorResponse) { _ in }
+            let _ = send(PDU: errorResponse) { _ in }
         }
         
     }
@@ -429,7 +429,7 @@ private protocol ATTSendOpcodeType {
     
     var data: [UInt8] { get }
     
-    var callback: ATTProtocolDataUnit -> () { get }
+    var callback: (ATTProtocolDataUnit) -> () { get }
 }
 
 private struct ATTSendOpcode<PDU: ATTProtocolDataUnit>: ATTSendOpcodeType {
@@ -440,11 +440,11 @@ private struct ATTSendOpcode<PDU: ATTProtocolDataUnit>: ATTSendOpcodeType {
     
     let data: [UInt8]
     
-    let response: PDU -> ()
+    let response: (PDU) -> ()
     
-    var callback: ATTProtocolDataUnit -> () { return { self.response($0 as! PDU) } }
+    var callback: (ATTProtocolDataUnit) -> () { return { self.response($0 as! PDU) } }
     
-    init(identifier: UInt, opcode: ATT.Opcode, data: [UInt8], response: PDU -> ()) {
+    init(identifier: UInt, opcode: ATT.Opcode, data: [UInt8], response: (PDU) -> ()) {
         
         self.identifier = identifier
         self.data = data
@@ -458,7 +458,7 @@ private protocol ATTNotifyType {
     
     var identifier: UInt { get }
     
-    var callback: ATTProtocolDataUnit -> () { get }
+    var callback: (ATTProtocolDataUnit) -> () { get }
 }
 
 private struct ATTNotify<PDU: ATTProtocolDataUnit>: ATTNotifyType {
@@ -467,11 +467,11 @@ private struct ATTNotify<PDU: ATTProtocolDataUnit>: ATTNotifyType {
     
     let identifier: UInt
     
-    let notify: PDU -> ()
+    let notify: (PDU) -> ()
     
-    var callback: ATTProtocolDataUnit -> () { return { self.notify($0 as! PDU) } }
+    var callback: (ATTProtocolDataUnit) -> () { return { self.notify($0 as! PDU) } }
     
-    init(identifier: UInt, notify: PDU -> ()) {
+    init(identifier: UInt, notify: (PDU) -> ()) {
         
         self.identifier = identifier
         self.notify = notify

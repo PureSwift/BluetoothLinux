@@ -73,7 +73,7 @@ private func generateDB() -> GATTDatabase {
     
     for service in TestProfile.services {
         
-        database.add(service: service)
+        let _ = database.add(service: service)
     }
     
     return database

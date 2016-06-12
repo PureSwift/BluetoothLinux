@@ -14,7 +14,7 @@ public final class GATTServer {
     
     // MARK: - Properties
     
-    public var log: (String -> ())?
+    public var log: ((String) -> ())?
     
     public var database = GATTDatabase()
     
@@ -63,40 +63,40 @@ public final class GATTServer {
     private func registerATTHandlers() {
         
         // Exchange MTU
-        connection.register(exchangeMTU)
+        let _ = connection.register(exchangeMTU)
         
         // Read By Group Type
-        connection.register(readByGroupType)
+        let _ = connection.register(readByGroupType)
         
         // Read By Type
-        connection.register(readByType)
+        let _ = connection.register(readByType)
         
         // Find Information
-        connection.register(findInformation)
+        let _ = connection.register(findInformation)
         
         // Find By Type Value
-        connection.register(findByTypeValue)
+        let _ = connection.register(findByTypeValue)
         
         // Write Request
-        connection.register(writeRequest)
+        let _ = connection.register(writeRequest)
         
         // Write Command
-        connection.register(writeCommand)
+        let _ = connection.register(writeCommand)
         
         // Read Request
-        connection.register(readRequest)
+        let _ = connection.register(readRequest)
         
         // Read Blob Request
-        connection.register(readBlobRequest)
+        let _ = connection.register(readBlobRequest)
         
         // Read Multiple Request
-        connection.register(readMultipleRequest)
+        let _ = connection.register(readMultipleRequest)
         
         // Prepare Write Request
-        connection.register(prepareWriteRequest)
+        let _ = connection.register(prepareWriteRequest)
         
         // Execute Write Request
-        connection.register(executeWriteRequest)
+        let _ = connection.register(executeWriteRequest)
     }
     
     @inline(__always)
@@ -113,7 +113,7 @@ public final class GATTServer {
         
         errorResponse(opcode, ATT.Error.UnlikelyError, handle)
         
-        do { try connection.write() }
+        do { let _ = try connection.write() }
         
         catch { print("Could not send UnlikelyError to client. (\(error))") }
         
@@ -272,7 +272,7 @@ public final class GATTServer {
         let finalMTU = max(min(pdu.clientMTU, serverMTU), UInt16(ATT.MTU.LowEnergy.Default))
         
         // Respond with the server MTU
-        connection.send(PDU: ATTMaximumTranssmissionUnitResponse(serverMTU: serverMTU)) { _ in }
+        let _ = connection.send(PDU: ATTMaximumTranssmissionUnitResponse(serverMTU: serverMTU)) { _ in }
         
         // Set MTU to minimum
         connection.maximumTransmissionUnit = Int(finalMTU)
