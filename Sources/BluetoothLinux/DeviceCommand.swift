@@ -51,7 +51,7 @@ internal func HCISendCommand(_ deviceDescriptor: CInt, opcode: (commandField: UI
     
     // write to device descriptor socket
     guard write(deviceDescriptor, &data, data.count) >= 0 // should we check if all data was written?
-        else { throw POSIXError.fromErrorNumber! }
+        else { throw POSIXError.fromErrno! }
 }
 
 @inline(__always)

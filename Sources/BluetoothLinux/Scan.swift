@@ -20,7 +20,7 @@ import Bluetooth
 
 public extension Adapter {
     
-    /// Scans for nearby Bluetooth devices.
+    /// Scans for nearby Classic Bluetooth devices.
     ///
     /// - Parameter duration: The duration of the scan. The actual duration lasts for at most 1.28 * ``duration`` seconds
     ///
@@ -52,7 +52,7 @@ public extension Adapter {
         defer { nameBuffer.deallocateCapacity(maxNameLength) }
         
         guard hci_read_remote_name(internalSocket, &address, CInt(maxNameLength), nameBuffer, CInt(timeout)) == CInt(0)
-            else { throw POSIXError.fromErrorNumber! }
+            else { throw POSIXError.fromErrno! }
         
         let name = String.fromCString(nameBuffer)
         
@@ -101,7 +101,7 @@ internal func HCIInquiry(_ deviceIdentifier: CInt, duration: Int, scanLimit: Int
     
     let deviceDescriptor = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.HCI.rawValue)
     
-    guard deviceDescriptor >= 0 else { throw POSIXError.fromErrorNumber! }
+    guard deviceDescriptor >= 0 else { throw POSIXError.fromErrno! }
     
     defer { close(deviceDescriptor) }
     
@@ -122,7 +122,7 @@ internal func HCIInquiry(_ deviceIdentifier: CInt, duration: Int, scanLimit: Int
     inquiryRequest.pointee.lap = deviceClass
     
     guard swift_bluetooth_ioctl(deviceDescriptor, HCI.IOCTL.Inquiry, buffer) >= 0
-        else { throw POSIXError.fromErrorNumber! }
+        else { throw POSIXError.fromErrno! }
     
     let resultCount = Int(inquiryRequest.pointee.responseCount)
     

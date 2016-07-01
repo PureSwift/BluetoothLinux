@@ -26,12 +26,12 @@ public extension Adapter {
 
         let opcodeGroupField = command.dynamicType.opcodeGroupField
 
-        let parameterData = commandParameter.byteValue
+        let parameterData = commandParameter.bytes
 
         let data = try HCISendRequest(internalSocket, opcode: (command.rawValue, opcodeGroupField.rawValue), commandParameterData: parameterData, eventParameterLength: EP.length, event: EP.event.rawValue, timeout: timeout)
 
-        guard let eventParameter = EP(byteValue: data)
-            else { throw AdapterError.GarbageResponse(Data(byteValue: data)) }
+        guard let eventParameter = EP(bytes: data)
+            else { throw AdapterError.GarbageResponse(Data(bytes: data)) }
 
         return eventParameter
     }
@@ -45,8 +45,8 @@ public extension Adapter {
 
         let data = try HCISendRequest(internalSocket, opcode: opcode, event: event, eventParameterLength: EP.length, timeout: timeout)
 
-        guard let eventParameter = EP(byteValue: data)
-            else { throw AdapterError.GarbageResponse(Data(byteValue: data)) }
+        guard let eventParameter = EP(bytes: data)
+            else { throw AdapterError.GarbageResponse(Data(bytes: data)) }
 
         return eventParameter
     }
@@ -58,7 +58,7 @@ public extension Adapter {
 
         let opcode = (command.rawValue, command.dynamicType.opcodeGroupField.rawValue)
 
-        let parameterData = commandParameter.byteValue
+        let parameterData = commandParameter.bytes
 
         let eventParameterLength = verifyStatusByte ? 1 : 0
 
@@ -142,7 +142,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
 
     // get old filter
     guard getsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, &filterLength) == 0
-        else { throw POSIXError.fromErrorNumber! }
+        else { throw POSIXError.fromErrno! }
     
     // configure new filter
     newFilter.clear()
@@ -157,13 +157,13 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
     
     // set new filter
     guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, newFilterPointer, filterLength) == 0
-        else { throw POSIXError.fromErrorNumber! }
+        else { throw POSIXError.fromErrno! }
 
     // restore old filter in case of error
     func restoreFilter(_ error: ErrorProtocol) -> ErrorProtocol {
 
         guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, filterLength) == 0
-            else { return AdapterError.CouldNotRestoreFilter(error, POSIXError.fromErrorNumber!) }
+            else { return AdapterError.CouldNotRestoreFilter(error, POSIXError.fromErrno!) }
 
         return error
     }
@@ -203,7 +203,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
                 } else {
 
                     // attempt to restore filter and throw
-                    throw restoreFilter(POSIXError.fromErrorNumber!)
+                    throw restoreFilter(POSIXError.fromErrno!)
                 }
             }
             
@@ -239,7 +239,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
             } else {
 
                 // attempt to restore filter and throw
-                throw restoreFilter(POSIXError.fromErrorNumber!)
+                throw restoreFilter(POSIXError.fromErrno!)
             }
         }
         
@@ -247,8 +247,8 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
         let eventData = Array(eventBuffer[(1 + HCIEventHeader.length) ..< actualBytesRead])
         //var length = actualBytesRead - (1 + HCIEventHeader.length)
 
-        guard let eventHeader = HCIEventHeader(byteValue: headerData)
-            else { throw restoreFilter(AdapterError.GarbageResponse(Data(byteValue: headerData))) }
+        guard let eventHeader = HCIEventHeader(bytes: headerData)
+            else { throw restoreFilter(AdapterError.GarbageResponse(Data(bytes: headerData))) }
         
         //print("Event header data: \(headerData)")
         //print("Event header: \(eventHeader)")
@@ -258,7 +258,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
         func done() throws {
 
             guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, filterLength) == 0
-                else { throw POSIXError.fromErrorNumber! }
+                else { throw POSIXError.fromErrno! }
         }
 
         switch eventHeader.event {
@@ -268,7 +268,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
             let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.CommandStatusParameter.length)))
             
             guard let parameter = HCIGeneralEvent.CommandStatusParameter(byteValue: parameterData)
-                else { throw AdapterError.GarbageResponse(Data(byteValue: parameterData)) }
+                else { throw AdapterError.GarbageResponse(Data(bytes: parameterData)) }
 
             /// must be command status for sent command
             guard parameter.opcode == opcodePacked else { continue }
@@ -292,7 +292,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
             let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.CommandCompleteParameter.length)))
 
             guard let parameter = HCIGeneralEvent.CommandCompleteParameter(byteValue: parameterData)
-                else { throw AdapterError.GarbageResponse(Data(byteValue: parameterData)) }
+                else { throw AdapterError.GarbageResponse(Data(bytes: parameterData)) }
             
             guard parameter.opcode == opcodePacked else { continue }
 
@@ -312,7 +312,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
             let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.RemoteNameRequestCompleteParameter.length)))
 
             guard let parameter = HCIGeneralEvent.RemoteNameRequestCompleteParameter(byteValue: parameterData)
-                else { throw AdapterError.GarbageResponse(Data(byteValue: parameterData)) }
+                else { throw AdapterError.GarbageResponse(Data(bytes: parameterData)) }
 
             if commandParameterData.isEmpty == false {
 

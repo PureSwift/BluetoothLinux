@@ -72,7 +72,7 @@ public final class L2CAPSocket {
 
         // get address
 
-        let address = adapterAddress ?? Address(byteValue: (0, 0, 0, 0, 0, 0)) // BDADDR_ANY
+        let address = adapterAddress ?? Address(bytes: (0, 0, 0, 0, 0, 0)) // BDADDR_ANY
 
         // set address
 
@@ -92,24 +92,24 @@ public final class L2CAPSocket {
         self.internalSocket = socket(AF_BLUETOOTH, SOCK_SEQPACKET, BTPROTO_L2CAP)
 
         // error creating socket
-        guard internalSocket >= 0 else { throw POSIXError.fromErrorNumber! }
+        guard internalSocket >= 0 else { throw POSIXError.fromErrno! }
 
         let socketLength = socklen_t(sizeof(sockaddr_l2))
 
         // bind socket to port and address
         guard withUnsafePointer(&localAddress, { bind(internalSocket, UnsafePointer<sockaddr>($0), socketLength) }) == 0
-            else { close(internalSocket); throw POSIXError.fromErrorNumber! }
+            else { close(internalSocket); throw POSIXError.fromErrno! }
         
         // set security level
         var security = bt_security()
         security.level = securityLevel.rawValue
         
         guard setsockopt(internalSocket, SOL_BLUETOOTH, BT_SECURITY, &security, socklen_t(sizeof(bt_security))) == 0
-            else { close(internalSocket); throw POSIXError.fromErrorNumber! }
+            else { close(internalSocket); throw POSIXError.fromErrno! }
         
         // put socket into listening mode
         guard listen(internalSocket, 10) == 0
-            else { close(internalSocket); throw POSIXError.fromErrorNumber! }
+            else { close(internalSocket); throw POSIXError.fromErrno! }
     }
 
     /// For new incoming connections for server.
@@ -130,7 +130,7 @@ public final class L2CAPSocket {
         security.level = securityLevel.rawValue
         
         guard setsockopt(internalSocket, SOL_BLUETOOTH, BT_SECURITY, &security, socklen_t(sizeof(bt_security))) == 0
-            else { throw POSIXError.fromErrorNumber! }
+            else { throw POSIXError.fromErrno! }
     }
 
     /// Blocks the caller until a new connection is recieved.
@@ -144,7 +144,7 @@ public final class L2CAPSocket {
         let client = withUnsafeMutablePointer(&remoteAddress, { accept(internalSocket, UnsafeMutablePointer<sockaddr>($0), &socketLength) })
 
         // error accepting new connection
-        guard client >= 0 else { throw POSIXError.fromErrorNumber! }
+        guard client >= 0 else { throw POSIXError.fromErrno! }
 
         return L2CAPSocket(clientSocket: client, remoteAddress: remoteAddress, securityLevel: securityLevel)
     }
@@ -156,22 +156,22 @@ public final class L2CAPSocket {
 
         let actualByteCount = read(internalSocket, &buffer, bufferSize)
 
-        guard actualByteCount >= 0 else { throw POSIXError.fromErrorNumber! }
+        guard actualByteCount >= 0 else { throw POSIXError.fromErrno! }
 
         let actualBytes = Array(buffer.prefix(actualByteCount))
 
-        return Data(byteValue: actualBytes)
+        return Data(bytes: actualBytes)
     }
 
     /// Write to the socket.
     public func send(_ data: Data) throws {
         
-        var buffer = data.byteValue
+        var buffer = data.bytes
         
         let actualByteCount = write(internalSocket, &buffer, buffer.count)
         
         guard actualByteCount >= 0
-            else { throw POSIXError.fromErrorNumber! }
+            else { throw POSIXError.fromErrno! }
         
         guard actualByteCount == buffer.count
             else { throw L2CAPSocketError.SentLessBytes(actualByteCount) }

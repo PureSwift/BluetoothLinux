@@ -68,7 +68,7 @@ internal func SetBeaconData(UUID: SwiftFoundation.UUID, major: UInt16, minor: UI
     
     // set UUID bytes
     
-    let littleUUIDBytes = isBigEndian ? UUID.toData().byteValue.reversed() : UUID.toData().byteValue
+    let littleUUIDBytes = isBigEndian ? UUID.toData().bytes.reversed() : UUID.toData().bytes
     
     parameter.data.9 = littleUUIDBytes[0]
     parameter.data.10 = littleUUIDBytes[1]

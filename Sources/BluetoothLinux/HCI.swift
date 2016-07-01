@@ -382,7 +382,7 @@ internal protocol HCIPacketHeader {
     
     static var length: Int { get }
     
-    init?(byteValue: [UInt8])
+    init?(bytes: [UInt8])
     
     var byteValue: [UInt8] { get }
 }
@@ -401,7 +401,7 @@ internal struct HCICommandHeader: HCIPacketHeader {
     
     init() { }
     
-    init?(byteValue: [UInt8]) {
+    init?(bytes: [UInt8]) {
         
         guard byteValue.count == HCICommandHeader.length
             else { return nil }
@@ -429,7 +429,7 @@ internal struct HCIEventHeader: HCIPacketHeader {
     
     init() { }
     
-    init?(byteValue: [UInt8]) {
+    init?(bytes: [UInt8]) {
         
         guard byteValue.count == HCIEventHeader.length
             else { return nil }

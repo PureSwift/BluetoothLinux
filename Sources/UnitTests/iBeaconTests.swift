@@ -25,7 +25,7 @@
             
             let rssi: Int8 = -29
             
-            var adverstisementDataParameter = beaconAdvertisementData(identifier.toData().byteValue, CInt(major).littleEndian, CInt(minor).littleEndian, CInt(rssi).littleEndian)
+            var adverstisementDataParameter = beaconAdvertisementData(identifier.toData().bytes, CInt(major).littleEndian, CInt(minor).littleEndian, CInt(rssi).littleEndian)
             
             var parameterBytes = [UInt8].init(repeating: 0, count: Int(adverstisementDataParameter.length))
             

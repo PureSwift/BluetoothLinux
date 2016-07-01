@@ -84,10 +84,10 @@ public final class ATTConnection {
         //print("Recieved data")
         
         // valid PDU data length
-        guard recievedData.byteValue.count >= ATT.MinimumPDULength
+        guard recievedData.bytes.count >= ATT.MinimumPDULength
             else { throw Error.GarbageResponse(recievedData) }
         
-        let opcodeByte = recievedData.byteValue[0]
+        let opcodeByte = recievedData.bytes[0]
         
         // valid opcode
         guard let opcode = ATT.Opcode(rawValue: opcodeByte)
@@ -129,7 +129,7 @@ public final class ATTConnection {
         
         //print("Sending data... (\(sendOpcode.data.count) bytes)")
         
-        try socket.send(Data(byteValue: sendOpcode.data))
+        try socket.send(Data(bytes: sendOpcode.data))
         
         let opcode = sendOpcode.dynamicType.PDUType.attributeOpcode
         
@@ -296,7 +296,7 @@ public final class ATTConnection {
         }
         
         // attempt to deserialize
-        guard let PDU = sendOpcode.dynamicType.PDUType.init(byteValue: data.byteValue)
+        guard let PDU = sendOpcode.dynamicType.PDUType.init(byteValue: data.bytes)
             else { throw Error.GarbageResponse(data) }
         
         // success!
@@ -314,11 +314,11 @@ public final class ATTConnection {
         guard let sendOpcode = pendingIndication
             else { throw Error.UnexpectedResponse(data) }
         
-        guard data.byteValue.count == 1
+        guard data.bytes.count == 1
             else { throw Error.GarbageResponse(data) }
         
         // attempt to deserialize
-        guard let PDU = sendOpcode.dynamicType.PDUType.init(byteValue: data.byteValue)
+        guard let PDU = sendOpcode.dynamicType.PDUType.init(byteValue: data.bytes)
             else { throw Error.GarbageResponse(data) }
         
         // success!
@@ -357,7 +357,7 @@ public final class ATTConnection {
             if notify.dynamicType.PDUType.attributeOpcode != opcode { continue }
             
             // attempt to deserialize
-            guard let PDU = foundPDU ?? notify.dynamicType.PDUType.init(byteValue: data.byteValue)
+            guard let PDU = foundPDU ?? notify.dynamicType.PDUType.init(byteValue: data.bytes)
                 else { throw Error.GarbageResponse(data) }
             
             foundPDU = PDU

@@ -108,7 +108,7 @@ internal func HCIOpenDevice(_ deviceIdentifier: CInt) throws -> CInt {
     // Create HCI socket
     let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.HCI.rawValue)
     
-    guard hciSocket >= 0 else { throw POSIXError.fromErrorNumber! }
+    guard hciSocket >= 0 else { throw POSIXError.fromErrno! }
     
     // Bind socket to the HCI device
     var address = HCISocketAddress()
@@ -118,7 +118,7 @@ internal func HCIOpenDevice(_ deviceIdentifier: CInt) throws -> CInt {
     let addressPointer = withUnsafeMutablePointer(&address) { UnsafeMutablePointer<sockaddr>($0) }
     
     guard bind(hciSocket, addressPointer, socklen_t(sizeof(HCISocketAddress))) >= 0
-        else { close(hciSocket); throw POSIXError.fromErrorNumber! }
+        else { close(hciSocket); throw POSIXError.fromErrno! }
     
     return hciSocket
 }
@@ -129,7 +129,7 @@ internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(
 
     let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.HCI.rawValue)
 
-    guard hciSocket >= 0 else { throw POSIXError.fromErrorNumber! }
+    guard hciSocket >= 0 else { throw POSIXError.fromErrno! }
 
     defer { close(hciSocket) }
 
@@ -145,7 +145,7 @@ internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(
         
     let ioctlValue = swift_bluetooth_ioctl(hciSocket, HCI.IOCTL.GetDeviceList, voidDeviceListPointer)
     
-    guard ioctlValue >= 0 else { throw POSIXError.fromErrorNumber! }
+    guard ioctlValue >= 0 else { throw POSIXError.fromErrno! }
     
     for i in 0 ..< Int(deviceList.count) {
 
@@ -177,7 +177,7 @@ internal func HCIGetRoute(_ address: Address? = nil) throws -> CInt? {
 
         deviceInfo.identifier = UInt16(deviceIdentifier)
 
-        guard withUnsafeMutablePointer(&deviceInfo, { swift_bluetooth_ioctl(dd, HCI.IOCTL.GetDeviceInfo, UnsafeMutablePointer<Void>($0)) }) == 0 else { throw POSIXError.fromErrorNumber! }
+        guard withUnsafeMutablePointer(&deviceInfo, { swift_bluetooth_ioctl(dd, HCI.IOCTL.GetDeviceInfo, UnsafeMutablePointer<Void>($0)) }) == 0 else { throw POSIXError.fromErrno! }
 
         return deviceInfo.address == address
     }
@@ -189,14 +189,14 @@ internal func HCIDeviceInfo(_ deviceIdentifier: CInt) throws -> HCIDeviceInforma
     
     let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.HCI.rawValue)
     
-    guard hciSocket >= 0 else { throw POSIXError.fromErrorNumber! }
+    guard hciSocket >= 0 else { throw POSIXError.fromErrno! }
     
     defer { close(hciSocket) }
     
     var deviceInfo = HCIDeviceInformation()
     deviceInfo.identifier = UInt16(deviceIdentifier)
     
-    guard withUnsafeMutablePointer(&deviceInfo, { swift_bluetooth_ioctl(hciSocket, HCI.IOCTL.GetDeviceInfo, UnsafeMutablePointer<Void>($0)) }) == 0 else { throw POSIXError.fromErrorNumber! }
+    guard withUnsafeMutablePointer(&deviceInfo, { swift_bluetooth_ioctl(hciSocket, HCI.IOCTL.GetDeviceInfo, UnsafeMutablePointer<Void>($0)) }) == 0 else { throw POSIXError.fromErrno! }
     
     return deviceInfo
 }

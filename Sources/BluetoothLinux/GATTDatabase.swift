@@ -158,9 +158,9 @@ public extension GATTDatabase {
         public var endGroupHandle: UInt16
         
         /// Included Service UUID
-        public var serviceUUID: Bluetooth.UUID
+        public var serviceUUID: BluetoothUUID
         
-        public init(serviceHandle: UInt16, endGroupHandle: UInt16, serviceUUID: Bluetooth.UUID) {
+        public init(serviceHandle: UInt16, endGroupHandle: UInt16, serviceUUID: BluetoothUUID) {
             
             self.serviceHandle = serviceHandle
             self.endGroupHandle = endGroupHandle
@@ -183,14 +183,14 @@ public extension GATTDatabase {
         
         public let handle: UInt16
         
-        public let UUID: Bluetooth.UUID
+        public let UUID: BluetoothUUID
         
         public let permissions: [Permission]
         
         public var value: Data
         
         /// Defualt initializer
-        private init(handle: UInt16, UUID: Bluetooth.UUID, value: Data = Data(), permissions: [Permission] = []) {
+        private init(handle: UInt16, UUID: BluetoothUUID, value: Data = Data(), permissions: [Permission] = []) {
             
             self.handle = handle
             self.UUID = UUID
@@ -203,7 +203,7 @@ public extension GATTDatabase {
             
             self.handle = handle
             self.UUID = GATT.UUID(primaryService: service.primary).toUUID()
-            self.value = Data(byteValue: service.UUID.littleEndian)
+            self.value = Data(bytes: service.UUID.littleEndian)
             self.permissions = [.Read] // Read only
         }
         
@@ -212,7 +212,7 @@ public extension GATTDatabase {
             
             self.handle = handle
             self.UUID = GATT.UUID.Include.toUUID()
-            self.value = Data(byteValue: include.littleEndian)
+            self.value = Data(bytes: include.littleEndian)
             self.permissions = [.Read] // Read only
         }
         
@@ -227,7 +227,7 @@ public extension GATTDatabase {
                 let valueHandleBytes = (handle + 1).littleEndian.bytes
                 let value = [propertiesMask, valueHandleBytes.0, valueHandleBytes.1] + characteristic.UUID.littleEndian
                 
-                return Attribute(handle: currentHandle, UUID: GATT.UUID.Characteristic.toUUID(), value: Data(byteValue: value), permissions: [.Read])
+                return Attribute(handle: currentHandle, UUID: GATT.UUID.Characteristic.toUUID(), value: Data(bytes: value), permissions: [.Read])
             }()
             
             currentHandle += 1

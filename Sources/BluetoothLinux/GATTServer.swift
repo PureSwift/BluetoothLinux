@@ -18,9 +18,9 @@ public final class GATTServer {
     
     public var database = GATTDatabase()
     
-    public var willRead: ((UUID: Bluetooth.UUID, value: Data, offset: Int) -> ATT.Error?)?
+    public var willRead: ((UUID: BluetoothUUID, value: Data, offset: Int) -> ATT.Error?)?
     
-    public var willWrite: ((UUID: Bluetooth.UUID, value: Data, newValue: Data) -> ATT.Error?)?
+    public var willWrite: ((UUID: BluetoothUUID, value: Data, newValue: Data) -> ATT.Error?)?
     
     public let maximumPreparedWrites: Int
     
@@ -196,7 +196,7 @@ public final class GATTServer {
             return
         }
         
-        let newData = Data(byteValue: value)
+        let newData = Data(bytes: value)
         
         // validate application errors with write callback
         if let error = willWrite?(UUID: attribute.UUID, value: attribute.value, newValue: newData) {
@@ -231,30 +231,30 @@ public final class GATTServer {
         }
         
         // check boundary
-        guard offset <= UInt16(attribute.value.byteValue.count)
+        guard offset <= UInt16(attribute.value.bytes.count)
             else { errorResponse(opcode, .InvalidOffset, handle); return nil }
         
         var value: [UInt8]
         
         // Guard against invalid access if offset equals to value length
-        if offset == UInt16(attribute.value.byteValue.count) {
+        if offset == UInt16(attribute.value.bytes.count) {
             
             value = []
             
         } else if offset > 0 {
             
-            value = Array(attribute.value.byteValue.suffix(from: Int(offset)))
+            value = Array(attribute.value.bytes.suffix(from: Int(offset)))
             
         } else {
             
-            value = attribute.value.byteValue
+            value = attribute.value.bytes
         }
         
         // adjust value for MTU
         value = Array(value.prefix(connection.maximumTransmissionUnit - 1))
         
         // validate application errors with read callback
-        if let error = willRead?(UUID: attribute.UUID, value: Data(byteValue: value), offset: Int(offset)) {
+        if let error = willRead?(UUID: attribute.UUID, value: Data(bytes: value), offset: Int(offset)) {
             
             errorResponse(opcode, error, handle)
             return nil
@@ -375,7 +375,7 @@ public final class GATTServer {
         guard attributes.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
-        let attributeData = attributes.map { AttributeData(handle: $0.handle, value: $0.value.byteValue) }
+        let attributeData = attributes.map { AttributeData(handle: $0.handle, value: $0.value.bytes) }
         
         var limitedAttributes = [attributeData[0]]
         
@@ -450,11 +450,11 @@ public final class GATTServer {
             // encode attribute
             switch (attribute.UUID, format) {
                 
-            case let (.Bit16(type), .Bit16):
+            case let (.bit16(type), .bit16):
                 
                 bit16Pairs.append((attribute.handle, type))
                 
-            case let (.Bit128(type), .Bit128):
+            case let (.bit128(type), .bit128):
                 
                 bit128Pairs.append((attribute.handle, type))
                 
@@ -465,8 +465,8 @@ public final class GATTServer {
         let data: Data
         
         switch format {
-        case .Bit16: data = .Bit16(bit16Pairs)
-        case .Bit128: data = .Bit128(bit128Pairs)
+        case .bit16: data = .bit16(bit16Pairs)
+        case .bit128: data = .bit128(bit128Pairs)
         }
         
         let response = ATTFindInformationResponse(data: data)
@@ -566,7 +566,7 @@ public final class GATTServer {
                 return
             }
             
-            values += attribute.value.byteValue
+            values += attribute.value.bytes
         }
         
         let response = ATTReadMultipleResponse(values: values)
@@ -637,11 +637,11 @@ public final class GATTServer {
                 
                 let previousValue = newValues[write.handle] ?? Data()
                 
-                let newValue = previousValue.byteValue + write.value
+                let newValue = previousValue.bytes + write.value
                 
                 // validate offset?
                 
-                newValues[write.handle] = Data(byteValue: newValue)
+                newValues[write.handle] = Data(bytes: newValue)
             }
             
             // validate new values
@@ -691,11 +691,11 @@ private extension GATTServer {
 internal extension GATTDatabase {
     
     /// Used for Service discovery. Should return tuples with the Service start handle, end handle and UUID.
-    func readByGroupType(handle: (start: UInt16, end: UInt16), type: Bluetooth.UUID) -> [(start: UInt16, end: UInt16, UUID: Bluetooth.UUID)] {
+    func readByGroupType(handle: (start: UInt16, end: UInt16), type: BluetoothUUID) -> [(start: UInt16, end: UInt16, UUID: BluetoothUUID)] {
         
         let handleRange = handle.end < UInt16.max ? Range(handle.start ... handle.end) : Range(handle.start ..< handle.end)
         
-        var data: [(start: UInt16, end: UInt16, UUID: Bluetooth.UUID)] = []
+        var data: [(start: UInt16, end: UInt16, UUID: BluetoothUUID)] = []
         
         for group in attributeGroups {
             
@@ -705,7 +705,7 @@ internal extension GATTDatabase {
             
             guard groupRange.isSubset(handleRange) else { continue }
             
-            let serviceUUID = Bluetooth.UUID(littleEndian: group.service.value.byteValue)!
+            let serviceUUID = BluetoothUUID(littleEndian: group.service.value.bytes)!
             
             data.append((group.startHandle, group.endHandle, serviceUUID))
         }
@@ -713,7 +713,7 @@ internal extension GATTDatabase {
         return data
     }
     
-    func readByType(handle: (start: UInt16, end: UInt16), type: Bluetooth.UUID) -> [Attribute] {
+    func readByType(handle: (start: UInt16, end: UInt16), type: BluetoothUUID) -> [Attribute] {
         
         let range = handle.end < UInt16.max ? Range(handle.start ... handle.end) : Range(handle.start ..< handle.end)
         
@@ -737,7 +737,7 @@ internal extension GATTDatabase {
             
             for attribute in group.attributes {
                 
-                let match = range.contains(attribute.handle) && attribute.UUID == .Bit16(type) && attribute.value.byteValue == value
+                let match = range.contains(attribute.handle) && attribute.UUID == .bit16(type) && attribute.value.bytes == value
                 
                 guard match else { continue }
                 
