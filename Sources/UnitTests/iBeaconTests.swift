@@ -29,7 +29,7 @@
             
             var parameterBytes = [UInt8].init(repeating: 0, count: Int(adverstisementDataParameter.length))
             
-            withUnsafePointer(&adverstisementDataParameter.data) { memcpy(&parameterBytes, UnsafePointer<Void>($0), parameterBytes.count) }
+            let _ = withUnsafePointer(&adverstisementDataParameter.data) { memcpy(&parameterBytes, UnsafePointer<Void>($0), parameterBytes.count) }
             
             var advertisingDataCommand = LowEnergyCommand.SetAdvertisingDataParameter()
             
