@@ -138,7 +138,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
     var newFilter = HCIFilter()
     let oldFilterPointer = withUnsafeMutablePointer(&oldFilter) { UnsafeMutablePointer<Void>($0) }
     let newFilterPointer = withUnsafeMutablePointer(&newFilter) { UnsafeMutablePointer<Void>($0) }
-    var filterLength = socklen_t(sizeof(HCIFilter))
+    var filterLength = socklen_t(sizeof(HCIFilter.self))
 
     // get old filter
     guard getsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, &filterLength) == 0
@@ -160,7 +160,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
         else { throw POSIXError.fromErrno! }
 
     // restore old filter in case of error
-    func restoreFilter(_ error: ErrorProtocol) -> ErrorProtocol {
+    func restoreFilter(_ error: Error) -> Error {
 
         guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, filterLength) == 0
             else { return AdapterError.CouldNotRestoreFilter(error, POSIXError.fromErrno!) }
@@ -209,7 +209,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
             
             // poll timed out
             guard pollStatus != 0
-                else { throw restoreFilter(POSIXError(rawValue: ETIMEDOUT)!) }
+                else { throw restoreFilter(POSIXError(code: .ETIMEDOUT)) }
 
             // decrement timeout (why?)
             timeout -= 10
@@ -277,7 +277,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
             guard event == HCIGeneralEvent.CommandStatus.rawValue else {
 
                 guard parameter.status == 0
-                    else { throw restoreFilter(POSIXError(rawValue: EIO)!) }
+                    else { throw restoreFilter(POSIXError(code: .EIO)) }
 
                 break
             }
@@ -340,7 +340,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
     }
 
     // throw timeout error
-    throw POSIXError(rawValue: ETIMEDOUT)!
+    throw POSIXError(code: .ETIMEDOUT)
 }
 
 // MARK: - Internal Constants

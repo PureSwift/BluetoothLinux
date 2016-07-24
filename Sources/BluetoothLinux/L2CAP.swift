@@ -78,7 +78,7 @@ public final class L2CAPSocket {
 
         var localAddress = sockaddr_l2()
         
-        memset(&localAddress, 0, sizeof(sockaddr_l2))
+        memset(&localAddress, 0, sizeof(sockaddr_l2.self))
         
         localAddress.l2_family = sa_family_t(AF_BLUETOOTH)
         localAddress.l2_bdaddr = address
@@ -94,7 +94,7 @@ public final class L2CAPSocket {
         // error creating socket
         guard internalSocket >= 0 else { throw POSIXError.fromErrno! }
 
-        let socketLength = socklen_t(sizeof(sockaddr_l2))
+        let socketLength = socklen_t(sizeof(sockaddr_l2.self))
 
         // bind socket to port and address
         guard withUnsafePointer(&localAddress, { bind(internalSocket, UnsafePointer<sockaddr>($0), socketLength) }) == 0
@@ -104,7 +104,7 @@ public final class L2CAPSocket {
         var security = bt_security()
         security.level = securityLevel.rawValue
         
-        guard setsockopt(internalSocket, SOL_BLUETOOTH, BT_SECURITY, &security, socklen_t(sizeof(bt_security))) == 0
+        guard setsockopt(internalSocket, SOL_BLUETOOTH, BT_SECURITY, &security, socklen_t(sizeof(bt_security.self))) == 0
             else { close(internalSocket); throw POSIXError.fromErrno! }
         
         // put socket into listening mode
@@ -129,7 +129,7 @@ public final class L2CAPSocket {
         var security = bt_security()
         security.level = securityLevel.rawValue
         
-        guard setsockopt(internalSocket, SOL_BLUETOOTH, BT_SECURITY, &security, socklen_t(sizeof(bt_security))) == 0
+        guard setsockopt(internalSocket, SOL_BLUETOOTH, BT_SECURITY, &security, socklen_t(sizeof(bt_security.self))) == 0
             else { throw POSIXError.fromErrno! }
     }
 
@@ -138,7 +138,7 @@ public final class L2CAPSocket {
 
         var remoteAddress = sockaddr_l2()
 
-        var socketLength = socklen_t(sizeof(sockaddr_l2))
+        var socketLength = socklen_t(sizeof(sockaddr_l2.self))
         
         // accept new client
         let client = withUnsafeMutablePointer(&remoteAddress, { accept(internalSocket, UnsafeMutablePointer<sockaddr>($0), &socketLength) })
@@ -185,7 +185,7 @@ public extension L2CAPSocket {
     public typealias Error = L2CAPSocket
 }
 
-public enum L2CAPSocketError: ErrorProtocol {
+public enum L2CAPSocketError: Error {
     
     /// Sent less bytes than expected.
     case SentLessBytes(Int)

@@ -387,14 +387,14 @@ public final class ATTConnection {
         }
         
         // If there is no pending request, pick an operation from the request queue.
-        if let sendOpcode = requestQueue.popFirst() where pendingRequest == nil {
+        if let sendOpcode = requestQueue.popFirst(), pendingRequest == nil {
             
             return sendOpcode
         }
         
         // There is either a request pending or no requests queued. 
         // If there is no pending indication, pick an operation from the indication queue.
-        if let sendOpcode = indicationQueue.popFirst() where pendingIndication == nil {
+        if let sendOpcode = indicationQueue.popFirst(), pendingIndication == nil {
             
             return sendOpcode
         }
@@ -410,7 +410,7 @@ public extension ATTConnection {
 }
 
 /// ATT Connection Error
-public enum ATTConnectionError: ErrorProtocol {
+public enum ATTConnectionError: Error {
     
     /// The recieved data could not be parsed correctly.
     case GarbageResponse(Data)

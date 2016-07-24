@@ -41,7 +41,7 @@ public final class Adapter {
     public convenience init(address: Address? = nil) throws {
         
         guard let deviceIdentifier = try HCIGetRoute(address)
-            else { throw Error.AdapterNotFound }
+            else { throw Adapter.Error.AdapterNotFound }
         
         let internalSocket = try HCIOpenDevice(deviceIdentifier)
         
@@ -84,7 +84,7 @@ public extension Adapter {
     public typealias Error = AdapterError
 }
 
-public enum AdapterError: ErrorProtocol {
+public enum AdapterError: Error {
     
     /// The specified adapter could not be found.
     case AdapterNotFound
@@ -95,7 +95,7 @@ public enum AdapterError: ErrorProtocol {
     /// A method that changed the adapter's filter had en internal error, and unsuccessfully tried to restore the previous filter.
     ///
     /// First error is the method's error. Second is the error while trying to restore the filter
-    case CouldNotRestoreFilter(ErrorProtocol, ErrorProtocol)
+    case CouldNotRestoreFilter(Error, Error)
     
     /// The recieved data could not be parsed correctly.
     case GarbageResponse(Data)
@@ -117,7 +117,7 @@ internal func HCIOpenDevice(_ deviceIdentifier: CInt) throws -> CInt {
     
     let addressPointer = withUnsafeMutablePointer(&address) { UnsafeMutablePointer<sockaddr>($0) }
     
-    guard bind(hciSocket, addressPointer, socklen_t(sizeof(HCISocketAddress))) >= 0
+    guard bind(hciSocket, addressPointer, socklen_t(sizeof(HCISocketAddress.self))) >= 0
         else { close(hciSocket); throw POSIXError.fromErrno! }
     
     return hciSocket
@@ -156,8 +156,8 @@ internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(
         let deviceIdentifier = CInt(deviceRequest.identifier)
         
         /* Operation not supported by device */
-        guard deviceIdentifier >= 0 else { throw POSIXError(rawValue: ENODEV)! }
-
+        guard deviceIdentifier >= 0 else { throw POSIXError(code: POSIXErrorCode.ENODEV) }
+        
         if try predicate(deviceDescriptor: hciSocket, deviceIdentifier: deviceIdentifier) {
 
             return deviceIdentifier
@@ -206,7 +206,7 @@ internal func HCIDeviceAddress(_ deviceIdentifier: CInt) throws -> Address {
     let deviceInfo = try HCIDeviceInfo(deviceIdentifier)
     
     guard HCITestBit(HCI.DeviceFlag.Up, deviceInfo.flags)
-        else { throw POSIXError(rawValue: ENETDOWN)! }
+        else { throw POSIXError(code: .ENETDOWN) }
     
     return deviceInfo.address
 }
