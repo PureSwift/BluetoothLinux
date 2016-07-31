@@ -318,7 +318,7 @@ internal struct HCIFilter {
         
         var newFilter = HCIFilter()
         
-        memset(&newFilter, 0, sizeof(HCIFilter))
+        memset(&newFilter, 0, sizeof(HCIFilter.self))
         
         self = newFilter
     }

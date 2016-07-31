@@ -113,7 +113,7 @@ internal func HCIInquiry(_ deviceIdentifier: CInt, duration: Int, scanLimit: Int
     
     let deviceClass = deviceClass ?? (0x33, 0x8b, 0x9e)
     
-    let inquiryRequest = UnsafeMutablePointer<HCIInquiryRequest>(buffer)
+    let inquiryRequest = unsafeBitCast(buffer, to: UnsafeMutablePointer<HCIInquiryRequest>.self)
     
     inquiryRequest.pointee.identifier = UInt16(deviceIdentifier)
     inquiryRequest.pointee.responseCount = UInt8(scanLimit)

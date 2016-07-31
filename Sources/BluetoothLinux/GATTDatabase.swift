@@ -48,13 +48,17 @@ public struct GATTDatabase {
     
     public mutating func add(service: Service) -> UInt16 {
         
-        let serviceAttribute = Attribute(service: service, handle: newHandle())
+        let newHandle = self.newHandle()
+        
+        let serviceAttribute = Attribute(service: service, handle: newHandle)
         
         var attributes = [serviceAttribute]
         
         for characteristic in service.characteristics {
+
+            let newHandle = self.newHandle()
             
-            attributes += Attribute.from(characteristic: characteristic, handle: newHandle())
+            attributes += Attribute.from(characteristic: characteristic, handle: newHandle)
             
             lastHandle = attributes.last!.handle
         }
@@ -168,7 +172,7 @@ public extension GATTDatabase {
         }
         
         /// ATT Attribute Value
-        private var littleEndian: [UInt8] {
+        fileprivate var littleEndian: [UInt8] {
             
             let handleBytes = serviceHandle.littleEndian.bytes
             
@@ -190,7 +194,7 @@ public extension GATTDatabase {
         public var value: Data
         
         /// Defualt initializer
-        private init(handle: UInt16, UUID: BluetoothUUID, value: Data = Data(), permissions: [Permission] = []) {
+        fileprivate init(handle: UInt16, UUID: BluetoothUUID, value: Data = Data(), permissions: [Permission] = []) {
             
             self.handle = handle
             self.UUID = UUID
@@ -199,7 +203,7 @@ public extension GATTDatabase {
         }
         
         /// Initialize attribute with a `Service`.
-        private init(service: GATT.Service, handle: UInt16) {
+        fileprivate init(service: GATT.Service, handle: UInt16) {
             
             self.handle = handle
             self.UUID = GATT.UUID(primaryService: service.primary).toUUID()
@@ -208,7 +212,7 @@ public extension GATTDatabase {
         }
         
         /// Initialize attribute with an `Include Declaration`.
-        private init(include: Include, handle: UInt16) {
+        fileprivate init(include: Include, handle: UInt16) {
             
             self.handle = handle
             self.UUID = GATT.UUID.Include.toUUID()
@@ -217,7 +221,7 @@ public extension GATTDatabase {
         }
         
         /// Initialize attributes from a `Characteristic`.
-        private static func from(characteristic: Characteristic, handle: UInt16) -> [Attribute] {
+        fileprivate static func from(characteristic: Characteristic, handle: UInt16) -> [Attribute] {
             
             var currentHandle = handle
             

@@ -115,7 +115,7 @@ internal func HCIOpenDevice(_ deviceIdentifier: CInt) throws -> CInt {
     address.family = sa_family_t(AF_BLUETOOTH)
     address.deviceIdentifier = UInt16(deviceIdentifier)
     
-    let addressPointer = withUnsafeMutablePointer(&address) { UnsafeMutablePointer<sockaddr>($0) }
+    let addressPointer = withUnsafeMutablePointer(to: &address) { unsafeBitCast($0, to: UnsafeMutablePointer<sockaddr>.self) }
     
     guard bind(hciSocket, addressPointer, socklen_t(sizeof(HCISocketAddress.self))) >= 0
         else { close(hciSocket); throw POSIXError.fromErrno! }
@@ -139,7 +139,7 @@ internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(
 
     deviceList.count = UInt16(HCI.MaximumDeviceCount)
     
-    let voidDeviceListPointer = withUnsafeMutablePointer(&deviceList) { UnsafeMutablePointer<Void>($0) }
+    let voidDeviceListPointer = withUnsafeMutablePointer(to: &deviceList) { UnsafeMutablePointer<Void>($0) }
     
     // request device list
         
@@ -177,7 +177,7 @@ internal func HCIGetRoute(_ address: Address? = nil) throws -> CInt? {
 
         deviceInfo.identifier = UInt16(deviceIdentifier)
 
-        guard withUnsafeMutablePointer(&deviceInfo, { swift_bluetooth_ioctl(dd, HCI.IOCTL.GetDeviceInfo, UnsafeMutablePointer<Void>($0)) }) == 0 else { throw POSIXError.fromErrno! }
+        guard withUnsafeMutablePointer(to: &deviceInfo, { swift_bluetooth_ioctl(dd, HCI.IOCTL.GetDeviceInfo, UnsafeMutablePointer<Void>($0)) }) == 0 else { throw POSIXError.fromErrno! }
 
         return deviceInfo.address == address
     }
@@ -196,7 +196,7 @@ internal func HCIDeviceInfo(_ deviceIdentifier: CInt) throws -> HCIDeviceInforma
     var deviceInfo = HCIDeviceInformation()
     deviceInfo.identifier = UInt16(deviceIdentifier)
     
-    guard withUnsafeMutablePointer(&deviceInfo, { swift_bluetooth_ioctl(hciSocket, HCI.IOCTL.GetDeviceInfo, UnsafeMutablePointer<Void>($0)) }) == 0 else { throw POSIXError.fromErrno! }
+    guard withUnsafeMutablePointer(to:&deviceInfo, { swift_bluetooth_ioctl(hciSocket, HCI.IOCTL.GetDeviceInfo, UnsafeMutablePointer<Void>($0)) }) == 0 else { throw POSIXError.fromErrno! }
     
     return deviceInfo
 }

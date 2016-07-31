@@ -70,10 +70,6 @@ public final class L2CAPSocket {
         // set properties
         self.securityLevel = securityLevel
 
-        // get address
-
-        let address = adapterAddress ?? Address(bytes: (0, 0, 0, 0, 0, 0)) // BDADDR_ANY
-
         // set address
 
         var localAddress = sockaddr_l2()
@@ -81,7 +77,7 @@ public final class L2CAPSocket {
         memset(&localAddress, 0, sizeof(sockaddr_l2.self))
         
         localAddress.l2_family = sa_family_t(AF_BLUETOOTH)
-        localAddress.l2_bdaddr = address
+        localAddress.l2_bdaddr = adapterAddress
         localAddress.l2_psm = protocolServiceMultiplexer.littleEndian
         localAddress.l2_cid = channelIdentifier.littleEndian
         localAddress.l2_bdaddr_type = addressType.rawValue
@@ -97,7 +93,7 @@ public final class L2CAPSocket {
         let socketLength = socklen_t(sizeof(sockaddr_l2.self))
 
         // bind socket to port and address
-        guard withUnsafePointer(&localAddress, { bind(internalSocket, UnsafePointer<sockaddr>($0), socketLength) }) == 0
+        guard withUnsafePointer(to: &localAddress, { bind(internalSocket, unsafeBitCast($0, to: UnsafeMutablePointer<sockaddr>.self), socketLength) }) == 0
             else { close(internalSocket); throw POSIXError.fromErrno! }
         
         // set security level
@@ -141,7 +137,7 @@ public final class L2CAPSocket {
         var socketLength = socklen_t(sizeof(sockaddr_l2.self))
         
         // accept new client
-        let client = withUnsafeMutablePointer(&remoteAddress, { accept(internalSocket, UnsafeMutablePointer<sockaddr>($0), &socketLength) })
+        let client = withUnsafeMutablePointer(to: &remoteAddress, { accept(internalSocket, unsafeBitCast($0, to: UnsafeMutablePointer<sockaddr>.self), &socketLength) })
 
         // error accepting new connection
         guard client >= 0 else { throw POSIXError.fromErrno! }

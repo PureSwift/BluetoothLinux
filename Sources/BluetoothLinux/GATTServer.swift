@@ -108,8 +108,8 @@ public final class GATTServer {
             else { fatalError("Could not add error PDU to queue: \(opcode) \(error) \(handle)") }
     }
     
-    @noreturn @inline(__always)
-    private func fatalErrorResponse(_ message: String, _ opcode: ATT.Opcode, _ handle: UInt16 = 0, line: UInt = #line) {
+    @inline(__always)
+    private func fatalErrorResponse(_ message: String, _ opcode: ATT.Opcode, _ handle: UInt16 = 0, line: UInt = #line) -> Never {
         
         errorResponse(opcode, ATT.Error.UnlikelyError, handle)
         

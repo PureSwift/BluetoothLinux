@@ -20,7 +20,7 @@
             
             var cDestination: UInt32 = 0
             
-            hci_set_bit(bit, withUnsafeMutablePointer(&cDestination, { UnsafeMutablePointer<Void>($0) }))
+            hci_set_bit(bit, withUnsafeMutablePointer(to: &cDestination, { UnsafeMutablePointer<Void>($0) }))
             
             var swiftDestination: UInt32 = 0
             
@@ -81,7 +81,7 @@
             
             var cListCopy = hci_ioctl_list
             
-            let cListPointer = withUnsafeMutablePointer(&cListCopy) { UnsafeMutablePointer<Int32>($0) }
+            let cListPointer = withUnsafeMutablePointer(to: &cListCopy) { unsafeBitCast($0, to: UnsafeMutablePointer<Int32>.self) }
             
             for (index, swiftDefinition) in swiftDefinitionList.enumerated() {
                 

@@ -8,8 +8,7 @@
 
 #if os(OSX) || os(iOS)
     
-    @noreturn
-    internal func stub() {
+    internal func stub() -> Never {
         
         fatalError("Method not implemented. This code only runs on Linux.")
     }
