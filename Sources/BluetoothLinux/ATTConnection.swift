@@ -131,7 +131,7 @@ public final class ATTConnection {
         
         try socket.send(Data(bytes: sendOpcode.data))
         
-        let opcode = sendOpcode.dynamicType.PDUType.attributeOpcode
+        let opcode = type(of: sendOpcode).PDUType.attributeOpcode
         
         //print("Did write \(opcode)")
         
@@ -166,7 +166,7 @@ public final class ATTConnection {
     }
     
     /// Registers a callback for an opcode and returns the ID associated with that callback.
-    public func register<T: ATTProtocolDataUnit>(_ callback: (T) -> ()) -> UInt {
+    public func register<T: ATTProtocolDataUnit>(_ callback: @escaping (T) -> ()) -> UInt {
         
         let identifier = nextRegisterID
         
@@ -214,7 +214,7 @@ public final class ATTConnection {
     /// Adds a PDU to the queue to send.
     ///
     /// - Returns: Identifier of queued send operation or `nil` if the PDU cannot be sent.
-    public func send<T: ATTProtocolDataUnit>(PDU: T, response: (T) -> ()) -> UInt? {
+    public func send<T: ATTProtocolDataUnit>(PDU: T, response: @escaping (T) -> ()) -> UInt? {
         
         let attributeOpcode = T.attributeOpcode
         
@@ -290,13 +290,13 @@ public final class ATTConnection {
         
         // If the received response doesn't match the pending request, or if the request is malformed, 
         // end the current request with failure.
-        guard sendOpcode.dynamicType.PDUType.attributeOpcode == opcode else {
+        guard type(of: sendOpcode).PDUType.attributeOpcode == opcode else {
             
             throw Error.UnexpectedResponse(data)
         }
         
         // attempt to deserialize
-        guard let PDU = sendOpcode.dynamicType.PDUType.init(byteValue: data.bytes)
+        guard let PDU = type(of: sendOpcode).PDUType.init(byteValue: data.bytes)
             else { throw Error.GarbageResponse(data) }
         
         // success!
@@ -318,7 +318,7 @@ public final class ATTConnection {
             else { throw Error.GarbageResponse(data) }
         
         // attempt to deserialize
-        guard let PDU = sendOpcode.dynamicType.PDUType.init(byteValue: data.bytes)
+        guard let PDU = type(of: sendOpcode).PDUType.init(byteValue: data.bytes)
             else { throw Error.GarbageResponse(data) }
         
         // success!
@@ -354,10 +354,10 @@ public final class ATTConnection {
         for notify in notifyList {
             
             // try next
-            if notify.dynamicType.PDUType.attributeOpcode != opcode { continue }
+            if type(of: notify).PDUType.attributeOpcode != opcode { continue }
             
             // attempt to deserialize
-            guard let PDU = foundPDU ?? notify.dynamicType.PDUType.init(byteValue: data.bytes)
+            guard let PDU = foundPDU ?? type(of: notify).PDUType.init(byteValue: data.bytes)
                 else { throw Error.GarbageResponse(data) }
             
             foundPDU = PDU
@@ -444,7 +444,7 @@ private struct ATTSendOpcode<PDU: ATTProtocolDataUnit>: ATTSendOpcodeType {
     
     var callback: (ATTProtocolDataUnit) -> () { return { self.response($0 as! PDU) } }
     
-    init(identifier: UInt, opcode: ATT.Opcode, data: [UInt8], response: (PDU) -> ()) {
+    init(identifier: UInt, opcode: ATT.Opcode, data: [UInt8], response: @escaping (PDU) -> ()) {
         
         self.identifier = identifier
         self.data = data
@@ -471,7 +471,7 @@ private struct ATTNotify<PDU: ATTProtocolDataUnit>: ATTNotifyType {
     
     var callback: (ATTProtocolDataUnit) -> () { return { self.notify($0 as! PDU) } }
     
-    init(identifier: UInt, notify: (PDU) -> ()) {
+    init(identifier: UInt, notify: @escaping (PDU) -> ()) {
         
         self.identifier = identifier
         self.notify = notify

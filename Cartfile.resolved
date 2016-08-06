@@ -1,3 +1,3 @@
 github "PureSwift/JSON-C" "0b49467d3f881523c9a74994f6e460a757bdb84f"
-github "PureSwift/SwiftFoundation" "9415e238f02ff78bb1f1c61f31bd1120959ddf4c"
-github "PureSwift/Bluetooth" "adfb8019748bee25c1679f2b65ecb87388f9c52a"
+github "PureSwift/SwiftFoundation" "8048cd25a9d38d5cc5917a783434da41e027aec3"
+github "PureSwift/Bluetooth" "e81d2ca4631097a442323f7364dc1a828fdc4b8d"

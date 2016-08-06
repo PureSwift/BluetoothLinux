@@ -109,7 +109,7 @@ public extension Adapter {
     
     func deviceRequest<CP: HCICommandParameter>(_ commandParameter: CP, timeout: Int = 1000) throws {
 
-        let opcode = (CP.command.rawValue, CP.command.dynamicType.opcodeGroupField.rawValue)
+        let opcode = (CP.command.rawValue, type(of: CP.command).opcodeGroupField.rawValue)
 
         let data = try HCISendRequest(internalSocket, opcode: opcode, commandParameterData: commandParameter.byteValue, eventParameterLength: 1, timeout: timeout)
 
@@ -138,7 +138,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
     var newFilter = HCIFilter()
     let oldFilterPointer = withUnsafeMutablePointer(to: &oldFilter) { UnsafeMutablePointer<Void>($0) }
     let newFilterPointer = withUnsafeMutablePointer(to: &newFilter) { UnsafeMutablePointer<Void>($0) }
-    var filterLength = socklen_t(sizeof(HCIFilter.self))
+    var filterLength = socklen_t(MemoryLayout<HCIFilter>.size)
 
     // get old filter
     guard getsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, &filterLength) == 0

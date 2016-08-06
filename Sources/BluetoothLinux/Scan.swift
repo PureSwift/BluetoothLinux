@@ -105,7 +105,7 @@ internal func HCIInquiry(_ deviceIdentifier: CInt, duration: Int, scanLimit: Int
     
     defer { close(deviceDescriptor) }
     
-    let bufferSize = sizeof(HCIInquiryRequest.self) + (sizeof(InquiryResult.self) * scanLimit)
+    let bufferSize = MemoryLayout<HCIInquiryRequest>.size + (MemoryLayout<InquiryResult>.size * scanLimit)
     
     let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
     
@@ -126,11 +126,11 @@ internal func HCIInquiry(_ deviceIdentifier: CInt, duration: Int, scanLimit: Int
     
     let resultCount = Int(inquiryRequest.pointee.responseCount)
     
-    let resultBufferSize = sizeof(InquiryResult.self) * resultCount
+    let resultBufferSize = MemoryLayout<InquiryResult>.size * resultCount
     
     var results = [InquiryResult](repeating: InquiryResult(), count: resultCount)
     
-    memcpy(&results, buffer.advanced(by: sizeof(HCIInquiryRequest.self)), resultBufferSize)
+    memcpy(&results, buffer.advanced(by: MemoryLayout<HCIInquiryRequest>.size), resultBufferSize)
     
     return results
 }

@@ -18,9 +18,9 @@ public final class GATTServer {
     
     public var database = GATTDatabase()
     
-    public var willRead: ((UUID: BluetoothUUID, value: Data, offset: Int) -> ATT.Error?)?
+    public var willRead: ((_ UUID: BluetoothUUID, _ value: Data, _ offset: Int) -> ATT.Error?)?
     
-    public var willWrite: ((UUID: BluetoothUUID, value: Data, newValue: Data) -> ATT.Error?)?
+    public var willWrite: ((_ UUID: BluetoothUUID, _ value: Data, _ newValue: Data) -> ATT.Error?)?
     
     public let maximumPreparedWrites: Int
     
@@ -199,7 +199,7 @@ public final class GATTServer {
         let newData = Data(bytes: value)
         
         // validate application errors with write callback
-        if let error = willWrite?(UUID: attribute.UUID, value: attribute.value, newValue: newData) {
+        if let error = willWrite?(attribute.UUID, attribute.value, newData) {
             
             doResponse(errorResponse(opcode, error, handle))
             return
@@ -254,7 +254,7 @@ public final class GATTServer {
         value = Array(value.prefix(connection.maximumTransmissionUnit - 1))
         
         // validate application errors with read callback
-        if let error = willRead?(UUID: attribute.UUID, value: Data(bytes: value), offset: Int(offset)) {
+        if let error = willRead?(attribute.UUID, Data(bytes: value), Int(offset)) {
             
             errorResponse(opcode, error, handle)
             return nil
@@ -284,7 +284,7 @@ public final class GATTServer {
         
         typealias AttributeData = ATTReadByGroupTypeResponse.AttributeData
         
-        let opcode = pdu.dynamicType.attributeOpcode
+        let opcode = type(of: pdu).attributeOpcode
         
         log?("Read by Group Type (\(pdu.startHandle) - \(pdu.endHandle))")
         
@@ -346,7 +346,7 @@ public final class GATTServer {
         
         typealias AttributeData = ATTReadByTypeResponse.AttributeData
         
-        let opcode = pdu.dynamicType.attributeOpcode
+        let opcode = type(of: pdu).attributeOpcode
         
         if let log = self.log {
             
@@ -418,7 +418,7 @@ public final class GATTServer {
         
         typealias Format = ATTFindInformationResponse.Format
         
-        let opcode = pdu.dynamicType.attributeOpcode
+        let opcode = type(of: pdu).attributeOpcode
         
         log?("Find Information (\(pdu.startHandle) - \(pdu.endHandle))")
         
@@ -478,7 +478,7 @@ public final class GATTServer {
         
         typealias Handle = ATTFindByTypeResponse.HandlesInformation
         
-        let opcode = pdu.dynamicType.attributeOpcode
+        let opcode = type(of: pdu).attributeOpcode
         
         log?("Find By Type Value (\(pdu.startHandle) - \(pdu.endHandle)) (\(pdu.attributeType))")
         
@@ -502,21 +502,21 @@ public final class GATTServer {
     
     private func writeRequest(pdu: ATTWriteRequest) {
         
-        let opcode = pdu.dynamicType.attributeOpcode
+        let opcode = type(of: pdu).attributeOpcode
         
         handleWriteRequest(opcode: opcode, handle: pdu.handle, value: pdu.value, shouldRespond: true)
     }
     
     private func writeCommand(pdu: ATTWriteCommand) {
         
-        let opcode = pdu.dynamicType.attributeOpcode
+        let opcode = type(of: pdu).attributeOpcode
         
         handleWriteRequest(opcode: opcode, handle: pdu.handle, value: pdu.value, shouldRespond: false)
     }
     
     private func readRequest(pdu: ATTReadRequest) {
         
-        let opcode = pdu.dynamicType.attributeOpcode
+        let opcode = type(of: pdu).attributeOpcode
         
         log?("Read (\(pdu.handle))")
         
@@ -528,7 +528,7 @@ public final class GATTServer {
     
     private func readBlobRequest(pdu: ATTReadBlobRequest) {
         
-        let opcode = pdu.dynamicType.attributeOpcode
+        let opcode = type(of: pdu).attributeOpcode
         
         log?("Read Blob (\(pdu.handle))")
         
@@ -540,7 +540,7 @@ public final class GATTServer {
     
     private func readMultipleRequest(pdu: ATTReadMultipleRequest) {
         
-        let opcode = pdu.dynamicType.attributeOpcode
+        let opcode = type(of: pdu).attributeOpcode
         
         log?("Read Multiple Request \(pdu.handles)")
         
@@ -560,7 +560,7 @@ public final class GATTServer {
             let attribute = database[handle]
             
             // validate application errors with read callback
-            if let error = willRead?(UUID: attribute.UUID, value: attribute.value, offset: 0) {
+            if let error = willRead?(attribute.UUID, attribute.value, 0) {
                 
                 errorResponse(opcode, error, handle)
                 return
@@ -576,7 +576,7 @@ public final class GATTServer {
     
     private func prepareWriteRequest(pdu: ATTPrepareWriteRequest) {
         
-        let opcode = pdu.dynamicType.attributeOpcode
+        let opcode = type(of: pdu).attributeOpcode
         
         log?("Prepare Write Request (\(pdu.handle))")
         
@@ -622,7 +622,7 @@ public final class GATTServer {
     
     private func executeWriteRequest(pdu: ATTExecuteWriteRequest) {
         
-        let opcode = pdu.dynamicType.attributeOpcode
+        let opcode = type(of: pdu).attributeOpcode
         
         log?("Execute Write Request (\(pdu.flag))")
         
@@ -650,7 +650,7 @@ public final class GATTServer {
                 let attribute = database[handle]
                 
                 // validate application errors with write callback
-                if let error = willWrite?(UUID: attribute.UUID, value: attribute.value, newValue: newValue) {
+                if let error = willWrite?(attribute.UUID, attribute.value, newValue) {
                     
                     errorResponse(opcode, error, handle)
                     return

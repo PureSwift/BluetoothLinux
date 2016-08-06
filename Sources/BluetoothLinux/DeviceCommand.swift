@@ -26,7 +26,7 @@ public extension Adapter {
         
         let command = T.command
         
-        let opcodeGroupField = command.dynamicType.opcodeGroupField
+        let opcodeGroupField = type(of: command).opcodeGroupField
         
         let parameterData = commandParameter.byteValue
         

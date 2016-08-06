@@ -22,21 +22,21 @@ internal struct IOC {
     
     static let DIRBITS      = CInt(2)
     
-    static let NRMASK       = CInt((1 << IOC.NRBITS)-1)
+    static let NRMASK       = CInt((1 << NRBITS)-1)
     
-    static let TYPEMASK     = CInt((1 << IOC.TYPEBITS)-1)
+    static let TYPEMASK     = CInt((1 << TYPEBITS)-1)
     
-    static let SIZEMASK     = CInt((1 << IOC.SIZEBITS)-1)
+    static let SIZEMASK     = CInt((1 << SIZEBITS)-1)
     
-    static let DIRMASK      = CInt((1 << IOC.DIRBITS)-1)
+    static let DIRMASK      = CInt((1 << DIRBITS)-1)
     
     static let NRSHIFT      = CInt(0)
     
-    static let TYPESHIFT    = CInt(IOC.NRSHIFT+IOC.NRBITS)
+    static let TYPESHIFT    = CInt(NRSHIFT+NRBITS)
     
-    static let SIZESHIFT    = CInt(IOC.TYPESHIFT+IOC.TYPEBITS)
+    static let SIZESHIFT    = CInt(TYPESHIFT+TYPEBITS)
     
-    static let DIRSHIFT     = CInt(IOC.SIZESHIFT+IOC.SIZEBITS)
+    static let DIRSHIFT     = CInt(SIZESHIFT+SIZEBITS)
     
     static let NONE         = CUnsignedInt(0)
     
@@ -47,7 +47,7 @@ internal struct IOC {
     @inline(__always)
     static func TYPECHECK<T>(_ type: T.Type) -> CInt {
         
-        return CInt(sizeof(type))
+        return CInt(MemoryLayout<T>.size)
     }
     
     /// #define _IOC(dir,type,nr,size) \

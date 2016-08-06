@@ -117,13 +117,13 @@ internal func HCIOpenDevice(_ deviceIdentifier: CInt) throws -> CInt {
     
     let addressPointer = withUnsafeMutablePointer(to: &address) { unsafeBitCast($0, to: UnsafeMutablePointer<sockaddr>.self) }
     
-    guard bind(hciSocket, addressPointer, socklen_t(sizeof(HCISocketAddress.self))) >= 0
+    guard bind(hciSocket, addressPointer, socklen_t(MemoryLayout<HCISocketAddress>.size)) >= 0
         else { close(hciSocket); throw POSIXError.fromErrno! }
     
     return hciSocket
 }
 
-internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(), _ predicate: (deviceDescriptor: CInt, deviceIdentifier: CInt) throws -> Bool) throws -> CInt? {
+internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(), _ predicate: (_ deviceDescriptor: CInt, _ deviceIdentifier: CInt) throws -> Bool) throws -> CInt? {
 
     // open HCI socket
 
@@ -158,7 +158,7 @@ internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(
         /* Operation not supported by device */
         guard deviceIdentifier >= 0 else { throw POSIXError(code: POSIXErrorCode.ENODEV) }
         
-        if try predicate(deviceDescriptor: hciSocket, deviceIdentifier: deviceIdentifier) {
+        if try predicate(hciSocket, deviceIdentifier) {
 
             return deviceIdentifier
         }

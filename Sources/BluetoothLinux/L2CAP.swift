@@ -74,7 +74,7 @@ public final class L2CAPSocket {
 
         var localAddress = sockaddr_l2()
         
-        memset(&localAddress, 0, sizeof(sockaddr_l2.self))
+        memset(&localAddress, 0, MemoryLayout<sockaddr_l2>.size)
         
         localAddress.l2_family = sa_family_t(AF_BLUETOOTH)
         localAddress.l2_bdaddr = adapterAddress
@@ -90,7 +90,7 @@ public final class L2CAPSocket {
         // error creating socket
         guard internalSocket >= 0 else { throw POSIXError.fromErrno! }
 
-        let socketLength = socklen_t(sizeof(sockaddr_l2.self))
+        let socketLength = socklen_t(MemoryLayout<sockaddr_l2>.size)
 
         // bind socket to port and address
         guard withUnsafePointer(to: &localAddress, { bind(internalSocket, unsafeBitCast($0, to: UnsafeMutablePointer<sockaddr>.self), socketLength) }) == 0
@@ -100,7 +100,7 @@ public final class L2CAPSocket {
         var security = bt_security()
         security.level = securityLevel.rawValue
         
-        guard setsockopt(internalSocket, SOL_BLUETOOTH, BT_SECURITY, &security, socklen_t(sizeof(bt_security.self))) == 0
+        guard setsockopt(internalSocket, SOL_BLUETOOTH, BT_SECURITY, &security, socklen_t(MemoryLayout<bt_security>.size)) == 0
             else { close(internalSocket); throw POSIXError.fromErrno! }
         
         // put socket into listening mode
@@ -125,7 +125,7 @@ public final class L2CAPSocket {
         var security = bt_security()
         security.level = securityLevel.rawValue
         
-        guard setsockopt(internalSocket, SOL_BLUETOOTH, BT_SECURITY, &security, socklen_t(sizeof(bt_security.self))) == 0
+        guard setsockopt(internalSocket, SOL_BLUETOOTH, BT_SECURITY, &security, socklen_t(MemoryLayout<bt_security>.size)) == 0
             else { throw POSIXError.fromErrno! }
     }
 
@@ -134,7 +134,7 @@ public final class L2CAPSocket {
 
         var remoteAddress = sockaddr_l2()
 
-        var socketLength = socklen_t(sizeof(sockaddr_l2.self))
+        var socketLength = socklen_t(MemoryLayout<sockaddr_l2>.size)
         
         // accept new client
         let client = withUnsafeMutablePointer(to: &remoteAddress, { accept(internalSocket, unsafeBitCast($0, to: UnsafeMutablePointer<sockaddr>.self), &socketLength) })
