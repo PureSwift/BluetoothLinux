@@ -15,7 +15,7 @@
 
 import SwiftFoundation
 
-@noreturn func Error(_ text: String) {
+func Error(_ text: String) -> Never {
     print(text)
     exit(1)
 }

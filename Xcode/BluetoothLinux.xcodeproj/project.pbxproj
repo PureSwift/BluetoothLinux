@@ -22,7 +22,6 @@
 		6E53E1771C8503AC00AC8FCA /* GATTDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */; };
 		6E53E1791C8503CA00AC8FCA /* ATTConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1781C8503CA00AC8FCA /* ATTConnection.swift */; };
 		6E66A8E51CD44D70005F922F /* BluetoothLinux.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E92A4271C15309B007BC4E9 /* BluetoothLinux.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E66A8E71CD44E2F005F922F /* iBeaconTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E66A8E31CD44A61005F922F /* iBeaconTests.swift */; };
 		6E795E9B1C49821B002377FE /* LinkMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E795E9A1C49821B002377FE /* LinkMode.swift */; };
 		6E881D821C389F4B00E509A9 /* iBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881D811C389F4B00E509A9 /* iBeacon.swift */; };
 		6E881DA21C39812F00E509A9 /* DeviceRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881D831C39783F00E509A9 /* DeviceRequest.swift */; };
@@ -32,9 +31,10 @@
 		6E92A4371C1530EF007BC4E9 /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92A4321C1530EF007BC4E9 /* Adapter.swift */; };
 		6E92A43B1C1530EF007BC4E9 /* Scan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92A4361C1530EF007BC4E9 /* Scan.swift */; };
 		6EA37EF41C84B4EA00A61969 /* L2CAPServerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA37EF21C84B4EA00A61969 /* L2CAPServerTest.swift */; };
+		6EA3EB131D5631F700C787A8 /* iBeaconTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA3EB111D5631F700C787A8 /* iBeaconTests.swift */; };
+		6EA3EB141D5631F700C787A8 /* MathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA3EB121D5631F700C787A8 /* MathTests.swift */; };
 		6EF355211C965EB400730BAB /* GATTServerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF355201C965EB400730BAB /* GATTServerTest.swift */; };
 		6EF928FB1C8830D200D9A103 /* BluetoothLinux.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E92A4241C15309B007BC4E9 /* BluetoothLinux.framework */; };
-		6EF929031C88316D00D9A103 /* MathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF929021C88316D00D9A103 /* MathTests.swift */; };
 		6EF929071C8832FF00D9A103 /* DarwinTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF929061C8832FF00D9A103 /* DarwinTests.m */; };
 		6EF929101C88379400D9A103 /* SwiftFoundation.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 6EF9290E1C88378B00D9A103 /* SwiftFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -82,7 +82,6 @@
 		6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTClient.swift; sourceTree = "<group>"; };
 		6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTDatabase.swift; sourceTree = "<group>"; };
 		6E53E1781C8503CA00AC8FCA /* ATTConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ATTConnection.swift; sourceTree = "<group>"; };
-		6E66A8E31CD44A61005F922F /* iBeaconTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iBeaconTests.swift; sourceTree = "<group>"; };
 		6E66A8E61CD44DD2005F922F /* iBeaconTestsHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iBeaconTestsHelper.h; sourceTree = "<group>"; };
 		6E739C8D1C88EE4C00D4775B /* ioctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioctl.h; sourceTree = "<group>"; };
 		6E795E9A1C49821B002377FE /* LinkMode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkMode.swift; sourceTree = "<group>"; };
@@ -98,12 +97,13 @@
 		6E92A4361C1530EF007BC4E9 /* Scan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scan.swift; sourceTree = "<group>"; };
 		6EA37EF11C84B4EA00A61969 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		6EA37EF21C84B4EA00A61969 /* L2CAPServerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = L2CAPServerTest.swift; sourceTree = "<group>"; };
+		6EA3EB111D5631F700C787A8 /* iBeaconTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iBeaconTests.swift; sourceTree = "<group>"; };
+		6EA3EB121D5631F700C787A8 /* MathTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MathTests.swift; sourceTree = "<group>"; };
 		6EE84E071CAF8E7B00A40C4D /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; name = Cartfile; path = ../Cartfile; sourceTree = "<group>"; };
 		6EF3551E1C965E8F00730BAB /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		6EF355201C965EB400730BAB /* GATTServerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTServerTest.swift; sourceTree = "<group>"; };
 		6EF928F61C8830D100D9A103 /* BluetoothLinuxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BluetoothLinuxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EF928FA1C8830D200D9A103 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6EF929021C88316D00D9A103 /* MathTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MathTests.swift; sourceTree = "<group>"; };
 		6EF929041C8831C700D9A103 /* MathTestsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathTestsHelper.h; sourceTree = "<group>"; };
 		6EF929051C8832FF00D9A103 /* BluetoothLinuxTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BluetoothLinuxTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		6EF929061C8832FF00D9A103 /* DarwinTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DarwinTests.m; sourceTree = "<group>"; };
@@ -167,7 +167,6 @@
 				6EE84E071CAF8E7B00A40C4D /* Cartfile */,
 				6E92A42F1C1530DC007BC4E9 /* Package.swift */,
 				6EF9290C1C88377100D9A103 /* Dependencies */,
-				6EF929011C88312A00D9A103 /* Unit Tests */,
 				6E0C5BBA1C83794700AF63E5 /* Tests Tools */,
 				6E92A4311C1530EF007BC4E9 /* Source */,
 				6E92A4261C15309B007BC4E9 /* BluetoothLinux */,
@@ -243,6 +242,8 @@
 			isa = PBXGroup;
 			children = (
 				6EF928FA1C8830D200D9A103 /* Info.plist */,
+				6EA3EB111D5631F700C787A8 /* iBeaconTests.swift */,
+				6EA3EB121D5631F700C787A8 /* MathTests.swift */,
 				6EF929051C8832FF00D9A103 /* BluetoothLinuxTests-Bridging-Header.h */,
 				6E66A8E61CD44DD2005F922F /* iBeaconTestsHelper.h */,
 				6EF929041C8831C700D9A103 /* MathTestsHelper.h */,
@@ -251,16 +252,6 @@
 				6EF929061C8832FF00D9A103 /* DarwinTests.m */,
 			);
 			path = BluetoothLinuxTests;
-			sourceTree = "<group>";
-		};
-		6EF929011C88312A00D9A103 /* Unit Tests */ = {
-			isa = PBXGroup;
-			children = (
-				6EF929021C88316D00D9A103 /* MathTests.swift */,
-				6E66A8E31CD44A61005F922F /* iBeaconTests.swift */,
-			);
-			name = "Unit Tests";
-			path = ../Sources/UnitTests;
 			sourceTree = "<group>";
 		};
 		6EF9290C1C88377100D9A103 /* Dependencies */ = {
@@ -420,9 +411,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E66A8E71CD44E2F005F922F /* iBeaconTests.swift in Sources */,
+				6EA3EB141D5631F700C787A8 /* MathTests.swift in Sources */,
 				6EF929071C8832FF00D9A103 /* DarwinTests.m in Sources */,
-				6EF929031C88316D00D9A103 /* MathTests.swift in Sources */,
+				6EA3EB131D5631F700C787A8 /* iBeaconTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
