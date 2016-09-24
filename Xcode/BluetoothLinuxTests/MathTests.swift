@@ -20,7 +20,7 @@
             
             var cDestination: UInt32 = 0
             
-            hci_set_bit(bit, withUnsafeMutablePointer(to: &cDestination, { UnsafeMutablePointer<Void>($0) }))
+            hci_set_bit(bit, withUnsafeMutablePointer(to: &cDestination, { UnsafeMutableRawPointer($0) }))
             
             var swiftDestination: UInt32 = 0
             
