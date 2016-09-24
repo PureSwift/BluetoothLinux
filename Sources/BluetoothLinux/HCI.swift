@@ -353,7 +353,7 @@ internal struct HCIFilter {
 // HCI Bit functions
 
 @inline(__always)
-internal func HCISetBit(_ bit: CInt, _ destination: UnsafeMutablePointer<Void>) {
+internal func HCISetBit(_ bit: CInt, _ destination: UnsafeMutableRawPointer) {
     
     #if os(OSX)
         //func swift_bluetooth_hci_set_bit(_: CInt, _: UnsafeMutablePointer<Void>) { stub() }
