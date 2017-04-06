@@ -1,0 +1,18 @@
+{
+  "autoPin": true,
+  "pins": [
+    {
+      "package": "Bluetooth",
+      "reason": null,
+      "repositoryURL": "https://github.com/PureSwift/Bluetooth.git",
+      "version": "1.2.2"
+    },
+    {
+      "package": "CSwiftBluetoothLinux",
+      "reason": null,
+      "repositoryURL": "https://github.com/PureSwift/CSwiftBluetoothLinux.git",
+      "version": "1.1.0"
+    }
+  ],
+  "version": 1
+}
