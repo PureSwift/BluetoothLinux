@@ -544,7 +544,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/Mac;
 				INFOPLIST_FILE = BluetoothLinuxTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $FRAMEWORK_SEARCH_PATHS";
 				PRODUCT_BUNDLE_IDENTIFIER = org.pureswift.BluetoothLinuxTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "BluetoothLinuxTests/BluetoothLinuxTests-Bridging-Header.h";
@@ -560,7 +560,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/Mac;
 				INFOPLIST_FILE = BluetoothLinuxTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks $FRAMEWORK_SEARCH_PATHS";
 				PRODUCT_BUNDLE_IDENTIFIER = org.pureswift.BluetoothLinuxTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "BluetoothLinuxTests/BluetoothLinuxTests-Bridging-Header.h";
