@@ -13,7 +13,7 @@
     import Darwin.C
 #endif
 
-import SwiftFoundation
+import Foundation
 import Bluetooth
 
 // MARK: - Methods
@@ -64,7 +64,7 @@ public extension Adapter {
 
 public extension Adapter {
     
-    public typealias DeviceClass = (Byte, Byte, Byte)
+    public typealias DeviceClass = (UInt8, UInt8, UInt8)
     
     /// Options for scanning Bluetooth devices
     public enum ScanOption: Int32, BitMaskOption {

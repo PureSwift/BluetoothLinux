@@ -9,7 +9,7 @@
 #if os(OSX)
     
     import XCTest
-    import SwiftFoundation
+    import Foundation
     import Bluetooth
     @testable import BluetoothLinux
     

@@ -11,8 +11,6 @@
 		6E0C5BC21C837AA700AF63E5 /* ScanTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BBE1C8379D100AF63E5 /* ScanTest.swift */; };
 		6E0C5BC31C837AAA00AF63E5 /* iBeaconTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BC01C837A9F00AF63E5 /* iBeaconTest.swift */; };
 		6E0C5BD81C83A45100AF63E5 /* SecurityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0C5BD71C83A45100AF63E5 /* SecurityType.swift */; };
-		6E17DC251CB1F8170043C644 /* Bluetooth.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 6E17DC241CB1F8150043C644 /* Bluetooth.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6E17DC271CB1F8380043C644 /* JSON.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 6E17DC261CB1F8330043C644 /* JSON.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E196CC31C8659DA009FA9CF /* HCI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E196CC21C8659DA009FA9CF /* HCI.swift */; };
 		6E196CC51C869A2E009FA9CF /* IOCTL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E196CC41C869A2E009FA9CF /* IOCTL.swift */; };
 		6E196CC71C86A5EC009FA9CF /* BluetoothProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E196CC61C86A5EC009FA9CF /* BluetoothProtocol.swift */; };
@@ -22,6 +20,7 @@
 		6E53E1771C8503AC00AC8FCA /* GATTDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */; };
 		6E53E1791C8503CA00AC8FCA /* ATTConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1781C8503CA00AC8FCA /* ATTConnection.swift */; };
 		6E66A8E51CD44D70005F922F /* BluetoothLinux.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E92A4271C15309B007BC4E9 /* BluetoothLinux.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E704C9C1E95E79F00484A22 /* POSIXError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E704C9B1E95E79F00484A22 /* POSIXError.swift */; };
 		6E795E9B1C49821B002377FE /* LinkMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E795E9A1C49821B002377FE /* LinkMode.swift */; };
 		6E881D821C389F4B00E509A9 /* iBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881D811C389F4B00E509A9 /* iBeacon.swift */; };
 		6E881DA21C39812F00E509A9 /* DeviceRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881D831C39783F00E509A9 /* DeviceRequest.swift */; };
@@ -36,7 +35,6 @@
 		6EF355211C965EB400730BAB /* GATTServerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF355201C965EB400730BAB /* GATTServerTest.swift */; };
 		6EF928FB1C8830D200D9A103 /* BluetoothLinux.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E92A4241C15309B007BC4E9 /* BluetoothLinux.framework */; };
 		6EF929071C8832FF00D9A103 /* DarwinTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF929061C8832FF00D9A103 /* DarwinTests.m */; };
-		6EF929101C88379400D9A103 /* SwiftFoundation.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 6EF9290E1C88378B00D9A103 /* SwiftFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,9 +54,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6EF929101C88379400D9A103 /* SwiftFoundation.framework in Copy Frameworks */,
-				6E17DC251CB1F8170043C644 /* Bluetooth.framework in Copy Frameworks */,
-				6E17DC271CB1F8380043C644 /* JSON.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -72,8 +67,6 @@
 		6E0C5BC01C837A9F00AF63E5 /* iBeaconTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iBeaconTest.swift; sourceTree = "<group>"; };
 		6E0C5BC11C837A9F00AF63E5 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		6E0C5BD71C83A45100AF63E5 /* SecurityType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityType.swift; sourceTree = "<group>"; };
-		6E17DC241CB1F8150043C644 /* Bluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bluetooth.framework; sourceTree = "<group>"; };
-		6E17DC261CB1F8330043C644 /* JSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JSON.framework; sourceTree = "<group>"; };
 		6E196CC21C8659DA009FA9CF /* HCI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HCI.swift; sourceTree = "<group>"; };
 		6E196CC41C869A2E009FA9CF /* IOCTL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IOCTL.swift; sourceTree = "<group>"; };
 		6E196CC61C86A5EC009FA9CF /* BluetoothProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothProtocol.swift; sourceTree = "<group>"; };
@@ -83,6 +76,7 @@
 		6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTDatabase.swift; sourceTree = "<group>"; };
 		6E53E1781C8503CA00AC8FCA /* ATTConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ATTConnection.swift; sourceTree = "<group>"; };
 		6E66A8E61CD44DD2005F922F /* iBeaconTestsHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iBeaconTestsHelper.h; sourceTree = "<group>"; };
+		6E704C9B1E95E79F00484A22 /* POSIXError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = POSIXError.swift; sourceTree = "<group>"; };
 		6E739C8D1C88EE4C00D4775B /* ioctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioctl.h; sourceTree = "<group>"; };
 		6E795E9A1C49821B002377FE /* LinkMode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkMode.swift; sourceTree = "<group>"; };
 		6E881D811C389F4B00E509A9 /* iBeacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iBeacon.swift; sourceTree = "<group>"; };
@@ -108,7 +102,6 @@
 		6EF929051C8832FF00D9A103 /* BluetoothLinuxTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BluetoothLinuxTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		6EF929061C8832FF00D9A103 /* DarwinTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DarwinTests.m; sourceTree = "<group>"; };
 		6EF9290A1C88350600D9A103 /* IOCTLTestsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOCTLTestsHelper.h; sourceTree = "<group>"; };
-		6EF9290E1C88378B00D9A103 /* SwiftFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SwiftFoundation.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,7 +159,6 @@
 			children = (
 				6EE84E071CAF8E7B00A40C4D /* Cartfile */,
 				6E92A42F1C1530DC007BC4E9 /* Package.swift */,
-				6EF9290C1C88377100D9A103 /* Dependencies */,
 				6E0C5BBA1C83794700AF63E5 /* Tests Tools */,
 				6E92A4311C1530EF007BC4E9 /* Source */,
 				6E92A4261C15309B007BC4E9 /* BluetoothLinux */,
@@ -197,6 +189,7 @@
 			isa = PBXGroup;
 			children = (
 				6E0C5BB81C8373DB00AF63E5 /* Darwin.swift */,
+				6E704C9B1E95E79F00484A22 /* POSIXError.swift */,
 				6E92A4321C1530EF007BC4E9 /* Adapter.swift */,
 				6E894BF31C83B51B00109F45 /* AddressType.swift */,
 				6E0C5BD71C83A45100AF63E5 /* SecurityType.swift */,
@@ -252,25 +245,6 @@
 				6EF929061C8832FF00D9A103 /* DarwinTests.m */,
 			);
 			path = BluetoothLinuxTests;
-			sourceTree = "<group>";
-		};
-		6EF9290C1C88377100D9A103 /* Dependencies */ = {
-			isa = PBXGroup;
-			children = (
-				6EF9290D1C88378B00D9A103 /* Mac */,
-			);
-			name = Dependencies;
-			sourceTree = "<group>";
-		};
-		6EF9290D1C88378B00D9A103 /* Mac */ = {
-			isa = PBXGroup;
-			children = (
-				6E17DC261CB1F8330043C644 /* JSON.framework */,
-				6E17DC241CB1F8150043C644 /* Bluetooth.framework */,
-				6EF9290E1C88378B00D9A103 /* SwiftFoundation.framework */,
-			);
-			name = Mac;
-			path = ../Carthage/Build/Mac;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -404,6 +378,7 @@
 				6E894BF41C83B51B00109F45 /* AddressType.swift in Sources */,
 				6E53E1791C8503CA00AC8FCA /* ATTConnection.swift in Sources */,
 				6EA37EF41C84B4EA00A61969 /* L2CAPServerTest.swift in Sources */,
+				6E704C9C1E95E79F00484A22 /* POSIXError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

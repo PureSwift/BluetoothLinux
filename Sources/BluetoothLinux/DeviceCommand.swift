@@ -12,7 +12,7 @@
     import Darwin.C
 #endif
 
-import SwiftFoundation
+import Foundation
 import Bluetooth
 
 public extension Adapter {

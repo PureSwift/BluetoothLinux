@@ -14,7 +14,7 @@
 #endif
 
 import Bluetooth
-import SwiftFoundation
+import Foundation
 
 /// Manages connection / communication to the underlying Bluetooth hardware.
 public final class Adapter {

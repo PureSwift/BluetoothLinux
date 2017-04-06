@@ -12,7 +12,7 @@
     import Darwin.C
 #endif
 
-import struct SwiftFoundation.Data
+import struct Foundation.Data
 import Bluetooth
 
 /// Manages a Bluetooth connection using the ATT protocol.
@@ -84,10 +84,10 @@ public final class ATTConnection {
         //print("Recieved data")
         
         // valid PDU data length
-        guard recievedData.bytes.count >= ATT.MinimumPDULength
+        guard recievedData.count >= ATT.MinimumPDULength
             else { throw Error.GarbageResponse(recievedData) }
         
-        let opcodeByte = recievedData.bytes[0]
+        let opcodeByte = recievedData[0]
         
         // valid opcode
         guard let opcode = ATT.Opcode(rawValue: opcodeByte)
@@ -296,7 +296,7 @@ public final class ATTConnection {
         }
         
         // attempt to deserialize
-        guard let PDU = type(of: sendOpcode).PDUType.init(byteValue: data.bytes)
+        guard let PDU = type(of: sendOpcode).PDUType.init(byteValue: Array(data))
             else { throw Error.GarbageResponse(data) }
         
         // success!
@@ -314,11 +314,11 @@ public final class ATTConnection {
         guard let sendOpcode = pendingIndication
             else { throw Error.UnexpectedResponse(data) }
         
-        guard data.bytes.count == 1
+        guard data.count == 1
             else { throw Error.GarbageResponse(data) }
         
         // attempt to deserialize
-        guard let PDU = type(of: sendOpcode).PDUType.init(byteValue: data.bytes)
+        guard let PDU = type(of: sendOpcode).PDUType.init(byteValue: Array(data))
             else { throw Error.GarbageResponse(data) }
         
         // success!
@@ -357,7 +357,7 @@ public final class ATTConnection {
             if type(of: notify).PDUType.attributeOpcode != opcode { continue }
             
             // attempt to deserialize
-            guard let PDU = foundPDU ?? type(of: notify).PDUType.init(byteValue: data.bytes)
+            guard let PDU = foundPDU ?? type(of: notify).PDUType.init(byteValue: Array(data))
                 else { throw Error.GarbageResponse(data) }
             
             foundPDU = PDU

@@ -13,7 +13,7 @@
     import Darwin.C
 #endif
 
-import SwiftFoundation
+import Foundation
 
 /// Tests the Scanning functionality
 func ScanTest(adapter: Adapter, timeout: Int) {
@@ -28,7 +28,7 @@ func ScanTest(adapter: Adapter, timeout: Int) {
         
     catch { Error("Could not scan: \(error)") }
     
-    let scanDuration = Date() - scanDate
+    let scanDuration = Date() - scanDate.timeIntervalSinceReferenceDate
     
     print("Finished scanning (\(scanDuration)s)")
     

@@ -13,7 +13,7 @@
     import Darwin.C
 #endif
 
-import SwiftFoundation
+import Foundation
 import Bluetooth
 
 func GATTServerTest(adapter: Adapter) {
@@ -26,7 +26,7 @@ func GATTServerTest(adapter: Adapter) {
         
         let type: Any = GATT.UUID.init(UUID: attribute.UUID as BluetoothUUID) ?? attribute.UUID
         
-        let value: Any = BluetoothUUID(littleEndian: attribute.value.bytes) ?? String(UTF8Data: attribute.value) ?? attribute.value
+        let value: Any = BluetoothUUID(littleEndian: Array(attribute.value)) ?? String(UTF8Data: attribute.value) ?? attribute.value
         
         print("\(attribute.handle) - \(type)")
         print("Permissions: \(attribute.permissions)")

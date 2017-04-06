@@ -6,8 +6,8 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-import struct SwiftFoundation.UUID
-import struct SwiftFoundation.Data
+import struct Foundation.UUID
+import struct Foundation.Data
 import Bluetooth
 
 public final class GATTServer {
@@ -26,7 +26,7 @@ public final class GATTServer {
     
     // MARK: - Private Properties
     
-    private let connection: ATTConnection
+    internal let connection: ATTConnection
     
     private var preparedWrites = [PreparedWrite]()
     
@@ -231,23 +231,23 @@ public final class GATTServer {
         }
         
         // check boundary
-        guard offset <= UInt16(attribute.value.bytes.count)
+        guard offset <= UInt16(attribute.value.count)
             else { errorResponse(opcode, .InvalidOffset, handle); return nil }
         
         var value: [UInt8]
         
         // Guard against invalid access if offset equals to value length
-        if offset == UInt16(attribute.value.bytes.count) {
+        if offset == UInt16(attribute.value.count) {
             
             value = []
             
         } else if offset > 0 {
             
-            value = Array(attribute.value.bytes.suffix(from: Int(offset)))
+            value = Array(attribute.value.suffix(from: Int(offset)))
             
         } else {
             
-            value = attribute.value.bytes
+            value = Array(attribute.value)
         }
         
         // adjust value for MTU
@@ -375,7 +375,7 @@ public final class GATTServer {
         guard attributes.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
-        let attributeData = attributes.map { AttributeData(handle: $0.handle, value: $0.value.bytes) }
+        let attributeData = attributes.map { AttributeData(handle: $0.handle, value: Array($0.value)) }
         
         var limitedAttributes = [attributeData[0]]
         
@@ -566,7 +566,7 @@ public final class GATTServer {
                 return
             }
             
-            values += attribute.value.bytes
+            values += Array(attribute.value)
         }
         
         let response = ATTReadMultipleResponse(values: values)
@@ -637,11 +637,11 @@ public final class GATTServer {
                 
                 let previousValue = newValues[write.handle] ?? Data()
                 
-                let newValue = previousValue.bytes + write.value
+                let newValue = previousValue + write.value
                 
                 // validate offset?
                 
-                newValues[write.handle] = Data(bytes: newValue)
+                newValues[write.handle] = newValue
             }
             
             // validate new values
@@ -705,7 +705,7 @@ internal extension GATTDatabase {
             
             guard groupRange.isSubset(handleRange) else { continue }
             
-            let serviceUUID = BluetoothUUID(littleEndian: group.service.value.bytes)!
+            let serviceUUID = BluetoothUUID(littleEndian: Array(group.service.value))!
             
             data.append((group.startHandle, group.endHandle, serviceUUID))
         }
@@ -737,7 +737,7 @@ internal extension GATTDatabase {
             
             for attribute in group.attributes {
                 
-                let match = range.contains(attribute.handle) && attribute.UUID == .bit16(type) && attribute.value.bytes == value
+                let match = range.contains(attribute.handle) && attribute.UUID == .bit16(type) && Array(attribute.value) == value
                 
                 guard match else { continue }
                 

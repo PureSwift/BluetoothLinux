@@ -13,7 +13,7 @@
     import Darwin.C
 #endif
 
-import SwiftFoundation
+import Foundation
 
 func Error(_ text: String) -> Never {
     print(text)

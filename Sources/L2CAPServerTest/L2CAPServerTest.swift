@@ -13,7 +13,7 @@
     import Darwin.C
 #endif
 
-import SwiftFoundation
+import Foundation
 import Bluetooth
 
 func PeripheralTest(adapter: Adapter) {
@@ -32,7 +32,7 @@ func PeripheralTest(adapter: Adapter) {
         
         let readData = try newConnection.recieve()
         
-        print("Recieved data: \(String(UTF8Data: readData) ?? "\(readData.bytes.map({ String($0, radix: 16, uppercase: false) }))" )")
+        print("Recieved data: \(String(UTF8Data: readData) ?? "\(readData.map({ String($0, radix: 16, uppercase: false) }))" )")
     }
 
     catch { Error("Error: \(error)") }

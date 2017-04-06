@@ -12,7 +12,7 @@
     import Darwin.C
 #endif
 
-import SwiftFoundation
+import Foundation
 import Bluetooth
 
 /// L2CAP Bluetooth socket
@@ -162,7 +162,7 @@ public final class L2CAPSocket {
     /// Write to the socket.
     public func send(_ data: Data) throws {
         
-        var buffer = data.bytes
+        var buffer = Array(data)
         
         let actualByteCount = write(internalSocket, &buffer, buffer.count)
         
