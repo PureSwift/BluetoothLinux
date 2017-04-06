@@ -24,10 +24,11 @@ public final class GATTServer {
     
     public let maximumPreparedWrites: Int
     
+    // Don't modify
+    public let connection: ATTConnection
+    
     // MARK: - Private Properties
-    
-    private let connection: ATTConnection
-    
+        
     private var preparedWrites = [PreparedWrite]()
     
     // MARK: - Initialization
@@ -44,12 +45,14 @@ public final class GATTServer {
     // MARK: - Methods
     
     /// Performs the actual IO for sending data.
+    @inline(__always)
     public func read() throws {
         
         try connection.read()
     }
     
     /// Performs the actual IO for recieving data.
+    @inline(__always)
     public func write() throws -> Bool {
         
         return try connection.write()
