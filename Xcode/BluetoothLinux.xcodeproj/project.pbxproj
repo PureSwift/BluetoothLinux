@@ -35,6 +35,7 @@
 		6EF355211C965EB400730BAB /* GATTServerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF355201C965EB400730BAB /* GATTServerTest.swift */; };
 		6EF928FB1C8830D200D9A103 /* BluetoothLinux.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E92A4241C15309B007BC4E9 /* BluetoothLinux.framework */; };
 		6EF929071C8832FF00D9A103 /* DarwinTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF929061C8832FF00D9A103 /* DarwinTests.m */; };
+		6EFEF5751FCCE30800B12870 /* ScanResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFEF5741FCCE30800B12870 /* ScanResponse.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +103,7 @@
 		6EF929051C8832FF00D9A103 /* BluetoothLinuxTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BluetoothLinuxTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		6EF929061C8832FF00D9A103 /* DarwinTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DarwinTests.m; sourceTree = "<group>"; };
 		6EF9290A1C88350600D9A103 /* IOCTLTestsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOCTLTestsHelper.h; sourceTree = "<group>"; };
+		6EFEF5741FCCE30800B12870 /* ScanResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScanResponse.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,6 +200,7 @@
 				6E795E9A1C49821B002377FE /* LinkMode.swift */,
 				6E196CC61C86A5EC009FA9CF /* BluetoothProtocol.swift */,
 				6E92A4361C1530EF007BC4E9 /* Scan.swift */,
+				6EFEF5741FCCE30800B12870 /* ScanResponse.swift */,
 				6E881D811C389F4B00E509A9 /* iBeacon.swift */,
 				6E894C011C83F1C500109F45 /* L2CAP.swift */,
 				6E53E1781C8503CA00AC8FCA /* ATTConnection.swift */,
@@ -365,6 +368,7 @@
 				6E53E1751C84FD8C00AC8FCA /* GATTClient.swift in Sources */,
 				6E0C5BD81C83A45100AF63E5 /* SecurityType.swift in Sources */,
 				6E92A43B1C1530EF007BC4E9 /* Scan.swift in Sources */,
+				6EFEF5751FCCE30800B12870 /* ScanResponse.swift in Sources */,
 				6E881D821C389F4B00E509A9 /* iBeacon.swift in Sources */,
 				6EF355211C965EB400730BAB /* GATTServerTest.swift in Sources */,
 				6E196CCB1C87B47E009FA9CF /* DeviceCommand.swift in Sources */,
