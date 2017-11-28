@@ -30,7 +30,7 @@ public extension Adapter {
         //print("Enabling Advertising")
         
         // start advertising
-        do { try enableAdvertising(timeout: commandTimeout) }
+        do { try enableLowEnergyAdvertising(timeout: commandTimeout) }
         catch HCIError.CommandDisallowed { /* ignore, means already turned on */ }
         
         //print("Setting iBeacon Data")
@@ -42,7 +42,7 @@ public extension Adapter {
         try deviceRequest(advertisingDataCommand, timeout: commandTimeout)
     }
     
-    func enableAdvertising(_ enabled: Bool = true, timeout: Int = 1000) throws {
+    func enableLowEnergyAdvertising(_ enabled: Bool = true, timeout: Int = 1000) throws {
         
         let parameter = LowEnergyCommand.SetAdvertiseEnableParameter(enabled: enabled)
         

@@ -58,6 +58,37 @@ public extension Adapter {
         
         return name
     }*/
+    
+    /// Scan LE devices.
+    func lowEnergyScan(duration: Int = 8,
+                       filterDuplicates: Bool = false,
+                       parameters: LowEnergyCommand.SetScanParametersParameter = .init(),
+                       commandTimeout timeout: Int = 1000) throws -> [String] {
+        
+        // set parameters first
+        try deviceRequest(parameters, timeout: timeout)
+        
+        // macro for enabling / disabling scan
+        func enableScan(_ isEnabled: Bool = true) throws {
+            
+            let scanEnableCommand = LowEnergyCommand.SetScanEnableParameter(enabled: isEnabled, filterDuplicates: filterDuplicates)
+            
+            do { try deviceRequest(scanEnableCommand, timeout: timeout) }
+            catch HCIError.CommandDisallowed { /* ignore, means already turned on or off */ }
+        }
+        
+        // enable scanning
+        try enableScan()
+        
+        // TODO: get adv reports
+        
+        
+        // disable scanning
+        try enableScan(false)
+        
+        // FIXME: LE Scanning
+        return []
+    }
 }
 
 // MARK: - Supporting Types

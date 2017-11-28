@@ -30,7 +30,7 @@ func iBeaconTest(adapter: Adapter, timeout: Int) {
     // sleep
     sleep(UInt32(timeout))
     
-    do { try adapter.enableAdvertising(false) }
+    do { try adapter.enableLowEnergyAdvertising(false) }
     
     catch { Error("Error disabling iBeacon") }
 }
