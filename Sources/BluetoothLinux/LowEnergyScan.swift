@@ -123,6 +123,7 @@ internal func PollScannedDevices(_ deviceDescriptor: CInt,
         
         doRead()
         
+        // try for errors
         while actualBytesRead < 0 {
             
             // ignore these errors
@@ -139,20 +140,22 @@ internal func PollScannedDevices(_ deviceDescriptor: CInt,
             }
         }
         
-        //let headerData = Array(eventBuffer[1 ..< 1 + HCIEventHeader.length])
         let eventData = Array(eventBuffer[(1 + HCIEventHeader.length) ..< actualBytesRead])
         
+        // parse LE meta event
         guard let meta = HCIGeneralEvent.LowEnergyMetaParameter(byteValue: eventData),
             let lowEnergyEvent = LowEnergyEvent(rawValue: meta.subevent)
             else { throw AdapterError.GarbageResponse(Data(eventData)) }
         
-        // only want adv report
+        // only want advertising report
         guard lowEnergyEvent == .advertisingReport
             else { continue }
         
+        // parse LE advertising report
         guard let advertisingReport = LowEnergyEvent.AdvertisingReportEventParameter(byteValue: meta.data)
             else { throw AdapterError.GarbageResponse(Data(meta.data)) }
         
+        // call closure on each device found
         advertisingReport.reports.forEach { foundDevice($0) }
     }
 }
