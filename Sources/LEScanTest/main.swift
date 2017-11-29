@@ -34,5 +34,5 @@ print("Found Bluetooth adapter with device ID: \(adapter.identifier)")
 print("Address: \(adapter.address!)")
 
 /// Perform Test
-LEScanTest(adapter: adapter, timeout: 10)
+LEScanTest(adapter: adapter, duration: 10)
 
