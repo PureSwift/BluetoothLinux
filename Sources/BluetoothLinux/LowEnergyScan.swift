@@ -18,13 +18,15 @@ import Bluetooth
 
 public extension Adapter {
     
+    public typealias LowEnergyScannedDevice = LowEnergyEvent.AdvertisingReportEventParameter.Report
+    
     /// Scan LE devices.
     func lowEnergyScan(duration: TimeInterval = 10,
                        filterDuplicates: Bool = true,
                        parameters: LowEnergyCommand.SetScanParametersParameter = .init(),
                        commandTimeout timeout: Int = 1000,
                        shouldContinueScanning: () -> (Bool),
-                       foundDevice: (String) -> ()) throws {
+                       foundDevice: (LowEnergyScannedDevice) -> ()) throws {
         
         // set parameters first
         try deviceRequest(parameters, timeout: timeout)
@@ -54,12 +56,12 @@ public extension Adapter {
     func lowEnergyScan(duration: TimeInterval = 10,
                        filterDuplicates: Bool = true,
                        parameters: LowEnergyCommand.SetScanParametersParameter = .init(),
-                       commandTimeout timeout: Int = 1000) throws -> [String] {
+                       commandTimeout timeout: Int = 1000) throws -> [LowEnergyScannedDevice] {
         
         let startDate = Date()
         let endDate = startDate + duration
         
-        var foundDevices = [String]()
+        var foundDevices = [LowEnergyScannedDevice]()
         
         try lowEnergyScan(duration: duration,
                                  filterDuplicates: filterDuplicates,
@@ -76,7 +78,7 @@ public extension Adapter {
 internal func PollScannedDevices(_ deviceDescriptor: CInt,
                                  duration: TimeInterval,
                                  shouldContinueScanning: () -> (Bool),
-                                 foundDevice: (String) -> ()) throws {
+                                 foundDevice: (Adapter.LowEnergyScannedDevice) -> ()) throws {
     
     var eventBuffer = [UInt8](repeating: 0, count: HCI.maximumEventSize)
     
@@ -111,8 +113,6 @@ internal func PollScannedDevices(_ deviceDescriptor: CInt,
         
         return error
     }
-    
-    var results = [String]()
     
     // poll until timeout
     while shouldContinueScanning() {
@@ -150,9 +150,10 @@ internal func PollScannedDevices(_ deviceDescriptor: CInt,
         guard lowEnergyEvent == .advertisingReport
             else { continue }
         
+        guard let advertisingReport = LowEnergyEvent.AdvertisingReportEventParameter(byteValue: meta.data)
+            else { throw AdapterError.GarbageResponse(Data(meta.data)) }
         
+        advertisingReport.reports.forEach { foundDevice($0) }
     }
-    
-    return results
 }
 

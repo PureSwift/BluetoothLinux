@@ -19,7 +19,7 @@ import Bluetooth
 public extension Adapter {
     
     /// Set the LE Scan Response
-    func setLowEnergyScanResponse(_ data: LowEnergyScanData, length: UInt8, commandTimeout: Int = 1000) throws {
+    func setLowEnergyScanResponse(_ data: LowEnergyResponseData, length: UInt8, commandTimeout: Int = 1000) throws {
         
         precondition(length <= 31, "LE Scan Response Data can only be 31 octets")
         
