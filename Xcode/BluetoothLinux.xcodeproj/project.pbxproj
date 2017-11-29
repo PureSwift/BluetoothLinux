@@ -21,6 +21,7 @@
 		6E53E1771C8503AC00AC8FCA /* GATTDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */; };
 		6E53E1791C8503CA00AC8FCA /* ATTConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1781C8503CA00AC8FCA /* ATTConnection.swift */; };
 		6E66A8E51CD44D70005F922F /* BluetoothLinux.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E92A4271C15309B007BC4E9 /* BluetoothLinux.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E6AD9871FCE8223007F0250 /* LEScanTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6AD9851FCE819A007F0250 /* LEScanTest.swift */; };
 		6E704C9C1E95E79F00484A22 /* POSIXError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E704C9B1E95E79F00484A22 /* POSIXError.swift */; };
 		6E795E9B1C49821B002377FE /* LinkMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E795E9A1C49821B002377FE /* LinkMode.swift */; };
 		6E881D821C389F4B00E509A9 /* iBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E881D811C389F4B00E509A9 /* iBeacon.swift */; };
@@ -79,6 +80,8 @@
 		6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTDatabase.swift; sourceTree = "<group>"; };
 		6E53E1781C8503CA00AC8FCA /* ATTConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ATTConnection.swift; sourceTree = "<group>"; };
 		6E66A8E61CD44DD2005F922F /* iBeaconTestsHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iBeaconTestsHelper.h; sourceTree = "<group>"; };
+		6E6AD9851FCE819A007F0250 /* LEScanTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LEScanTest.swift; sourceTree = "<group>"; };
+		6E6AD9861FCE819A007F0250 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		6E704C9B1E95E79F00484A22 /* POSIXError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = POSIXError.swift; sourceTree = "<group>"; };
 		6E739C8D1C88EE4C00D4775B /* ioctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioctl.h; sourceTree = "<group>"; };
 		6E795E9A1C49821B002377FE /* LinkMode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkMode.swift; sourceTree = "<group>"; };
@@ -130,6 +133,7 @@
 		6E0C5BBA1C83794700AF63E5 /* Tests Tools */ = {
 			isa = PBXGroup;
 			children = (
+				6E6AD9841FCE819A007F0250 /* LEScanTest */,
 				6EF3551D1C965E8F00730BAB /* GATTServerTest */,
 				6EA37EF01C84B4EA00A61969 /* L2CAPServerTest */,
 				6E0C5BBF1C837A9F00AF63E5 /* iBeaconTest */,
@@ -156,6 +160,16 @@
 			);
 			name = iBeaconTest;
 			path = ../Sources/iBeaconTest;
+			sourceTree = "<group>";
+		};
+		6E6AD9841FCE819A007F0250 /* LEScanTest */ = {
+			isa = PBXGroup;
+			children = (
+				6E6AD9851FCE819A007F0250 /* LEScanTest.swift */,
+				6E6AD9861FCE819A007F0250 /* main.swift */,
+			);
+			name = LEScanTest;
+			path = ../Sources/LEScanTest;
 			sourceTree = "<group>";
 		};
 		6E92A41A1C15309B007BC4E9 = {
@@ -369,6 +383,7 @@
 				6E53E1771C8503AC00AC8FCA /* GATTDatabase.swift in Sources */,
 				6E53E1731C84FD8200AC8FCA /* GATTServer.swift in Sources */,
 				6E0C5BC31C837AAA00AF63E5 /* iBeaconTest.swift in Sources */,
+				6E6AD9871FCE8223007F0250 /* LEScanTest.swift in Sources */,
 				6E53E1751C84FD8C00AC8FCA /* GATTClient.swift in Sources */,
 				6E0C5BD81C83A45100AF63E5 /* SecurityType.swift in Sources */,
 				6E92A43B1C1530EF007BC4E9 /* Scan.swift in Sources */,

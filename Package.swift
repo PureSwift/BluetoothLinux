@@ -16,6 +16,9 @@ let package = Package(
             name: "GATTServerTest",
             dependencies: [.Target(name: "BluetoothLinux")]),
         Target(
+            name: "LEScanTest",
+            dependencies: [.Target(name: "BluetoothLinux")]),
+        Target(
             name: "BluetoothLinux")
     ],
     dependencies: [
