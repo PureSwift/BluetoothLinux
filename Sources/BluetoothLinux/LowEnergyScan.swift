@@ -24,7 +24,7 @@ public extension Adapter {
                        parameters: LowEnergyCommand.SetScanParametersParameter = .init(),
                        commandTimeout timeout: Int = 1000,
                        shouldContinueScanning: () -> (Bool),
-                       foundDevice: () -> ()) throws {
+                       foundDevice: (String) -> ()) throws {
         
         // set parameters first
         try deviceRequest(parameters, timeout: timeout)
@@ -50,13 +50,33 @@ public extension Adapter {
                                shouldContinueScanning: shouldContinueScanning,
                                foundDevice: foundDevice)
     }
+    
+    func lowEnergyScan(duration: TimeInterval = 10,
+                       filterDuplicates: Bool = true,
+                       parameters: LowEnergyCommand.SetScanParametersParameter = .init(),
+                       commandTimeout timeout: Int = 1000) throws -> [String] {
+        
+        let startDate = Date()
+        let endDate = startDate + duration
+        
+        var foundDevices = [String]()
+        
+        try lowEnergyScan(duration: duration,
+                                 filterDuplicates: filterDuplicates,
+                                 parameters: parameters,
+                                 commandTimeout: timeout,
+                                 shouldContinueScanning: { Date() < endDate },
+                                 foundDevice: { foundDevices.append($0) })
+        
+        return foundDevices
+    }
 }
 
 /// Poll for scanned devices
 internal func PollScannedDevices(_ deviceDescriptor: CInt,
                                  duration: TimeInterval,
                                  shouldContinueScanning: () -> (Bool),
-                                 foundDevice: () -> ()) throws {
+                                 foundDevice: (String) -> ()) throws {
     
     var eventBuffer = [UInt8](repeating: 0, count: HCI.maximumEventSize)
     
@@ -92,13 +112,10 @@ internal func PollScannedDevices(_ deviceDescriptor: CInt,
         return error
     }
     
-    let startDate = Date()
-    let endDate = startDate + duration
-    
     var results = [String]()
     
     // poll until timeout
-    while Date() < endDate {
+    while shouldContinueScanning() {
         
         var actualBytesRead = 0
         
@@ -122,11 +139,18 @@ internal func PollScannedDevices(_ deviceDescriptor: CInt,
             }
         }
         
-        let headerData = Array(eventBuffer[1 ..< 1 + HCIEventHeader.length])
+        //let headerData = Array(eventBuffer[1 ..< 1 + HCIEventHeader.length])
         let eventData = Array(eventBuffer[(1 + HCIEventHeader.length) ..< actualBytesRead])
         
-        guard let meta = HCIGeneralEvent.LowEnergyMeta(bytes: )
-            else { return  }
+        guard let meta = HCIGeneralEvent.LowEnergyMetaParameter(byteValue: eventData),
+            let lowEnergyEvent = LowEnergyEvent(rawValue: meta.subevent)
+            else { throw AdapterError.GarbageResponse(Data(eventData)) }
+        
+        // only want adv report
+        guard lowEnergyEvent == .advertisingReport
+            else { continue }
+        
+        
     }
     
     return results
