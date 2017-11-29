@@ -31,7 +31,7 @@ public extension Adapter {
         
         // start advertising
         do { try enableLowEnergyAdvertising(timeout: commandTimeout) }
-        catch HCIError.CommandDisallowed { /* ignore, means already turned on */ }
+        catch HCIError.commandDisallowed { /* ignore, means already turned on */ }
         
         //print("Setting iBeacon Data")
         

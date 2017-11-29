@@ -133,7 +133,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
     // initialize variables
     var timeout = timeout
     let opcodePacked = HCICommandOpcodePack(opcode.commandField, opcode.groupField).littleEndian
-    var eventBuffer = [UInt8](repeating: 0, count: HCI.MaximumEventSize)
+    var eventBuffer = [UInt8](repeating: 0, count: HCI.maximumEventSize)
     var oldFilter = HCIFilter()
     var newFilter = HCIFilter()
     let oldFilterPointer = withUnsafeMutablePointer(to: &oldFilter) { UnsafeMutableRawPointer($0) }

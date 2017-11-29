@@ -311,16 +311,12 @@ internal struct HCIFilter {
     
     var opcode: UInt16 = 0
     
-    init() { }
+    init() { clear() }
     
     @inline(__always)
     mutating func clear() {
         
-        var newFilter = HCIFilter()
-        
-        memset(&newFilter, 0, MemoryLayout<HCIFilter>.size)
-        
-        self = newFilter
+        memset(&self, 0, MemoryLayout<HCIFilter>.size)
     }
     
     @inline(__always)
@@ -337,6 +333,12 @@ internal struct HCIFilter {
         let bit = (CInt(event) & HCIFilter.Bits.Event)
         
         HCISetBit(bit, &eventMask.0)
+    }
+    
+    @inline(__always)
+    mutating func setEvent<T: HCIEvent>(_ event: T) {
+        
+        setEvent(event.rawValue)
     }
     
     @inline(__always)

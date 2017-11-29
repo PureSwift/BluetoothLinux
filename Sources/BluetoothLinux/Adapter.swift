@@ -137,7 +137,7 @@ internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(
 
     var deviceList = HCIDeviceListRequest()
 
-    deviceList.count = UInt16(HCI.MaximumDeviceCount)
+    deviceList.count = UInt16(HCI.maximumDeviceCount)
     
     let voidDeviceListPointer = withUnsafeMutablePointer(to: &deviceList) { UnsafeMutableRawPointer($0) }
     

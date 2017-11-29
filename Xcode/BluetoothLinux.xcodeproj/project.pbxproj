@@ -15,6 +15,7 @@
 		6E196CC51C869A2E009FA9CF /* IOCTL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E196CC41C869A2E009FA9CF /* IOCTL.swift */; };
 		6E196CC71C86A5EC009FA9CF /* BluetoothProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E196CC61C86A5EC009FA9CF /* BluetoothProtocol.swift */; };
 		6E196CCB1C87B47E009FA9CF /* DeviceCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E196CCA1C87B47E009FA9CF /* DeviceCommand.swift */; };
+		6E3229181FCDDB320035605D /* LowEnergyScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3229171FCDDB320035605D /* LowEnergyScan.swift */; };
 		6E53E1731C84FD8200AC8FCA /* GATTServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1721C84FD8200AC8FCA /* GATTServer.swift */; };
 		6E53E1751C84FD8C00AC8FCA /* GATTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */; };
 		6E53E1771C8503AC00AC8FCA /* GATTDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */; };
@@ -72,6 +73,7 @@
 		6E196CC41C869A2E009FA9CF /* IOCTL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IOCTL.swift; sourceTree = "<group>"; };
 		6E196CC61C86A5EC009FA9CF /* BluetoothProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothProtocol.swift; sourceTree = "<group>"; };
 		6E196CCA1C87B47E009FA9CF /* DeviceCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceCommand.swift; sourceTree = "<group>"; };
+		6E3229171FCDDB320035605D /* LowEnergyScan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyScan.swift; sourceTree = "<group>"; };
 		6E53E1721C84FD8200AC8FCA /* GATTServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTServer.swift; sourceTree = "<group>"; };
 		6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTClient.swift; sourceTree = "<group>"; };
 		6E53E1761C8503AC00AC8FCA /* GATTDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTDatabase.swift; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 				6E795E9A1C49821B002377FE /* LinkMode.swift */,
 				6E196CC61C86A5EC009FA9CF /* BluetoothProtocol.swift */,
 				6E92A4361C1530EF007BC4E9 /* Scan.swift */,
+				6E3229171FCDDB320035605D /* LowEnergyScan.swift */,
 				6EFEF5741FCCE30800B12870 /* ScanResponse.swift */,
 				6E881D811C389F4B00E509A9 /* iBeacon.swift */,
 				6E894C011C83F1C500109F45 /* L2CAP.swift */,
@@ -361,6 +364,7 @@
 			files = (
 				6E0C5BB91C8373DB00AF63E5 /* Darwin.swift in Sources */,
 				6E92A4371C1530EF007BC4E9 /* Adapter.swift in Sources */,
+				6E3229181FCDDB320035605D /* LowEnergyScan.swift in Sources */,
 				6E894C021C83F1C500109F45 /* L2CAP.swift in Sources */,
 				6E53E1771C8503AC00AC8FCA /* GATTDatabase.swift in Sources */,
 				6E53E1731C84FD8200AC8FCA /* GATTServer.swift in Sources */,
