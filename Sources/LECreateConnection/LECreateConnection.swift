@@ -17,7 +17,7 @@ import Foundation
 import Bluetooth
 
 /// Tests the Scanning functionality
-func LECreateConnection(adapter: Adapter, peerAddress: Address, duration: TimeInterval) {
+func LECreateConnection(adapter: Adapter, peerAddress: Address) {
     
     typealias ConnectionInterval = LowEnergyCommand.CreateConnectionParameter.ConnectionInterval
     

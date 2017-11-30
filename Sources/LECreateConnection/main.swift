@@ -33,6 +33,12 @@ print("Found Bluetooth adapter with device ID: \(adapter.identifier)")
 
 print("Address: \(adapter.address!)")
 
+guard let peerAddressString = CommandLine.arguments.first
+    else { Error("No Address specified") }
+
+guard let peerAddress = Address(rawValue: peerAddressString)
+    else { Error("Invalid Address specified") }
+
 /// Perform Test
-LECreateConnection(adapter: adapter, duration: 10)
+LECreateConnection(adapter: adapter, peerAddress: peerAddress)
 
