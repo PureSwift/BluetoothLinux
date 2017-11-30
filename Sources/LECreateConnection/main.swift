@@ -9,11 +9,12 @@
 #if os(Linux)
     import BluetoothLinux
     import Glibc
-#elseif os(OSX) || os(iOS)
+#elseif os(macOS) || os(iOS)
     import Darwin.C
 #endif
 
 import Foundation
+import Bluetooth
 
 func Error(_ text: String) -> Never {
     
