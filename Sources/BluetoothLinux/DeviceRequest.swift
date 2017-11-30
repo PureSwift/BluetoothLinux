@@ -92,20 +92,26 @@ public extension Adapter {
                 else { throw AdapterError.DeviceRequestStatus(statusByte) }
         }
     }
-
-    @inline(__always)
-    func deviceRequest<C: HCICommand>(command: C, timeout: Int = 1000) throws {
+ 
+    */
+    
+    /// Send a command to the controller and wait for response. 
+    func deviceRequest<C: HCICommand>(_ command: C, timeout: Int = 1000) throws {
 
         let opcode = (command.rawValue, C.opcodeGroupField.rawValue)
 
-        let data = try HCISendRequest(internalSocket, opcode: opcode, eventParameterLength: 1, timeout: timeout)
-
+        let data = try HCISendRequest(internalSocket,
+                                      opcode: opcode,
+                                      eventParameterLength: 1,
+                                      timeout: timeout)
+        
         guard let statusByte = data.first
             else { fatalError("Missing status byte!") }
-
+        
         guard statusByte == 0x00
-            else { throw AdapterError.DeviceRequestStatus(statusByte) }
-    }*/
+            else { throw HCIError(rawValue: statusByte)! }
+        
+    }
     
     func deviceRequest<CP: HCICommandParameter>(_ commandParameter: CP, timeout: Int = 1000) throws {
 
@@ -116,7 +122,7 @@ public extension Adapter {
                                       commandParameterData: commandParameter.byteValue,
                                       eventParameterLength: 1,
                                       timeout: timeout)
-
+        
         guard let statusByte = data.first
             else { fatalError("Missing status byte!") }
         
@@ -124,7 +130,6 @@ public extension Adapter {
             else { throw HCIError(rawValue: statusByte)! }
     }
     
-    @inline(__always)
     func deviceRequest <Return: HCICommandReturnParameter> (_ commandReturnType : Return.Type, timeout: Int = 1000) throws -> Return {
         
         let opcode = (Return.command.rawValue, Return.HCICommandType.opcodeGroupField.rawValue)
