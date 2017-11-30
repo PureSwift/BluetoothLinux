@@ -119,6 +119,29 @@ public extension Adapter {
         guard statusByte == 0x00
             else { throw HCIError(rawValue: statusByte)! }
     }
+    
+    @inline(__always)
+    func deviceRequest <Return: HCICommandReturnParameter> (_ commandReturnType : Return.Type, timeout: Int = 1000) throws -> Return {
+        
+        let opcode = (Return.command.rawValue, Return.HCICommandType.opcodeGroupField.rawValue)
+        
+        let data = try HCISendRequest(internalSocket,
+                                      opcode: opcode,
+                                      eventParameterLength: commandReturnType.length,
+                                      timeout: timeout)
+        
+        guard let response = Return.init(byteValue: data)
+            else { return nil }
+        
+        switch response {
+            
+        case .success:
+            return 
+            
+        case let .error(error):
+            throw error
+        }
+    }
 }
 
 // MARK: - Internal HCI Functions

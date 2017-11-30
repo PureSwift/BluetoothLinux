@@ -41,7 +41,7 @@ public final class Adapter {
     public convenience init(address: Address? = nil) throws {
         
         guard let deviceIdentifier = try HCIGetRoute(address)
-            else { throw Adapter.Error.AdapterNotFound }
+            else { throw Adapter.Error.adapterNotFound }
         
         let internalSocket = try HCIOpenDevice(deviceIdentifier)
         
@@ -87,18 +87,16 @@ public extension Adapter {
 public enum AdapterError: Error {
     
     /// The specified adapter could not be found.
-    case AdapterNotFound
+    case adapterNotFound
     
-    /// The error status byte used with `deviceRequest()`.
-    case DeviceRequestStatus(UInt8)
-    
-    /// A method that changed the adapter's filter had en internal error, and unsuccessfully tried to restore the previous filter.
+    /// A method that changed the adapter's filter had en internal error, 
+    /// and unsuccessfully tried to restore the previous filter.
     ///
     /// First error is the method's error. Second is the error while trying to restore the filter
-    case CouldNotRestoreFilter(Error, Error)
+    case couldNotRestoreFilter(Error, Error)
     
     /// The recieved data could not be parsed correctly.
-    case GarbageResponse(Data)
+    case garbageResponse(Data)
 }
 
 // MARK: - Internal HCI Functions

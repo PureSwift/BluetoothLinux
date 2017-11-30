@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "34C081B5769DF013EB03B277A9D4C50E827DD1C0",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "250A84592BCC6CC1A36CC7F68F10389F70849254" : 9223372036854775807,
+    "34C081B5769DF013EB03B277A9D4C50E827DD1C0" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "209D67BA-66BF-4B45-8AC6-A3BDDFB665D7",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "250A84592BCC6CC1A36CC7F68F10389F70849254" : "bluez\/",
+    "34C081B5769DF013EB03B277A9D4C50E827DD1C0" : "BluetoothLinux\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "BluetoothLinux",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Xcode\/BluetoothLinux.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "http:\/\/git.kernel.org\/pub\/scm\/bluetooth\/bluez.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "250A84592BCC6CC1A36CC7F68F10389F70849254"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:PureSwift\/BluetoothLinux.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "34C081B5769DF013EB03B277A9D4C50E827DD1C0"
+    }
+  ]
+}

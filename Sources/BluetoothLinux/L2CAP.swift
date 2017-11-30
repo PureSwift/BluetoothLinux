@@ -65,7 +65,11 @@ public final class L2CAPSocket {
     }
 
     /// Create a new L2CAP server on the adapter with the specified identifier.
-    public init(adapterAddress: Address, protocolServiceMultiplexer: UInt16 = 0, channelIdentifier: UInt16 = 0, addressType: AddressType = AddressType(), securityLevel: SecurityLevel = SecurityLevel()) throws {
+    public init(adapterAddress: Address,
+                protocolServiceMultiplexer: UInt16 = 0,
+                channelIdentifier: UInt16 = 0,
+                addressType: AddressType = AddressType(),
+                securityLevel: SecurityLevel = SecurityLevel()) throws {
         
         // set properties
         self.securityLevel = securityLevel
