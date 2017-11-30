@@ -35,11 +35,11 @@ func LECreateConnection(adapter: Adapter, peerAddress: Address) {
     
     do {
         
+        print("Connecting to \(peerAddress)")
+        
         let handle = try adapter.lowEnergyCreateConnection(parameters: connectionParameters, commandTimeout: 25000)
         
         print("Connection handle \(handle)")
-        
-        
     }
     
     catch { Error("Could not scan: \(error)") }
