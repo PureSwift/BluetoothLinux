@@ -318,7 +318,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt,
             guard event == HCIGeneralEvent.CommandStatus.rawValue else {
 
                 guard parameter.status == 0
-                    else { throw restoreFilter(POSIXError(code: .EIO)) }
+                    else { throw restoreFilter(HCIError(rawValue: parameter.status) ?? POSIXError(code: .EIO)) }
 
                 break
             }
