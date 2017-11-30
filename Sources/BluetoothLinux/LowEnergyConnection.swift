@@ -21,20 +21,31 @@ public extension Adapter {
     public func lowEnergyCreateConnection(address peerAddress: Address,
                                           type peerAddressType: LowEnergyAddressType = .public,
                                           ownAddressType: LowEnergyAddressType = .public,
-                                          commandTimeout timeout: Int = 1000) throws {
+                                          commandTimeout timeout: Int = 1000) throws -> UInt16 {
         
         let parameters = LowEnergyCommand.CreateConnectionParameter(peerAddressType: peerAddressType,
                                                                     peerAddress: peerAddress,
                                                                     ownAddressType: ownAddressType)
         
-        try lowEnergyCreateConnection(parameters: parameters, commandTimeout: timeout)
+        return try lowEnergyCreateConnection(parameters: parameters, commandTimeout: timeout)
     }
     
     public func lowEnergyCreateConnection(parameters: LowEnergyCommand.CreateConnectionParameter,
-                                          commandTimeout timeout: Int = 1000) throws {
+                                          commandTimeout timeout: Int = 1000) throws -> UInt16 {
         
         // connect with specified parameters
-        try deviceRequest(parameters, timeout: timeout)
+        let event = try deviceRequest(commandParameter: parameters,
+                                      eventParameterType: LowEnergyEvent.ConnectionCompleteParameter.self,
+                                      timeout: timeout)
+        
+        switch event.status {
+            
+        case let .error(error):
+            throw error
+            
+        case .success:
+            return event.handle
+        }
     }
     
     /// LE Create Connection Cancel Command

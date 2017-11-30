@@ -97,8 +97,11 @@ public final class L2CAPSocket {
         let socketLength = socklen_t(MemoryLayout<sockaddr_l2>.size)
 
         // bind socket to port and address
-        guard withUnsafePointer(to: &localAddress, { bind(internalSocket, unsafeBitCast($0, to: UnsafeMutablePointer<sockaddr>.self), socketLength) }) == 0
-            else { close(internalSocket); throw POSIXError.fromErrno! }
+        guard withUnsafeMutablePointer(to: &localAddress, {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1, {
+                bind(internalSocket, $0, socketLength) == 0
+            })
+        }) else { close(internalSocket); throw POSIXError.fromErrno! }
         
         // set security level
         var security = bt_security()
@@ -141,8 +144,12 @@ public final class L2CAPSocket {
         var socketLength = socklen_t(MemoryLayout<sockaddr_l2>.size)
         
         // accept new client
-        let client = withUnsafeMutablePointer(to: &remoteAddress, { accept(internalSocket, unsafeBitCast($0, to: UnsafeMutablePointer<sockaddr>.self), &socketLength) })
-
+        let client = withUnsafeMutablePointer(to: &remoteAddress, {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1, {
+                accept(internalSocket, $0, &socketLength)
+            })
+        })
+        
         // error accepting new connection
         guard client >= 0 else { throw POSIXError.fromErrno! }
 

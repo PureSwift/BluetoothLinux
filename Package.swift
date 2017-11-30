@@ -19,6 +19,9 @@ let package = Package(
             name: "LEScanTest",
             dependencies: [.Target(name: "BluetoothLinux")]),
         Target(
+            name: "LECreateConnection",
+            dependencies: [.Target(name: "BluetoothLinux")]),
+        Target(
             name: "BluetoothLinux")
     ],
     dependencies: [

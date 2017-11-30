@@ -22,8 +22,11 @@ func PeripheralTest(adapter: Adapter) {
         
         let address = adapter.address!
         
-        let server = try L2CAPSocket(adapterAddress: address, channelIdentifier: ATT.CID, addressType: .LowEnergyPublic, securityLevel: .Low)
-
+        let server = try L2CAPSocket(adapterAddress: address,
+                                     channelIdentifier: ATT.CID,
+                                     addressType: .LowEnergyPublic,
+                                     securityLevel: .Low)
+        
         print("Created L2CAP server")
         
         let newConnection = try server.waitForConnection()

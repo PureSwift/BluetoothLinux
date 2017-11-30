@@ -17,6 +17,7 @@
 		6E196CCB1C87B47E009FA9CF /* DeviceCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E196CCA1C87B47E009FA9CF /* DeviceCommand.swift */; };
 		6E1DC1EC1FCF9B7400C8DE52 /* LowEnergyConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1DC1EB1FCF9B7400C8DE52 /* LowEnergyConnection.swift */; };
 		6E1DC1EE1FCFA29700C8DE52 /* LowEnergyWhiteList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1DC1ED1FCFA29700C8DE52 /* LowEnergyWhiteList.swift */; };
+		6E1DC1F21FCFC1A800C8DE52 /* LECreateConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1DC1F01FCFC1A800C8DE52 /* LECreateConnection.swift */; };
 		6E3229181FCDDB320035605D /* LowEnergyScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3229171FCDDB320035605D /* LowEnergyScan.swift */; };
 		6E53E1731C84FD8200AC8FCA /* GATTServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1721C84FD8200AC8FCA /* GATTServer.swift */; };
 		6E53E1751C84FD8C00AC8FCA /* GATTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */; };
@@ -78,6 +79,8 @@
 		6E196CCA1C87B47E009FA9CF /* DeviceCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceCommand.swift; sourceTree = "<group>"; };
 		6E1DC1EB1FCF9B7400C8DE52 /* LowEnergyConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyConnection.swift; sourceTree = "<group>"; };
 		6E1DC1ED1FCFA29700C8DE52 /* LowEnergyWhiteList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyWhiteList.swift; sourceTree = "<group>"; };
+		6E1DC1F01FCFC1A800C8DE52 /* LECreateConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LECreateConnection.swift; sourceTree = "<group>"; };
+		6E1DC1F11FCFC1A800C8DE52 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		6E3229171FCDDB320035605D /* LowEnergyScan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowEnergyScan.swift; sourceTree = "<group>"; };
 		6E53E1721C84FD8200AC8FCA /* GATTServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTServer.swift; sourceTree = "<group>"; };
 		6E53E1741C84FD8C00AC8FCA /* GATTClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTClient.swift; sourceTree = "<group>"; };
@@ -137,6 +140,7 @@
 		6E0C5BBA1C83794700AF63E5 /* Tests Tools */ = {
 			isa = PBXGroup;
 			children = (
+				6E1DC1EF1FCFC1A800C8DE52 /* LECreateConnection */,
 				6E6AD9841FCE819A007F0250 /* LEScanTest */,
 				6EF3551D1C965E8F00730BAB /* GATTServerTest */,
 				6EA37EF01C84B4EA00A61969 /* L2CAPServerTest */,
@@ -164,6 +168,16 @@
 			);
 			name = iBeaconTest;
 			path = ../Sources/iBeaconTest;
+			sourceTree = "<group>";
+		};
+		6E1DC1EF1FCFC1A800C8DE52 /* LECreateConnection */ = {
+			isa = PBXGroup;
+			children = (
+				6E1DC1F01FCFC1A800C8DE52 /* LECreateConnection.swift */,
+				6E1DC1F11FCFC1A800C8DE52 /* main.swift */,
+			);
+			name = LECreateConnection;
+			path = ../Sources/LECreateConnection;
 			sourceTree = "<group>";
 		};
 		6E6AD9841FCE819A007F0250 /* LEScanTest */ = {
@@ -405,6 +419,7 @@
 				6E894C001C83EA2000109F45 /* main.swift in Sources */,
 				6E196CC31C8659DA009FA9CF /* HCI.swift in Sources */,
 				6E196CC71C86A5EC009FA9CF /* BluetoothProtocol.swift in Sources */,
+				6E1DC1F21FCFC1A800C8DE52 /* LECreateConnection.swift in Sources */,
 				6E894BF41C83B51B00109F45 /* AddressType.swift in Sources */,
 				6E53E1791C8503CA00AC8FCA /* ATTConnection.swift in Sources */,
 				6EA37EF41C84B4EA00A61969 /* L2CAPServerTest.swift in Sources */,

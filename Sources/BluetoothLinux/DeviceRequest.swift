@@ -18,24 +18,29 @@ import Bluetooth
 public extension Adapter {
 
     /// Sends a command to the device and waits for a response.
-    /*
     @inline(__always)
     func deviceRequest<CP: HCICommandParameter, EP: HCIEventParameter>(commandParameter: CP, eventParameterType: EP.Type, timeout: Int = 1000) throws -> EP {
 
         let command = CP.command
 
-        let opcodeGroupField = command.dynamicType.opcodeGroupField
+        let opcodeGroupField = CP.HCICommandType.opcodeGroupField
 
-        let parameterData = commandParameter.bytes
-
-        let data = try HCISendRequest(internalSocket, opcode: (command.rawValue, opcodeGroupField.rawValue), commandParameterData: parameterData, eventParameterLength: EP.length, event: EP.event.rawValue, timeout: timeout)
-
-        guard let eventParameter = EP(bytes: data)
-            else { throw AdapterError.GarbageResponse(Data(bytes: data)) }
-
+        let parameterData = commandParameter.byteValue
+        
+        let data = try HCISendRequest(internalSocket,
+                                      opcode: (command.rawValue, opcodeGroupField.rawValue),
+                                      commandParameterData: parameterData,
+                                      event: EP.event.rawValue,
+                                      eventParameterLength: EP.length,
+                                      timeout: timeout)
+        
+        guard let eventParameter = EP(byteValue: data)
+            else { throw AdapterError.garbageResponse(Data(bytes: data)) }
+        
         return eventParameter
     }
-
+    
+    /*
     @inline(__always)
     func deviceRequest<C: HCICommand, EP: HCIEventParameter>(command: C, eventParameterType: EP.Type, timeout: Int = 1000) throws -> EP {
 
