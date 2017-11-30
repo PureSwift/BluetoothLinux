@@ -111,7 +111,11 @@ public extension Adapter {
 
         let opcode = (CP.command.rawValue, type(of: CP.command).opcodeGroupField.rawValue)
 
-        let data = try HCISendRequest(internalSocket, opcode: opcode, commandParameterData: commandParameter.byteValue, eventParameterLength: 1, timeout: timeout)
+        let data = try HCISendRequest(internalSocket,
+                                      opcode: opcode,
+                                      commandParameterData: commandParameter.byteValue,
+                                      eventParameterLength: 1,
+                                      timeout: timeout)
 
         guard let statusByte = data.first
             else { fatalError("Missing status byte!") }
@@ -127,10 +131,16 @@ public extension Adapter {
         
         let data = try HCISendRequest(internalSocket,
                                       opcode: opcode,
-                                      eventParameterLength: commandReturnType.length,
+                                      eventParameterLength: commandReturnType.length + 1, // status code + parameters
                                       timeout: timeout)
         
-        guard let response = Return.init(byteValue: data)
+        guard let statusByte = data.first
+            else { fatalError("Missing status byte!") }
+        
+        guard statusByte == 0x00
+            else { throw HCIError(rawValue: statusByte)! }
+        
+        guard let response = Return(byteValue: Array(data.suffix(from: 1)))
             else { throw AdapterError.garbageResponse(Data(data)) }
         
         return response
@@ -140,7 +150,12 @@ public extension Adapter {
 // MARK: - Internal HCI Functions
 
 /// Returns event parameter data.
-internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), commandParameterData: [UInt8] = [], event: UInt8 = 0, eventParameterLength: Int = 0, timeout: Int = 1000) throws -> [UInt8] {
+internal func HCISendRequest(_ deviceDescriptor: CInt,
+                             opcode: (commandField: UInt16, groupField: UInt16),
+                             commandParameterData: [UInt8] = [],
+                             event: UInt8 = 0,
+                             eventParameterLength: Int = 0,
+                             timeout: Int = 1000) throws -> [UInt8] {
 
     // assertions
     assert(timeout >= 0, "Negative timeout value")
@@ -301,7 +316,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
             // success!
             try done()
             let dataLength = min(eventData.count, eventParameterLength)
-            return  Array(eventData.suffix(dataLength))
+            return Array(eventData.suffix(dataLength))
 
         case HCIGeneralEvent.CommandComplete.rawValue:
             
