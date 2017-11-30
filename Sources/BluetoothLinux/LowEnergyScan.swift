@@ -143,12 +143,11 @@ internal func PollScannedDevices(_ deviceDescriptor: CInt,
         let eventData = Array(eventBuffer[(1 + HCIEventHeader.length) ..< actualBytesRead])
         
         // parse LE meta event
-        guard let meta = HCIGeneralEvent.LowEnergyMetaParameter(byteValue: eventData),
-            let lowEnergyEvent = LowEnergyEvent(rawValue: meta.subevent)
+        guard let meta = HCIGeneralEvent.LowEnergyMetaParameter(byteValue: eventData)
             else { throw AdapterError.garbageResponse(Data(eventData)) }
         
         // only want advertising report
-        guard lowEnergyEvent == .advertisingReport
+        guard meta.subevent == .advertisingReport
             else { continue }
         
         // parse LE advertising report
