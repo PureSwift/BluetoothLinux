@@ -23,7 +23,7 @@ public extension Adapter {
     /// Used to read the total number of white list entries that can be stored in the Controller.
     public func lowEnergyReadWhiteListSize(commandTimeout timeout: Int = 1000) throws -> Int {
         
-        let sizeReturnParameter = try deviceRequest(LowEnergyCommand.readWhiteListSize, timeout: timeout)
+        let sizeReturnParameter = try deviceRequest(LowEnergyCommand.ReadWhiteListSizeReturnParameter.self, timeout: timeout)
         
         return Int(sizeReturnParameter.size)
     }

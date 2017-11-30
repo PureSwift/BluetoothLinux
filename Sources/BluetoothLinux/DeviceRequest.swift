@@ -131,16 +131,9 @@ public extension Adapter {
                                       timeout: timeout)
         
         guard let response = Return.init(byteValue: data)
-            else { return nil }
+            else { throw AdapterError.garbageResponse(Data(data)) }
         
-        switch response {
-            
-        case .success:
-            return 
-            
-        case let .error(error):
-            throw error
-        }
+        return response
     }
 }
 
@@ -186,7 +179,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
     func restoreFilter(_ error: Error) -> Error {
 
         guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, filterLength) == 0
-            else { return AdapterError.CouldNotRestoreFilter(error, POSIXError.fromErrno!) }
+            else { return AdapterError.couldNotRestoreFilter(error, POSIXError.fromErrno!) }
 
         return error
     }
@@ -271,7 +264,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
         //var length = actualBytesRead - (1 + HCIEventHeader.length)
 
         guard let eventHeader = HCIEventHeader(bytes: headerData)
-            else { throw restoreFilter(AdapterError.GarbageResponse(Data(bytes: headerData))) }
+            else { throw restoreFilter(AdapterError.garbageResponse(Data(bytes: headerData))) }
         
         //print("Event header data: \(headerData)")
         //print("Event header: \(eventHeader)")
@@ -291,7 +284,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
             let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.CommandStatusParameter.length)))
             
             guard let parameter = HCIGeneralEvent.CommandStatusParameter(byteValue: parameterData)
-                else { throw AdapterError.GarbageResponse(Data(bytes: parameterData)) }
+                else { throw AdapterError.garbageResponse(Data(bytes: parameterData)) }
 
             /// must be command status for sent command
             guard parameter.opcode == opcodePacked else { continue }
@@ -315,7 +308,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
             let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.CommandCompleteParameter.length)))
 
             guard let parameter = HCIGeneralEvent.CommandCompleteParameter(byteValue: parameterData)
-                else { throw AdapterError.GarbageResponse(Data(bytes: parameterData)) }
+                else { throw AdapterError.garbageResponse(Data(bytes: parameterData)) }
             
             guard parameter.opcode == opcodePacked else { continue }
 
@@ -335,7 +328,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
             let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.RemoteNameRequestCompleteParameter.length)))
 
             guard let parameter = HCIGeneralEvent.RemoteNameRequestCompleteParameter(byteValue: parameterData)
-                else { throw AdapterError.GarbageResponse(Data(bytes: parameterData)) }
+                else { throw AdapterError.garbageResponse(Data(bytes: parameterData)) }
 
             if commandParameterData.isEmpty == false {
 
@@ -350,6 +343,23 @@ internal func HCISendRequest(_ deviceDescriptor: CInt, opcode: (commandField: UI
             try done()
             let dataLength = min(eventData.count - 1, eventParameterLength)
             return Array(eventData.suffix(dataLength))
+            
+        case HCIGeneralEvent.LowEnergyMeta.rawValue:
+            
+            let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.LowEnergyMetaParameter.length)))
+            
+            guard let metaParameter = HCIGeneralEvent.LowEnergyMetaParameter(byteValue: parameterData)
+                else { throw AdapterError.garbageResponse(Data(bytes: parameterData)) }
+            
+            // LE event should match
+            guard metaParameter.subevent == event
+                else { continue }
+            
+            // success!
+            try done()
+            //let dataLength = min(eventData.count - 1, eventParameterLength)
+            //return Array(eventData.suffix(dataLength))
+            return metaParameter.data
 
         // all other events
         default:

@@ -109,7 +109,7 @@ internal func PollScannedDevices(_ deviceDescriptor: CInt,
         guard withUnsafeMutablePointer(to: &oldFilter, {
             let pointer = UnsafeMutableRawPointer($0)
             return setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, pointer, newFilterLength) == 0
-        }) else { return AdapterError.CouldNotRestoreFilter(error, POSIXError.fromErrno!) }
+        }) else { return AdapterError.couldNotRestoreFilter(error, POSIXError.fromErrno!) }
         
         return error
     }
@@ -145,7 +145,7 @@ internal func PollScannedDevices(_ deviceDescriptor: CInt,
         // parse LE meta event
         guard let meta = HCIGeneralEvent.LowEnergyMetaParameter(byteValue: eventData),
             let lowEnergyEvent = LowEnergyEvent(rawValue: meta.subevent)
-            else { throw AdapterError.GarbageResponse(Data(eventData)) }
+            else { throw AdapterError.garbageResponse(Data(eventData)) }
         
         // only want advertising report
         guard lowEnergyEvent == .advertisingReport
@@ -153,7 +153,7 @@ internal func PollScannedDevices(_ deviceDescriptor: CInt,
         
         // parse LE advertising report
         guard let advertisingReport = LowEnergyEvent.AdvertisingReportEventParameter(byteValue: meta.data)
-            else { throw AdapterError.GarbageResponse(Data(meta.data)) }
+            else { throw AdapterError.garbageResponse(Data(meta.data)) }
         
         // call closure on each device found
         advertisingReport.reports.forEach { foundDevice($0) }
