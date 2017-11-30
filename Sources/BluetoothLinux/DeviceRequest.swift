@@ -371,19 +371,17 @@ internal func HCISendRequest(_ deviceDescriptor: CInt,
             
         case HCIGeneralEvent.LowEnergyMeta.rawValue:
             
-            let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.LowEnergyMetaParameter.length)))
+            let parameterData = eventData
             
             guard let metaParameter = HCIGeneralEvent.LowEnergyMetaParameter(byteValue: parameterData)
                 else { throw AdapterError.garbageResponse(Data(bytes: parameterData)) }
             
             // LE event should match
-            guard metaParameter.subevent == event
+            guard metaParameter.subevent.rawValue == event
                 else { continue }
             
             // success!
             try done()
-            //let dataLength = min(eventData.count - 1, eventParameterLength)
-            //return Array(eventData.suffix(dataLength))
             return metaParameter.data
 
         // all other events
