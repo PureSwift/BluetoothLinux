@@ -405,11 +405,11 @@ internal struct HCICommandHeader: HCIPacketHeader {
     
     init?(bytes: [UInt8]) {
         
-        guard byteValue.count == HCICommandHeader.length
+        guard bytes.count == HCICommandHeader.length
             else { return nil }
         
-        self.opcode = UInt16(bytes: (byteValue[0], byteValue[1])).littleEndian
-        self.parameterLength = byteValue[2]
+        self.opcode = UInt16(bytes: (bytes[0], bytes[1])).littleEndian
+        self.parameterLength = bytes[2]
     }
     
     var byteValue: [UInt8] {
@@ -433,11 +433,11 @@ internal struct HCIEventHeader: HCIPacketHeader {
     
     init?(bytes: [UInt8]) {
         
-        guard byteValue.count == HCIEventHeader.length
+        guard bytes.count == HCIEventHeader.length
             else { return nil }
         
-        self.event = byteValue[0]
-        self.parameterLength = byteValue[1]
+        self.event = bytes[0]
+        self.parameterLength = bytes[1]
     }
     
     var byteValue: [UInt8] {
@@ -445,6 +445,4 @@ internal struct HCIEventHeader: HCIPacketHeader {
         return [event, parameterLength]
     }
 }
-
-
 
