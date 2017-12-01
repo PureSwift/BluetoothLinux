@@ -1,13 +1,10 @@
 # BluetoothLinux
 
+[![Build Status](https://travis-ci.org/PureSwift/BluetoothLinux.svg?branch=travisCI)](https://travis-ci.org/PureSwift/BluetoothLinux)
+
 Pure Swift Bluetooth Stack for Linux
 
 Does not require [BlueZ](https://www.bluez.org), communicates directly with the Linux kernel and Bluetooth controller. 
-
-# Installation
-
-1. Install [Helper C Headers](https://github.com/PureSwift/CSwiftBluetoothLinux)
-1. `swift build`
 
 # Tests
 
