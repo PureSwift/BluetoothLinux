@@ -8,13 +8,13 @@
 
 #if os(Linux)
     import Glibc
-    import CSwiftBluetoothLinux
-#elseif os(OSX) || os(iOS)
+#elseif os(macOS) || os(iOS)
     import Darwin.C
 #endif
 
 import Foundation
 import Bluetooth
+import CSwiftBluetoothLinux
 
 // MARK: - Methods
 
@@ -113,18 +113,22 @@ internal func HCIInquiry(_ deviceIdentifier: CInt, duration: Int, scanLimit: Int
     
     let deviceClass = deviceClass ?? (0x33, 0x8b, 0x9e)
     
-    let inquiryRequest = unsafeBitCast(buffer, to: UnsafeMutablePointer<HCIInquiryRequest>.self)
+    buffer.withMemoryRebound(to: HCIInquiryRequest.self, capacity: 1) { (inquiryRequest) in
+        
+        inquiryRequest.pointee.identifier = UInt16(deviceIdentifier)
+        inquiryRequest.pointee.responseCount = UInt8(scanLimit)
+        inquiryRequest.pointee.length = UInt8(duration)
+        inquiryRequest.pointee.flags = UInt16(flags)
+        inquiryRequest.pointee.lap = deviceClass
+        return
+    }
     
-    inquiryRequest.pointee.identifier = UInt16(deviceIdentifier)
-    inquiryRequest.pointee.responseCount = UInt8(scanLimit)
-    inquiryRequest.pointee.length = UInt8(duration)
-    inquiryRequest.pointee.flags = UInt16(flags)
-    inquiryRequest.pointee.lap = deviceClass
-    
-    guard swift_bluetooth_ioctl(deviceDescriptor, HCI.IOCTL.Inquiry, buffer) >= 0
+    guard InputOutputControl(deviceDescriptor, HCI.IOCTL.Inquiry, UnsafeMutableRawPointer(buffer) ) >= 0
         else { throw POSIXError.fromErrno! }
     
-    let resultCount = Int(inquiryRequest.pointee.responseCount)
+    let resultCount = buffer.withMemoryRebound(to: HCIInquiryRequest.self, capacity: 1) { (inquiryRequest) in
+        Int(inquiryRequest.pointee.responseCount)
+    }
     
     let resultBufferSize = MemoryLayout<InquiryResult>.size * resultCount
     

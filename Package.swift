@@ -22,7 +22,10 @@ let package = Package(
             name: "LECreateConnection",
             dependencies: [.Target(name: "BluetoothLinux")]),
         Target(
-            name: "BluetoothLinux")
+            name: "BluetoothLinux",
+            dependencies: [.Target(name: "CSwiftBluetoothLinux")]),
+        Target(
+            name: "CSwiftBluetoothLinux"),
     ],
     dependencies: [
         .Package(url: "https://github.com/PureSwift/Bluetooth.git", majorVersion: 1)

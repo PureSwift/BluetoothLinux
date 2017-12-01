@@ -8,12 +8,12 @@
 
 #if os(Linux)
     import Glibc
-    import CSwiftBluetoothLinux
-#elseif os(OSX) || os(iOS)
+#elseif os(macOS) || os(iOS)
     import Darwin.C
 #endif
 
 import Bluetooth
+import CSwiftBluetoothLinux
 
 public extension HCI {
     
@@ -352,19 +352,6 @@ internal struct HCIFilter {
     }
 }
 
-// HCI Bit functions
-
-@inline(__always)
-internal func HCISetBit(_ bit: CInt, _ destination: UnsafeMutableRawPointer) {
-    
-    #if os(OSX)
-        //func swift_bluetooth_hci_set_bit(_: CInt, _: UnsafeMutablePointer<Void>) { stub() }
-        //hci_set_bit(bit, destination)
-    #elseif os(Linux)
-        swift_bluetooth_hci_set_bit(bit, destination)
-    #endif
-}
-
 /*
 @inline(__always)
 internal func HCISetBit(bit: CInt, _ destination: UnsafeMutablePointer<Void>) {
@@ -397,11 +384,15 @@ internal struct HCICommandHeader: HCIPacketHeader {
     static let length = 3
     
     /// OCF & OGF
-    var opcode: UInt16 = 0
+    var opcode: UInt16
     
-    var parameterLength: UInt8 = 0
+    var parameterLength: UInt8
     
-    init() { }
+    init(opcode: UInt16 = 0, parameterLength: UInt8 = 0) {
+        
+        self.opcode = opcode
+        self.parameterLength = parameterLength
+    }
     
     init?(bytes: [UInt8]) {
         
@@ -425,11 +416,9 @@ internal struct HCIEventHeader: HCIPacketHeader {
     
     static let length = 2
     
-    var event: UInt8 = 0
+    var event: UInt8
     
-    var parameterLength: UInt8 = 0
-    
-    init() { }
+    var parameterLength: UInt8
     
     init?(bytes: [UInt8]) {
         

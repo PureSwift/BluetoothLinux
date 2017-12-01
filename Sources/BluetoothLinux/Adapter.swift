@@ -8,11 +8,11 @@
 
 #if os(Linux)
     import Glibc
-    import CSwiftBluetoothLinux
-#elseif os(OSX) || os(iOS)
+#elseif os(macOS) || os(iOS)
     import Darwin.C
 #endif
 
+import CSwiftBluetoothLinux
 import Bluetooth
 import Foundation
 
@@ -113,9 +113,13 @@ internal func HCIOpenDevice(_ deviceIdentifier: CInt) throws -> CInt {
     address.family = sa_family_t(AF_BLUETOOTH)
     address.deviceIdentifier = UInt16(deviceIdentifier)
     
-    let addressPointer = withUnsafeMutablePointer(to: &address) { unsafeBitCast($0, to: UnsafeMutablePointer<sockaddr>.self) }
+    let didBind = withUnsafeMutablePointer(to: &address) {
+        $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+            bind(hciSocket, $0, socklen_t(MemoryLayout<HCISocketAddress>.size)) >= 0
+        }
+    }
     
-    guard bind(hciSocket, addressPointer, socklen_t(MemoryLayout<HCISocketAddress>.size)) >= 0
+    guard didBind
         else { close(hciSocket); throw POSIXError.fromErrno! }
     
     return hciSocket
@@ -137,11 +141,10 @@ internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(
 
     deviceList.count = UInt16(HCI.maximumDeviceCount)
     
-    let voidDeviceListPointer = withUnsafeMutablePointer(to: &deviceList) { UnsafeMutableRawPointer($0) }
-    
     // request device list
-        
-    let ioctlValue = swift_bluetooth_ioctl(hciSocket, HCI.IOCTL.GetDeviceList, voidDeviceListPointer)
+    let ioctlValue = withUnsafeMutablePointer(to: &deviceList) {
+        InputOutputControl(hciSocket, HCI.IOCTL.GetDeviceList, $0)
+    }
     
     guard ioctlValue >= 0 else { throw POSIXError.fromErrno! }
     
@@ -175,7 +178,9 @@ internal func HCIGetRoute(_ address: Address? = nil) throws -> CInt? {
 
         deviceInfo.identifier = UInt16(deviceIdentifier)
 
-        guard withUnsafeMutablePointer(to: &deviceInfo, { swift_bluetooth_ioctl(dd, HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0 else { throw POSIXError.fromErrno! }
+        guard withUnsafeMutablePointer(to: &deviceInfo, {
+            InputOutputControl(dd, HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0
+            else { throw POSIXError.fromErrno! }
 
         return deviceInfo.address == address
     }
@@ -194,7 +199,9 @@ internal func HCIDeviceInfo(_ deviceIdentifier: CInt) throws -> HCIDeviceInforma
     var deviceInfo = HCIDeviceInformation()
     deviceInfo.identifier = UInt16(deviceIdentifier)
     
-    guard withUnsafeMutablePointer(to:&deviceInfo, { swift_bluetooth_ioctl(hciSocket, HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0 else { throw POSIXError.fromErrno! }
+    guard withUnsafeMutablePointer(to: &deviceInfo, {
+        InputOutputControl(hciSocket, HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0
+        else { throw POSIXError.fromErrno! }
     
     return deviceInfo
 }
