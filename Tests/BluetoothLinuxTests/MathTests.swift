@@ -8,10 +8,18 @@
 
 import XCTest
 import Bluetooth
+import CSwiftBluetoothLinux
 import CSwiftBluetoothLinuxTest
 @testable import BluetoothLinux
 
 final class MathTests: XCTestCase {
+    
+    static let allTests = [
+        ("testHCISetBit", testHCISetBit),
+        ("testHCIFilterSetPacketType", testHCIFilterSetPacketType),
+        ("testHCIFilterSetEvent", testHCIFilterSetEvent),
+        ("testIOCTLConstants", testIOCTLConstants)
+    ]
     
     func testHCISetBit() {
         
@@ -80,17 +88,23 @@ final class MathTests: XCTestCase {
         
         var cListCopy = hci_ioctl_list
         
-        let cListPointer = withUnsafeMutablePointer(to: &cListCopy) { unsafeBitCast($0, to: UnsafeMutablePointer<Int32>.self) }
-        
-        for (index, swiftDefinition) in swiftDefinitionList.enumerated() {
+        withUnsafeMutablePointer(to: &cListCopy) {
             
-            let cDefinition = CUnsignedLong(bitPattern: CLong(cListPointer[index]))
-            
-            guard swiftDefinition == cDefinition else {
+            $0.withMemoryRebound(to: Int32.self, capacity: 9) { (cListPointer) in
                 
-                XCTFail("\(swiftDefinition) == \(cDefinition) at definition \(index + 1)")
-                return
+                for (index, swiftDefinition) in swiftDefinitionList.enumerated() {
+                    
+                    let cDefinition = CUnsignedLong(bitPattern: CLong(cListPointer[index]))
+                    
+                    guard swiftDefinition == cDefinition else {
+                        
+                        XCTFail("\(swiftDefinition) == \(cDefinition) at definition \(index + 1)")
+                        return
+                    }
+                }
+                
             }
         }
+        
     }
 }

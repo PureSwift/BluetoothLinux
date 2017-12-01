@@ -7,7 +7,8 @@
 //
 
 import XCTest
-import CSwiftBluetoothLinuxTest
 @testable import BluetoothLinuxTests
 
-XCTMain([testCase(BluetoothLinux.allTests)])
+XCTMain([
+    testCase(MathTests.allTests)
+    ])
