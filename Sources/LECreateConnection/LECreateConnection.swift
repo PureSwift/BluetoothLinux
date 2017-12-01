@@ -6,9 +6,9 @@
 //  Copyright © 2017 PureSwift. All rights reserved.
 //
 
-import BluetoothLinux
 import Foundation
 import Bluetooth
+import BluetoothLinux
 
 /// Tests the Scanning functionality
 func LECreateConnection(adapter: Adapter, peerAddress: Address) {
