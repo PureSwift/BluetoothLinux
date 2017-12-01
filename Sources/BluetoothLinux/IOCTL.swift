@@ -74,11 +74,3 @@ internal struct IOC {
         return IOC(READ, type, nr, TYPECHECK(size))
     }
 }
-
-// MARK: - Darwin Stubs
-
-#if os(OSX) || os(iOS)
-        
-    func swift_bluetooth_ioctl(_ fd: Int32, _ request: UInt, _ pointer: UnsafeMutableRawPointer) -> CInt { stub() }
-
-#endif
