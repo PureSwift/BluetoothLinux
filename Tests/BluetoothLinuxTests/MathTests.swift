@@ -23,23 +23,21 @@ final class MathTests: XCTestCase {
     
     func testHCISetBit() {
         
-        let bit = HCIFilter.Bits.Event
+        let event = HCIGeneralEvent.CommandStatus.rawValue
+        
+        let bit = (CInt(event) & HCIFilter.Bits.Event)
         
         var cDestination: UInt32 = 0
         
-        withUnsafeMutablePointer(to: &cDestination) {
-            CSwiftBluetoothLinuxTest.hci_set_bit(bit, UnsafeMutableRawPointer($0))
-        }
+        CSwiftBluetoothLinuxTest.hci_set_bit(bit, &cDestination)
         
         var swiftDestination: UInt32 = 0
         
-        withUnsafeMutablePointer(to: &swiftDestination) {
-            CSwiftBluetoothLinux.HCISetBit(bit, UnsafeMutableRawPointer($0))
-        }
+        CSwiftBluetoothLinux.HCISetBit(bit, &swiftDestination)
         
         XCTAssert(cDestination == swiftDestination, "\(cDestination) == \(swiftDestination)")
-        XCTAssert(swiftDestination == 2147483648, "\(swiftDestination)")
-        XCTAssert(cDestination == 2147483648, "\(cDestination)")
+        XCTAssert(swiftDestination == 32768, "\(swiftDestination)")
+        XCTAssert(cDestination == 32768, "\(cDestination)")
     }
     
     func testHCIFilterSetPacketType() {
