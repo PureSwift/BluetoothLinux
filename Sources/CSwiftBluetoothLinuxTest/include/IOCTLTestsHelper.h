@@ -37,7 +37,8 @@
 #define HCIINQUIRY	_IOR('H', 240, int)
 
 // TODO: Complete all HCI IOCTL definitions
-static int hci_ioctl_list[] = { HCIDEVUP,
+static int hci_ioctl_list[] = {
+    HCIDEVUP,
     HCIDEVDOWN,
     HCIDEVRESET,
     HCIDEVRESTAT,
@@ -45,5 +46,6 @@ static int hci_ioctl_list[] = { HCIDEVUP,
     HCIGETDEVINFO,
     HCIGETCONNLIST,
     HCIGETCONNINFO,
-    HCIGETAUTHINFO};
+    HCIGETAUTHINFO
+};
 

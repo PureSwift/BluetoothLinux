@@ -10,5 +10,6 @@ import XCTest
 @testable import BluetoothLinuxTests
 
 XCTMain([
-    testCase(MathTests.allTests)
+    testCase(MathTests.allTests),
+    testCase(iBeaconTests.allTests)
     ])
