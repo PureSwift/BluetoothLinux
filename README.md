@@ -1,6 +1,6 @@
 # BluetoothLinux
 
-[![Build Status](https://travis-ci.org/PureSwift/BluetoothLinux.svg?branch=travisCI)](https://travis-ci.org/PureSwift/BluetoothLinux)
+[![Build Status](https://travis-ci.org/PureSwift/BluetoothLinux.svg?branch=master)](https://travis-ci.org/PureSwift/BluetoothLinux)
 
 Pure Swift Bluetooth Stack for Linux
 
