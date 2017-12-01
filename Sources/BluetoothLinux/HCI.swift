@@ -359,7 +359,7 @@ internal func HCISetBit(_ bit: CInt, _ destination: UnsafeMutableRawPointer) {
     
     #if os(OSX)
         //func swift_bluetooth_hci_set_bit(_: CInt, _: UnsafeMutablePointer<Void>) { stub() }
-        hci_set_bit(bit, destination)
+        //hci_set_bit(bit, destination)
     #elseif os(Linux)
         swift_bluetooth_hci_set_bit(bit, destination)
     #endif

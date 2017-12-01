@@ -6,14 +6,7 @@
 //  Copyright © 2015 PureSwift. All rights reserved.
 //
 
-#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
-    import Darwin
-#elseif os(Linux)
-    import Glibc
-#endif
-
-import struct Foundation.POSIXError
-import class Foundation.NSError
+import Foundation
 
 public extension POSIXError {
     

@@ -6,13 +6,7 @@
 //  Copyright © 2017 PureSwift. All rights reserved.
 //
 
-#if os(Linux)
-    import BluetoothLinux
-    import Glibc
-#elseif os(macOS) || os(iOS)
-    import Darwin.C
-#endif
-
+import BluetoothLinux
 import Foundation
 import Bluetooth
 
