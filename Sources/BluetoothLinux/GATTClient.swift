@@ -130,6 +130,11 @@ public final class GATTClient {
         }
     }
     
+    private func discoveryComplete() {
+        
+        
+    }
+    
     // MARK: - Callbacks
     
     private func readByGroupType(pdu: ATTReadByGroupTypeResponse) {
@@ -140,6 +145,8 @@ public final class GATTClient {
         // The End Group Handle is the handle of the last attribute within the service definition. 
         // The Read By Group Type Request shall be called again with the Starting Handle set to one greater than the 
         // last End Group Handle in the Read By Group Type Response.
+        
+        let lastEnd = pdu.data.last?.endGroupHandle ?? 0x00
         
         
     }
