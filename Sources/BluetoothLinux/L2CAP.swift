@@ -19,32 +19,6 @@ import Bluetooth
 public final class L2CAPSocket {
 
     // MARK: - Properties
-
-    /// Bluetooth address
-    public var address: Address {
-        
-        return internalAddress.l2_bdaddr
-    }
-    
-    public var addressType: AddressType {
-        
-        return AddressType(rawValue: internalAddress.l2_bdaddr_type)!
-    }
-    
-    /// Protocol/Service Multiplexer (PSM)
-    public var protocolServiceMultiplexer: UInt16 {
-        
-        return internalAddress.l2_psm.currentEndian
-    }
-    
-    /// Channel Identifier (CID)
-    /// 
-    /// L2CAP channel endpoints are identified to their clients by a Channel Identifier (CID). 
-    /// This is assigned by L2CAP, and each L2CAP channel endpoint on any device has a different CID.
-    public var channelIdentifier: UInt16 {
-        
-        return internalAddress.l2_cid.currentEndian
-    }
     
     /// The socket's security level.
     public private(set) var securityLevel: SecurityLevel
@@ -57,11 +31,15 @@ public final class L2CAPSocket {
     /// Internal L2CAP Socket address
     internal let internalAddress: sockaddr_l2
     
+    /// Whether the socket object "owns" the socket file descriptor
+    /// and should close it upon deallocation.
+    internal let isSocketOwner: Bool
+    
     // MARK: - Initialization
 
     deinit {
 
-        close(internalSocket)
+        if isSocketOwner { close(internalSocket) }
     }
 
     /// Create a new L2CAP server on the adapter with the specified identifier.
@@ -89,7 +67,9 @@ public final class L2CAPSocket {
         self.internalAddress = localAddress
 
         // allocate socket
-        self.internalSocket = socket(AF_BLUETOOTH, SOCK_SEQPACKET, BTPROTO_L2CAP)
+        let internalSocket = socket(AF_BLUETOOTH, SOCK_SEQPACKET, BluetoothProtocol.L2CAP.rawValue)
+        self.internalSocket = internalSocket
+        self.isSocketOwner = true
 
         // error creating socket
         guard internalSocket >= 0 else { throw POSIXError.fromErrno! }
@@ -116,11 +96,78 @@ public final class L2CAPSocket {
     }
 
     /// For new incoming connections for server.
-    internal init(clientSocket: CInt, remoteAddress: sockaddr_l2, securityLevel: SecurityLevel) {
+    internal init(clientSocket: CInt,
+                  remoteAddress: sockaddr_l2,
+                  securityLevel: SecurityLevel) {
 
         self.internalSocket = clientSocket
         self.internalAddress = remoteAddress
         self.securityLevel = securityLevel
+        self.isSocketOwner = true
+    }
+    /*
+    /// Create L2CAP socket from file descriptor provided by external API like HCI controller.
+    public init?(fileDescriptor: CInt,
+                 isSocketOwner: Bool = true) throws {
+        
+        guard try L2CAPSocket.validate(fileDescriptor: fileDescriptor)
+            else { return nil }
+        
+        self.internalSocket = fileDescriptor
+        self.isSocketOwner = isSocketOwner
+        
+    }*/
+    
+    // MARK: - Accessors
+    
+    /// Bluetooth address
+    public var address: Address {
+        
+        return internalAddress.l2_bdaddr
+    }
+    
+    public var addressType: AddressType {
+        
+        return AddressType(rawValue: internalAddress.l2_bdaddr_type)!
+    }
+    
+    /// Protocol/Service Multiplexer (PSM)
+    public var protocolServiceMultiplexer: UInt16 {
+        
+        return internalAddress.l2_psm.currentEndian
+    }
+    
+    /// Channel Identifier (CID)
+    ///
+    /// L2CAP channel endpoints are identified to their clients by a Channel Identifier (CID).
+    /// This is assigned by L2CAP, and each L2CAP channel endpoint on any device has a different CID.
+    public var channelIdentifier: UInt16 {
+        
+        return internalAddress.l2_cid.currentEndian
+    }
+    
+    // MARK: - Static Methods
+    
+    /// Check whether the file descriptor is a L2CAP socket.
+    public static func validate(fileDescriptor: CInt) throws -> Bool {
+        
+        func value(for socketOption: CInt) throws -> CInt {
+            
+            var optionValue: CInt = 0
+            var optionLength = socklen_t(MemoryLayout<CInt>.size)
+            
+            guard getsockopt(fileDescriptor, SOL_SOCKET, socketOption, &optionValue, &optionLength) == 0
+                else { throw POSIXError.fromErrno! }
+            
+            return optionValue
+        }
+        
+        //. socket doman and protocol
+        guard try value(for: SO_DOMAIN) == AF_BLUETOOTH,
+            try value(for: SO_PROTOCOL) == BluetoothProtocol.L2CAP.rawValue
+            else { return false }
+        
+        return true
     }
 
     // MARK: - Methods
@@ -181,7 +228,19 @@ public final class L2CAPSocket {
             else { throw POSIXError.fromErrno! }
         
         guard actualByteCount == buffer.count
-            else { throw L2CAPSocketError.SentLessBytes(actualByteCount) }
+            else { throw L2CAPSocketError.sentLessBytes(actualByteCount) }
+    }
+    
+    /// Attempt to get L2CAP socket options.
+    public func requestSocketOptions() throws -> Options {
+        
+        var optionValue = Options()
+        var optionLength = socklen_t(MemoryLayout<Options>.size)
+        
+        guard getsockopt(internalSocket, SOL_L2CAP, L2CAP_OPTIONS, &optionValue, &optionLength) == 0
+            else { throw POSIXError.fromErrno! }
+        
+        return optionValue
     }
 }
 
@@ -195,18 +254,71 @@ public extension L2CAPSocket {
 public enum L2CAPSocketError: Error {
     
     /// Sent less bytes than expected.
-    case SentLessBytes(Int)
+    case sentLessBytes(Int)
+    
+    /// The provided file descriptor was invalid
+    case invalidFileDescriptor(CInt)
+    
+    case connectionError()
+}
+
+public extension L2CAPSocket {
+    
+    /// L2CAP Socket Options
+    public struct Options {
+        
+        public var outputMaximumTransmissionUnit: UInt16 // omtu
+        public var inputMaximumTransmissionUnit: UInt16 // imtu
+        public var flushTo: UInt16 // flush_to
+        public var mode: UInt8
+        public var fcs: UInt8
+        public var maxTX: UInt8 // max_tx
+        public var txwinSize: UInt8 // txwin_size
+        
+        fileprivate init() {
+            
+            self.outputMaximumTransmissionUnit = 0
+            self.inputMaximumTransmissionUnit = 0
+            self.flushTo = 0
+            self.mode = 0
+            self.fcs = 0
+            self.maxTX = 0
+            self.txwinSize = 0
+        }
+    }
+    
+    public enum ConnectionResult: UInt16 {
+        
+        case success    = 0x0000
+        case pending    = 0x0001
+        case badPSM     = 0x0002
+        case secBlock   = 0x0003
+        case noMemory   = 0x0004
+    }
+    
+    public enum ConnectionStatus: UInt16 {
+        
+        case noInfo                 = 0x0000
+        case authenticationPending  = 0x0001
+        case authorizationPending   = 0x0002
+    }
 }
 
 // MARK: - Internal Supporting Types
 
 let AF_BLUETOOTH: CInt = 31
 
-let BTPROTO_L2CAP: CInt = 0
+//let BTPROTO_L2CAP: CInt = 0 // BluetoothProtocol.L2CAP
 
 let SOL_BLUETOOTH: CInt = 274
 
 let BT_SECURITY: CInt = 4
+
+let BT_FLUSHABLE: CInt = 8
+
+let SOL_L2CAP: CInt	= 6
+
+let L2CAP_OPTIONS: CInt = 0x01
 
 /// L2CAP socket address (not packed)
 struct sockaddr_l2 {
@@ -233,3 +345,12 @@ struct bt_security {
     
 #endif
 
+// MARK: - OS X support
+
+#if os(macOS)
+    
+let SO_PROTOCOL: CInt = 38
+    
+let SO_DOMAIN: CInt = 39
+    
+#endif
