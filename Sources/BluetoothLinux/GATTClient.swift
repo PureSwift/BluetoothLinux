@@ -55,31 +55,18 @@ public final class GATTClient {
     
     // MARK: Requests
     
-    public func discoverServices(uuid: BluetoothUUID? = nil,
-                                 start: UInt16 = 0x0001,
-                                 end: UInt16 = 0xffff,
-                                 primary: Bool = true) throws -> [(UUID: BluetoothUUID, primary: Bool)] {
+    /// Discover All Primary Services
+    ///
+    /// This sub-procedure is used by a client to discover all the primary services on a server.
+    public func discoverAllPrimaryServices() {
         
-        let serviceType = GATT.UUID(primaryService: primary)
-        
-        if let uuid = uuid {
-            
-            let pdu = ATTFindByTypeRequest(startHandle: start,
-                                       endHandle: end,
-                                       attributeType: serviceType.rawValue,
-                                       attributeValue: uuid.littleEndian)
-            
-            send(pdu, response: <#T##(ATTProtocolDataUnit) -> ()#>)
-            
-        } else {
-            
-            let pdu = ATTReadByGroupTypeRequest(startHandle: start,
-                                            endHandle: end,
-                                            type: serviceType.toUUID())
-            
-            
-        }
+        /// The Attribute Protocol Read By Group Type Request shall be used with 
+        /// the Attribute Type parameter set to the UUID for «Primary Service». 
+        /// The Starting Handle shall be set to 0x0001 and the Ending Handle shall be set to 0xFFFF.
+        discoverServices(start: 0x0001, end: 0xFFFF, primary: true)
     }
+    
+    
     
     // MARK: - Private Methods
     
@@ -93,27 +80,66 @@ public final class GATTClient {
     }
     
     @inline(__always)
-    private func send<T: ATTProtocolDataUnit>(_ request: T, response: @escaping (T) -> ()) {
+    private func send <Request: ATTProtocolDataUnit, Response: ATTProtocolDataUnit> (_ request: Request, response: @escaping (Response) -> ()) {
         
         log?("Request: \(request)")
         
-        guard let _ = connection.send(PDU: request, response: response)
+        let callback: (ATTProtocolDataUnit) -> () = { response($0 as! Response)  }
+        
+        let responseType: ATTProtocolDataUnit.Type = Response.self
+        
+        guard let _ = connection.send(request, response: (callback, responseType))
             else { fatalError("Could not add PDU to queue: \(request)") }
     }
+    
+    // MARK: Requests
     
     private func exchangeMTU() {
         
         let clientMTU = UInt16(self.connection.maximumTransmissionUnit)
         
-        let pdu = ATTMaximumTransmissionUnitRequest(clientMTU: UInt16(self.connection.maximumTransmissionUnit))
+        let pdu = ATTMaximumTransmissionUnitRequest(clientMTU: clientMTU)
         
         
         
     }
     
+    private func discoverServices(uuid: BluetoothUUID? = nil,
+                                  start: UInt16 = 0x0001,
+                                  end: UInt16 = 0xffff,
+                                  primary: Bool = true) {
+        
+        let serviceType = GATT.UUID(primaryService: primary)
+        
+        if let uuid = uuid {
+            
+            let pdu = ATTFindByTypeRequest(startHandle: start,
+                                           endHandle: end,
+                                           attributeType: serviceType.rawValue,
+                                           attributeValue: uuid.littleEndian)
+            
+            send(pdu, response: findByType)
+            
+        } else {
+            
+            let pdu = ATTReadByGroupTypeRequest(startHandle: start,
+                                                endHandle: end,
+                                                type: serviceType.toUUID())
+            
+            send(pdu, response: readByGroupType)
+        }
+    }
+    
     // MARK: - Callbacks
     
     private func readByGroupType(pdu: ATTReadByGroupTypeResponse) {
+        
+        // Read By Group Type Response returns a list of Attribute Handle, End Group Handle, and Attribute Value tuples
+        // corresponding to the services supported by the server. Each Attribute Value contained in the response is the 
+        // Service UUID of a service supported by the server. The Attribute Handle is the handle for the service declaration.
+        // The End Group Handle is the handle of the last attribute within the service definition. 
+        // The Read By Group Type Request shall be called again with the Starting Handle set to one greater than the 
+        // last End Group Handle in the Read By Group Type Response.
         
         
     }
