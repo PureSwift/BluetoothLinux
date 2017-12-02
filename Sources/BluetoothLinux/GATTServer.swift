@@ -25,7 +25,8 @@ public final class GATTServer {
     public let maximumPreparedWrites: Int
     
     // Don't modify
-    public let connection: ATTConnection
+    @_versioned
+    internal let connection: ATTConnection
     
     // MARK: - Private Properties
         
@@ -33,7 +34,14 @@ public final class GATTServer {
     
     // MARK: - Initialization
     
-    public init(socket: L2CAPSocket, maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default, maximumPreparedWrites: Int = 50) {
+    deinit {
+        
+        self.connection.unregisterAll()
+    }
+    
+    public init(socket: L2CAPSocket,
+                maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default,
+                maximumPreparedWrites: Int = 50) {
         
         // set initial MTU and register handlers
         self.maximumPreparedWrites = maximumPreparedWrites
