@@ -35,18 +35,21 @@ public final class GATTClient {
         self.connection = ATTConnection(socket: socket)
         self.connection.maximumTransmissionUnit = maximumTransmissionUnit
         self.registerATTHandlers()
+        
+        // queue MTU exchange
+        self.exchangeMTU()
     }
     
     // MARK: - Methods
     
-    /// Performs the actual IO for sending data.
+    /// Performs the actual IO for recieving data.
     @inline(__always)
     public func read() throws {
         
         try connection.read()
     }
     
-    /// Performs the actual IO for recieving data.
+    /// Performs the actual IO for sending data.
     @inline(__always)
     public func write() throws -> Bool {
         
@@ -65,8 +68,6 @@ public final class GATTClient {
         /// The Starting Handle shall be set to 0x0001 and the Ending Handle shall be set to 0xFFFF.
         discoverServices(start: 0x0001, end: 0xFFFF, primary: true)
     }
-    
-    
     
     // MARK: - Private Methods
     
@@ -148,7 +149,7 @@ public final class GATTClient {
         
         let lastEnd = pdu.data.last?.endGroupHandle ?? 0x00
         
-        
+        print(pdu)
     }
     
     private func findByType(pdu: ATTFindByTypeResponse) {

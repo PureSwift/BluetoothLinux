@@ -88,7 +88,7 @@ public final class L2CAPSocket {
     /// Creates a client socket for an L2CAP connection.
     public static func lowEnergyClient(adapterAddress: Address = .any,
                                        destination: (address: Address, type: AddressType),
-                                       securityLevel: SecurityLevel = .Low) throws {
+                                       securityLevel: SecurityLevel = .Low) throws -> L2CAPSocket {
         
         let socket = try L2CAPSocket(adapterAddress: adapterAddress,
                                      protocolServiceMultiplexer: 0,
@@ -97,6 +97,8 @@ public final class L2CAPSocket {
                                      securityLevel: securityLevel)
         
         try socket.openConnection(to: destination.address, type: destination.type)
+        
+        return socket
     }
     
     // MARK: - Static Methods
