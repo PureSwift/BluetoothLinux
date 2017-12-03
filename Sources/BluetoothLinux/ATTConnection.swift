@@ -125,6 +125,7 @@ internal final class ATTConnection {
         guard let sendOperation = pickNextSendOpcode()
             else { return false }
         
+        
         assert(sendOperation.data.count <= maximumTransmissionUnit, "Trying to send \(sendOperation.data.count) bytes when MTU is \(maximumTransmissionUnit)")
         
         //print("Sending data... (\(sendOpcode.data.count) bytes)")
@@ -215,7 +216,7 @@ internal final class ATTConnection {
     ///
     /// - Returns: Identifier of queued send operation or `nil` if the PDU cannot be sent.
     public func send <PDU: ATTProtocolDataUnit> (_ pdu: PDU,
-                      response: (callback: (ATTProtocolDataUnit) -> (), ATTProtocolDataUnit.Type)? = nil) -> UInt? {
+                      response: (callback: (AnyResponse) -> (), ATTProtocolDataUnit.Type)? = nil) -> UInt? {
         
         let attributeOpcode = PDU.attributeOpcode
         
@@ -345,15 +346,8 @@ internal final class ATTConnection {
             throw Error.UnexpectedResponse(data)
         }
         
-        // attempt to deserialize
-        guard let responseInfo = sendOperation.response
-            else { fatalError("Response was expected, but no callback was provided") }
-        
-        guard let responsePDU = responseInfo.responseType.init(byteValue: Array(data))
-            else { throw Error.GarbageResponse(data) }
-        
         // success!
-        responseInfo.callback(responsePDU)
+        try sendOperation.handle(data: data)
         
         //wakeup_writer(att);
     }
@@ -366,19 +360,8 @@ internal final class ATTConnection {
         
         self.pendingIndication = nil
         
-        // not necesary
-        //guard data.count == 1
-        //    else { throw Error.GarbageResponse(data) }
-        
-        // attempt to deserialize
-        guard let responseInfo = sendOperation.response
-            else { fatalError("Response was expected, but no callback was provided") }
-        
-        guard let responsePDU = responseInfo.responseType.init(byteValue: Array(data))
-            else { throw Error.GarbageResponse(data) }
-        
         // success!
-        responseInfo.callback(responsePDU)
+        try sendOperation.handle(data: data)
         
         //wakeup_writer(att);
     }
@@ -472,7 +455,7 @@ internal final class ATTConnection {
             return sendOpcode
         }
         
-        // There is either a request pending or no requests queued.
+        // There is either a request pending or no requests queued. 
         // If there is no pending indication, pick an operation from the indication queue.
         if pendingIndication == nil,
             let sendOpcode = indicationQueue.popFirst() {
@@ -538,9 +521,43 @@ public enum ATTConnectionError: Error {
     case UnexpectedResponse(Data)
 }
 
+internal extension ATTConnection {
+    
+    typealias AnyResponse = AnyATTResponse
+}
+
+public enum AnyATTResponse {
+    
+    case error(ATTErrorResponse)
+    case value(ATTProtocolDataUnit)
+}
+
+public enum ATTResponse <Value: ATTProtocolDataUnit> {
+    
+    case error(ATTErrorResponse)
+    case value(Value)
+    
+    internal init(_ anyResponse: AnyATTResponse) {
+        
+        // validate types
+        assert(Value.self != ATTErrorResponse.self)
+        assert(Value.attributeOpcode.type == .Response)
+        
+        switch anyResponse {
+        case let .error(error):
+            self = .error(error)
+        case let .value(value):
+            let specializedValue = value as! Value
+            self = .value(specializedValue)
+        }
+    }
+}
+
 // MARK: - Private Supporting Types
 
-private final class ATTSendOperation {
+fileprivate final class ATTSendOperation {
+    
+    typealias Response = ATTConnection.AnyResponse
     
     /// The operation identifier.
     let identifier: UInt
@@ -552,17 +569,41 @@ private final class ATTSendOperation {
     let opcode: ATTOpcode
     
     /// The response callback.
-    let response: (callback: (ATTProtocolDataUnit) -> (), responseType: ATTProtocolDataUnit.Type)?
+    let response: (callback: (Response) -> (), responseType: ATTProtocolDataUnit.Type)?
     
     fileprivate init(identifier: UInt,
                      opcode: ATT.Opcode,
                      data: [UInt8],
-                     response: (callback: (ATTProtocolDataUnit) -> (), responseType: ATTProtocolDataUnit.Type)? = nil) {
+                     response: (callback: (Response) -> (), responseType: ATTProtocolDataUnit.Type)? = nil) {
         
         self.identifier = identifier
         self.opcode = opcode
         self.data = data
         self.response = response
+    }
+    
+    func handle(data: Data) throws {
+        
+        guard let responseInfo = self.response
+            else { throw ATTConnectionError.UnexpectedResponse(data) }
+        
+        guard let opcode = data.first
+            else { throw ATTConnectionError.GarbageResponse(data) }
+        
+        if opcode == ATT.Opcode.ErrorResponse.rawValue {
+            
+            guard let errorResponse = ATTErrorResponse(byteValue: [UInt8](data))
+                else { throw ATTConnectionError.GarbageResponse(data) }
+            
+            responseInfo.callback(.error(errorResponse))
+            
+        } else {
+            
+            guard let response = responseInfo.responseType.init(byteValue: [UInt8](data))
+                else { throw ATTConnectionError.GarbageResponse(data) }
+            
+            responseInfo.callback(.value(response))
+        }
     }
 }
 

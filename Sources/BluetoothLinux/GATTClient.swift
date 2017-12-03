@@ -30,10 +30,12 @@ public final class GATTClient {
     }
     
     public init(socket: L2CAPSocket,
-                maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default) {
+                maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default,
+                log: ((String) -> ())? = nil) {
         
         self.connection = ATTConnection(socket: socket)
         self.connection.maximumTransmissionUnit = maximumTransmissionUnit
+        self.log = log
         self.registerATTHandlers()
         
         // queue MTU exchange
@@ -61,7 +63,7 @@ public final class GATTClient {
     /// Discover All Primary Services
     ///
     /// This sub-procedure is used by a client to discover all the primary services on a server.
-    public func discoverAllPrimaryServices() {
+    public func discoverAllPrimaryServices(_ completion: () -> ()) {
         
         /// The Attribute Protocol Read By Group Type Request shall be used with 
         /// the Attribute Type parameter set to the UUID for «Primary Service». 
@@ -74,18 +76,16 @@ public final class GATTClient {
     @inline(__always)
     private func registerATTHandlers() {
         
-        // Exchange MTU
-        //let _ = connection.register(exchangeMTU)
-        
+        // value confirmation
         
     }
     
     @inline(__always)
-    private func send <Request: ATTProtocolDataUnit, Response: ATTProtocolDataUnit> (_ request: Request, response: @escaping (Response) -> ()) {
+    private func send <Request: ATTProtocolDataUnit, Response: ATTProtocolDataUnit> (_ request: Request, response: @escaping (ATTResponse<Response>) -> ()) {
         
         log?("Request: \(request)")
         
-        let callback: (ATTProtocolDataUnit) -> () = { response($0 as! Response)  }
+        let callback: (AnyATTResponse) -> () = { response(ATTResponse<Response>($0)) }
         
         let responseType: ATTProtocolDataUnit.Type = Response.self
         
@@ -101,8 +101,7 @@ public final class GATTClient {
         
         let pdu = ATTMaximumTransmissionUnitRequest(clientMTU: clientMTU)
         
-        
-        
+        send(pdu, response: exchangeMTUResponse)
     }
     
     private func discoverServices(uuid: BluetoothUUID? = nil,
@@ -138,7 +137,27 @@ public final class GATTClient {
     
     // MARK: - Callbacks
     
-    private func readByGroupType(pdu: ATTReadByGroupTypeResponse) {
+    private func exchangeMTUResponse(_ response: ATTResponse<ATTMaximumTranssmissionUnitResponse>) {
+        
+        switch response {
+            
+        case let .error(error):
+            
+            print(error)
+            
+        case let .value(pdu):
+            
+            let finalMTU = Int(pdu.serverMTU)
+            
+            let currentMTU = self.connection.maximumTransmissionUnit
+            
+            log?("MTU Exchange (\(currentMTU) -> \(finalMTU))")
+            
+            self.connection.maximumTransmissionUnit = finalMTU
+        }
+    }
+    
+    private func readByGroupType(_ response: ATTResponse<ATTReadByGroupTypeResponse>) {
         
         // Read By Group Type Response returns a list of Attribute Handle, End Group Handle, and Attribute Value tuples
         // corresponding to the services supported by the server. Each Attribute Value contained in the response is the 
@@ -147,12 +166,23 @@ public final class GATTClient {
         // The Read By Group Type Request shall be called again with the Starting Handle set to one greater than the 
         // last End Group Handle in the Read By Group Type Response.
         
-        let lastEnd = pdu.data.last?.endGroupHandle ?? 0x00
+        switch response {
+            
+        case let .error(error):
+            
+            print(error)
+            
+        case let .value(pdu):
+            
+            let lastEnd = pdu.data.last?.endGroupHandle ?? 0x00
+            
+            print(pdu)
+        }
         
-        print(pdu)
+        
     }
     
-    private func findByType(pdu: ATTFindByTypeResponse) {
+    private func findByType(_ response: ATTResponse<ATTFindByTypeResponse>) {
         
         
     }

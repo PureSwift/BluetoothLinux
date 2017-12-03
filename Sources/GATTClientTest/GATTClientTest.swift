@@ -25,7 +25,7 @@ func GATTClientTest(adapter: Adapter, address: Address) {
         
         // queue operations
         
-        client.discoverAllPrimaryServices()
+        client.discoverAllPrimaryServices { print($0) }
         
         func didFinish() -> Bool {
             
