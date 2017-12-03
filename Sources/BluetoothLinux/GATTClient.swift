@@ -80,7 +80,8 @@ public final class GATTClient {
         
     }
     
-    private func send <Request: ATTProtocolDataUnit, Response: ATTProtocolDataUnit> (_ request: Request, response: @escaping (ATTResponse<Response>) -> ()) -> UInt? {
+    @inline(__always)
+    private func send <Request: ATTProtocolDataUnit, Response: ATTProtocolDataUnit> (_ request: Request, response: @escaping (ATTResponse<Response>) -> ()) {
         
         log?("Request: \(request)")
         
@@ -88,7 +89,8 @@ public final class GATTClient {
         
         let responseType: ATTProtocolDataUnit.Type = Response.self
         
-        return connection.send(request, response: (callback, responseType))
+        guard let _ = connection.send(request, response: (callback, responseType))
+            else { fatalError("Could not add PDU to queue: \(request)") }
     }
     
     // MARK: Requests
@@ -99,8 +101,7 @@ public final class GATTClient {
         
         let pdu = ATTMaximumTransmissionUnitRequest(clientMTU: clientMTU)
         
-        guard let _ = send(pdu, response: { [unowned self] in self.exchangeMTUResponse($0) })
-            else { fatalError("Could not add PDU to request queue. Invalid state.") }
+        send(pdu, response: { [unowned self] in self.exchangeMTUResponse($0) })
     }
     
     private func discoverServices(uuid: BluetoothUUID? = nil,
@@ -115,9 +116,8 @@ public final class GATTClient {
                                                   start: start,
                                                   end: end,
                                                   serviceType: serviceType,
+                                                  foundServices: [],
                                                   completion: completion)
-        
-        let sendOperationID: UInt?
         
         if let uuid = uuid {
             
@@ -126,29 +126,16 @@ public final class GATTClient {
                                            attributeType: serviceType.rawValue,
                                            attributeValue: uuid.littleEndian)
             
-            sendOperationID = send(pdu) { [unowned self] in self.findByType($0, operation: operation) }
+            send(pdu) { [unowned self] in self.findByType($0, operation: operation) }
             
         } else {
-            
-            
             
             let pdu = ATTReadByGroupTypeRequest(startHandle: start,
                                                 endHandle: end,
                                                 type: serviceType.toUUID())
             
-            sendOperationID = send(pdu) { [unowned self] in self.readByGroupType($0, operation: operation) }
+            send(pdu) { [unowned self] in self.readByGroupType($0, operation: operation) }
         }
-        
-        /// immediately call completion with error
-        guard sendOperationID != nil else {
-            completion(.error(.queueFull))
-            return
-        }
-    }
-    
-    private func servicesDiscoveryComplete(operation: DiscoverServicesOperation) {
-        
-        
     }
     
     // MARK: - Callbacks
@@ -184,38 +171,79 @@ public final class GATTClient {
         
         switch response {
             
-        case let .error(error):
+        case let .error(errorResponse):
             
-            print(error)
+            operation.error(errorResponse)
             
         case let .value(pdu):
             
             var operation = operation
             
-            operation.start += 1
+            // store PDU values
+            operation.foundServices += pdu.data.map { Service(uuid: $0.value, primary: operation) }
             
+            // get more if possible
             let lastEnd = pdu.data.last?.endGroupHandle ?? 0x00
             
+            // prevent infinite loop
+            guard lastEnd >= operation.start
+                else { operation.completion(.error(Error.invalidResponse(pdu))); return }
+            
+            operation.start = lastEnd + 1
+            
+            if lastEnd < operation.end {
+                
+                let pdu = ATTReadByGroupTypeRequest(startHandle: operation.start,
+                                                    endHandle: operation.end,
+                                                    type: operation.serviceType.toUUID())
+                
+                send(pdu) { [unowned self] in self.readByGroupType($0, operation: operation) }
+                
+            } else {
+                
+                operation.success()
+            }
+        }
+    }
+    
+    private func findByType(_ response: ATTResponse<ATTFindByTypeResponse>, operation: DiscoverServicesOperation) {
+        
+        switch response {
+            
+        case let .error(errorResponse):
+            
+            operation.error(errorResponse)
+            
+        case let .value(pdu):
+            
+            guard let uuid = operation.uuid
+                else { fatalError("Should have UUID specified") }
+            
+            // store PDU values
+            
+            
+            // get more if possible
+            var operation = operation
+            
+            let lastEnd = pdu.handlesInformationList.last?.groupEnd ?? 0x00
+            
+            operation.start = lastEnd + 1
+            
+            // need to continue scanning
             if lastEnd < operation.end {
                 
                 let pdu = ATTFindByTypeRequest(startHandle: operation.start,
                                                endHandle: operation.end,
                                                attributeType: operation.serviceType.rawValue,
-                                               attributeValue: operation.uuid?.littleEndian ?? [])
+                                               attributeValue: uuid.littleEndian)
                 
-                guard let _ = send(pdu, response: { [unowned self] in self.findByType($0, operation: operation) })
-                    else { operation.completion(.error(.queueFull)); return }
+                send(pdu, response: { [unowned self] in self.findByType($0, operation: operation) })
                 
+            } else {
                 
+                operation.success()
             }
         }
-        
-        
-    }
-    
-    private func findByType(_ response: ATTResponse<ATTFindByTypeResponse>, operation: DiscoverServicesOperation) {
-        
-        
     }
 }
 
@@ -230,16 +258,16 @@ public extension GATTClient {
 
 public enum GATTClientError: Error {
     
-    /// The request was not successfully sent because the underlying transmit queue is full.
-    case queueFull
-    
     /// The GATT server responded with an error response.
     case errorResponse(ATTErrorResponse)
+    
+    /// The GATT server responded with a PDU that has invalid values.
+    case invalidResponse(ATTProtocolDataUnit)
 }
 
 public enum GATTClientResponse <Value> {
     
-    case error(GATTClientError)
+    case error(Swift.Error)
     case value(Value)
 }
 
@@ -249,6 +277,8 @@ public extension GATTClient {
     public struct Service {
         
         public let uuid: BluetoothUUID
+        
+        public let primary: Bool
     }
 }
 
@@ -266,6 +296,20 @@ private extension GATTClient {
         
         let serviceType: GATT.UUID
         
+        var foundServices = [Service]()
+        
         let completion: (GATTClientResponse<[Service]>) -> ()
+        
+        @inline(__always)
+        func success() {
+            
+            completion(.value(foundServices))
+        }
+        
+        @inline(__always)
+        func error(_ responseError: ATTErrorResponse) {
+            
+            completion(.error(Error.errorResponse(responseError)))
+        }
     }
 }
