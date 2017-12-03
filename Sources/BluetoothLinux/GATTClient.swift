@@ -358,7 +358,15 @@ private extension GATTClient {
         @inline(__always)
         func error(_ responseError: ATTErrorResponse) {
             
-            completion(.error(Error.errorResponse(responseError)))
+            if responseError.errorCode == .AttributeNotFound,
+                foundServices.isEmpty == false {
+                
+                success()
+                
+            } else {
+                
+                completion(.error(Error.errorResponse(responseError)))
+            }
         }
     }
 }

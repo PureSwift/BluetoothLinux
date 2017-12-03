@@ -28,13 +28,13 @@ func GATTClientTest(adapter: Adapter, address: Address) {
         var testChecklist = GATTClientTests()
         
         client.discoverAllPrimaryServices {
-            print("\(GATTClient.discoverAllPrimaryServices)", $0)
+            print("\(GATTClient.discoverAllPrimaryServices.self)", $0)
             guard case let .value(value) = $0 else { return }
             testChecklist.discoverAllPrimaryServices = value.contains { $0.uuid == TestProfile.TestService.UUID }
         }
         
         client.discoverPrimaryServices(by: TestProfile.TestService.UUID) {
-            print("\(GATTClient.discoverAllPrimaryServices)", $0)
+            print("\(GATTClient.discoverAllPrimaryServices.self)", $0)
             guard case let .value(value) = $0 else { return }
             testChecklist.discoverAllPrimaryServices = value.count == 1
                 && value.contains { $0.uuid == TestProfile.TestService.UUID }
