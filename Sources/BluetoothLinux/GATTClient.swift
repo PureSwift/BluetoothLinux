@@ -63,12 +63,12 @@ public final class GATTClient {
     /// Discover All Primary Services
     ///
     /// This sub-procedure is used by a client to discover all the primary services on a server.
-    public func discoverAllPrimaryServices(_ completion: () -> ()) {
+    public func discoverAllPrimaryServices(completion: @escaping (GATTClientResponse<[Service]>) -> ()) {
         
         /// The Attribute Protocol Read By Group Type Request shall be used with 
         /// the Attribute Type parameter set to the UUID for «Primary Service». 
         /// The Starting Handle shall be set to 0x0001 and the Ending Handle shall be set to 0xFFFF.
-        discoverServices(start: 0x0001, end: 0xFFFF, primary: true)
+        discoverServices(start: 0x0001, end: 0xFFFF, primary: true, completion: completion)
     }
     
     // MARK: - Private Methods
@@ -81,7 +81,7 @@ public final class GATTClient {
     }
     
     @inline(__always)
-    private func send <Request: ATTProtocolDataUnit, Response: ATTProtocolDataUnit> (_ request: Request, response: @escaping (ATTResponse<Response>) -> ()) {
+    private func send <Request: ATTProtocolDataUnit, Response: ATTProtocolDataUnit> (_ request: Request, response: @escaping (ATTResponse<Response>) -> ()) -> UInt? {
         
         log?("Request: \(request)")
         
@@ -89,8 +89,7 @@ public final class GATTClient {
         
         let responseType: ATTProtocolDataUnit.Type = Response.self
         
-        guard let _ = connection.send(request, response: (callback, responseType))
-            else { fatalError("Could not add PDU to queue: \(request)") }
+        return connection.send(request, response: (callback, responseType))
     }
     
     // MARK: Requests
@@ -101,15 +100,25 @@ public final class GATTClient {
         
         let pdu = ATTMaximumTransmissionUnitRequest(clientMTU: clientMTU)
         
-        send(pdu, response: exchangeMTUResponse)
+        guard send(pdu, response: exchangeMTUResponse)
+            else { fatalError("Could not add PDU to request queue. Invalid state.") }
     }
     
     private func discoverServices(uuid: BluetoothUUID? = nil,
                                   start: UInt16 = 0x0001,
                                   end: UInt16 = 0xffff,
-                                  primary: Bool = true) {
+                                  primary: Bool = true,
+                                  completion: @escaping (GATTClientResponse<[Service]>) -> ()) {
         
         let serviceType = GATT.UUID(primaryService: primary)
+        
+        let operation = DiscoverServicesOperation(uuid: uuid,
+                                                  start: start,
+                                                  end: end,
+                                                  serviceType: serviceType,
+                                                  completion: completion)
+        
+        let sendOperationID: UInt?
         
         if let uuid = uuid {
             
@@ -118,19 +127,25 @@ public final class GATTClient {
                                            attributeType: serviceType.rawValue,
                                            attributeValue: uuid.littleEndian)
             
-            send(pdu, response: findByType)
+            sendOperationID = send(pdu) { [unowned self] in self.findByType($0, operation: operation) }
             
         } else {
+            
+            
             
             let pdu = ATTReadByGroupTypeRequest(startHandle: start,
                                                 endHandle: end,
                                                 type: serviceType.toUUID())
             
-            send(pdu, response: readByGroupType)
+            sendOperationID = send(pdu) { [unowned self] in self.readByGroupType($0, operation: operation) }
+        }
+        
+        guard sendOperationID != nil else {
+            completion(.error(.queueFull))
         }
     }
     
-    private func discoveryComplete() {
+    private func servicesDiscoveryComplete(operation: DiscoverServicesOperation) {
         
         
     }
@@ -143,7 +158,7 @@ public final class GATTClient {
             
         case let .error(error):
             
-            print(error)
+            log?("Could not exchange MTU: \(error)")
             
         case let .value(pdu):
             
@@ -157,7 +172,7 @@ public final class GATTClient {
         }
     }
     
-    private func readByGroupType(_ response: ATTResponse<ATTReadByGroupTypeResponse>) {
+    private func readByGroupType(_ response: ATTResponse<ATTReadByGroupTypeResponse>, operation: DiscoverServicesOperation) {
         
         // Read By Group Type Response returns a list of Attribute Handle, End Group Handle, and Attribute Value tuples
         // corresponding to the services supported by the server. Each Attribute Value contained in the response is the 
@@ -174,16 +189,84 @@ public final class GATTClient {
             
         case let .value(pdu):
             
+            var operation = operation
+            
+            operation.start += 1
+            
             let lastEnd = pdu.data.last?.endGroupHandle ?? 0x00
             
-            print(pdu)
+            if lastEnd < operation.end {
+                
+                let pdu = ATTFindByTypeRequest(startHandle: operation.start,
+                                               endHandle: operation.end,
+                                               attributeType: operation.serviceType.rawValue,
+                                               attributeValue: operation.uuid?.littleEndian ?? [])
+                
+                guard let newOperation = send(pdu, response: findByType)
+                    else { return }
+                
+                
+            }
         }
         
         
     }
     
-    private func findByType(_ response: ATTResponse<ATTFindByTypeResponse>) {
+    private func findByType(_ response: ATTResponse<ATTFindByTypeResponse>, operation: DiscoverServicesOperation) {
         
         
+    }
+}
+
+// MARK: - Supporting Types
+
+public extension GATTClient {
+    
+    public typealias Error = GATTClientError
+    
+    public typealias Response<Value> = GATTClientResponse<Value>
+}
+
+public enum GATTClientError: Error {
+    
+    /// The internal operations queue is full and no more pending ATT operations can be queued.
+    ///
+    /// The request was not successfully sent because the underlying transmit queue is full.
+    case queueFull
+    
+    /// The GATT server responded with an error response.
+    case errorResponse(ATTErrorResponse)
+}
+
+public enum GATTClientResponse <Value> {
+    
+    case error(GATTClientError)
+    case value(Value)
+}
+
+public extension GATTClient {
+    
+    /// A discovered service.
+    public struct Service {
+        
+        public let uuid: BluetoothUUID
+    }
+}
+
+// MARK: - Private Supporting Types
+
+private extension GATTClient {
+    
+    struct DiscoverServicesOperation {
+        
+        let uuid: BluetoothUUID?
+        
+        var start: UInt16
+        
+        let end: UInt16
+        
+        let serviceType: GATT.UUID
+        
+        let completion: (GATTClientResponse<[Service]>) -> ()
     }
 }

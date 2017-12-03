@@ -746,7 +746,9 @@ internal extension GATTDatabase {
             
             for attribute in group.attributes {
                 
-                let match = range.contains(attribute.handle) && attribute.UUID == .bit16(type) && Array(attribute.value) == value
+                let match = range.contains(attribute.handle)
+                    && attribute.UUID == .bit16(type)
+                    && Array(attribute.value) == value
                 
                 guard match else { continue }
                 
