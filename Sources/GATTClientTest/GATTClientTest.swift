@@ -25,10 +25,15 @@ func GATTClientTest(adapter: Adapter, address: Address) {
         
         // queue operations
         
+        client.discoverAllPrimaryServices()
         
+        func didFinish() -> Bool {
+            
+            return false
+        }
         
         // execute IO
-        while true {
+        while didFinish() == false {
             
             var pendingWrite = true
             

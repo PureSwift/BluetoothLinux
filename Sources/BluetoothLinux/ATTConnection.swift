@@ -466,14 +466,16 @@ internal final class ATTConnection {
         }
         
         // If there is no pending request, pick an operation from the request queue.
-        if let sendOpcode = requestQueue.popFirst(), pendingRequest == nil {
+        if pendingRequest == nil,
+            let sendOpcode = requestQueue.popFirst() {
             
             return sendOpcode
         }
         
-        // There is either a request pending or no requests queued. 
+        // There is either a request pending or no requests queued.
         // If there is no pending indication, pick an operation from the indication queue.
-        if let sendOpcode = indicationQueue.popFirst(), pendingIndication == nil {
+        if pendingIndication == nil,
+            let sendOpcode = indicationQueue.popFirst() {
             
             return sendOpcode
         }
