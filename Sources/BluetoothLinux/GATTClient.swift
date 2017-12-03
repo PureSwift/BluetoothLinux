@@ -63,12 +63,32 @@ public final class GATTClient {
     /// Discover All Primary Services
     ///
     /// This sub-procedure is used by a client to discover all the primary services on a server.
+    ///
+    /// - Parameter completion: The completion closure.
     public func discoverAllPrimaryServices(completion: @escaping (GATTClientResponse<[Service]>) -> ()) {
         
         /// The Attribute Protocol Read By Group Type Request shall be used with 
         /// the Attribute Type parameter set to the UUID for «Primary Service». 
         /// The Starting Handle shall be set to 0x0001 and the Ending Handle shall be set to 0xFFFF.
         discoverServices(start: 0x0001, end: 0xFFFF, primary: true, completion: completion)
+    }
+    
+    /// Discover Primary Service by Service UUID
+    /// 
+    /// This sub-procedure is used by a client to discover a specific primary service on a server
+    /// when only the Service UUID is known. The specific primary service may exist multiple times on a server. 
+    /// The primary service being discovered is identified by the service UUID.
+    ///
+    /// - Parameter uuid: The UUID of the service to find.
+    /// - Parameter completion: The completion closure.
+    public func discoverPrimaryServices(by uuid: BluetoothUUID,
+                                        completion: @escaping (GATTClientResponse<[Service]>) -> ()) {
+        
+        // The Attribute Protocol Find By Type Value Request shall be used with the Attribute Type
+        // parameter set to the UUID for «Primary Service» and the Attribute Value set to the 16-bit
+        // Bluetooth UUID or 128-bit UUID for the specific primary service. 
+        // The Starting Handle shall be set to 0x0001 and the Ending Handle shall be set to 0xFFFF.
+        discoverServices(uuid: uuid, start: 0x0001, end: 0xFFFF, primary: true, completion: completion)
     }
     
     // MARK: - Private Methods
@@ -115,7 +135,7 @@ public final class GATTClient {
         let operation = DiscoverServicesOperation(uuid: uuid,
                                                   start: start,
                                                   end: end,
-                                                  serviceType: serviceType,
+                                                  type: serviceType,
                                                   foundServices: [],
                                                   completion: completion)
         
@@ -180,7 +200,18 @@ public final class GATTClient {
             var operation = operation
             
             // store PDU values
-            operation.foundServices += pdu.data.map { Service(uuid: $0.value, primary: operation) }
+            for serviceData in pdu.data {
+                
+                guard let serviceUUID = BluetoothUUID(littleEndian: serviceData.value)
+                    else { operation.completion(.error(Error.invalidResponse(pdu))); return }
+                
+                let service = Service(uuid: serviceUUID,
+                                      type: operation.type,
+                                      handle: serviceData.attributeHandle,
+                                      end: serviceData.endGroupHandle)
+                
+                operation.foundServices.append(service)
+            }
             
             // get more if possible
             let lastEnd = pdu.data.last?.endGroupHandle ?? 0x00
@@ -195,7 +226,7 @@ public final class GATTClient {
                 
                 let pdu = ATTReadByGroupTypeRequest(startHandle: operation.start,
                                                     endHandle: operation.end,
-                                                    type: operation.serviceType.toUUID())
+                                                    type: operation.type.toUUID())
                 
                 send(pdu) { [unowned self] in self.readByGroupType($0, operation: operation) }
                 
@@ -208,6 +239,12 @@ public final class GATTClient {
     
     private func findByType(_ response: ATTResponse<ATTFindByTypeResponse>, operation: DiscoverServicesOperation) {
         
+        // Find By Type Value Response returns a list of Attribute Handle ranges. 
+        // The Attribute Handle range is the starting handle and the ending handle of the service definition.
+        // If the Attribute Handle range for the Service UUID being searched is returned and the End Found Handle 
+        // is not 0xFFFF, the Find By Type Value Request may be called again with the Starting Handle set to one 
+        // greater than the last Attribute Handle range in the Find By Type Value Response.
+        
         switch response {
             
         case let .error(errorResponse):
@@ -216,15 +253,23 @@ public final class GATTClient {
             
         case let .value(pdu):
             
-            guard let uuid = operation.uuid
+            guard let serviceUUID = operation.uuid
                 else { fatalError("Should have UUID specified") }
             
-            // store PDU values
-            
-            
-            // get more if possible
             var operation = operation
             
+            // store PDU values
+            for serviceData in pdu.handlesInformationList {
+                
+                let service = Service(uuid: serviceUUID,
+                                      type: operation.type,
+                                      handle: serviceData.foundAttribute,
+                                      end: serviceData.groupEnd)
+                
+                operation.foundServices.append(service)
+            }
+            
+            // get more if possible
             let lastEnd = pdu.handlesInformationList.last?.groupEnd ?? 0x00
             
             operation.start = lastEnd + 1
@@ -234,8 +279,8 @@ public final class GATTClient {
                 
                 let pdu = ATTFindByTypeRequest(startHandle: operation.start,
                                                endHandle: operation.end,
-                                               attributeType: operation.serviceType.rawValue,
-                                               attributeValue: uuid.littleEndian)
+                                               attributeType: operation.type.rawValue,
+                                               attributeValue: serviceUUID.littleEndian)
                 
                 send(pdu, response: { [unowned self] in self.findByType($0, operation: operation) })
                 
@@ -278,7 +323,11 @@ public extension GATTClient {
         
         public let uuid: BluetoothUUID
         
-        public let primary: Bool
+        public let type: GATT.UUID
+        
+        public let handle: UInt16
+        
+        public let end: UInt16
     }
 }
 
@@ -294,7 +343,7 @@ private extension GATTClient {
         
         let end: UInt16
         
-        let serviceType: GATT.UUID
+        let type: GATT.UUID
         
         var foundServices = [Service]()
         
