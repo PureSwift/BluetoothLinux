@@ -137,7 +137,7 @@ public final class GATTClient {
     
     // MARK: - Callbacks
     
-    private func exchangeMTUResponse(_ response: ATTResponse<ATTMaximumTranssmissionUnitResponse>) {
+    private func exchangeMTUResponse(_ response: ATTResponse<ATTMaximumTransmissionUnitResponse>) {
         
         switch response {
             

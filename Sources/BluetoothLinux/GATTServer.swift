@@ -281,7 +281,7 @@ public final class GATTServer {
         let finalMTU = max(min(pdu.clientMTU, serverMTU), UInt16(ATT.MTU.LowEnergy.Default))
         
         // Respond with the server MTU
-        let _ = connection.send(ATTMaximumTranssmissionUnitResponse(serverMTU: serverMTU))
+        let _ = connection.send(ATTMaximumTransmissionUnitResponse(serverMTU: serverMTU))
         
         // Set MTU to minimum
         connection.maximumTransmissionUnit = Int(finalMTU)

@@ -42,7 +42,7 @@ final class iBeaconTests: XCTestCase {
         
         var advertisingDataCommand = LowEnergyCommand.SetAdvertisingDataParameter()
         
-        SetBeaconData(UUID: identifier,
+        SetBeaconData(uuid: identifier,
                       major: major,
                       minor: minor,
                       RSSI: UInt8(bitPattern: rssi),
