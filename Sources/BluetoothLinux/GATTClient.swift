@@ -80,7 +80,6 @@ public final class GATTClient {
         
     }
     
-    @inline(__always)
     private func send <Request: ATTProtocolDataUnit, Response: ATTProtocolDataUnit> (_ request: Request, response: @escaping (ATTResponse<Response>) -> ()) -> UInt? {
         
         log?("Request: \(request)")
@@ -100,7 +99,7 @@ public final class GATTClient {
         
         let pdu = ATTMaximumTransmissionUnitRequest(clientMTU: clientMTU)
         
-        guard send(pdu, response: exchangeMTUResponse)
+        guard let _ = send(pdu, response: { [unowned self] in self.exchangeMTUResponse($0) })
             else { fatalError("Could not add PDU to request queue. Invalid state.") }
     }
     
@@ -140,8 +139,10 @@ public final class GATTClient {
             sendOperationID = send(pdu) { [unowned self] in self.readByGroupType($0, operation: operation) }
         }
         
+        /// immediately call completion with error
         guard sendOperationID != nil else {
             completion(.error(.queueFull))
+            return
         }
     }
     
@@ -202,8 +203,8 @@ public final class GATTClient {
                                                attributeType: operation.serviceType.rawValue,
                                                attributeValue: operation.uuid?.littleEndian ?? [])
                 
-                guard let newOperation = send(pdu, response: findByType)
-                    else { return }
+                guard let _ = send(pdu, response: { [unowned self] in self.findByType($0, operation: operation) })
+                    else { operation.completion(.error(.queueFull)); return }
                 
                 
             }
@@ -229,8 +230,6 @@ public extension GATTClient {
 
 public enum GATTClientError: Error {
     
-    /// The internal operations queue is full and no more pending ATT operations can be queued.
-    ///
     /// The request was not successfully sent because the underlying transmit queue is full.
     case queueFull
     
