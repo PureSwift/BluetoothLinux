@@ -37,7 +37,7 @@ public extension Adapter {
         
         // set iBeacon data
         var advertisingDataCommand = LowEnergyCommand.SetAdvertisingDataParameter()
-        SetBeaconData(UUID: UUID, major: major, minor: minor, RSSI: UInt8(bitPattern: RSSI), parameter: &advertisingDataCommand)
+        SetBeaconData(uuid: UUID, major: major, minor: minor, RSSI: UInt8(bitPattern: RSSI), parameter: &advertisingDataCommand)
         
         try deviceRequest(advertisingDataCommand, timeout: commandTimeout)
     }
@@ -68,7 +68,7 @@ internal func SetBeaconData(uuid: Foundation.UUID, major: UInt16, minor: UInt16,
     
     // set UUID bytes
     
-    let littleUUIDBytes = isBigEndian ? Array(uuid.toData().reversed()) : Array(uuid.toData())
+    let littleUUIDBytes = BluetoothUUID.bit128(uuid).littleEndian
     
     parameter.data.9 = littleUUIDBytes[0]
     parameter.data.10 = littleUUIDBytes[1]
