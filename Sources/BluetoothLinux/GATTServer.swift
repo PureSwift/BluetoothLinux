@@ -314,7 +314,7 @@ public final class GATTServer {
         guard data.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
-        let attributeData = data.map { AttributeData(attributeHandle: $0.start, endGroupHandle: $0.end, value: $0.UUID.littleEndian) }
+        let attributeData = data.map { AttributeData(attributeHandle: $0.start, endGroupHandle: $0.end, value: $0.UUID.littleEndianData) }
         
         var limitedAttributes = [attributeData[0]]
         
@@ -442,11 +442,12 @@ public final class GATTServer {
         guard attributes.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
-        let format = Format(UUID: attributes[0].UUID)
+        guard let format = Format(uuid: attributes[0].UUID)
+            else { errorResponse(opcode, .UnlikelyError, pdu.startHandle); return }
         
         var bit16Pairs = [(UInt16, UInt16)]()
         
-        var bit128Pairs = [(UInt16, UUID)]()
+        var bit128Pairs = [(UInt16, UInt128)]()
         
         for (index, attribute) in attributes.enumerated() {
             
@@ -714,7 +715,7 @@ internal extension GATTDatabase {
             
             guard groupRange.isSubset(handleRange) else { continue }
             
-            let serviceUUID = BluetoothUUID(littleEndian: Array(group.service.value))!
+            let serviceUUID = BluetoothUUID(littleEndianData: Array(group.service.value))!
             
             data.append((group.startHandle, group.endHandle, serviceUUID))
         }

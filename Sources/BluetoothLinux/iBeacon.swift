@@ -68,7 +68,7 @@ internal func SetBeaconData(uuid: Foundation.UUID, major: UInt16, minor: UInt16,
     
     // set UUID bytes
     
-    let littleUUIDBytes = BluetoothUUID.bit128(uuid).littleEndian
+    let littleUUIDBytes = BluetoothUUID(uuid: uuid).littleEndianData
     
     parameter.data.9 = littleUUIDBytes[0]
     parameter.data.10 = littleUUIDBytes[1]
