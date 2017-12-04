@@ -40,23 +40,6 @@ static inline unsigned int twoc(int in, int t)
     return (in < 0) ? (in + (2 << (t-1))) : in;
 }
 
-static inline unsigned int *uuid_str_to_data(char *uuid)
-{
-    char conv[] = "0123456789ABCDEF";
-    int len = strlen(uuid);
-    unsigned int *data = (unsigned int*)malloc(sizeof(unsigned int) * len);
-    unsigned int *dp = data;
-    char *cu = uuid;
-    
-    for(; cu<uuid+len; dp++,cu+=2)
-    {
-        *dp = ((strchr(conv, toupper(*cu)) - conv) * 16)
-        + (strchr(conv, toupper(*(cu+1))) - conv);
-    }
-    
-    return data;
-}
-
 /** Generate iBeacon data from https://github.com/carsonmcdonald/bluez-ibeacon */
 static inline le_set_advertising_data_cp beaconAdvertisementData(const unsigned char *uuid, int major_number, int minor_number, int rssi_value)
 {

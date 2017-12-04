@@ -29,15 +29,24 @@ final class iBeaconTests: XCTestCase {
         
         let rssi: Int8 = -29
         
-        var adverstisementDataParameter = beaconAdvertisementData(Array(identifier.toData()), CInt(major).littleEndian, CInt(minor).littleEndian, CInt(rssi).littleEndian)
+        var adverstisementDataParameter = beaconAdvertisementData(Array(identifier.data),
+                                                                  CInt(major).littleEndian,
+                                                                  CInt(minor).littleEndian,
+                                                                  CInt(rssi).littleEndian)
         
         var parameterBytes = [UInt8].init(repeating: 0, count: Int(adverstisementDataParameter.length))
         
-        let _ = withUnsafePointer(to: &adverstisementDataParameter.data) { memcpy(&parameterBytes, UnsafeRawPointer($0), parameterBytes.count) }
+        let _ = withUnsafePointer(to: &adverstisementDataParameter.data) {
+            memcpy(&parameterBytes, UnsafeRawPointer($0), parameterBytes.count)
+        }
         
         var advertisingDataCommand = LowEnergyCommand.SetAdvertisingDataParameter()
         
-        SetBeaconData(UUID: identifier, major: major, minor: minor, RSSI: UInt8(bitPattern: rssi), parameter: &advertisingDataCommand)
+        SetBeaconData(uuid: identifier,
+                      major: major,
+                      minor: minor,
+                      RSSI: UInt8(bitPattern: rssi),
+                      parameter: &advertisingDataCommand)
         
         XCTAssert(adverstisementDataParameter.length == advertisingDataCommand.length, "Invalid Length: \(adverstisementDataParameter.length) == \(advertisingDataCommand.length)")
         

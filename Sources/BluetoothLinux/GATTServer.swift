@@ -25,7 +25,8 @@ public final class GATTServer {
     public let maximumPreparedWrites: Int
     
     // Don't modify
-    public let connection: ATTConnection
+    @_versioned
+    internal let connection: ATTConnection
     
     // MARK: - Private Properties
         
@@ -33,7 +34,14 @@ public final class GATTServer {
     
     // MARK: - Initialization
     
-    public init(socket: L2CAPSocket, maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default, maximumPreparedWrites: Int = 50) {
+    deinit {
+        
+        self.connection.unregisterAll()
+    }
+    
+    public init(socket: L2CAPSocket,
+                maximumTransmissionUnit: Int = ATT.MTU.LowEnergy.Default,
+                maximumPreparedWrites: Int = 50) {
         
         // set initial MTU and register handlers
         self.maximumPreparedWrites = maximumPreparedWrites
@@ -126,7 +134,7 @@ public final class GATTServer {
         
         log?("Response: \(response)")
         
-        guard let _ = connection.send(PDU: response, response: { _ in })
+        guard let _ = connection.send(response)
             else { fatalError("Could not add PDU to queue: \(response)") }
     }
     
@@ -273,7 +281,7 @@ public final class GATTServer {
         let finalMTU = max(min(pdu.clientMTU, serverMTU), UInt16(ATT.MTU.LowEnergy.Default))
         
         // Respond with the server MTU
-        let _ = connection.send(PDU: ATTMaximumTranssmissionUnitResponse(serverMTU: serverMTU)) { _ in }
+        let _ = connection.send(ATTMaximumTransmissionUnitResponse(serverMTU: serverMTU))
         
         // Set MTU to minimum
         connection.maximumTransmissionUnit = Int(finalMTU)
@@ -306,7 +314,7 @@ public final class GATTServer {
         guard data.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
-        let attributeData = data.map { AttributeData(attributeHandle: $0.start, endGroupHandle: $0.end, value: $0.UUID.littleEndian) }
+        let attributeData = data.map { AttributeData(attributeHandle: $0.start, endGroupHandle: $0.end, value: $0.UUID.littleEndianData) }
         
         var limitedAttributes = [attributeData[0]]
         
@@ -434,11 +442,12 @@ public final class GATTServer {
         guard attributes.isEmpty == false
             else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
         
-        let format = Format(UUID: attributes[0].UUID)
+        guard let format = Format(uuid: attributes[0].UUID)
+            else { errorResponse(opcode, .UnlikelyError, pdu.startHandle); return }
         
         var bit16Pairs = [(UInt16, UInt16)]()
         
-        var bit128Pairs = [(UInt16, UUID)]()
+        var bit128Pairs = [(UInt16, UInt128)]()
         
         for (index, attribute) in attributes.enumerated() {
             
@@ -706,7 +715,7 @@ internal extension GATTDatabase {
             
             guard groupRange.isSubset(handleRange) else { continue }
             
-            let serviceUUID = BluetoothUUID(littleEndian: Array(group.service.value))!
+            let serviceUUID = BluetoothUUID(littleEndianData: Array(group.service.value))!
             
             data.append((group.startHandle, group.endHandle, serviceUUID))
         }
@@ -738,7 +747,9 @@ internal extension GATTDatabase {
             
             for attribute in group.attributes {
                 
-                let match = range.contains(attribute.handle) && attribute.UUID == .bit16(type) && Array(attribute.value) == value
+                let match = range.contains(attribute.handle)
+                    && attribute.UUID == .bit16(type)
+                    && Array(attribute.value) == value
                 
                 guard match else { continue }
                 

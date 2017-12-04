@@ -13,6 +13,7 @@ public enum SecurityLevel: UInt8, Comparable {
     case Low        = 1
     case Medium     = 2
     case High       = 3
+    case Fips       = 4
     
     public init() { self = .SDP }
 }
