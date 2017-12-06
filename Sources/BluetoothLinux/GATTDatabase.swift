@@ -187,17 +187,20 @@ public extension GATTDatabase {
         
         public let handle: UInt16
         
-        public let UUID: BluetoothUUID
+        public let uuid: BluetoothUUID
         
         public let permissions: [Permission]
         
         public var value: Data
         
         /// Defualt initializer
-        fileprivate init(handle: UInt16, UUID: BluetoothUUID, value: Data = Data(), permissions: [Permission] = []) {
+        fileprivate init(handle: UInt16,
+                         uuid: BluetoothUUID,
+                         value: Data = Data(),
+                         permissions: [Permission] = []) {
             
             self.handle = handle
-            self.UUID = UUID
+            self.uuid = uuid
             self.value = value
             self.permissions = permissions
         }
@@ -206,18 +209,18 @@ public extension GATTDatabase {
         fileprivate init(service: GATT.Service, handle: UInt16) {
             
             self.handle = handle
-            self.UUID = GATT.UUID(primaryService: service.primary).toUUID()
-            self.value = service.UUID.littleEndian.data
-            self.permissions = [.Read] // Read only
+            self.uuid = GATT.UUID(primaryService: service.primary).uuid
+            self.value = service.uuid.littleEndian.data
+            self.permissions = [.read] // Read only
         }
         
         /// Initialize attribute with an `Include Declaration`.
         fileprivate init(include: Include, handle: UInt16) {
             
             self.handle = handle
-            self.UUID = GATT.UUID.Include.toUUID()
+            self.uuid = GATT.UUID.include.uuid
             self.value = Data(bytes: include.littleEndian)
-            self.permissions = [.Read] // Read only
+            self.permissions = [.read] // Read only
         }
         
         /// Initialize attributes from a `Characteristic`.
@@ -227,16 +230,19 @@ public extension GATTDatabase {
             
             let declarationAttribute: Attribute = {
                 
-                let propertiesMask = characteristic.properties.optionsBitmask()
+                let propertiesMask = characteristic.properties.flags
                 let valueHandleBytes = (handle + 1).littleEndian.bytes
-                let value = [propertiesMask, valueHandleBytes.0, valueHandleBytes.1] + characteristic.UUID.littleEndianData
+                let value = [propertiesMask, valueHandleBytes.0, valueHandleBytes.1] + characteristic.uuid.littleEndianData
                 
-                return Attribute(handle: currentHandle, UUID: GATT.UUID.Characteristic.toUUID(), value: Data(bytes: value), permissions: [.Read])
+                return Attribute(handle: currentHandle,
+                                 uuid: GATT.UUID.characteristic.uuid,
+                                 value: Data(bytes: value),
+                                 permissions: [.read])
             }()
             
             currentHandle += 1
             
-            let valueAttribute = Attribute(handle: currentHandle, UUID: characteristic.UUID, value: characteristic.value, permissions: characteristic.permissions)
+            let valueAttribute = Attribute(handle: currentHandle, uuid: characteristic.uuid, value: characteristic.value, permissions: characteristic.permissions)
             
             var attributes = [declarationAttribute, valueAttribute]
             
@@ -264,7 +270,7 @@ public extension GATTDatabase {
         private init(descriptor: Descriptor, handle: UInt16) {
             
             self.handle = handle
-            self.UUID = descriptor.UUID
+            self.uuid = descriptor.uuid
             self.value = descriptor.value
             self.permissions = descriptor.permissions
         }

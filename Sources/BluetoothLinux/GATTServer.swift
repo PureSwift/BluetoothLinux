@@ -120,7 +120,7 @@ public final class GATTServer {
     @inline(__always)
     private func fatalErrorResponse(_ message: String, _ opcode: ATT.Opcode, _ handle: UInt16 = 0, line: UInt = #line) -> Never {
         
-        errorResponse(opcode, ATT.Error.UnlikelyError, handle)
+        errorResponse(opcode, .unlikelyError, handle)
         
         do { let _ = try connection.write() }
         
@@ -144,32 +144,32 @@ public final class GATTServer {
         
         // check permissions
         
-        if permissions.contains(.Read) && !attribute.permissions.contains(.Read) {
+        if permissions.contains(.read) && !attribute.permissions.contains(.read) {
             
-            return .ReadNotPermitted
+            return .readNotPermitted
         }
         
-        if permissions.contains(.Write) && !attribute.permissions.contains(.Write) {
+        if permissions.contains(.write) && !attribute.permissions.contains(.write) {
             
-            return .WriteNotPermitted
+            return .writeNotPermitted
         }
         
         // check security
         
         let security = connection.socket.securityLevel
         
-        if attribute.permissions.contains(.ReadAuthentication)
-            || attribute.permissions.contains(.WriteAuthentication)
+        if attribute.permissions.contains(.readAuthentication)
+            || attribute.permissions.contains(.writeAuthentication)
             && security < .High {
             
-            return .Authentication
+            return .authentication
         }
         
-        if attribute.permissions.contains(.ReadEncrypt)
-            || attribute.permissions.contains(.WriteEncrypt)
+        if attribute.permissions.contains(.readEncrypt)
+            || attribute.permissions.contains(.writeEncrypt)
             && security < .Medium {
             
-            return .InsufficientEncryption
+            return .insufficientEncryption
         }
         
         return nil
@@ -189,17 +189,17 @@ public final class GATTServer {
         
         // no attributes, impossible to write
         guard database.attributes.isEmpty == false
-            else { doResponse(errorResponse(opcode, .InvalidHandle, handle)); return }
+            else { doResponse(errorResponse(opcode, .invalidHandle, handle)); return }
         
         // validate handle
         guard (1 ... UInt16(database.attributes.count)).contains(handle)
-            else { doResponse(errorResponse(opcode, .InvalidHandle, handle)); return }
+            else { doResponse(errorResponse(opcode, .invalidHandle, handle)); return }
         
         // get attribute
         let attribute = database[handle]
         
         // validate permissions
-        if let error = checkPermissions([.Write, .WriteAuthentication, .WriteEncrypt], attribute) {
+        if let error = checkPermissions([.write, .writeAuthentication, .writeEncrypt], attribute) {
             
             doResponse(errorResponse(opcode, error, handle))
             return
@@ -208,7 +208,7 @@ public final class GATTServer {
         let newData = Data(bytes: value)
         
         // validate application errors with write callback
-        if let error = willWrite?(attribute.UUID, attribute.value, newData) {
+        if let error = willWrite?(attribute.uuid, attribute.value, newData) {
             
             doResponse(errorResponse(opcode, error, handle))
             return
@@ -223,17 +223,17 @@ public final class GATTServer {
         
         // no attributes
         guard database.attributes.isEmpty == false
-            else { errorResponse(opcode, .InvalidHandle, handle); return nil }
+            else { errorResponse(opcode, .invalidHandle, handle); return nil }
         
         // validate handle
         guard (1 ... UInt16(database.attributes.count)).contains(handle)
-            else { errorResponse(opcode, .InvalidHandle, handle); return nil }
+            else { errorResponse(opcode, .invalidHandle, handle); return nil }
         
         // get attribute
         let attribute = database[handle]
         
         // validate permissions
-        if let error = checkPermissions([.Read, .ReadAuthentication, .ReadEncrypt], attribute) {
+        if let error = checkPermissions([.read, .readAuthentication, .readEncrypt], attribute) {
             
             errorResponse(opcode, error, handle)
             return nil
@@ -241,7 +241,7 @@ public final class GATTServer {
         
         // check boundary
         guard offset <= UInt16(attribute.value.count)
-            else { errorResponse(opcode, .InvalidOffset, handle); return nil }
+            else { errorResponse(opcode, .invalidOffset, handle); return nil }
         
         var value: [UInt8]
         
@@ -263,7 +263,7 @@ public final class GATTServer {
         value = Array(value.prefix(connection.maximumTransmissionUnit - 1))
         
         // validate application errors with read callback
-        if let error = willRead?(attribute.UUID, Data(bytes: value), Int(offset)) {
+        if let error = willRead?(attribute.uuid, Data(bytes: value), Int(offset)) {
             
             errorResponse(opcode, error, handle)
             return nil
@@ -299,20 +299,20 @@ public final class GATTServer {
         
         // validate handles
         guard pdu.startHandle != 0 && pdu.endHandle != 0
-            else { errorResponse(opcode, .InvalidHandle); return }
+            else { errorResponse(opcode, .invalidHandle); return }
         
         guard pdu.startHandle <= pdu.endHandle
-            else { errorResponse(opcode, .InvalidHandle, pdu.startHandle); return }
+            else { errorResponse(opcode, .invalidHandle, pdu.startHandle); return }
         
         // GATT defines that only the Primary Service and Secondary Service group types 
         // can be used for the "Read By Group Type" request. Return an error if any other group type is given.
-        guard pdu.type == GATT.UUID.PrimaryService.toUUID() || pdu.type == GATT.UUID.SecondaryService.toUUID()
-            else { errorResponse(opcode, .UnsupportedGroupType, pdu.startHandle); return }
+        guard pdu.type == GATT.UUID.primaryService.uuid || pdu.type == GATT.UUID.secondaryService.uuid
+            else { errorResponse(opcode, .unsupportedGroupType, pdu.startHandle); return }
         
         let data = database.readByGroupType(handle: (pdu.startHandle, pdu.endHandle), type: pdu.type)
         
         guard data.isEmpty == false
-            else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
+            else { errorResponse(opcode, .attributeNotFound, pdu.startHandle); return }
         
         let attributeData = data.map { AttributeData(attributeHandle: $0.start, endGroupHandle: $0.end, value: $0.UUID.littleEndianData) }
         
@@ -361,7 +361,7 @@ public final class GATTServer {
             
             let typeText: String
             
-            if let gatt = GATT.UUID(UUID: pdu.attributeType) {
+            if let gatt = GATT.UUID(uuid: pdu.attributeType) {
                 
                 typeText = "\(gatt)"
                 
@@ -374,15 +374,15 @@ public final class GATTServer {
         }
         
         guard pdu.startHandle != 0 && pdu.endHandle != 0
-            else { errorResponse(opcode, .InvalidHandle); return }
+            else { errorResponse(opcode, .invalidHandle); return }
         
         guard pdu.startHandle <= pdu.endHandle
-            else { errorResponse(opcode, .InvalidHandle, pdu.startHandle); return }
+            else { errorResponse(opcode, .invalidHandle, pdu.startHandle); return }
         
         let attributes = database.readByType(handle: (pdu.startHandle, pdu.endHandle), type: pdu.attributeType)
         
         guard attributes.isEmpty == false
-            else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
+            else { errorResponse(opcode, .attributeNotFound, pdu.startHandle); return }
         
         let attributeData = attributes.map { AttributeData(handle: $0.handle, value: Array($0.value)) }
         
@@ -432,18 +432,18 @@ public final class GATTServer {
         log?("Find Information (\(pdu.startHandle) - \(pdu.endHandle))")
         
         guard pdu.startHandle != 0 && pdu.endHandle != 0
-            else { errorResponse(opcode, .InvalidHandle); return }
+            else { errorResponse(opcode, .invalidHandle); return }
         
         guard pdu.startHandle <= pdu.endHandle
-            else { errorResponse(opcode, .InvalidHandle, pdu.startHandle); return }
+            else { errorResponse(opcode, .invalidHandle, pdu.startHandle); return }
         
         let attributes = database.findInformation(handle: (pdu.startHandle, pdu.endHandle))
         
         guard attributes.isEmpty == false
-            else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
+            else { errorResponse(opcode, .attributeNotFound, pdu.startHandle); return }
         
-        guard let format = Format(uuid: attributes[0].UUID)
-            else { errorResponse(opcode, .UnlikelyError, pdu.startHandle); return }
+        guard let format = Format(uuid: attributes[0].uuid)
+            else { errorResponse(opcode, .unlikelyError, pdu.startHandle); return }
         
         var bit16Pairs = [(UInt16, UInt16)]()
         
@@ -458,7 +458,7 @@ public final class GATTServer {
                 else { break }
             
             // encode attribute
-            switch (attribute.UUID, format) {
+            switch (attribute.uuid, format) {
                 
             case let (.bit16(type), .bit16):
                 
@@ -493,15 +493,15 @@ public final class GATTServer {
         log?("Find By Type Value (\(pdu.startHandle) - \(pdu.endHandle)) (\(pdu.attributeType))")
         
         guard pdu.startHandle != 0 && pdu.endHandle != 0
-            else { errorResponse(opcode, .InvalidHandle); return }
+            else { errorResponse(opcode, .invalidHandle); return }
         
         guard pdu.startHandle <= pdu.endHandle
-            else { errorResponse(opcode, .InvalidHandle, pdu.startHandle); return }
+            else { errorResponse(opcode, .invalidHandle, pdu.startHandle); return }
         
         let handles = database.findByTypeValue(handle: (pdu.startHandle, pdu.endHandle), type: pdu.attributeType, value: pdu.attributeValue)
         
         guard handles.isEmpty == false
-            else { errorResponse(opcode, .AttributeNotFound, pdu.startHandle); return }
+            else { errorResponse(opcode, .attributeNotFound, pdu.startHandle); return }
         
         let handlesInformation = handles.map { Handle(foundAttribute: $0.0, groupEnd: $0.1) }
         
@@ -556,7 +556,7 @@ public final class GATTServer {
         
         // no attributes, impossible to write
         guard database.attributes.isEmpty == false
-            else { errorResponse(opcode, .InvalidHandle, pdu.handles[0]); return }
+            else { errorResponse(opcode, .invalidHandle, pdu.handles[0]); return }
         
         var values = [UInt8]()
         
@@ -564,13 +564,13 @@ public final class GATTServer {
             
             // validate handle
             guard (1 ... UInt16(database.attributes.count)).contains(handle)
-                else { errorResponse(opcode, .InvalidHandle, handle); return }
+                else { errorResponse(opcode, .invalidHandle, handle); return }
             
             // get attribute
             let attribute = database[handle]
             
             // validate application errors with read callback
-            if let error = willRead?(attribute.UUID, attribute.value, 0) {
+            if let error = willRead?(attribute.uuid, attribute.value, 0) {
                 
                 errorResponse(opcode, error, handle)
                 return
@@ -592,25 +592,25 @@ public final class GATTServer {
         
         // no attributes, impossible to write
         guard database.attributes.isEmpty == false
-            else { errorResponse(opcode, .InvalidHandle, pdu.handle); return }
+            else { errorResponse(opcode, .invalidHandle, pdu.handle); return }
         
         // validate handle
         guard (1 ... UInt16(database.attributes.count)).contains(pdu.handle)
-            else { errorResponse(opcode, .InvalidHandle, pdu.handle); return }
+            else { errorResponse(opcode, .invalidHandle, pdu.handle); return }
         
         // validate that the prepared writes queue is not full
         guard preparedWrites.count <= maximumPreparedWrites
-            else { errorResponse(opcode, .PrepareQueueFull); return }
+            else { errorResponse(opcode, .prepareQueueFull); return }
         
         // validate handle
         guard (1 ... UInt16(database.attributes.count)).contains(pdu.handle)
-            else { errorResponse(opcode, .InvalidHandle, pdu.handle); return }
+            else { errorResponse(opcode, .invalidHandle, pdu.handle); return }
         
         // get attribute
         let attribute = database[pdu.handle]
         
         // validate permissions
-        if let error = checkPermissions([.Write, .WriteAuthentication, .WriteEncrypt], attribute) {
+        if let error = checkPermissions([.write, .writeAuthentication, .writeEncrypt], attribute) {
             
             errorResponse(opcode, error, pdu.handle)
             return
@@ -660,7 +660,7 @@ public final class GATTServer {
                 let attribute = database[handle]
                 
                 // validate application errors with write callback
-                if let error = willWrite?(attribute.UUID, attribute.value, newValue) {
+                if let error = willWrite?(attribute.uuid, attribute.value, newValue) {
                     
                     errorResponse(opcode, error, handle)
                     return
@@ -709,7 +709,7 @@ internal extension GATTDatabase {
         
         for group in attributeGroups {
             
-            guard group.service.UUID == type else { continue }
+            guard group.service.uuid == type else { continue }
             
             let groupRange = Range(group.startHandle ... group.endHandle)
             
@@ -727,7 +727,7 @@ internal extension GATTDatabase {
         
         let range = handle.end < UInt16.max ? Range(handle.start ... handle.end) : Range(handle.start ..< handle.end)
         
-        return attributes.filter { range.contains($0.handle) && $0.UUID == type }
+        return attributes.filter { range.contains($0.handle) && $0.uuid == type }
     }
     
     func findInformation(handle: (start: UInt16, end: UInt16)) -> [Attribute] {
@@ -748,7 +748,7 @@ internal extension GATTDatabase {
             for attribute in group.attributes {
                 
                 let match = range.contains(attribute.handle)
-                    && attribute.UUID == .bit16(type)
+                    && attribute.uuid == .bit16(type)
                     && Array(attribute.value) == value
                 
                 guard match else { continue }

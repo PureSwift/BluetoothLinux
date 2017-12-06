@@ -94,7 +94,7 @@ internal func PollScannedDevices(_ deviceDescriptor: CInt,
     var newFilter = HCIFilter()
     newFilter.clear()
     newFilter.setPacketType(.Event)
-    newFilter.setEvent(HCIGeneralEvent.LowEnergyMeta.rawValue)
+    newFilter.setEvent(HCIGeneralEvent.lowEnergyMeta.rawValue)
     
     // set new filter
     var newFilterLength = socklen_t(MemoryLayout<HCIFilter>.size)

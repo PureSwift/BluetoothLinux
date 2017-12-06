@@ -91,6 +91,26 @@ public final class GATTClient {
         discoverServices(uuid: uuid, start: 0x0001, end: 0xFFFF, primary: true, completion: completion)
     }
     
+    /// Discover All Characteristics of a Service
+    /// 
+    /// This sub-procedure is used by a client to find all the characteristic declarations within 
+    /// a service definition on a server when only the service handle range is known.
+    /// The service specified is identified by the service handle range.
+    public func discoverAllCharacteristics(of service: Service,
+                                           completion: @escaping (GATTClientResponse<[Characteristic]>) -> ()) {
+        
+        // The Attribute Protocol Read By Type Request shall be used with the Attribute Type
+        // parameter set to the UUID for «Characteristic» The Starting Handle shall be set to 
+        // starting handle of the specified service and the Ending Handle shall be set to the 
+        // ending handle of the specified service.
+        
+        let pdu = ATTReadByTypeRequest(startHandle: service.handle,
+                                       endHandle: service.end,
+                                       attributeType: GATT.UUID.characteristic.uuid)
+        
+        send(pdu) { [unowned self] in self.readByType($0, completion: completion) }
+    }
+    
     // MARK: - Private Methods
     
     @inline(__always)
@@ -152,7 +172,7 @@ public final class GATTClient {
             
             let pdu = ATTReadByGroupTypeRequest(startHandle: start,
                                                 endHandle: end,
-                                                type: serviceType.toUUID())
+                                                type: serviceType.uuid)
             
             send(pdu) { [unowned self] in self.readByGroupType($0, operation: operation) }
         }
@@ -226,7 +246,7 @@ public final class GATTClient {
                 
                 let pdu = ATTReadByGroupTypeRequest(startHandle: operation.start,
                                                     endHandle: operation.end,
-                                                    type: operation.type.toUUID())
+                                                    type: operation.type.uuid)
                 
                 send(pdu) { [unowned self] in self.readByGroupType($0, operation: operation) }
                 
@@ -290,6 +310,27 @@ public final class GATTClient {
             }
         }
     }
+    
+    private func readByType( _ response: ATTResponse<ATTReadByTypeResponse>,
+                             completion: @escaping (GATTClientResponse<[Characteristic]>) -> ()) {
+        
+        switch response {
+            
+        case let .error(errorResponse):
+            
+            completion(.error(errorResponse))
+            
+        case let .value(pdu): break
+            
+            // parse pdu data
+            
+            
+            // get more if possible
+            //let lastEnd = pdu.data.last?.groupEnd ?? 0x00
+            
+            
+        }
+    }
 }
 
 // MARK: - Supporting Types
@@ -329,6 +370,15 @@ public extension GATTClient {
         
         public let end: UInt16
     }
+    
+    public struct Characteristic {
+        
+        public let uuid: BluetoothUUID
+        
+        public let handle: UInt16
+        
+        public let end: UInt16
+    }
 }
 
 // MARK: - Private Supporting Types
@@ -358,7 +408,7 @@ private extension GATTClient {
         @inline(__always)
         func error(_ responseError: ATTErrorResponse) {
             
-            if responseError.errorCode == .AttributeNotFound,
+            if responseError.errorCode == .attributeNotFound,
                 foundServices.isEmpty == false {
                 
                 success()

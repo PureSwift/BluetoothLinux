@@ -35,7 +35,7 @@ public extension Adapter {
         assert(limit > 0, "Must scan at least one device")
         assert(limit <= 255, "Cannot be larger than UInt8.max")
         
-        let flags = options.optionsBitmask()
+        let flags = options.flags
         
         return try HCIInquiry(identifier, duration: duration, scanLimit: limit, deviceClass: deviceClass, flags: flags)
     }
@@ -72,8 +72,9 @@ public extension Adapter {
         /// The cache of previously detected devices is flushed before performing the current inquiry. 
         /// Otherwise, if flags is set to 0, then the results of previous inquiries may be returned, 
         /// even if the devices aren't in range anymore.
-        case FlushCache = 0x0001
+        case flushCache = 0x0001
         
+        public static let all: Set<ScanOption> = [.flushCache]
     }
     
     public struct InquiryResult {

@@ -189,9 +189,9 @@ internal func HCISendRequest(_ deviceDescriptor: CInt,
     newFilter.clear()
     newFilter.typeMask = 16
     //newFilter.setPacketType(.Event)
-    newFilter.setEvent(HCIGeneralEvent.CommandStatus.rawValue)
-    newFilter.setEvent(HCIGeneralEvent.CommandComplete.rawValue)
-    newFilter.setEvent(HCIGeneralEvent.LowEnergyMeta.rawValue)
+    newFilter.setEvent(HCIGeneralEvent.commandStatus.rawValue)
+    newFilter.setEvent(HCIGeneralEvent.commandComplete.rawValue)
+    newFilter.setEvent(HCIGeneralEvent.lowEnergyMeta.rawValue)
     newFilter.setEvent(event)
     //newFilter.setEvent(HCIGeneralEvent.CommandStatus.rawValue, HCIGeneralEvent.CommandComplete.rawValue, HCIGeneralEvent.LowEnergyMeta.rawValue, event)
     newFilter.opcode = opcodePacked
@@ -304,7 +304,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt,
 
         switch eventHeader.event {
 
-        case HCIGeneralEvent.CommandStatus.rawValue:
+        case HCIGeneralEvent.commandStatus.rawValue:
             
             let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.CommandStatusParameter.length)))
             
@@ -315,7 +315,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt,
             guard parameter.opcode == opcodePacked else { continue }
 
             ///
-            guard event == HCIGeneralEvent.CommandStatus.rawValue else {
+            guard event == HCIGeneralEvent.commandStatus.rawValue else {
 
                 guard parameter.status == 0
                     else { throw restoreFilter(HCIError(rawValue: parameter.status) ?? POSIXError(code: .EIO)) }
@@ -328,7 +328,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt,
             let dataLength = min(eventData.count, eventParameterLength)
             return Array(eventData.suffix(dataLength))
 
-        case HCIGeneralEvent.CommandComplete.rawValue:
+        case HCIGeneralEvent.commandComplete.rawValue:
             
             let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.CommandCompleteParameter.length)))
 
@@ -346,7 +346,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt,
             let dataLength = min(data.count, eventParameterLength)
             return Array(data.suffix(dataLength))
 
-        case HCIGeneralEvent.RemoteNameRequestComplete.rawValue:
+        case HCIGeneralEvent.remoteNameRequestComplete.rawValue:
 
             guard eventHeader.event == event else { break }
             
@@ -369,7 +369,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt,
             let dataLength = min(eventData.count - 1, eventParameterLength)
             return Array(eventData.suffix(dataLength))
             
-        case HCIGeneralEvent.LowEnergyMeta.rawValue:
+        case HCIGeneralEvent.lowEnergyMeta.rawValue:
             
             let parameterData = eventData
             

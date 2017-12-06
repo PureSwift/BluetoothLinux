@@ -98,19 +98,19 @@ internal final class ATTConnection {
         // Act on the received PDU based on the opcode type
         switch opcode.type {
             
-        case .Response:
+        case .response:
             
             try handle(response: recievedData, opcode: opcode)
             
-        case .Confirmation:
+        case .confirmation:
             
             try handle(confirmation: recievedData, opcode: opcode)
             
-        case .Request:
+        case .request:
             
             try handle(request: recievedData, opcode: opcode)
             
-        case .Command, .Notification, .Indication:
+        case .command, .notification, .indication:
             
             // For all other opcodes notify the upper layer of the PDU and let them act on it.
             try handle(notify: recievedData, opcode: opcode)
@@ -142,15 +142,15 @@ internal final class ATTConnection {
         */
         switch opcode.type {
             
-        case .Request:
+        case .request:
             
             pendingRequest = sendOperation
             
-        case .Indication:
+        case .indication:
             
             pendingRequest = sendOperation
             
-        case .Response:
+        case .response:
             
             // Set `incomingRequest` to false to indicate that no request is pending
             incomingRequest = false
@@ -158,7 +158,7 @@ internal final class ATTConnection {
             // Fall through to the next case
             fallthrough
             
-        case .Command, .Notification, .Confirmation:
+        case .command, .notification, .confirmation:
             
             break
         }
@@ -225,7 +225,7 @@ internal final class ATTConnection {
         // Only request and indication PDUs should have response callbacks. 
         switch type {
             
-        case .Request, .Indication: // Indication handles confirmation
+        case .request, .indication: // Indication handles confirmation
             
             guard response != nil
                 else { return nil }
@@ -253,15 +253,15 @@ internal final class ATTConnection {
         // Add the op to the correct queue based on its type
         switch type {
             
-        case .Request:
+        case .request:
             
             requestQueue.append(sendOpcode)
             
-        case .Indication:
+        case .indication:
             
             indicationQueue.append(sendOpcode)
             
-        case .Command, .Notification, .Response, .Confirmation:
+        case .command, .notification, .response, .confirmation:
             
             writeQueue.append(sendOpcode)
         }
@@ -314,7 +314,7 @@ internal final class ATTConnection {
         let requestOpcode: ATTOpcode
         
         // Retry for error response
-        if opcode == .ErrorResponse {
+        if opcode == .errorResponse {
             
             guard let errorResponse = ATTErrorResponse(byteValue: [UInt8](data))
                 else { throw Error.GarbageResponse(data) }
@@ -406,9 +406,9 @@ internal final class ATTConnection {
         }
         
         // If this was a request and no handler was registered for it, respond with "Not Supported"
-        if foundPDU == nil && opcode.type == .Request {
+        if foundPDU == nil && opcode.type == .request {
             
-            let errorResponse = ATTErrorResponse(requestOpcode: opcode, attributeHandle: 0x00, error: .RequestNotSupported)
+            let errorResponse = ATTErrorResponse(requestOpcode: opcode, attributeHandle: 0x00, error: .requestNotSupported)
             
             let _ = send(errorResponse)
         }
@@ -476,12 +476,12 @@ internal final class ATTConnection {
         // get security from IO
         var security = self.socket.securityLevel
         
-        if error == .InsufficientEncryption,
+        if error == .insufficientEncryption,
             security < .Medium {
             
             security = .Medium
             
-        } else if error == .Authentication {
+        } else if error == .authentication {
             
             if (security < .Medium) {
                 security = .Medium
@@ -541,7 +541,7 @@ public enum ATTResponse <Value: ATTProtocolDataUnit> {
         
         // validate types
         assert(Value.self != ATTErrorResponse.self)
-        assert(Value.attributeOpcode.type == .Response)
+        assert(Value.attributeOpcode.type == .response)
         
         switch anyResponse {
         case let .error(error):
@@ -590,7 +590,7 @@ fileprivate final class ATTSendOperation {
         guard let opcode = data.first
             else { throw ATTConnectionError.GarbageResponse(data) }
         
-        if opcode == ATT.Opcode.ErrorResponse.rawValue {
+        if opcode == ATT.Opcode.errorResponse.rawValue {
             
             guard let errorResponse = ATTErrorResponse(byteValue: [UInt8](data))
                 else { throw ATTConnectionError.GarbageResponse(data) }
