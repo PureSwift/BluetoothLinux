@@ -393,10 +393,25 @@ public final class GATTClient {
             // get more if possible
             let lastEnd = pdu.data.last?.handle ?? 0x00
             
+            // prevent infinite loop
+            guard lastEnd >= operation.start
+                else { operation.completion(.error(Error.invalidResponse(pdu))); return }
+            
             operation.start = lastEnd + 1
             
             // need to continue discovery
-            
+            if lastEnd != 0, operation.start < operation.end {
+                
+                let pdu = ATTReadByTypeRequest(startHandle: operation.start,
+                                               endHandle: operation.end,
+                                               attributeType: operation.type.uuid)
+                
+                send(pdu, response: { [unowned self] in self.readByType($0, operation: operation) })
+                
+            } else {
+                
+                operation.success()
+            }
         }
     }
 }
