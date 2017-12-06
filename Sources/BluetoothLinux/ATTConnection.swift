@@ -470,25 +470,25 @@ internal final class ATTConnection {
     private func changeSecurity(for error: ATTError) -> Bool {
         
         // only change if security is Auto
-        guard self.socket.securityLevel == .SDP
+        guard self.socket.securityLevel == .sdp
             else { return false }
         
         // get security from IO
         var security = self.socket.securityLevel
         
         if error == .insufficientEncryption,
-            security < .Medium {
+            security < .medium {
             
-            security = .Medium
+            security = .medium
             
         } else if error == .authentication {
             
-            if (security < .Medium) {
-                security = .Medium
-            } else if (security < .High) {
-                security = .High
-            } else if (security < .Fips) {
-                security = .Fips
+            if (security < .medium) {
+                security = .medium
+            } else if (security < .high) {
+                security = .high
+            } else if (security < .fips) {
+                security = .fips
             } else {
                 return false
             }

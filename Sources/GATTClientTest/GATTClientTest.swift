@@ -15,7 +15,7 @@ func GATTClientTest(adapter: Adapter, address: Address) {
     do {
         
         let clientSocket = try L2CAPSocket.lowEnergyClient(adapterAddress: adapter.address ?? .any,
-                                                           destination: (address, .LowEnergyPublic))
+                                                           destination: (address, .lowEnergyPublic))
         
         print("Created L2CAP client socket, connected to \(address)")
         

@@ -31,7 +31,10 @@ func GATTServerTest(adapter: Adapter) {
         
         let address = adapter.address!
         
-        let serverSocket = try L2CAPSocket(adapterAddress: address, channelIdentifier: ATT.CID, addressType: .LowEnergyPublic, securityLevel: .Low)
+        let serverSocket = try L2CAPSocket(adapterAddress: address,
+                                           channelIdentifier: ATT.CID,
+                                           addressType: .lowEnergyPublic,
+                                           securityLevel: .low)
         
         print("Created L2CAP server")
         

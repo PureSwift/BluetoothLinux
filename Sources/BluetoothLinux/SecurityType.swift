@@ -9,13 +9,13 @@
 /// Bluetooth security level.
 public enum SecurityLevel: UInt8, Comparable {
     
-    case SDP        = 0
-    case Low        = 1
-    case Medium     = 2
-    case High       = 3
-    case Fips       = 4
+    case sdp        = 0
+    case low        = 1
+    case medium     = 2
+    case high       = 3
+    case fips       = 4
     
-    public init() { self = .SDP }
+    public init() { self = .sdp }
 }
 
 // MARK: - Comparable
