@@ -27,10 +27,13 @@ func GATTClientTest(adapter: Adapter, address: Address) {
         
         var testChecklist = GATTClientTests()
         
+        let characteristicUUIDs = TestProfile.TestService.characteristics.map { $0.uuid }
+        
         client.discoverAllPrimaryServices {
             print("discoverAllPrimaryServices")
             dump($0)
             guard case let .value(value) = $0 else { return }
+            
             testChecklist.discoverAllPrimaryServices = value.contains { $0.uuid == TestProfile.TestService.uuid }
         }
         
@@ -38,14 +41,32 @@ func GATTClientTest(adapter: Adapter, address: Address) {
             print("discoverAllPrimaryServicesByUUID")
             dump($0)
             guard case let .value(value) = $0 else { return }
+            
             testChecklist.discoverPrimaryServicesByUUID = value.count == 1
                 && value.contains { $0.uuid == TestProfile.TestService.uuid }
+            
+            if let service = value.first {
+                
+                client.discoverAllCharacteristics(of: service) {
+                    print("discoverAllCharacteristics")
+                    dump($0)
+                    guard case let .value(value) = $0 else { return }
+                    
+                    let uuids = value.map { $0.uuid }
+                    
+                    testChecklist.discoverAllCharacteristics = Set(uuids) == Set(characteristicUUIDs)
+                }
+            }
         }
+        
+        let start = Date()
         
         func didFinish() -> Bool {
             
-            return testChecklist.discoverAllPrimaryServices
+            return (Date() >= (start + 30))
+                && testChecklist.discoverAllPrimaryServices
                 && testChecklist.discoverPrimaryServicesByUUID
+                && testChecklist.discoverAllCharacteristics
         }
         
         // execute IO
@@ -91,4 +112,5 @@ internal struct GATTClientTests {
     
     var discoverAllPrimaryServices = false
     var discoverPrimaryServicesByUUID = false
+    var discoverAllCharacteristics = false
 }
