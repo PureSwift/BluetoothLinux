@@ -42,8 +42,8 @@ public final class L2CAPSocket {
     public init(adapterAddress: Address,
                 protocolServiceMultiplexer: UInt16 = 0,
                 channelIdentifier: UInt16 = ATT.CID,
-                addressType: AddressType? = .LowEnergyPublic,
-                securityLevel: SecurityLevel = .Low) throws {
+                addressType: AddressType? = .lowEnergyPublic,
+                securityLevel: SecurityLevel = .low) throws {
         
         let (internalSocket, internalAddress) = try L2CAPSocket.createSocket(adapterAddress: adapterAddress,
                                                           protocolServiceMultiplexer: protocolServiceMultiplexer,
@@ -53,7 +53,7 @@ public final class L2CAPSocket {
         // store values
         self.internalSocket = internalSocket
         self.internalAddress = internalAddress
-        self.securityLevel = .SDP
+        self.securityLevel = .sdp
         
         // configure socket
         try self.setSecurityLevel(securityLevel)
@@ -72,12 +72,12 @@ public final class L2CAPSocket {
     /// Creates a server socket for an L2CAP connection.
     public static func lowEnergyServer(adapterAddress: Address = .any,
                                        isRandom: Bool = false,
-                                       securityLevel: SecurityLevel = .Low) throws -> L2CAPSocket {
+                                       securityLevel: SecurityLevel = .low) throws -> L2CAPSocket {
         
         let socket = try L2CAPSocket(adapterAddress: adapterAddress,
                                  protocolServiceMultiplexer: 0,
                                  channelIdentifier: ATT.CID,
-                                 addressType: isRandom ? .LowEnergyRandom : .LowEnergyPublic,
+                                 addressType: isRandom ? .lowEnergyRandom : .lowEnergyPublic,
                                  securityLevel: securityLevel)
         
         try socket.startListening()
@@ -88,7 +88,7 @@ public final class L2CAPSocket {
     /// Creates a client socket for an L2CAP connection.
     public static func lowEnergyClient(adapterAddress: Address = .any,
                                        destination: (address: Address, type: AddressType),
-                                       securityLevel: SecurityLevel = .Low) throws -> L2CAPSocket {
+                                       securityLevel: SecurityLevel = .low) throws -> L2CAPSocket {
         
         let socket = try L2CAPSocket(adapterAddress: adapterAddress,
                                      protocolServiceMultiplexer: 0,
@@ -233,7 +233,7 @@ public final class L2CAPSocket {
     
     /// Connect to another L2CAP server.
     public func openConnection(to address: Address,
-                               type addressType: AddressType = .LowEnergyPublic) throws {
+                               type addressType: AddressType = .lowEnergyPublic) throws {
         
         // Set up destination address
         var destinationAddress = sockaddr_l2()

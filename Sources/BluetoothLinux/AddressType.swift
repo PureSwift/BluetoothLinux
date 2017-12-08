@@ -12,18 +12,18 @@
 public enum AddressType: UInt8 {
     
     /// Bluetooth Basic Rate/Enhanced Data Rate
-    case BREDR              = 0x00
-    case LowEnergyRandom    = 0x01
-    case LowEnergyPublic    = 0x02
+    case bredr              = 0x00
+    case lowEnergyRandom    = 0x01
+    case lowEnergyPublic    = 0x02
     
-    public init() { self = .BREDR }
+    public init() { self = .bredr }
     
     /// Whether the Bluetooth address type is LE.
     public var isLowEnergy: Bool {
         
         switch self {
             
-        case .LowEnergyPublic, .LowEnergyRandom:
+        case .lowEnergyPublic, .lowEnergyRandom:
             return true
         
         default:
