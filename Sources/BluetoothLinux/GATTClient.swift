@@ -16,8 +16,6 @@ public final class GATTClient {
     
     public var log: ((String) -> ())?
     
-    public var database = GATTDatabase()
-    
     // Don't modify
     @_versioned
     internal let connection: ATTConnection
@@ -503,7 +501,7 @@ fileprivate struct DiscoveryOperation <T> {
     }
 }
 
-private extension GATTClient {
+internal extension GATTClient {
     
     /// A characteristic declaration is an Attribute with the Attribute Type set to
     /// the UUID for «Characteristic» and Attribute Value set to the Characteristic Properties,
@@ -549,7 +547,7 @@ private extension GATTClient {
                 
             case .uuid128Bit:
                 
-                let value = UInt128(data: Data(bytes.suffix(from: 5)))!
+                let value = UInt128(data: Data(bytes.suffix(from: 3)))!
                 
                 uuid = .bit128(UInt128(littleEndian: value))
             }
