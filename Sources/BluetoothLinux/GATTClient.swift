@@ -468,44 +468,44 @@ public extension GATTClient {
 
 // MARK: - Private Supporting Types
 
-private extension GATTClient {
+fileprivate struct DiscoveryOperation <T> {
     
-    struct DiscoveryOperation <T> {
+    let uuid: BluetoothUUID?
+    
+    var start: UInt16
+    
+    let end: UInt16
+    
+    let type: GATT.UUID
+    
+    var foundData = [T]()
+    
+    let completion: (GATTClientResponse<[T]>) -> ()
+    
+    @inline(__always)
+    func success() {
         
-        let uuid: BluetoothUUID?
-        
-        var start: UInt16
-        
-        let end: UInt16
-        
-        let type: GATT.UUID
-        
-        var foundData = [T]()
-        
-        let completion: (GATTClientResponse<[T]>) -> ()
-        
-        @inline(__always)
-        func success() {
-            
-            completion(.value(foundData))
-        }
-        
-        @inline(__always)
-        func error(_ responseError: ATTErrorResponse) {
-            
-            if responseError.errorCode == .attributeNotFound,
-                foundData.isEmpty == false {
-                
-                success()
-                
-            } else {
-                
-                completion(.error(Error.errorResponse(responseError)))
-            }
-        }
+        completion(.value(foundData))
     }
     
-    /// A characteristic declaration is an Attribute with the Attribute Type set to 
+    @inline(__always)
+    func error(_ responseError: ATTErrorResponse) {
+        
+        if responseError.errorCode == .attributeNotFound,
+            foundData.isEmpty == false {
+            
+            success()
+            
+        } else {
+            
+            completion(.error(GATTClientError.errorResponse(responseError)))
+        }
+    }
+}
+
+private extension GATTClient {
+    
+    /// A characteristic declaration is an Attribute with the Attribute Type set to
     /// the UUID for «Characteristic» and Attribute Value set to the Characteristic Properties,
     /// Characteristic Value Attribute Handle and Characteristic UUID. 
     /// The Attribute Permissions shall be readable and not require authentication or authorization.

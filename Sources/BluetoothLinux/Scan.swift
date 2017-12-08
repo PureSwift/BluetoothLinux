@@ -75,6 +75,11 @@ public extension Adapter {
         case flushCache = 0x0001
         
         public static let all: Set<ScanOption> = [.flushCache]
+        
+        #if swift(>=3.1)
+        #elseif swift(>=3.0)
+        public typealias RawValue = Int32
+        #endif
     }
     
     public struct InquiryResult {
