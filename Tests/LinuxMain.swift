@@ -11,5 +11,6 @@ import XCTest
 
 XCTMain([
     testCase(MathTests.allTests),
-    testCase(iBeaconTests.allTests)
+    testCase(iBeaconTests.allTests),
+    testCase(DataTests.allTests)
     ])
