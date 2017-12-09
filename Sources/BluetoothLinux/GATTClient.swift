@@ -202,18 +202,11 @@ public final class GATTClient {
                                                            foundData: [],
                                                            completion: completion)
         
-        if let uuid = uuid {
-            
-            
-            
-        } else {
-            
-            let pdu = ATTReadByTypeRequest(startHandle: service.handle,
-                                           endHandle: service.end,
-                                           attributeType: attributeType.uuid)
-            
-            send(pdu) { [unowned self] in self.readByType($0, operation: operation) }
-        }
+        let pdu = ATTReadByTypeRequest(startHandle: service.handle,
+                                       endHandle: service.end,
+                                       attributeType: attributeType.uuid)
+        
+        send(pdu) { [unowned self] in self.readByType($0, operation: operation) }
     }
     
     // MARK: - Callbacks
@@ -386,6 +379,14 @@ public final class GATTClient {
                                                     handle: (handle, declaration.valueHandle))
                 
                 operation.foundData.append(characteristic)
+                
+                // if we specified a UUID to be searched,
+                // then call completion if it matches
+                if let operationUUID = operation.uuid {
+                    
+                    guard characteristic.uuid != operationUUID
+                        else { operation.success(); return }
+                }
             }
             
             // get more if possible
@@ -408,6 +409,7 @@ public final class GATTClient {
                 
             } else {
                 
+                // end of service
                 operation.success()
             }
         }
