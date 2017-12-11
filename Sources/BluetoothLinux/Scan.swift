@@ -29,13 +29,13 @@ public extension Adapter {
     /// - Parameter deviceClass: Device class to filter results by.
     ///
     /// - Parameter options: Array of ```ScanOption```.
-    func scan(duration: Int = 8, limit: Int = 255, deviceClass: DeviceClass? = nil, options: [ScanOption] = []) throws -> [InquiryResult] {
+    func scan(duration: Int = 8, limit: Int = 255, deviceClass: DeviceClass? = nil, options: BitMaskOptionSet<ScanOption> = []) throws -> [InquiryResult] {
         
         assert(duration > 0, "Scan must be longer than 0 seconds")
         assert(limit > 0, "Must scan at least one device")
         assert(limit <= 255, "Cannot be larger than UInt8.max")
         
-        let flags = options.flags
+        let flags = options.rawValue
         
         return try HCIInquiry(identifier, duration: duration, scanLimit: limit, deviceClass: deviceClass, flags: flags)
     }
@@ -76,10 +76,7 @@ public extension Adapter {
         
         public static let all: Set<ScanOption> = [.flushCache]
         
-        #if swift(>=3.1)
-        #elseif swift(>=3.0)
         public typealias RawValue = Int32
-        #endif
     }
     
     public struct InquiryResult {
