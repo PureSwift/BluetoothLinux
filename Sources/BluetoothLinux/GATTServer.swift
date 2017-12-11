@@ -138,7 +138,8 @@ public final class GATTServer {
             else { fatalError("Could not add PDU to queue: \(response)") }
     }
     
-    private func checkPermissions(_ permissions: [ATT.AttributePermission], _ attribute: GATTDatabase.Attribute) -> ATT.Error? {
+    private func checkPermissions(_ permissions: BitMaskOptionSet<ATT.AttributePermission>,
+                                  _ attribute: GATTDatabase.Attribute) -> ATT.Error? {
         
         guard attribute.permissions != permissions else { return nil }
         

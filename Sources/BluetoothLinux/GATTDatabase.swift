@@ -189,7 +189,7 @@ public extension GATTDatabase {
         
         public let uuid: BluetoothUUID
         
-        public let permissions: [Permission]
+        public let permissions: BitMaskOptionSet<Permission>
         
         public var value: Data
         
@@ -197,7 +197,7 @@ public extension GATTDatabase {
         fileprivate init(handle: UInt16,
                          uuid: BluetoothUUID,
                          value: Data = Data(),
-                         permissions: [Permission] = []) {
+                         permissions: BitMaskOptionSet<Permission> = []) {
             
             self.handle = handle
             self.uuid = uuid
