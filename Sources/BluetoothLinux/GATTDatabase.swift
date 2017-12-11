@@ -230,7 +230,7 @@ public extension GATTDatabase {
             
             let declarationAttribute: Attribute = {
                 
-                let propertiesMask = characteristic.properties.flags
+                let propertiesMask = characteristic.properties.rawValue
                 let valueHandleBytes = (handle + 1).littleEndian.bytes
                 let value = [propertiesMask, valueHandleBytes.0, valueHandleBytes.1] + characteristic.uuid.littleEndianData
                 

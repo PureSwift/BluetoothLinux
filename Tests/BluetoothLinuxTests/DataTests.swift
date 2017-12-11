@@ -43,7 +43,8 @@ final class DataTests: XCTestCase {
             
             XCTAssert(characteristicDeclaration.valueHandle == 42)
             XCTAssert(characteristicDeclaration.uuid == characteristic.uuid)
-            XCTAssert(characteristicDeclaration.properties == Set(characteristic.properties))
+            XCTAssert(characteristicDeclaration.properties.set == Set(characteristic.properties))
+            XCTAssert(characteristicDeclaration.properties == characteristic.properties)
         }
     }
 }

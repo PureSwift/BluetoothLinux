@@ -460,7 +460,7 @@ public extension GATTClient {
         
         public let uuid: BluetoothUUID
         
-        public let properties: Set<Property>
+        public let properties: BitMaskOptionSet<Property>
         
         public let handle: (declaration: UInt16, value: UInt16)
     }
@@ -516,7 +516,7 @@ internal extension GATTClient {
         /// Characteristic Properties
         ///
         /// Bit field of characteristic properties.
-        var properties: Set<Property>
+        var properties: BitMaskOptionSet<Property>
         
         /// Characteristic Value Handle
         /// 
@@ -533,7 +533,7 @@ internal extension GATTClient {
             guard let length = Length(rawValue: bytes.count)
                 else { return nil }
             
-            let properties = Property.from(flags: bytes[0])
+            let properties = BitMaskOptionSet<Property>(rawValue: bytes[0])
             
             let valueHandle = UInt16(littleEndian: UInt16(bytes: (bytes[1], bytes[2])))
             
