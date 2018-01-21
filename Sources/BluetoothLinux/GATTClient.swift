@@ -43,14 +43,12 @@ public final class GATTClient {
     // MARK: - Methods
     
     /// Performs the actual IO for recieving data.
-    @inline(__always)
     public func read() throws {
         
         try connection.read()
     }
     
     /// Performs the actual IO for sending data.
-    @inline(__always)
     public func write() throws -> Bool {
         
         return try connection.write()

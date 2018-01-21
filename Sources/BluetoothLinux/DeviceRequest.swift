@@ -18,7 +18,6 @@ import Bluetooth
 public extension Adapter {
 
     /// Sends a command to the device and waits for a response.
-    @inline(__always)
     func deviceRequest<CP: HCICommandParameter, EP: HCIEventParameter>(commandParameter: CP, eventParameterType: EP.Type, timeout: Int = 1000) throws -> EP {
 
         let command = CP.command
