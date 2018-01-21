@@ -21,8 +21,7 @@ public extension Adapter {
     public typealias LowEnergyScannedDevice = LowEnergyEvent.AdvertisingReportEventParameter.Report
     
     /// Scan LE devices.
-    func lowEnergyScan(duration: TimeInterval = 10,
-                       filterDuplicates: Bool = true,
+    func lowEnergyScan(filterDuplicates: Bool = true,
                        parameters: LowEnergyCommand.SetScanParametersParameter = .init(),
                        commandTimeout timeout: Int = 1000,
                        shouldContinueScanning: () -> (Bool),
@@ -34,7 +33,8 @@ public extension Adapter {
         // macro for enabling / disabling scan
         func enableScan(_ isEnabled: Bool = true) throws {
             
-            let scanEnableCommand = LowEnergyCommand.SetScanEnableParameter(enabled: isEnabled, filterDuplicates: filterDuplicates)
+            let scanEnableCommand = LowEnergyCommand.SetScanEnableParameter(enabled: isEnabled,
+                                                                            filterDuplicates: filterDuplicates)
             
             do { try deviceRequest(scanEnableCommand, timeout: timeout) }
             catch HCIError.commandDisallowed { /* ignore, means already turned on or off */ }
@@ -48,7 +48,6 @@ public extension Adapter {
         
         // poll for scanned devices
         try PollScannedDevices(internalSocket,
-                               duration: duration,
                                shouldContinueScanning: shouldContinueScanning,
                                foundDevice: foundDevice)
     }
@@ -63,8 +62,7 @@ public extension Adapter {
         
         var foundDevices = [LowEnergyScannedDevice]()
         
-        try lowEnergyScan(duration: duration,
-                                 filterDuplicates: filterDuplicates,
+        try lowEnergyScan(filterDuplicates: filterDuplicates,
                                  parameters: parameters,
                                  commandTimeout: timeout,
                                  shouldContinueScanning: { Date() < endDate },
@@ -76,7 +74,6 @@ public extension Adapter {
 
 /// Poll for scanned devices
 internal func PollScannedDevices(_ deviceDescriptor: CInt,
-                                 duration: TimeInterval,
                                  shouldContinueScanning: () -> (Bool),
                                  foundDevice: (Adapter.LowEnergyScannedDevice) -> ()) throws {
     
