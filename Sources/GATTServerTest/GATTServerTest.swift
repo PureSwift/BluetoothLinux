@@ -29,6 +29,10 @@ func GATTServerTest(adapter: Adapter) {
     
     do {
         
+        try adapter.enableBeacon(major: 0, minor: 0, RSSI: -29)
+        
+        print("Enabled LE advertisement")
+        
         let address = adapter.address!
         
         let serverSocket = try L2CAPSocket.lowEnergyServer(adapterAddress: address,

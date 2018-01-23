@@ -18,7 +18,7 @@ import Bluetooth
 public extension Adapter {
     
     /// Enable iBeacon functionality.
-    func enableBeacon(uuid: Foundation.UUID = UUID(), major: UInt16, minor: UInt16, RSSI: Int8, interval: UInt16 = 100, commandTimeout: Int = 1000) throws {
+    func enableBeacon(uuid: Foundation.UUID = UUID(), major: UInt16, minor: UInt16, rssi: Int8, interval: UInt16 = 100, commandTimeout: Int = 1000) throws {
                 
         // set advertising parameters
         let advertisingParameters = LowEnergyCommand.SetAdvertisingParametersParameter(interval: (interval, interval))
@@ -37,7 +37,7 @@ public extension Adapter {
         
         // set iBeacon data
         var advertisingDataCommand = LowEnergyCommand.SetAdvertisingDataParameter()
-        SetBeaconData(uuid: uuid, major: major, minor: minor, RSSI: UInt8(bitPattern: RSSI), parameter: &advertisingDataCommand)
+        SetBeaconData(uuid: uuid, major: major, minor: minor, rssi: UInt8(bitPattern: rssi), parameter: &advertisingDataCommand)
         
         try deviceRequest(advertisingDataCommand, timeout: commandTimeout)
     }
@@ -52,7 +52,7 @@ public extension Adapter {
 
 // MARK: - Private
 
-internal func SetBeaconData(uuid: Foundation.UUID, major: UInt16, minor: UInt16, RSSI: UInt8, parameter: inout LowEnergyCommand.SetAdvertisingDataParameter) {
+internal func SetBeaconData(uuid: Foundation.UUID, major: UInt16, minor: UInt16, rssi: UInt8, parameter: inout LowEnergyCommand.SetAdvertisingDataParameter) {
     
     parameter.length = 30
     
