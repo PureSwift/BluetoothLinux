@@ -313,7 +313,25 @@ public final class GATTServer {
         guard data.isEmpty == false
             else { errorResponse(opcode, .attributeNotFound, pdu.startHandle); return }
         
-        let attributeData = data.map { AttributeData(attributeHandle: $0.start, endGroupHandle: $0.end, value: $0.UUID.littleEndianData) }
+        var attributeData = [AttributeData]()
+        attributeData.reserveCapacity(data.count)
+        
+        for (index, attribute) in data.enumerated() {
+            
+            let value = attribute.UUID.littleEndianData
+            
+            if index > 0 {
+                
+                let lastAttribute = data[index - 1]
+                
+                guard value.count == lastAttribute.UUID.littleEndianData.count
+                    else { break } // stop appending
+            }
+            
+            attributeData.append(AttributeData(attributeHandle: attribute.start,
+                                               endGroupHandle: attribute.end,
+                                               value: value))
+        }
         
         var limitedAttributes = [attributeData[0]]
         
