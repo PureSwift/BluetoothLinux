@@ -29,7 +29,7 @@ func GATTServerTest(adapter: Adapter) {
     
     do {
         
-        try adapter.enableBeacon(major: 0, minor: 0, RSSI: -29)
+        try adapter.enableBeacon(major: 0, minor: 0, rssi: -29)
         
         print("Enabled LE advertisement")
         

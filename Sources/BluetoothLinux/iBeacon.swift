@@ -97,6 +97,6 @@ internal func SetBeaconData(uuid: Foundation.UUID, major: UInt16, minor: UInt16,
     parameter.data.27 = minorBytes.1
     parameter.data.28 = minorBytes.0
     
-    parameter.data.29 = RSSI
+    parameter.data.29 = rssi
 }
 
