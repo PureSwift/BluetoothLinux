@@ -46,9 +46,9 @@ public final class L2CAPSocket {
                 securityLevel: SecurityLevel = .low) throws {
         
         let (internalSocket, internalAddress) = try L2CAPSocket.createSocket(adapterAddress: adapterAddress,
-                                                          protocolServiceMultiplexer: protocolServiceMultiplexer,
-                                                          channelIdentifier: channelIdentifier,
-                                                          addressType: addressType)
+                                                                             protocolServiceMultiplexer: protocolServiceMultiplexer,
+                                                                             channelIdentifier: channelIdentifier,
+                                                                             addressType: addressType)
         
         // store values
         self.internalSocket = internalSocket
@@ -117,7 +117,7 @@ public final class L2CAPSocket {
             return optionValue
         }
         
-        //. socket doman and protocol
+        //. socket domain and protocol
         guard try value(for: SO_DOMAIN) == AF_BLUETOOTH,
             try value(for: SO_PROTOCOL) == BluetoothProtocol.L2CAP.rawValue
             else { return false }
