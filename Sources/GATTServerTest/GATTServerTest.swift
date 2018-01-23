@@ -31,10 +31,9 @@ func GATTServerTest(adapter: Adapter) {
         
         let address = adapter.address!
         
-        let serverSocket = try L2CAPSocket(adapterAddress: address,
-                                           channelIdentifier: ATT.CID,
-                                           addressType: .lowEnergyPublic,
-                                           securityLevel: .low)
+        let serverSocket = try L2CAPSocket.lowEnergyServer(adapterAddress: address,
+                                                           isRandom: false,
+                                                           securityLevel: .low)
         
         print("Created L2CAP server")
         
@@ -78,9 +77,11 @@ private func generateDB() -> GATTDatabase {
 
 public struct TestProfile {
     
-    public static let services = [TestProfile.TestService]
+    public static let services: [Service] = [TestService, TestDefinedService]
     
-    public static let TestService = Service(uuid: BluetoothUUID(rawValue: "60F14FE2-F972-11E5-B84F-23E070D5A8C7")!, primary: true, characteristics: [TestProfile.Read, TestProfile.ReadBlob, TestProfile.Write, TestProfile.WriteBlob])
+    public static let TestService = Service(uuid: BluetoothUUID(rawValue: "60F14FE2-F972-11E5-B84F-23E070D5A8C7")!,
+                                            primary: true,
+                                            characteristics: [TestProfile.Read, TestProfile.ReadBlob, TestProfile.Write, TestProfile.WriteBlob])
     
     public static let Read = Characteristic(uuid: BluetoothUUID(rawValue: "E77D264C-F96F-11E5-80E0-23E070D5A8C7")!, value: "Test Read-Only".toUTF8Data(), permissions: [.read], properties: [.read])
     
@@ -93,6 +94,13 @@ public struct TestProfile {
     public static let WriteBlob = Characteristic(uuid: BluetoothUUID(rawValue: "2FDDB448-F96F-11E5-A891-23E070D5A8C7")!, value: Data(), permissions: [.write], properties: [.write])
     
     public static let WriteBlobValue = Data(bytes: [UInt8](repeating: 1, count: 512))
+    
+    public static let TestDefinedService = Service(uuid: BluetoothUUID.bit16(0xFEA9),
+                                                   primary: true,
+                                                   characteristics: [TestProfile.Read,
+                                                                     TestProfile.ReadBlob,
+                                                                     TestProfile.Write,
+                                                                     TestProfile.WriteBlob])
 }
 
 public typealias Service = GATT.Service
