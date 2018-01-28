@@ -120,6 +120,15 @@ public final class GATTClient {
         discoverCharacteristics(uuid: uuid, service: service, completion: completion)
     }
     
+    /// Read Characteristic Value
+    ///
+    /// This sub-procedure is used to read a Characteristic Value from a server when the client knows
+    /// the Characteristic Value Handle.
+    public func readCharacteristic(_ characteristic: Characteristic, completion: @escaping (GATTClientResponse<Data>) -> ()) {
+                
+        readCharacteristicValue(characteristic.handle.value, completion: completion)
+    }
+    
     // MARK: - Private Methods
     
     @inline(__always)
@@ -150,7 +159,7 @@ public final class GATTClient {
         
         let pdu = ATTMaximumTransmissionUnitRequest(clientMTU: clientMTU)
         
-        send(pdu, response: { [unowned self] in self.exchangeMTUResponse($0) })
+        send(pdu) { [unowned self] in self.exchangeMTUResponse($0) }
     }
     
     private func discoverServices(uuid: BluetoothUUID? = nil,
@@ -165,7 +174,6 @@ public final class GATTClient {
                                                   start: start,
                                                   end: end,
                                                   type: serviceType,
-                                                  foundData: [],
                                                   completion: completion)
         
         if let uuid = uuid {
@@ -197,7 +205,6 @@ public final class GATTClient {
                                                            start: service.handle,
                                                            end: service.end,
                                                            type: attributeType,
-                                                           foundData: [],
                                                            completion: completion)
         
         let pdu = ATTReadByTypeRequest(startHandle: service.handle,
@@ -205,6 +212,45 @@ public final class GATTClient {
                                        attributeType: attributeType.uuid)
         
         send(pdu) { [unowned self] in self.readByType($0, operation: operation) }
+    }
+    
+    /// Read Characteristic Value
+    ///
+    /// This sub-procedure is used to read a Characteristic Value from a server when the client knows
+    /// the Characteristic Value Handle.
+    private func readCharacteristicValue(_ handle: UInt16, completion: @escaping (GATTClientResponse<Data>) -> ()) {
+        
+        // The Attribute Protocol Read Request is used with the
+        // Attribute Handle parameter set to the Characteristic Value Handle.
+        // The Read Response returns the Characteristic Value in the Attribute Value parameter.
+        
+        // read value and try to read blob if too big
+        let pdu = ATTReadRequest(handle: handle)
+        
+        let operation = ReadOperation(handle: handle, completion: completion)
+        
+        send(pdu) { [unowned self] in self.readCharacteristicValueResponse($0, operation: operation) }
+    }
+    
+    /// Read Long Characteristic Value
+    ///
+    /// This sub-procedure is used to read a Characteristic Value from a server when the client knows
+    /// the Characteristic Value Handle and the length of the Characteristic Value is longer than can
+    /// be sent in a single Read Response Attribute Protocol message.
+    @inline(__always)
+    private func readLongCharacteristicValue(_ operation: ReadOperation) {
+        
+        // The Attribute Protocol Read Blob Request is used to perform this sub-procedure.
+        // The Attribute Handle shall be set to the Characteristic Value Handle of the Characteristic Value to be read.
+        // The Value Offset parameter shall be the offset within the Characteristic Value to be read. To read the
+        // complete Characteristic Value the offset should be set to 0x00 for the first Read Blob Request.
+        // The offset for subsequent Read Blob Requests is the next octet that has yet to be read.
+        // The Read Blob Request is repeated until the Read Blob Response’s Part Attribute Value parameter is shorter than (ATT_MTU-1).
+        
+        let pdu = ATTReadBlobRequest(handle: operation.handle,
+                                     offset: operation.offset)
+        
+        send(pdu) { [unowned self] in self.readBlob($0, operation: operation) }
     }
     
     // MARK: - Callbacks
@@ -305,8 +351,6 @@ public final class GATTClient {
             guard let serviceUUID = operation.uuid
                 else { fatalError("Should have UUID specified") }
             
-            var operation = operation
-            
             // pre-allocate array
             operation.foundData.reserveCapacity(operation.foundData.count + pdu.handlesInformationList.count)
             
@@ -334,7 +378,7 @@ public final class GATTClient {
                                                attributeType: operation.type.rawValue,
                                                attributeValue: serviceUUID.littleEndianData)
                 
-                send(pdu, response: { [unowned self] in self.findByType($0, operation: operation) })
+                send(pdu) { [unowned self] in self.findByType($0, operation: operation) }
                 
             } else {
                 
@@ -358,8 +402,6 @@ public final class GATTClient {
             operation.error(errorResponse)
             
         case let .value(pdu):
-            
-            var operation = operation
             
             // pre-allocate array
             operation.foundData.reserveCapacity(operation.foundData.count + pdu.data.count)
@@ -403,12 +445,70 @@ public final class GATTClient {
                                                endHandle: operation.end,
                                                attributeType: operation.type.uuid)
                 
-                send(pdu, response: { [unowned self] in self.readByType($0, operation: operation) })
+                send(pdu) { [unowned self] in self.readByType($0, operation: operation) }
                 
             } else {
                 
                 // end of service
                 operation.success()
+            }
+        }
+    }
+    
+    /// Read Characteristic Value Response
+    private func readCharacteristicValueResponse(_ response: ATTResponse<ATTReadResponse>, operation: ReadOperation) {
+        
+        // The Read Response only contains a Characteristic Value that is less than or equal to (ATT_MTU – 1) octets in length.
+        // If the Characteristic Value is greater than (ATT_MTU – 1) octets in length, the Read Long Characteristic Value procedure
+        // may be used if the rest of the Characteristic Value is required.
+        
+        switch response {
+            
+        case let .error(error):
+            
+            operation.error(error)
+            
+        case let .value(pdu):
+            
+            operation.data = pdu.attributeValue
+            
+            // short value
+            if pdu.attributeValue.count < (self.connection.maximumTransmissionUnit - 1) {
+                
+                operation.success()
+                
+            } else {
+                
+                // read blob
+                readLongCharacteristicValue(operation)
+            }
+        }
+    }
+    
+    /// Read Blob Response
+    private func readBlob(_ response: ATTResponse<ATTReadBlobResponse>, operation: ReadOperation) {
+        
+        // For each Read Blob Request a Read Blob Response is received with a portion of the Characteristic Value contained in the Part Attribute Value parameter.
+        
+        switch response {
+            
+        case let .error(error):
+            
+            operation.error(error)
+            
+        case let .value(pdu):
+            
+            operation.data += pdu.partAttributeValue
+            
+            // short value
+            if pdu.partAttributeValue.count < (self.connection.maximumTransmissionUnit - 1) {
+                
+                operation.success()
+                
+            } else {
+                
+                // read blob
+                readLongCharacteristicValue(operation)
             }
         }
     }
@@ -466,7 +566,7 @@ public extension GATTClient {
 
 // MARK: - Private Supporting Types
 
-fileprivate struct DiscoveryOperation <T> {
+fileprivate final class DiscoveryOperation <T> {
     
     let uuid: BluetoothUUID?
     
@@ -479,6 +579,19 @@ fileprivate struct DiscoveryOperation <T> {
     var foundData = [T]()
     
     let completion: (GATTClientResponse<[T]>) -> ()
+    
+    init(uuid: BluetoothUUID?,
+         start: UInt16,
+         end: UInt16,
+         type: GATT.UUID,
+         completion: @escaping (GATTClientResponse<[T]>) -> ()) {
+        
+        self.uuid = uuid
+        self.start = start
+        self.end = end
+        self.type = type
+        self.completion = completion
+    }
     
     @inline(__always)
     func success() {
@@ -497,6 +610,53 @@ fileprivate struct DiscoveryOperation <T> {
         } else {
             
             completion(.error(GATTClientError.errorResponse(responseError)))
+        }
+    }
+}
+
+private extension GATTClient {
+    
+    final class ReadOperation {
+        
+        let handle: UInt16
+        
+        var data = [UInt8]()
+        
+        let completion: (GATTClientResponse<Data>) -> ()
+        
+        var offset: UInt16 {
+            
+            @inline(__always)
+            get { return UInt16(data.count) }
+        }
+        
+        init(handle: UInt16,
+             completion: @escaping (GATTClientResponse<Data>) -> ()) {
+            
+            self.handle = handle
+            self.completion = completion
+        }
+        
+        @inline(__always)
+        func success() {
+            
+            let data = Data(bytes: self.data)
+            
+            completion(.value(data))
+        }
+        
+        @inline(__always)
+        func error(_ responseError: ATTErrorResponse) {
+            
+            if responseError.errorCode == .invalidOffset,
+                data.isEmpty == false {
+                
+                success()
+                
+            } else {
+                
+                completion(.error(GATTClientError.errorResponse(responseError)))
+            }
         }
     }
 }
