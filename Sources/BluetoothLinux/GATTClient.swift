@@ -774,8 +774,7 @@ private extension GATTClient {
         @inline(__always)
         func success(_ attributes: [ATTReadByTypeResponse.AttributeData]) {
             
-            var data = [UInt16: Data]()
-            data.reserveCapacity(attributes.count)
+            var data = [UInt16: Data](minimumCapacity: attributes.count)
             
             for attribute in attributes {
                 
