@@ -218,7 +218,10 @@ public final class GATTServer {
         doResponse(respond(ATTWriteResponse()))
     }
     
-    private func handleReadRequest(opcode: ATT.Opcode, handle: UInt16, offset: UInt16 = 0) -> [UInt8]? {
+    private func handleReadRequest(opcode: ATT.Opcode,
+                                   handle: UInt16,
+                                   offset: UInt16 = 0,
+                                   isBlob: Bool = false) -> [UInt8]? {
         
         // no attributes
         guard database.attributes.isEmpty == false
@@ -237,6 +240,12 @@ public final class GATTServer {
             errorResponse(opcode, error, handle)
             return nil
         }
+        
+        // check size
+        // If the Characteristic Value is not longer than (ATT_MTU – 1) an Error Response with
+        // the Error Code set to Attribute Not Long shall be received on the first Read Blob Request.
+        guard isBlob == false || attribute.value.count > (connection.maximumTransmissionUnit - 1)
+            else { errorResponse(opcode, .attributeNotLong, handle); return nil }
         
         // check boundary
         guard offset <= UInt16(attribute.value.count)
@@ -559,7 +568,7 @@ public final class GATTServer {
         
         log?("Read Blob (\(pdu.handle))")
         
-        if let value = handleReadRequest(opcode: opcode, handle: pdu.handle, offset: pdu.offset) {
+        if let value = handleReadRequest(opcode: opcode, handle: pdu.handle, offset: pdu.offset, isBlob: true) {
             
             respond(ATTReadBlobResponse(partAttributeValue: value))
         }
