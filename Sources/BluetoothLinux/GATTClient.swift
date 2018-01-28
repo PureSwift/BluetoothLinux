@@ -125,8 +125,31 @@ public final class GATTClient {
     /// This sub-procedure is used to read a Characteristic Value from a server when the client knows
     /// the Characteristic Value Handle.
     public func readCharacteristic(_ characteristic: Characteristic, completion: @escaping (GATTClientResponse<Data>) -> ()) {
-                
+        
+        // read value and try to read blob if too big
         readCharacteristicValue(characteristic.handle.value, completion: completion)
+    }
+    
+    public func readCharacteristic(_ characteristic: BluetoothUUID, completion: @escaping (GATTClientResponse<Data>) -> ()) {
+        
+        
+    }
+    
+    /// Read Multiple Characteristic Values
+    ///
+    /// This sub-procedure is used to read multiple Characteristic Values from a server when the client knows the Characteristic Value Handles.
+    /// The Attribute Protocol Read Multiple Requests is used with the Set Of Handles parameter set to the Characteristic Value Handles.
+    /// The Read Multiple Response returns the Characteristic Values in the Set Of Values parameter.
+    public func readCharacteristics(_ characteristics: [Characteristic], completion: @escaping (GATTClientResponse<[(Characteristic, Data)]>) -> ()) {
+        
+        let handles = characteristics.map { $0.handle.value }
+        
+        guard let pdu = ATTReadMultipleRequest(handles: handles)
+            else { fatalError("Must provide at least 2 characteristics") }
+        
+        let operation = ReadMultipleOperation(characteristics: characteristics, completion: completion)
+        
+        send(pdu) { [unowned self] in self.readMultiple($0, operation: operation) }
     }
     
     // MARK: - Private Methods
@@ -510,6 +533,20 @@ public final class GATTClient {
             }
         }
     }
+    
+    private func readMultiple(_ response: ATTResponse<ATTReadMultipleResponse>, operation: ReadMultipleOperation) {
+        
+        switch response {
+            
+        case let .error(error):
+            
+            operation.error(error)
+            
+        case let .value(pdu):
+            
+            operation.success(pdu.values)
+        }
+    }
 }
 
 // MARK: - Supporting Types
@@ -655,6 +692,44 @@ private extension GATTClient {
                 
                 completion(.error(GATTClientError.errorResponse(responseError)))
             }
+        }
+    }
+    
+    final class ReadMultipleOperation {
+        
+        typealias Completion = (GATTClientResponse<[(Characteristic, Data)]>) -> ()
+        
+        let characteristics: [Characteristic]
+        
+        let completion: Completion
+        
+        init(characteristics: [Characteristic],
+             completion: @escaping Completion) {
+            
+            self.characteristics = characteristics
+            self.completion = completion
+        }
+        
+        @inline(__always)
+        func success(_ values: [[UInt8]]) {
+            
+            var data = [(Characteristic, Data)]()
+            data.reserveCapacity(values.count)
+            
+            for (index, value) in values.enumerated() {
+                
+                let characteristic = characteristics[index]
+                
+                data.append((characteristic, Data(value)))
+            }
+            
+            completion(.value(data))
+        }
+        
+        @inline(__always)
+        func error(_ responseError: ATTErrorResponse) {
+            
+            completion(.error(GATTClientError.errorResponse(responseError)))
         }
     }
 }

@@ -241,7 +241,8 @@ public final class GATTServer {
             return nil
         }
         
-        // check size
+        // Verify attribute value size for blob reading
+        //
         // If the Characteristic Value is not longer than (ATT_MTU – 1) an Error Response with
         // the Error Code set to Attribute Not Long shall be received on the first Read Blob Request.
         guard isBlob == false || attribute.value.count > (connection.maximumTransmissionUnit - 1)
@@ -580,7 +581,7 @@ public final class GATTServer {
         
         log?("Read Multiple Request \(pdu.handles)")
         
-        // no attributes, impossible to write
+        // no attributes, impossible to read
         guard database.attributes.isEmpty == false
             else { errorResponse(opcode, .invalidHandle, pdu.handles[0]); return }
         
