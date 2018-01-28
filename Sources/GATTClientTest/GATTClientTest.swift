@@ -55,6 +55,30 @@ func GATTClientTest(adapter: Adapter, address: Address) {
                     let uuids = value.map { $0.uuid }
                     
                     testChecklist.discoverAllCharacteristics = Set(uuids) == Set(characteristicUUIDs)
+                    
+                    let readCharacteristic = value.first(where: { $0.uuid == TestProfile.Read.uuid })!
+                    
+                    client.readCharacteristic(readCharacteristic) {
+                        
+                        print("readCharacteristic")
+                        dump($0)
+                        
+                        guard case let .value(value) = $0 else { return }
+                        
+                        testChecklist.readValue = value == TestProfile.Read.value
+                    }
+                    
+                    let readBlobCharacteristic = value.first(where: { $0.uuid == TestProfile.ReadBlob.uuid })!
+                    
+                    client.readCharacteristic(readBlobCharacteristic) {
+                        
+                        print("readCharacteristic Blob")
+                        dump($0)
+                        
+                        guard case let .value(value) = $0 else { return }
+                        
+                        testChecklist.readBlob = value == TestProfile.ReadBlob.value
+                    }
                 }
             }
         }
@@ -113,4 +137,6 @@ internal struct GATTClientTests {
     var discoverAllPrimaryServices = false
     var discoverPrimaryServicesByUUID = false
     var discoverAllCharacteristics = false
+    var readValue = false
+    var readBlob = false
 }

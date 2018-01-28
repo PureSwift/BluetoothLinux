@@ -292,8 +292,6 @@ public final class GATTClient {
             
         case let .value(pdu):
             
-            var operation = operation
-            
             // store PDU values
             for serviceData in pdu.data {
                 
