@@ -130,17 +130,37 @@ public final class GATTClient {
         readCharacteristicValue(characteristic.handle.value, completion: completion)
     }
     
-    public func readCharacteristic(_ characteristic: BluetoothUUID, completion: @escaping (GATTClientResponse<Data>) -> ()) {
+    /// Read Using Characteristic UUID
+    ///
+    /// This sub-procedure is used to read a Characteristic Value from a server when the client
+    /// only knows the characteristic UUID and does not know the handle of the characteristic.
+    public func readCharacteristics(using uuid: BluetoothUUID,
+                                    handleRange: (start: UInt16, end: UInt16) = (.min, .max),
+                                    completion: @escaping (GATTClientResponse<[UInt16: Data]>) -> ()) {
         
+        // The Attribute Protocol Read By Type Request is used to perform the sub-procedure.
+        // The Attribute Type is set to the known characteristic UUID and the Starting Handle and Ending Handle parameters
+        // shall be set to the range over which this read is to be performed. This is typically the handle range for the service in which the characteristic belongs.
         
+        let pdu = ATTReadByTypeRequest(startHandle: handleRange.start,
+                                       endHandle: handleRange.end,
+                                       attributeType: uuid)
+        
+        let operation = ReadUsingUUIDOperation(uuid: uuid, completion: completion)
+        
+        send(pdu) { [unowned self] in self.readByType($0, operation: operation) }
     }
     
     /// Read Multiple Characteristic Values
     ///
     /// This sub-procedure is used to read multiple Characteristic Values from a server when the client knows the Characteristic Value Handles.
-    /// The Attribute Protocol Read Multiple Requests is used with the Set Of Handles parameter set to the Characteristic Value Handles.
-    /// The Read Multiple Response returns the Characteristic Values in the Set Of Values parameter.
-    public func readCharacteristics(_ characteristics: [Characteristic], completion: @escaping (GATTClientResponse<[(Characteristic, Data)]>) -> ()) {
+    ///
+    /// - Note: A client should not use this request for attributes when the Set Of Values parameter could be (ATT_MTU–1)
+    /// as it will not be possible to determine if the last attribute value is complete, or if it overflowed.
+    public func readCharacteristics(_ characteristics: [Characteristic], completion: @escaping (GATTClientResponse<Data>) -> ()) {
+        
+        // The Attribute Protocol Read Multiple Request is used with the Set Of Handles parameter set to the Characteristic Value Handles.
+        // The Read Multiple Response returns the Characteristic Values in the Set Of Values parameter.
         
         let handles = characteristics.map { $0.handle.value }
         
@@ -547,6 +567,23 @@ public final class GATTClient {
             operation.success(pdu.values)
         }
     }
+    
+    private func readByType(_ response: ATTResponse<ATTReadByTypeResponse>, operation: ReadUsingUUIDOperation) {
+        
+        // Read By Type Response returns a list of Attribute Handle and Attribute Value pairs corresponding to the characteristics
+        // contained in the handle range provided.
+        
+        switch response {
+            
+        case let .error(error):
+            
+            operation.error(error)
+            
+        case let .value(pdu):
+            
+            operation.success(pdu.data)
+        }
+    }
 }
 
 // MARK: - Supporting Types
@@ -697,30 +734,52 @@ private extension GATTClient {
     
     final class ReadMultipleOperation {
         
-        typealias Completion = (GATTClientResponse<[(Characteristic, Data)]>) -> ()
-        
         let characteristics: [Characteristic]
         
-        let completion: Completion
+        let completion: (GATTClientResponse<Data>) -> ()
         
         init(characteristics: [Characteristic],
-             completion: @escaping Completion) {
+             completion: @escaping (GATTClientResponse<Data>) -> ()) {
             
             self.characteristics = characteristics
             self.completion = completion
         }
         
         @inline(__always)
-        func success(_ values: [[UInt8]]) {
+        func success(_ values: [UInt8]) {
             
-            var data = [(Characteristic, Data)]()
-            data.reserveCapacity(values.count)
+            completion(.value(Data(values)))
+        }
+        
+        @inline(__always)
+        func error(_ responseError: ATTErrorResponse) {
             
-            for (index, value) in values.enumerated() {
+            completion(.error(GATTClientError.errorResponse(responseError)))
+        }
+    }
+    
+    final class ReadUsingUUIDOperation {
+        
+        let uuid: BluetoothUUID
+        
+        let completion: (GATTClientResponse<[UInt16: Data]>) -> ()
+        
+        init(uuid: BluetoothUUID,
+             completion: @escaping (GATTClientResponse<[UInt16: Data]>) -> ()) {
+            
+            self.uuid = uuid
+            self.completion = completion
+        }
+        
+        @inline(__always)
+        func success(_ attributes: [ATTReadByTypeResponse.AttributeData]) {
+            
+            var data = [UInt16: Data]()
+            data.reserveCapacity(attributes.count)
+            
+            for attribute in attributes {
                 
-                let characteristic = characteristics[index]
-                
-                data.append((characteristic, Data(value)))
+                data[attribute.handle] = Data(attribute.value)
             }
             
             completion(.value(data))
