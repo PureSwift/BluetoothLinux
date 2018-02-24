@@ -13,8 +13,8 @@ public enum AddressType: UInt8 {
     
     /// Bluetooth Basic Rate/Enhanced Data Rate
     case bredr              = 0x00
-    case lowEnergyRandom    = 0x01
-    case lowEnergyPublic    = 0x02
+    case lowEnergyPublic    = 0x01
+    case lowEnergyRandom    = 0x02
     
     public init() { self = .bredr }
     
