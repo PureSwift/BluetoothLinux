@@ -124,7 +124,8 @@ public final class GATTClient {
     ///
     /// This sub-procedure is used to read a Characteristic Value from a server when the client knows
     /// the Characteristic Value Handle.
-    public func readCharacteristic(_ characteristic: Characteristic, completion: @escaping (GATTClientResponse<Data>) -> ()) {
+    public func readCharacteristic(_ characteristic: Characteristic,
+                                   completion: @escaping (GATTClientResponse<Data>) -> ()) {
         
         // read value and try to read blob if too big
         readCharacteristicValue(characteristic.handle.value, completion: completion)
@@ -137,6 +138,8 @@ public final class GATTClient {
     public func readCharacteristics(using uuid: BluetoothUUID,
                                     handleRange: (start: UInt16, end: UInt16) = (.min, .max),
                                     completion: @escaping (GATTClientResponse<[UInt16: Data]>) -> ()) {
+        
+        precondition(handleRange.start < handleRange.end)
         
         // The Attribute Protocol Read By Type Request is used to perform the sub-procedure.
         // The Attribute Type is set to the known characteristic UUID and the Starting Handle and Ending Handle parameters

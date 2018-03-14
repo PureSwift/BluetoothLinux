@@ -6,7 +6,7 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-#if os(OSX) || os(iOS)
+#if os(macOS) || os(iOS)
     
     internal func stub() -> Never {
         

@@ -33,19 +33,19 @@ public extension HCI {
 /// HCI device flags
 public enum HCIDeviceFlag: CInt {
     
-    case Up
-    case Initialized
-    case Running
+    case up
+    case initialized
+    case running
     
-    case PassiveScan
-    case InteractiveScan
-    case Authenticated
-    case Encrypt
-    case Inquiry
+    case passiveScan
+    case interactiveScan
+    case authenticated
+    case encrypt
+    case inquiry
     
-    case Raw
+    case raw
     
-    public init() { self = .Up }
+    public init() { self = .up }
 }
 
 /// HCI controller types

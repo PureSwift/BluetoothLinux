@@ -119,7 +119,7 @@ public final class L2CAPSocket {
         
         //. socket domain and protocol
         guard try value(for: SO_DOMAIN) == AF_BLUETOOTH,
-            try value(for: SO_PROTOCOL) == BluetoothProtocol.L2CAP.rawValue
+            try value(for: SO_PROTOCOL) == BluetoothProtocol.l2cap.rawValue
             else { return false }
         
         return true
@@ -133,7 +133,7 @@ public final class L2CAPSocket {
                                      addressType: AddressType?) throws -> (CInt, sockaddr_l2) {
         
         // open socket
-        let internalSocket = socket(AF_BLUETOOTH, SOCK_SEQPACKET, BluetoothProtocol.L2CAP.rawValue)
+        let internalSocket = socket(AF_BLUETOOTH, SOCK_SEQPACKET, BluetoothProtocol.l2cap.rawValue)
         
         // error creating socket
         guard internalSocket >= 0

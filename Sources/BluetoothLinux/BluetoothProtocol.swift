@@ -9,12 +9,12 @@
 /// BTPROTO_*
 public enum BluetoothProtocol: CInt {
     
-    case L2CAP      = 0
-    case HCI        = 1
-    case SCO        = 2
-    case RFCOMM     = 3
-    case BNEP       = 4
-    case CMTP       = 5
-    case HIDP       = 6
-    case AVDTP      = 7
+    case l2cap      = 0
+    case hci        = 1
+    case sco        = 2
+    case rfcomm     = 3
+    case bnep       = 4
+    case cmtp       = 5
+    case hidp       = 6
+    case avdtp      = 7
 }

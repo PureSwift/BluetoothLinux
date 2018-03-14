@@ -104,7 +104,7 @@ public enum AdapterError: Error {
 internal func HCIOpenDevice(_ deviceIdentifier: CInt) throws -> CInt {
     
     // Create HCI socket
-    let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.HCI.rawValue)
+    let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
     
     guard hciSocket >= 0 else { throw POSIXError.fromErrno! }
     
@@ -129,7 +129,7 @@ internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(
 
     // open HCI socket
 
-    let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.HCI.rawValue)
+    let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
 
     guard hciSocket >= 0 else { throw POSIXError.fromErrno! }
 
@@ -190,7 +190,7 @@ internal func HCIDeviceInfo(_ deviceIdentifier: CInt) throws -> HCIDeviceInforma
     
     // open HCI socket
     
-    let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.HCI.rawValue)
+    let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
     
     guard hciSocket >= 0 else { throw POSIXError.fromErrno! }
     
@@ -210,7 +210,7 @@ internal func HCIDeviceAddress(_ deviceIdentifier: CInt) throws -> Address {
     
     let deviceInfo = try HCIDeviceInfo(deviceIdentifier)
     
-    guard HCITestBit(HCI.DeviceFlag.Up, deviceInfo.flags)
+    guard HCITestBit(HCI.DeviceFlag.up, deviceInfo.flags)
         else { throw POSIXError(code: .ENETDOWN) }
     
     return deviceInfo.address

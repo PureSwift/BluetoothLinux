@@ -102,7 +102,7 @@ internal func HCIInquiry(_ deviceIdentifier: CInt, duration: Int, scanLimit: Int
     
     typealias InquiryResult = Adapter.InquiryResult
     
-    let deviceDescriptor = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.HCI.rawValue)
+    let deviceDescriptor = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
     
     guard deviceDescriptor >= 0 else { throw POSIXError.fromErrno! }
     
