@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>L2CAPSocket Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Class/L2CAPSocket" class="dashAnchor"></a>
+
+    <a title="L2CAPSocket Class Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+          BluetoothLinux Docs
+        </a>
+         (46% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/PureSwift/BluetoothLinux">
+            <img class="header-icon" src="../img/gh.png"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html">BluetoothLinux Reference</a>
+      <img class="carat" src="../img/carat.png" />
+      L2CAPSocket Class Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Adapter.html">Adapter</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Adapter/ScanOption.html">– ScanOption</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Adapter/InquiryResult.html">– InquiryResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/GATTClient.html">GATTClient</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/GATTClient/Service.html">– Service</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/GATTClient/Characteristic.html">– Characteristic</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/GATTServer.html">GATTServer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/L2CAPSocket.html">L2CAPSocket</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/L2CAPSocket/Options.html">– Options</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/L2CAPSocket/ConnectionResult.html">– ConnectionResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/L2CAPSocket/ConnectionStatus.html">– ConnectionStatus</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Global Variables.html">Global Variables</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global Variables.html#/SOCK_SEQPACKET">SOCK_SEQPACKET</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/ATTConnectionError.html">ATTConnectionError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/ATTResponse.html">ATTResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AdapterError.html">AdapterError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AddressType.html">AddressType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AnyATTResponse.html">AnyATTResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/BluetoothProtocol.html">BluetoothProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/GATTClientError.html">GATTClientError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/GATTClientResponse.html">GATTClientResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HCIBusType.html">HCIBusType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HCIControllerType.html">HCIControllerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HCIDeviceEvent.html">HCIDeviceEvent</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HCIDeviceFlag.html">HCIDeviceFlag</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HCIPacketType.html">HCIPacketType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HCISocketOption.html">HCISocketOption</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/L2CAPSocketError.html">L2CAPSocketError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/LinkMode.html">LinkMode</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/POSIXErrorCode.html">POSIXErrorCode</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/SecurityLevel.html">SecurityLevel</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Address.html">Address</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/POSIXError.html">POSIXError</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Functions.html">Functions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:14BluetoothLinux1loiSbAA13SecurityLevelO_ADtF">&lt;(_:_:)</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/GATTDatabase.html">GATTDatabase</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/GATTDatabase/Include.html">– Include</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/GATTDatabase/Attribute.html">– Attribute</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/HCIIOCTL.html">HCIIOCTL</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/POSIXError.html">POSIXError</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content">
+            <h1>L2CAPSocket</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">L2CAPSocket</span></code></pre>
+
+                </div>
+              </div>
+            <p>L2CAP Bluetooth socket</p>
+
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Properties"></a>
+                <a name="//apple_ref/swift/Section/Properties" class="dashAnchor"></a>
+                <a href="#/Properties">
+                  <h3 class="section-name">Properties</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC13securityLevelAA08SecurityF0Ov"></a>
+                    <a name="//apple_ref/swift/Property/securityLevel" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC13securityLevelAA08SecurityF0Ov">securityLevel</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The socket&rsquo;s security level.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">securityLevel</span><span class="p">:</span> <span class="kt"><a href="../Enums/SecurityLevel.html">SecurityLevel</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Initialization"></a>
+                <a name="//apple_ref/swift/Section/Initialization" class="dashAnchor"></a>
+                <a href="#/Initialization">
+                  <h3 class="section-name">Initialization</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketCAC0A07AddressV07adapterE0_s6UInt16V26protocolServiceMultiplexerAI17channelIdentifierAA0E4TypeOSg07addressM0AA13SecurityLevelO08securityP0tKcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(adapterAddress:protocolServiceMultiplexer:channelIdentifier:addressType:securityLevel:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketCAC0A07AddressV07adapterE0_s6UInt16V26protocolServiceMultiplexerAI17channelIdentifierAA0E4TypeOSg07addressM0AA13SecurityLevelO08securityP0tKcfc">init(adapterAddress:protocolServiceMultiplexer:channelIdentifier:addressType:securityLevel:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Create a new L2CAP socket on the adapter with the specified identifier.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">adapterAddress</span><span class="p">:</span> <span class="kt">Address</span><span class="p">,</span>
+            <span class="nv">protocolServiceMultiplexer</span><span class="p">:</span> <span class="kt">UInt16</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nv">channelIdentifier</span><span class="p">:</span> <span class="kt">UInt16</span> <span class="o">=</span> <span class="kt">ATT</span><span class="o">.</span><span class="kt">CID</span><span class="p">,</span>
+            <span class="nv">addressType</span><span class="p">:</span> <span class="kt"><a href="../Enums/AddressType.html">AddressType</a></span><span class="p">?</span> <span class="o">=</span> <span class="o">.</span><span class="n">lowEnergyPublic</span><span class="p">,</span>
+            <span class="nv">securityLevel</span><span class="p">:</span> <span class="kt"><a href="../Enums/SecurityLevel.html">SecurityLevel</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">low</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC15lowEnergyServerAC0A07AddressV07adapterH0_Sb8isRandomAA13SecurityLevelO08securityM0tKFZ"></a>
+                    <a name="//apple_ref/swift/Method/lowEnergyServer(adapterAddress:isRandom:securityLevel:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC15lowEnergyServerAC0A07AddressV07adapterH0_Sb8isRandomAA13SecurityLevelO08securityM0tKFZ">lowEnergyServer(adapterAddress:isRandom:securityLevel:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a server socket for an L2CAP connection.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">lowEnergyServer</span><span class="p">(</span><span class="nv">adapterAddress</span><span class="p">:</span> <span class="kt">Address</span> <span class="o">=</span> <span class="o">.</span><span class="n">any</span><span class="p">,</span>
+                                   <span class="nv">isRandom</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+                                   <span class="nv">securityLevel</span><span class="p">:</span> <span class="kt"><a href="../Enums/SecurityLevel.html">SecurityLevel</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">low</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">L2CAPSocket</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC15lowEnergyClientAC0A07AddressV07adapterH0_AG7address_AA0H4TypeO4typet11destinationAA13SecurityLevelO08securityO0tKFZ"></a>
+                    <a name="//apple_ref/swift/Method/lowEnergyClient(adapterAddress:destination:securityLevel:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC15lowEnergyClientAC0A07AddressV07adapterH0_AG7address_AA0H4TypeO4typet11destinationAA13SecurityLevelO08securityO0tKFZ">lowEnergyClient(adapterAddress:destination:securityLevel:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a client socket for an L2CAP connection.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">lowEnergyClient</span><span class="p">(</span><span class="nv">adapterAddress</span><span class="p">:</span> <span class="kt">Address</span> <span class="o">=</span> <span class="o">.</span><span class="n">any</span><span class="p">,</span>
+                                   <span class="nv">destination</span><span class="p">:</span> <span class="p">(</span><span class="nv">address</span><span class="p">:</span> <span class="kt">Address</span><span class="p">,</span> <span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/AddressType.html">AddressType</a></span><span class="p">),</span>
+                                   <span class="nv">securityLevel</span><span class="p">:</span> <span class="kt"><a href="../Enums/SecurityLevel.html">SecurityLevel</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">low</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">L2CAPSocket</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Static%20Methods"></a>
+                <a name="//apple_ref/swift/Section/Static Methods" class="dashAnchor"></a>
+                <a href="#/Static%20Methods">
+                  <h3 class="section-name">Static Methods</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC8validateSbs5Int32V14fileDescriptor_tKFZ"></a>
+                    <a name="//apple_ref/swift/Method/validate(fileDescriptor:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC8validateSbs5Int32V14fileDescriptor_tKFZ">validate(fileDescriptor:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Check whether the file descriptor is a L2CAP socket.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">fileDescriptor</span><span class="p">:</span> <span class="kt">CInt</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Accessors"></a>
+                <a name="//apple_ref/swift/Section/Accessors" class="dashAnchor"></a>
+                <a href="#/Accessors">
+                  <h3 class="section-name">Accessors</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC7address0A07AddressVv"></a>
+                    <a name="//apple_ref/swift/Property/address" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC7address0A07AddressVv">address</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Bluetooth address</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">address</span><span class="p">:</span> <span class="kt">Address</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC11addressTypeAA07AddressF0Ov"></a>
+                    <a name="//apple_ref/swift/Property/addressType" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC11addressTypeAA07AddressF0Ov">addressType</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">addressType</span><span class="p">:</span> <span class="kt"><a href="../Enums/AddressType.html">AddressType</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC26protocolServiceMultiplexers6UInt16Vv"></a>
+                    <a name="//apple_ref/swift/Property/protocolServiceMultiplexer" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC26protocolServiceMultiplexers6UInt16Vv">protocolServiceMultiplexer</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Protocol/Service Multiplexer (PSM)</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">protocolServiceMultiplexer</span><span class="p">:</span> <span class="kt">UInt16</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC17channelIdentifiers6UInt16Vv"></a>
+                    <a name="//apple_ref/swift/Property/channelIdentifier" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC17channelIdentifiers6UInt16Vv">channelIdentifier</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Channel Identifier (CID)</p>
+
+<p>L2CAP channel endpoints are identified to their clients by a Channel Identifier (CID).
+This is assigned by L2CAP, and each L2CAP channel endpoint on any device has a different CID.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">channelIdentifier</span><span class="p">:</span> <span class="kt">UInt16</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Methods"></a>
+                <a name="//apple_ref/swift/Section/Methods" class="dashAnchor"></a>
+                <a href="#/Methods">
+                  <h3 class="section-name">Methods</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC16setSecurityLevelyAA0fG0OKF"></a>
+                    <a name="//apple_ref/swift/Method/setSecurityLevel(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC16setSecurityLevelyAA0fG0OKF">setSecurityLevel(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Attempts to change the socket&rsquo;s security level.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">setSecurityLevel</span><span class="p">(</span><span class="n">_</span> <span class="nv">securityLevel</span><span class="p">:</span> <span class="kt"><a href="../Enums/SecurityLevel.html">SecurityLevel</a></span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC14startListeningySi10queueLimit_tKF"></a>
+                    <a name="//apple_ref/swift/Method/startListening(queueLimit:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC14startListeningySi10queueLimit_tKF">startListening(queueLimit:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Put socket into listening mode.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">startListening</span><span class="p">(</span><span class="nv">queueLimit</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC17waitForConnectionACyKF"></a>
+                    <a name="//apple_ref/swift/Method/waitForConnection()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC17waitForConnectionACyKF">waitForConnection()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Blocks the caller until a new connection is recieved.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">waitForConnection</span><span class="p">()</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">L2CAPSocket</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC14openConnectiony0A07AddressV2to_AA0G4TypeO4typetKF"></a>
+                    <a name="//apple_ref/swift/Method/openConnection(to:type:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC14openConnectiony0A07AddressV2to_AA0G4TypeO4typetKF">openConnection(to:type:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Connect to another L2CAP server.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">openConnection</span><span class="p">(</span><span class="n">to</span> <span class="nv">address</span><span class="p">:</span> <span class="kt">Address</span><span class="p">,</span>
+                           <span class="n">type</span> <span class="nv">addressType</span><span class="p">:</span> <span class="kt"><a href="../Enums/AddressType.html">AddressType</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">lowEnergyPublic</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC7recieve10Foundation4DataVSiKF"></a>
+                    <a name="//apple_ref/swift/Method/recieve(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC7recieve10Foundation4DataVSiKF">recieve(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Reads from the socket.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">recieve</span><span class="p">(</span><span class="n">_</span> <span class="nv">bufferSize</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Data</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC4sendy10Foundation4DataVKF"></a>
+                    <a name="//apple_ref/swift/Method/send(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC4sendy10Foundation4DataVKF">send(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Write to the socket.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="n">_</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC20requestSocketOptionsAC0G0VyKF"></a>
+                    <a name="//apple_ref/swift/Method/requestSocketOptions()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC20requestSocketOptionsAC0G0VyKF">requestSocketOptions()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Attempt to get L2CAP socket options.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">requestSocketOptions</span><span class="p">()</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/L2CAPSocket/Options.html">Options</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC7OptionsV"></a>
+                    <a name="//apple_ref/swift/Struct/Options" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC7OptionsV">Options</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>L2CAP Socket Options</p>
+
+                        <a href="../Classes/L2CAPSocket/Options.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Options</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC16ConnectionResultO"></a>
+                    <a name="//apple_ref/swift/Enum/ConnectionResult" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC16ConnectionResultO">ConnectionResult</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="../Classes/L2CAPSocket/ConnectionResult.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ConnectionResult</span><span class="p">:</span> <span class="kt">UInt16</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux11L2CAPSocketC16ConnectionStatusO"></a>
+                    <a name="//apple_ref/swift/Enum/ConnectionStatus" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux11L2CAPSocketC16ConnectionStatusO">ConnectionStatus</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="../Classes/L2CAPSocket/ConnectionStatus.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ConnectionStatus</span><span class="p">:</span> <span class="kt">UInt16</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">PureSwift</a>. All rights reserved. (Last updated: 2018-03-15)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+    </section>
+  </body>
+</div>
+</html>

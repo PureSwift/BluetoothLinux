@@ -1,0 +1,915 @@
+{
+  "warnings": [
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/ATTConnection.swift",
+      "line": 536,
+      "symbol": "AnyATTResponse",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/ATTConnection.swift",
+      "line": 538,
+      "symbol": "AnyATTResponse.error",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/ATTConnection.swift",
+      "line": 539,
+      "symbol": "AnyATTResponse.value",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/ATTConnection.swift",
+      "line": 542,
+      "symbol": "ATTResponse",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/ATTConnection.swift",
+      "line": 544,
+      "symbol": "ATTResponse.error",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/ATTConnection.swift",
+      "line": 545,
+      "symbol": "ATTResponse.value",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/Adapter.swift",
+      "line": 87,
+      "symbol": "AdapterError",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/AddressType.swift",
+      "line": 16,
+      "symbol": "AddressType.lowEnergyPublic",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/AddressType.swift",
+      "line": 17,
+      "symbol": "AddressType.lowEnergyRandom",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/AddressType.swift",
+      "line": 19,
+      "symbol": "AddressType.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/BluetoothProtocol.swift",
+      "line": 12,
+      "symbol": "BluetoothProtocol.l2cap",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/BluetoothProtocol.swift",
+      "line": 13,
+      "symbol": "BluetoothProtocol.hci",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/BluetoothProtocol.swift",
+      "line": 14,
+      "symbol": "BluetoothProtocol.sco",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/BluetoothProtocol.swift",
+      "line": 15,
+      "symbol": "BluetoothProtocol.rfcomm",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/BluetoothProtocol.swift",
+      "line": 16,
+      "symbol": "BluetoothProtocol.bnep",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/BluetoothProtocol.swift",
+      "line": 17,
+      "symbol": "BluetoothProtocol.cmtp",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/BluetoothProtocol.swift",
+      "line": 18,
+      "symbol": "BluetoothProtocol.hidp",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/BluetoothProtocol.swift",
+      "line": 19,
+      "symbol": "BluetoothProtocol.avdtp",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/DeviceCommand.swift",
+      "line": 20,
+      "symbol": "Adapter.deviceCommand(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/DeviceCommand.swift",
+      "line": 25,
+      "symbol": "Adapter.deviceCommand(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/DeviceRequest.swift",
+      "line": 120,
+      "symbol": "Adapter.deviceRequest(_:timeout:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/DeviceRequest.swift",
+      "line": 137,
+      "symbol": "Adapter.deviceRequest(_:timeout:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTClient.swift",
+      "line": 17,
+      "symbol": "GATTClient.log",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTClient.swift",
+      "line": 30,
+      "symbol": "GATTClient.init(socket:maximumTransmissionUnit:log:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTClient.swift",
+      "line": 706,
+      "symbol": "GATTClientError",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTClient.swift",
+      "line": 715,
+      "symbol": "GATTClientResponse",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTClient.swift",
+      "line": 717,
+      "symbol": "GATTClientResponse.error",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTClient.swift",
+      "line": 718,
+      "symbol": "GATTClientResponse.value",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTClient.swift",
+      "line": 726,
+      "symbol": "GATTClient.Service.uuid",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTClient.swift",
+      "line": 728,
+      "symbol": "GATTClient.Service.type",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTClient.swift",
+      "line": 730,
+      "symbol": "GATTClient.Service.handle",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTClient.swift",
+      "line": 732,
+      "symbol": "GATTClient.Service.end",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTClient.swift",
+      "line": 735,
+      "symbol": "GATTClient.Characteristic",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTClient.swift",
+      "line": 739,
+      "symbol": "GATTClient.Characteristic.uuid",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTClient.swift",
+      "line": 741,
+      "symbol": "GATTClient.Characteristic.properties",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTClient.swift",
+      "line": 743,
+      "symbol": "GATTClient.Characteristic.handle",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTDatabase.swift",
+      "line": 24,
+      "symbol": "GATTDatabase.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTDatabase.swift",
+      "line": 49,
+      "symbol": "GATTDatabase.add(service:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTDatabase.swift",
+      "line": 167,
+      "symbol": "GATTDatabase.Include.init(serviceHandle:endGroupHandle:serviceUUID:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTDatabase.swift",
+      "line": 188,
+      "symbol": "GATTDatabase.Attribute.handle",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTDatabase.swift",
+      "line": 190,
+      "symbol": "GATTDatabase.Attribute.uuid",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTDatabase.swift",
+      "line": 192,
+      "symbol": "GATTDatabase.Attribute.permissions",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTDatabase.swift",
+      "line": 194,
+      "symbol": "GATTDatabase.Attribute.value",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTServer.swift",
+      "line": 13,
+      "symbol": "GATTServer",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTServer.swift",
+      "line": 17,
+      "symbol": "GATTServer.log",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTServer.swift",
+      "line": 19,
+      "symbol": "GATTServer.database",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTServer.swift",
+      "line": 21,
+      "symbol": "GATTServer.willRead",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTServer.swift",
+      "line": 23,
+      "symbol": "GATTServer.willWrite",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTServer.swift",
+      "line": 25,
+      "symbol": "GATTServer.maximumPreparedWrites",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/GATTServer.swift",
+      "line": 42,
+      "symbol": "GATTServer.init(socket:maximumTransmissionUnit:maximumPreparedWrites:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 36,
+      "symbol": "HCIDeviceFlag.up",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 37,
+      "symbol": "HCIDeviceFlag.initialized",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 38,
+      "symbol": "HCIDeviceFlag.running",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 40,
+      "symbol": "HCIDeviceFlag.passiveScan",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 41,
+      "symbol": "HCIDeviceFlag.interactiveScan",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 42,
+      "symbol": "HCIDeviceFlag.authenticated",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 43,
+      "symbol": "HCIDeviceFlag.encrypt",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 44,
+      "symbol": "HCIDeviceFlag.inquiry",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 46,
+      "symbol": "HCIDeviceFlag.raw",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 48,
+      "symbol": "HCIDeviceFlag.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 54,
+      "symbol": "HCIControllerType.BREDR",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 55,
+      "symbol": "HCIControllerType.AMP",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 61,
+      "symbol": "HCIBusType.Virtual",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 62,
+      "symbol": "HCIBusType.USB",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 63,
+      "symbol": "HCIBusType.PCCard",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 64,
+      "symbol": "HCIBusType.UART",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 65,
+      "symbol": "HCIBusType.RS232",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 66,
+      "symbol": "HCIBusType.PCI",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 67,
+      "symbol": "HCIBusType.SDIO",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 73,
+      "symbol": "HCIDeviceEvent.Register",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 74,
+      "symbol": "HCIDeviceEvent.Unregister",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 75,
+      "symbol": "HCIDeviceEvent.Up",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 76,
+      "symbol": "HCIDeviceEvent.Down",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 77,
+      "symbol": "HCIDeviceEvent.Suspend",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 78,
+      "symbol": "HCIDeviceEvent.Resume",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 84,
+      "symbol": "HCIPacketType.Command",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 85,
+      "symbol": "HCIPacketType.ACL",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 86,
+      "symbol": "HCIPacketType.SCO",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 87,
+      "symbol": "HCIPacketType.Event",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 88,
+      "symbol": "HCIPacketType.Vendor",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 94,
+      "symbol": "HCISocketOption.DataDirection",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 95,
+      "symbol": "HCISocketOption.Filter",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/HCI.swift",
+      "line": 96,
+      "symbol": "HCISocketOption.TimeStamp",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 169,
+      "symbol": "L2CAPSocket.addressType",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 302,
+      "symbol": "L2CAPSocketError",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 310,
+      "symbol": "L2CAPSocketError.connectionError",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 318,
+      "symbol": "L2CAPSocket.Options.outputMaximumTransmissionUnit",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 319,
+      "symbol": "L2CAPSocket.Options.inputMaximumTransmissionUnit",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 320,
+      "symbol": "L2CAPSocket.Options.flushTo",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 321,
+      "symbol": "L2CAPSocket.Options.mode",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 322,
+      "symbol": "L2CAPSocket.Options.fcs",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 323,
+      "symbol": "L2CAPSocket.Options.maxTX",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 324,
+      "symbol": "L2CAPSocket.Options.txwinSize",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 338,
+      "symbol": "L2CAPSocket.ConnectionResult",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 340,
+      "symbol": "L2CAPSocket.ConnectionResult.success",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 341,
+      "symbol": "L2CAPSocket.ConnectionResult.pending",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 342,
+      "symbol": "L2CAPSocket.ConnectionResult.badPSM",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 343,
+      "symbol": "L2CAPSocket.ConnectionResult.secBlock",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 344,
+      "symbol": "L2CAPSocket.ConnectionResult.noMemory",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 347,
+      "symbol": "L2CAPSocket.ConnectionStatus",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 349,
+      "symbol": "L2CAPSocket.ConnectionStatus.noInfo",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 350,
+      "symbol": "L2CAPSocket.ConnectionStatus.authenticationPending",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/L2CAP.swift",
+      "line": 351,
+      "symbol": "L2CAPSocket.ConnectionStatus.authorizationPending",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/LinkMode.swift",
+      "line": 11,
+      "symbol": "LinkMode",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/LinkMode.swift",
+      "line": 13,
+      "symbol": "LinkMode.accept",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/LinkMode.swift",
+      "line": 14,
+      "symbol": "LinkMode.master",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/LinkMode.swift",
+      "line": 15,
+      "symbol": "LinkMode.authenticated",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/LinkMode.swift",
+      "line": 16,
+      "symbol": "LinkMode.encrypted",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/LinkMode.swift",
+      "line": 17,
+      "symbol": "LinkMode.trusted",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/LinkMode.swift",
+      "line": 18,
+      "symbol": "LinkMode.reliable",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/LinkMode.swift",
+      "line": 19,
+      "symbol": "LinkMode.secure",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/LowEnergyConnection.swift",
+      "line": 21,
+      "symbol": "Adapter.lowEnergyCreateConnection(address:type:ownAddressType:commandTimeout:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/LowEnergyConnection.swift",
+      "line": 33,
+      "symbol": "Adapter.lowEnergyCreateConnection(parameters:commandTimeout:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/LowEnergyConnection.swift",
+      "line": 63,
+      "symbol": "Adapter.updateLowEnergyConnection(handle:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/LowEnergyScan.swift",
+      "line": 55,
+      "symbol": "Adapter.lowEnergyScan(duration:filterDuplicates:parameters:commandTimeout:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/Scan.swift",
+      "line": 67,
+      "symbol": "Adapter.DeviceClass",
+      "symbol_kind": "source.lang.swift.decl.typealias",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/Scan.swift",
+      "line": 82,
+      "symbol": "Adapter.InquiryResult",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/Scan.swift",
+      "line": 87,
+      "symbol": "Adapter.InquiryResult.pscanRepMode",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/Scan.swift",
+      "line": 89,
+      "symbol": "Adapter.InquiryResult.pscanPeriodMode",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/Scan.swift",
+      "line": 91,
+      "symbol": "Adapter.InquiryResult.pscanMode",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/Scan.swift",
+      "line": 93,
+      "symbol": "Adapter.InquiryResult.deviceClass",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/Scan.swift",
+      "line": 95,
+      "symbol": "Adapter.InquiryResult.clockOffset",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/SecurityType.swift",
+      "line": 12,
+      "symbol": "SecurityLevel.sdp",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/SecurityType.swift",
+      "line": 13,
+      "symbol": "SecurityLevel.low",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/SecurityType.swift",
+      "line": 14,
+      "symbol": "SecurityLevel.medium",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/SecurityType.swift",
+      "line": 15,
+      "symbol": "SecurityLevel.high",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/SecurityType.swift",
+      "line": 16,
+      "symbol": "SecurityLevel.fips",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/SecurityType.swift",
+      "line": 18,
+      "symbol": "SecurityLevel.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/SecurityType.swift",
+      "line": 23,
+      "symbol": "<(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.free",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux/Sources/BluetoothLinux/iBeacon.swift",
+      "line": 50,
+      "symbol": "Adapter.enableLowEnergyAdvertising(_:timeout:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    }
+  ],
+  "source_directory": "/Users/coleman/Developer/BluetoothLinux/BluetoothLinux"
+}
