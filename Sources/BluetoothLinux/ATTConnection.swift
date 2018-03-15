@@ -225,12 +225,16 @@ internal final class ATTConnection {
         // Only request and indication PDUs should have response callbacks. 
         switch type {
             
-        case .request, .indication: // Indication handles confirmation
+        case .request,
+             .indication: // Indication handles confirmation
             
             guard response != nil
                 else { return nil }
             
-        default:
+        case .response,
+             .command,
+             .confirmation,
+             .notification:
             
             guard response == nil
                 else { return nil }
@@ -261,7 +265,10 @@ internal final class ATTConnection {
             
             indicationQueue.append(sendOpcode)
             
-        case .command, .notification, .response, .confirmation:
+        case .response,
+             .command,
+             .confirmation,
+             .notification:
             
             writeQueue.append(sendOpcode)
         }

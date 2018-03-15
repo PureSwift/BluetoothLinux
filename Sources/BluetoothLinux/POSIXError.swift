@@ -24,7 +24,9 @@ public extension POSIXError {
     /// Creates `POSIXError` from error code.
     init(code: POSIXErrorCode) {
         
-        let nsError = NSError(domain: NSPOSIXErrorDomain, code: Int(code.rawValue), userInfo: nil)
+        let nsError = NSError(domain: NSPOSIXErrorDomain,
+                              code: Int(code.rawValue),
+                              userInfo: nil)
         
         self.init(_nsError: nsError)
     }
