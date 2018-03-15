@@ -10,11 +10,11 @@ import Foundation
 
 public enum LinkMode: UInt16 {
     
-    case Accept         = 0x8000
-    case Master         = 0x0001
-    case Authenticated  = 0x0002
-    case Encrypted      = 0x0004
-    case Trusted        = 0x0008
-    case Reliable       = 0x0010
-    case Secure         = 0x0020
+    case accept         = 0x8000
+    case master         = 0x0001
+    case authenticated  = 0x0002
+    case encrypted      = 0x0004
+    case trusted        = 0x0008
+    case reliable       = 0x0010
+    case secure         = 0x0020
 }

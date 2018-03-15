@@ -92,7 +92,8 @@ public enum AdapterError: Error {
     /// A method that changed the adapter's filter had en internal error, 
     /// and unsuccessfully tried to restore the previous filter.
     ///
-    /// First error is the method's error. Second is the error while trying to restore the filter
+    /// First error is the method's error.
+    /// The second error is the error while trying to restore the filter.
     case couldNotRestoreFilter(Error, Error)
     
     /// The recieved data could not be parsed correctly.
@@ -119,8 +120,10 @@ internal func HCIOpenDevice(_ deviceIdentifier: CInt) throws -> CInt {
         }
     }
     
-    guard didBind
-        else { close(hciSocket); throw POSIXError.fromErrno! }
+    guard didBind else {
+        close(hciSocket)
+        throw POSIXError.fromErrno!
+    }
     
     return hciSocket
 }
@@ -143,7 +146,7 @@ internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(
     
     // request device list
     let ioctlValue = withUnsafeMutablePointer(to: &deviceList) {
-        InputOutputControl(hciSocket, HCI.IOCTL.GetDeviceList, $0)
+        IOControl(hciSocket, HCI.IOCTL.GetDeviceList, $0)
     }
     
     guard ioctlValue >= 0 else { throw POSIXError.fromErrno! }
@@ -179,7 +182,7 @@ internal func HCIGetRoute(_ address: Address? = nil) throws -> CInt? {
         deviceInfo.identifier = UInt16(deviceIdentifier)
 
         guard withUnsafeMutablePointer(to: &deviceInfo, {
-            InputOutputControl(dd, HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0
+            IOControl(dd, HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0
             else { throw POSIXError.fromErrno! }
 
         return deviceInfo.address == address
@@ -200,7 +203,7 @@ internal func HCIDeviceInfo(_ deviceIdentifier: CInt) throws -> HCIDeviceInforma
     deviceInfo.identifier = UInt16(deviceIdentifier)
     
     guard withUnsafeMutablePointer(to: &deviceInfo, {
-        InputOutputControl(hciSocket, HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0
+        IOControl(hciSocket, HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0
         else { throw POSIXError.fromErrno! }
     
     return deviceInfo

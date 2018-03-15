@@ -17,7 +17,7 @@
  @param pointer Untyped pointer to memory.
  */
 static inline int swift_bluetooth_ioctl(int fd, unsigned long int request, void *pointer)
-__attribute__((swift_name("InputOutputControl(_:_:_:)")))
+__attribute__((swift_name("IOControl(_:_:_:)")))
 {
     return ioctl(fd, request, pointer);
 }

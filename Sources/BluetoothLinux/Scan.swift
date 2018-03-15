@@ -126,7 +126,7 @@ internal func HCIInquiry(_ deviceIdentifier: CInt, duration: Int, scanLimit: Int
         return
     }
     
-    guard InputOutputControl(deviceDescriptor, HCI.IOCTL.Inquiry, UnsafeMutableRawPointer(buffer) ) >= 0
+    guard IOControl(deviceDescriptor, HCI.IOCTL.Inquiry, UnsafeMutableRawPointer(buffer) ) >= 0
         else { throw POSIXError.fromErrno! }
     
     let resultCount = buffer.withMemoryRebound(to: HCIInquiryRequest.self, capacity: 1) { (inquiryRequest) in
