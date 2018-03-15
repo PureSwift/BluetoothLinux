@@ -5,6 +5,6 @@
 # ------------------------------
 
 git submodule update --remote
+cd BluetoothLinux
 
-jazzy -o ./ \
-      --source-directory BluetoothLinux/
+jazzy -o ../

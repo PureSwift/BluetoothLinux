@@ -1,0 +1,3 @@
+[submodule "BluetoothLinux"]
+	path = BluetoothLinux
+	url = https://github.com/PureSwift/BluetoothLinux.git
