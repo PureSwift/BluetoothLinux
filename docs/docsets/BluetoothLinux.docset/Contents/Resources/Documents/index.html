@@ -200,22 +200,57 @@
         <section class="section">
           <div class="section-content">
             
-            <h1 id='bluetoothlinux' class='heading'>BluetoothLinux</h1>
+            <p><img src="https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/PureSwiftBluetoothLinux.png" alt="BluetoothLinux"></p>
 
-<p><a href="https://travis-ci.org/PureSwift/BluetoothLinux"><img src="https://travis-ci.org/PureSwift/BluetoothLinux.svg?branch=master" alt="Build Status"></a></p>
+<p><a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-3.2-orange.svg?style=flat" alt="Swift"></a>
+<a href="https://swift.org"><img src="https://img.shields.io/badge/platform-linux-lightgrey.svg" alt="Platform"></a>
+<a href="https://github.com/PureSwift/BluetoothLinux/releases"><img src="https://img.shields.io/github/release/PureSwift/BluetoothLinux" alt="Release"></a>
+<a href="https://travis-ci.org/PureSwift/BluetoothLinux"><img src="https://travis-ci.org/PureSwift/BluetoothLinux.svg?branch=master" alt="Build Status"></a>
+<a href="https://tldrlegal.com/license/mit-license"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat" alt="License"></a>
+<a href="https://codebeat.co/projects/github-com-pureswift-bluetoothlinux-master"><img src="https://codebeat.co/badges/3eaf4fc3-6514-4f2d-83d5-ffd879f319d2" alt="CodeBeat"></a></p>
+
+<p><a href="https://github.com/apple/swift-package-manager"><img src="https://img.shields.io/badge/SPM-compatible-4BC51D.svg?style=flat" alt="SPM compatible"></a>
+<a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat" alt="Carthage compatible"></a></p>
 
 <p>Pure Swift Bluetooth Stack for Linux</p>
 
 <p>Does not require <a href="https://www.bluez.org">BlueZ</a>, communicates directly with the Linux kernel and Bluetooth controller. </p>
-<h2 id='testing' class='heading'>Testing</h2>
+<h2 id='usage' class='heading'>Usage</h2>
+<pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">Bluetooth</span>
+<span class="kd">import</span> <span class="kt">BluetoothLinux</span>
 
-<p>I recommend <a href="https://itunes.apple.com/us/app/lightblue-explorer-bluetooth/id557428110?mt=8">LightBlue Explorer</a> and <a href="https://itunes.apple.com/us/app/locate-beacon/id738709014?mt=8">Locate Beacon</a> to verify the iBeacon is advertising. The iBeacon test case is already configured to use a UUID that is preinstalled in the <em>Locate Beacon</em> app.</p>
+<span class="k">guard</span> <span class="k">let</span> <span class="nv">adapter</span> <span class="o">=</span> <span class="k">try</span><span class="p">?</span> <span class="kt">Adapter</span><span class="p">()</span>
+    <span class="k">else</span> <span class="p">{</span> <span class="kt">Error</span><span class="p">(</span><span class="s">"No Bluetooth adapters found"</span><span class="p">)</span> <span class="p">}</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="s">"Found Bluetooth adapter with device ID: </span><span class="se">\(</span><span class="n">adapter</span><span class="o">.</span><span class="n">identifier</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+
+<span class="k">let</span> <span class="nv">iBeaconUUID</span> <span class="o">=</span> <span class="kt">Foundation</span><span class="o">.</span><span class="kt">UUID</span><span class="p">(</span><span class="nv">rawValue</span><span class="p">:</span> <span class="s">"E2C56DB5-DFFB-48D2-B060-D0F5A71096E0"</span><span class="p">)</span><span class="o">!</span>
+
+<span class="k">do</span> <span class="p">{</span> <span class="k">try</span> <span class="n">adapter</span><span class="o">.</span><span class="nf">enableBeacon</span><span class="p">(</span><span class="nv">uuid</span><span class="p">:</span> <span class="n">iBeaconUUID</span><span class="p">,</span> <span class="nv">major</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nv">minor</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nv">rssi</span><span class="p">:</span> <span class="o">-</span><span class="mi">29</span><span class="p">)</span> <span class="p">}</span>
+
+<span class="k">catch</span> <span class="p">{</span> <span class="nf">print</span><span class="p">(</span><span class="s">"Error enabling iBeacon: </span><span class="se">\(</span><span class="n">error</span><span class="se">)</span><span class="s">"</span><span class="p">)</span> <span class="p">}</span>
+</code></pre>
+<h2 id='installation' class='heading'>Installation</h2>
+<h3 id='swift-package-manager' class='heading'>Swift Package Manager</h3>
+<pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">PackageDescription</span>
+
+<span class="k">let</span> <span class="nv">package</span> <span class="o">=</span> <span class="kt">Package</span><span class="p">(</span>
+    <span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span>
+        <span class="o">.</span><span class="kt">Package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/PureSwift/BluetoothLinux.git"</span><span class="p">,</span> <span class="nv">majorVersion</span><span class="p">:</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="p">]</span>
+<span class="p">)</span>
+</code></pre>
 <h2 id='documentation' class='heading'>Documentation</h2>
 
 <p>Documentation can be generated with <a href="https://github.com/realm/jazzy">Jazzy</a>.</p>
 <pre class="highlight plaintext"><code>swift package generate-xcodeproj
 jazzy
 </code></pre>
+
+<p>Read the documentation <a href="http://pureswift.github.io/BluetoothLinux/docs/">here</a>. For more information, see the <a href="https://github.com/PureSwift/BluetoothLinux/tree/gh-pages">gh-pages</a> branch.</p>
+<h2 id='testing' class='heading'>Testing</h2>
+
+<p>I recommend <a href="https://itunes.apple.com/us/app/lightblue-explorer-bluetooth/id557428110?mt=8">LightBlue Explorer</a> and <a href="https://itunes.apple.com/us/app/locate-beacon/id738709014?mt=8">Locate Beacon</a> to verify the iBeacon is advertising. The iBeacon test case is already configured to use a UUID that is preinstalled in the <em>Locate Beacon</em> app.</p>
 <h2 id='troubleshooting' class='heading'>Troubleshooting</h2>
 
 <p>Do not test in Parallels or VMware with the built in Bluetooth adapter found in Macs. You can, however, use VMWare or Parallels, with a Linux compatible Bluetooth LE USB adapter plugged in. VirtualBox will work with the builtin adapter on Macs.</p>
@@ -224,13 +259,16 @@ jazzy
 <h2 id='see-also' class='heading'>See Also</h2>
 
 <ul>
-<li><a href="https://github.com/PureSwift/Bluetooth">Bluetooth</a> - Pure Swift Bluetooth Definitions</li>
+<li><a href="https://github.com/PureSwift/Bluetooth">Bluetooth</a> - Pure Swift Bluetooth Definitions.</li>
 <li><a href="https://github.com/PureSwift/GATT">GATT</a> - Bluetooth Generic Attribute Profile (GATT) for Swift</li>
 <li><a href="https://github.com/PureSwift/SwiftFoundation">SwiftFoundation</a> - Cross-Platform, Protocol-Oriented Programming base library to complement the Swift Standard Library.</li>
 <li><a href="https://github.com/PureSwift/Cacao">Cacao</a> - Pure Swift Cross-platform UIKit</li>
 <li><a href="https://github.com/PureSwift/Silica">Silica</a> - Pure Swift CoreGraphics (Quartz2D) implementation</li>
 <li><a href="https://github.com/PureSwift/Predicate">Predicate</a> - Pure Swift Predicate implementation</li>
 </ul>
+<h2 id='license' class='heading'>License</h2>
+
+<p><strong>BluetoothLinux</strong> is released under the MIT license. See LICENSE for details.</p>
 
           </div>
         </section>
