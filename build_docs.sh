@@ -7,6 +7,6 @@
 git submodule update --remote
 cd BluetoothLinux
 swift package generate-xcodeproj
-rm .jazzy.yaml
+cp .jazzy.yaml ../
 cd ../
-jazzy -o ./
+jazzy --source-directory BluetoothLinux/
