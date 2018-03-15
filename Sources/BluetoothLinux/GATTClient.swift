@@ -231,7 +231,7 @@ public final class GATTClient {
      
      This sub-procedure is used to write a Characteristic Value to a server when the client knows the Characteristic Value Handle. This sub-procedure only writes the first (ATT_MTU – 3) octets of a Characteristic Value. This sub-procedure cannot be used to write a long Attribute; instead the Write Long Characteristic Values sub-procedure should be used.
      
-     ![Image](./Assets/WriteCharacteristicValue.png)
+     ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/WriteCharacteristicValue.png)
      */
     public func writeCharacteristic(_ characteristic: Characteristic,
                                     data: Data,
