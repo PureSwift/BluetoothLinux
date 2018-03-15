@@ -20,6 +20,9 @@ public final class GATTClient {
     @_versioned
     internal let connection: ATTConnection
     
+    /// Currently writing a long value.
+    private var inLongWrite: Bool = false
+    
     // MARK: - Initialization
     
     deinit {
@@ -190,18 +193,24 @@ public final class GATTClient {
             
             if let completion = completion {
                 
-                writeCharacteristicValue(characteristic, data: data, completion: completion)
+                writeCharacteristicValue(characteristic,
+                                         data: data,
+                                         completion: completion)
                 
             } else {
                 
-                writeCharacteristicCommand(characteristic, data: data)
+                writeCharacteristicCommand(characteristic,
+                                           data: data)
             }
             
         } else {
             
             let completion = completion ?? { _ in }
             
-            writeLongCharacteristicValue(data: data, reliableWrites: reliableWrites, completion: completion)
+            writeLongCharacteristicValue(characteristic,
+                                         data: data,
+                                         reliableWrites: reliableWrites,
+                                         completion: completion)
         }
     }
     
@@ -418,7 +427,8 @@ public final class GATTClient {
      
      This sub-procedure is used to write a Characteristic Value to a server when the client knows the Characteristic Value Handle but the length of the Characteristic Value is longer than can be sent in a single Write Request Attribute Protocol message.
      */
-    public func writeLongCharacteristicValue(data: Data,
+    public func writeLongCharacteristicValue(_ characteristic: Characteristic,
+                                             data: Data,
                                              reliableWrites: Bool = false,
                                              completion: @escaping (GATTClientResponse<()>) -> ()) {
         
@@ -431,7 +441,24 @@ public final class GATTClient {
         // The Prepare Write Request is repeated until the complete Characteristic Value has been transferred,
         // after which an Executive Write Request is used to write the complete value.
         
+        guard inLongWrite == false
+            else { completion(.error(GATTClientError.inLongWrite)); return }
         
+        let bytes = [UInt8](data)
+        
+        let firstValuePart = [UInt8](bytes.prefix(connection.maximumTransmissionUnit - 5))
+        
+        let pdu = ATTPrepareWriteRequest(handle: characteristic.handle.value,
+                                         offset: 0x00,
+                                         partValue: firstValuePart)
+        
+        let operation = WriteOperation(uuid: characteristic.uuid,
+                                       data: bytes,
+                                       reliableWrites: reliableWrites,
+                                       lastRequest: pdu,
+                                       completion: completion)
+        
+        send(pdu) { [unowned self] in self.prepareWrite($0, operation: operation) }
     }
     
     // MARK: - Callbacks
@@ -747,12 +774,56 @@ public final class GATTClient {
     /**
      Prepare Write Response
      
-     
      An Error Response shall be sent by the server in response to the Prepare Write Request if insufficient authentication, insufficient authorization, insufficient encryption key size is used by the client, or if a write operation is not permitted on the Characteristic Value. The Error Code parameter is set as specified in the Attribute Protocol. If the Attribute Value that is written is the wrong size, or has an invalid value as defined by the profile, then the write shall not succeed and an Error Response shall be sent with the Error Code set to Application Error by the server.
      */
     private func prepareWrite(_ response: ATTResponse<ATTPrepareWriteResponse>, operation: WriteOperation) {
         
-        
+        switch response {
+            
+        case let .error(error):
+            
+            operation.error(error)
+            
+        case let .value(pdu):
+            
+            operation.receivedData += pdu.partValue
+            
+            // verify data sent
+            if operation.reliableWrites {
+                
+                guard pdu.handle == operation.lastRequest.handle,
+                    pdu.offset == operation.lastRequest.offset,
+                    pdu.partValue == operation.lastRequest.partValue else {
+                        inLongWrite = false
+                        operation.completion(.error(GATTClientError.invalidResponse(pdu)))
+                        return
+                }
+            }
+            
+            let offset = operation.lastRequest.offset + UInt16(operation.lastRequest.partValue.count)
+            
+            // all data sent
+            guard offset < operation.data.count else {
+                inLongWrite = false
+                operation.success()
+                return
+            }
+            
+            // write next part
+            let length = connection.maximumTransmissionUnit - 5
+            let attributeValuePart = [UInt8](operation.data[Int(offset) ..<  Int(offset) + length])
+            assert(attributeValuePart.count == length)
+            
+            let pdu = ATTPrepareWriteRequest(handle: operation.lastRequest.handle,
+                                             offset: offset,
+                                             partValue: attributeValuePart)
+            
+            operation.lastRequest = pdu
+            operation.sentData += attributeValuePart
+            
+            assert(inLongWrite)
+            send(pdu) { [unowned self] in self.prepareWrite($0, operation: operation) }
+        }
     }
 }
 
@@ -772,6 +843,9 @@ public enum GATTClientError: Error {
     
     /// The GATT server responded with a PDU that has invalid values.
     case invalidResponse(ATTProtocolDataUnit)
+    
+    /// Already writing long value.
+    case inLongWrite
 }
 
 public enum GATTClientResponse <Value> {
@@ -969,15 +1043,31 @@ private extension GATTClient {
         
         let completion: Completion
         
-        let sentData: [UInt8]
+        let reliableWrites: Bool
         
-        let receivedData: [UInt8]
+        let data: [UInt8]
+        
+        var sentData: [UInt8]
+        
+        var receivedData: [UInt8]
+        
+        var lastRequest: ATTPrepareWriteRequest
         
         init(uuid: BluetoothUUID,
+             data: [UInt8],
+             reliableWrites: Bool,
+             lastRequest: ATTPrepareWriteRequest,
              completion: @escaping Completion) {
+            
+            precondition(data.isEmpty == false)
             
             self.uuid = uuid
             self.completion = completion
+            self.data = data
+            self.reliableWrites = reliableWrites
+            self.lastRequest = lastRequest
+            self.sentData = lastRequest.partValue
+            self.receivedData = []
         }
         
         @inline(__always)
