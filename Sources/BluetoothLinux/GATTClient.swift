@@ -778,11 +778,18 @@ public final class GATTClient {
      */
     private func prepareWrite(_ response: ATTResponse<ATTPrepareWriteResponse>, operation: WriteOperation) {
         
+        @inline(__always)
+        func complete(_ completion: (WriteOperation) -> ()) {
+            
+            inLongWrite = false
+            completion(operation)
+        }
+        
         switch response {
             
         case let .error(error):
             
-            operation.error(error)
+            complete { $0.error(error) }
             
         case let .value(pdu):
             
@@ -793,21 +800,15 @@ public final class GATTClient {
                 
                 guard pdu.handle == operation.lastRequest.handle,
                     pdu.offset == operation.lastRequest.offset,
-                    pdu.partValue == operation.lastRequest.partValue else {
-                        inLongWrite = false
-                        operation.completion(.error(GATTClientError.invalidResponse(pdu)))
-                        return
-                }
+                    pdu.partValue == operation.lastRequest.partValue
+                    else { complete { $0.completion(.error(GATTClientError.invalidResponse(pdu))) }; return }
             }
             
             let offset = operation.lastRequest.offset + UInt16(operation.lastRequest.partValue.count)
             
             // all data sent
-            guard offset < operation.data.count else {
-                inLongWrite = false
-                operation.success()
-                return
-            }
+            guard offset < operation.data.count
+                else { complete { $0.success() }; return }
             
             // write next part
             let length = connection.maximumTransmissionUnit - 5
@@ -821,7 +822,6 @@ public final class GATTClient {
             operation.lastRequest = pdu
             operation.sentData += attributeValuePart
             
-            assert(inLongWrite)
             send(pdu) { [unowned self] in self.prepareWrite($0, operation: operation) }
         }
     }
