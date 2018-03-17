@@ -20,6 +20,9 @@ public final class GATTClient {
     @_versioned
     internal let connection: ATTConnection
     
+    /// Currently writing a long value.
+    private var inLongWrite: Bool = false
+    
     // MARK: - Initialization
     
     deinit {
@@ -59,6 +62,7 @@ public final class GATTClient {
     /// Discover All Primary Services
     ///
     /// This sub-procedure is used by a client to discover all the primary services on a server.
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/DiscoverAllPrimaryServices.png)
     ///
     /// - Parameter completion: The completion closure.
     public func discoverAllPrimaryServices(completion: @escaping (GATTClientResponse<[Service]>) -> ()) {
@@ -74,6 +78,7 @@ public final class GATTClient {
     /// This sub-procedure is used by a client to discover a specific primary service on a server
     /// when only the Service UUID is known. The specific primary service may exist multiple times on a server. 
     /// The primary service being discovered is identified by the service UUID.
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/DiscoverPrimaryServiceByServiceUUID.png)
     ///
     /// - Parameter uuid: The UUID of the service to find.
     /// - Parameter completion: The completion closure.
@@ -92,6 +97,10 @@ public final class GATTClient {
     /// This sub-procedure is used by a client to find all the characteristic declarations within 
     /// a service definition on a server when only the service handle range is known.
     /// The service specified is identified by the service handle range.
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/DiscoverAllCharacteristics.png)
+    ///
+    /// - Parameter service: The service.
+    /// - Parameter completion: The completion closure.
     public func discoverAllCharacteristics(of service: Service,
                                            completion: @escaping (GATTClientResponse<[Characteristic]>) -> ()) {
         
@@ -109,6 +118,11 @@ public final class GATTClient {
     /// only the service handle ranges are known and the characteristic UUID is known. 
     /// The specific service may exist multiple times on a server. 
     /// The characteristic being discovered is identified by the characteristic UUID.
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/DiscoverCharacteristicsByUUID.png)
+    ///
+    /// - Parameter service: The service of the characteristics to find.
+    /// - Parameter uuid: The UUID of the characteristics to find.
+    /// - Parameter completion: The completion closure.
     public func discoverCharacteristics(of service: Service,
                                         by uuid: BluetoothUUID,
                                         completion: @escaping (GATTClientResponse<[Characteristic]>) -> ()) {
@@ -120,10 +134,43 @@ public final class GATTClient {
         discoverCharacteristics(uuid: uuid, service: service, completion: completion)
     }
     
+    /**
+     Discover All Characteristic Descriptors
+     
+     This sub-procedure is used by a client to find all the characteristic descriptor’s Attribute Handles and Attribute Types within a characteristic definition when only the characteristic handle range is known. The characteristic specified is identified by the characteristic handle range.
+     
+     ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/DiscoverAllCharacteristicDescriptors.png)
+     
+     
+     */
+    public func discoverAllCharacteristicDescriptors() {
+        
+        /**
+         The Attribute Protocol Find Information Request shall be used with the Starting Handle set
+         to the handle of the specified characteristic value + 1 and the Ending Handle set to the
+         ending handle of the specified characteristic.
+         
+         Two possible responses can be sent from the server for the Find Information Request: Find Information Response and Error Response.
+         
+         Error Response is returned if an error occurred on the server.
+         
+         Find Information Response returns a list of Attribute Handle and Attribute Value pairs corresponding to the characteristic descriptors in the characteristic definition. The Attribute Handle is the handle for the characteristic descriptor declaration. The Attribute Value is the Characteristic Descriptor UUID. The Find Information Request shall be called again with the Starting Handle set to one greater than the last Attribute Handle in the Find Information Response.
+         
+         The sub-procedure is complete when the Error Response is received and the Error Code is set to Attribute Not Found or the Find Information Response has an Attribute Handle that is equal to the Ending Handle of the request.
+         It is permitted to end the sub-procedure early if a desired Characteristic Descriptor is found prior to discovering all the characteristic descriptors of the specified characteristic.
+         
+         */
+        
+        
+        
+    }
+    
     /// Read Characteristic Value
     ///
     /// This sub-procedure is used to read a Characteristic Value from a server when the client knows
     /// the Characteristic Value Handle.
+    ///
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/ReadCharacteristicValue.png)
     public func readCharacteristic(_ characteristic: Characteristic,
                                    completion: @escaping (GATTClientResponse<Data>) -> ()) {
         
@@ -135,6 +182,8 @@ public final class GATTClient {
     ///
     /// This sub-procedure is used to read a Characteristic Value from a server when the client
     /// only knows the characteristic UUID and does not know the handle of the characteristic.
+    ///
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/ReadUsingCharacteristicUUID.png)
     public func readCharacteristics(using uuid: BluetoothUUID,
                                     handleRange: (start: UInt16, end: UInt16) = (.min, .max),
                                     completion: @escaping (GATTClientResponse<[UInt16: Data]>) -> ()) {
@@ -156,9 +205,12 @@ public final class GATTClient {
     
     /// Read Multiple Characteristic Values
     ///
-    /// This sub-procedure is used to read multiple Characteristic Values from a server when the client knows the Characteristic Value Handles.
+    /// This sub-procedure is used to read multiple Characteristic Values from a server when the client
+    /// knows the Characteristic Value Handles.
     ///
-    /// - Note: A client should not use this request for attributes when the Set Of Values parameter could be (ATT_MTU–1)
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/ReadMultipleCharacteristicValues.png)
+    ///
+    /// - Note: A client should not use this request for attributes when the Set Of Values parameter could be `(ATT_MTU–1)`
     /// as it will not be possible to determine if the last attribute value is complete, or if it overflowed.
     public func readCharacteristics(_ characteristics: [Characteristic], completion: @escaping (GATTClientResponse<Data>) -> ()) {
         
@@ -176,78 +228,51 @@ public final class GATTClient {
     }
     
     /**
-     Write Without Response
+     Write Characteristic
      
-     This sub-procedure is used to write a Characteristic Value to a server when the client knows the Characteristic Value Handle and the client does not need an acknowledgement that the write was successfully performed. This sub-procedure only writes the first `(ATT_MTU – 3)` octets of a Characteristic Value. This sub-procedure cannot be used to write a long characteristic; instead the Write Long Characteristic Values sub-procedure should be used.
-     
-     If the Characteristic Value write request is the wrong size, or has an invalid value as defined by the profile, then the write shall not succeed and no error shall be generated by the server.
-     */
-    public func writeCharacteristic(_ characteristic: Characteristic, data: Data) {
-        
-        // The Attribute Protocol Write Command is used for this sub-procedure.
-        // The Attribute Handle parameter shall be set to the Characteristic Value Handle.
-        // The Attribute Value parameter shall be set to the new Characteristic Value.
-        
-        let data = [UInt8](data.prefix(connection.maximumTransmissionUnit - 3))
-        
-        let pdu = ATTWriteCommand(handle: characteristic.handle.value, value: data)
-        
-        send(pdu)
-    }
-    
-    /**
-     Signed Write Without Response
-     
-     This sub-procedure is used to write a Characteristic Value to a server when the client knows the Characteristic Value Handle and the ATT Bearer is not encrypted. This sub-procedure shall only be used if the Characteristic Properties authenticated bit is enabled and the client and server device share a bond.
-     
-     If the authenticated Characteristic Value that is written is the wrong size, has an invalid value as defined by the profile, or the signed value does not authenticate the client, then the write shall not succeed and no error shall be gener- ated by the server.
-     
-     - Note: On BR/EDR, the ATT Bearer is always encrypted, due to the use of Security Mode 4, therefore this sub-procedure shall not be used.
-     */
-    public func writeSignedCharacteristic(_ characteristic: Characteristic, data: Data) {
-        
-        // This sub-procedure only writes the first (ATT_MTU – 15) octets of an Attribute Value.
-        // This sub-procedure cannot be used to write a long Attribute.
-        
-        // The Attribute Protocol Write Command is used for this sub-procedure.
-        // The Attribute Handle parameter shall be set to the Characteristic Value Handle.
-        // The Attribute Value parameter shall be set to the new Characteristic Value authenticated by signing the value.
-        
-        // If a connection is already encrypted with LE security mode 1, level 2 or level 3 as defined in [Vol 3] Part C,
-        // Section 10.2 then, a Write Without Response as defined in Section 4.9.1 shall be used instead of
-        // a Signed Write Without Response.
-        
-        let data = [UInt8](data.prefix(connection.maximumTransmissionUnit - 15))
-        
-        // TODO: Sign Data
-        
-        let pdu = ATTWriteCommand(handle: characteristic.handle.value, value: data)
-        
-        send(pdu)
-    }
-    
-    /**
-     Write Characteristic Value
-     
-     This sub-procedure is used to write a Characteristic Value to a server when the client knows the Characteristic Value Handle. This sub-procedure only writes the first (ATT_MTU – 3) octets of a Characteristic Value. This sub-procedure cannot be used to write a long Attribute; instead the Write Long Characteristic Values sub-procedure should be used.
-     
-     ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/WriteCharacteristicValue.png)
+     Uses the appropriate procecedure to write the characteristic value.
      */
     public func writeCharacteristic(_ characteristic: Characteristic,
                                     data: Data,
-                                    completion: @escaping (GATTClientResponse<()>) -> ()) {
+                                    reliableWrites: Bool = true,
+                                    completion: ((GATTClientResponse<()>) -> ())?) {
         
-        // The Attribute Protocol Write Request is used to for this sub-procedure.
-        // The Attribute Handle parameter shall be set to the Characteristic Value Handle.
-        // The Attribute Value parameter shall be set to the new characteristic.
+        // short value
+        if data.count <= connection.maximumTransmissionUnit - 3 {
+            
+            if let completion = completion {
+                
+                writeCharacteristicValue(characteristic,
+                                         data: data,
+                                         completion: completion)
+                
+            } else {
+                
+                writeCharacteristicCommand(characteristic,
+                                           data: data)
+            }
+            
+        } else {
+            
+            let completion = completion ?? { _ in }
+            
+            writeLongCharacteristicValue(characteristic,
+                                         data: data,
+                                         reliableWrites: reliableWrites,
+                                         completion: completion)
+        }
+    }
+    
+    /**
+     Notifications
+     
+     This sub-procedure is used when a server is configured to notify a Characteristic Value to a client without expecting any Attribute Protocol layer acknowledgment that the notification was successfully received.
+     
+     ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/Notifications.png)
+     */
+    public func registerNotifications() {
         
-        let data = [UInt8](data.prefix(connection.maximumTransmissionUnit - 3))
         
-        let pdu = ATTWriteRequest(handle: characteristic.handle.value, value: data)
-        
-        // A Write Response shall be sent by the server if the write of the Characteristic Value succeeded.
-        
-        send(pdu) { [unowned self] in self.writeResponse($0, completion: completion) }
     }
     
     // MARK: - Private Methods
@@ -348,6 +373,8 @@ public final class GATTClient {
     ///
     /// This sub-procedure is used to read a Characteristic Value from a server when the client knows
     /// the Characteristic Value Handle.
+    ///
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/ReadCharacteristicValue.png)
     private func readCharacteristicValue(_ handle: UInt16, completion: @escaping (GATTClientResponse<Data>) -> ()) {
         
         // The Attribute Protocol Read Request is used with the
@@ -367,6 +394,8 @@ public final class GATTClient {
     /// This sub-procedure is used to read a Characteristic Value from a server when the client knows
     /// the Characteristic Value Handle and the length of the Characteristic Value is longer than can
     /// be sent in a single Read Response Attribute Protocol message.
+    ///
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/ReadLongCharacteristicValues.png)
     @inline(__always)
     private func readLongCharacteristicValue(_ operation: ReadOperation) {
         
@@ -381,6 +410,124 @@ public final class GATTClient {
                                      offset: operation.offset)
         
         send(pdu) { [unowned self] in self.readBlob($0, operation: operation) }
+    }
+    
+    /**
+     Write Without Response
+     
+     This sub-procedure is used to write a Characteristic Value to a server when the client knows the Characteristic Value Handle and the client does not need an acknowledgement that the write was successfully performed. This sub-procedure only writes the first `(ATT_MTU – 3)` octets of a Characteristic Value. This sub-procedure cannot be used to write a long characteristic; instead the Write Long Characteristic Values sub-procedure should be used.
+     
+     If the Characteristic Value write request is the wrong size, or has an invalid value as defined by the profile, then the write shall not succeed and no error shall be generated by the server.
+     */
+    private func writeCharacteristicCommand(_ characteristic: Characteristic, data: Data) {
+        
+        // The Attribute Protocol Write Command is used for this sub-procedure.
+        // The Attribute Handle parameter shall be set to the Characteristic Value Handle.
+        // The Attribute Value parameter shall be set to the new Characteristic Value.
+        
+        let data = [UInt8](data.prefix(connection.maximumTransmissionUnit - 3))
+        
+        let pdu = ATTWriteCommand(handle: characteristic.handle.value, value: data)
+        
+        send(pdu)
+    }
+    
+    /**
+     Signed Write Without Response
+     
+     This sub-procedure is used to write a Characteristic Value to a server when the client knows the Characteristic Value Handle and the ATT Bearer is not encrypted. This sub-procedure shall only be used if the Characteristic Properties authenticated bit is enabled and the client and server device share a bond.
+     
+     If the authenticated Characteristic Value that is written is the wrong size, has an invalid value as defined by the profile, or the signed value does not authenticate the client, then the write shall not succeed and no error shall be gener- ated by the server.
+     
+     ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/SignedWriteWithoutResponse.png)
+     
+     - Note: On BR/EDR, the ATT Bearer is always encrypted, due to the use of Security Mode 4, therefore this sub-procedure shall not be used.
+     */
+    private func writeSignedCharacteristicCommand(_ characteristic: Characteristic, data: Data) {
+        
+        // This sub-procedure only writes the first (ATT_MTU – 15) octets of an Attribute Value.
+        // This sub-procedure cannot be used to write a long Attribute.
+        
+        // The Attribute Protocol Write Command is used for this sub-procedure.
+        // The Attribute Handle parameter shall be set to the Characteristic Value Handle.
+        // The Attribute Value parameter shall be set to the new Characteristic Value authenticated by signing the value.
+        
+        // If a connection is already encrypted with LE security mode 1, level 2 or level 3 as defined in [Vol 3] Part C,
+        // Section 10.2 then, a Write Without Response as defined in Section 4.9.1 shall be used instead of
+        // a Signed Write Without Response.
+        
+        let data = [UInt8](data.prefix(connection.maximumTransmissionUnit - 15))
+        
+        // TODO: Sign Data
+        
+        let pdu = ATTWriteCommand(handle: characteristic.handle.value, value: data)
+        
+        send(pdu)
+    }
+    
+    /**
+     Write Characteristic Value
+     
+     This sub-procedure is used to write a Characteristic Value to a server when the client knows the Characteristic Value Handle. This sub-procedure only writes the first (ATT_MTU – 3) octets of a Characteristic Value. This sub-procedure cannot be used to write a long Attribute; instead the Write Long Characteristic Values sub-procedure should be used.
+     
+     ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/WriteCharacteristicValue.png)
+     */
+    private func writeCharacteristicValue(_ characteristic: Characteristic,
+                                         data: Data,
+                                         completion: @escaping (GATTClientResponse<()>) -> ()) {
+        
+        // The Attribute Protocol Write Request is used to for this sub-procedure.
+        // The Attribute Handle parameter shall be set to the Characteristic Value Handle.
+        // The Attribute Value parameter shall be set to the new characteristic.
+        
+        let data = [UInt8](data.prefix(connection.maximumTransmissionUnit - 3))
+        
+        let pdu = ATTWriteRequest(handle: characteristic.handle.value, value: data)
+        
+        // A Write Response shall be sent by the server if the write of the Characteristic Value succeeded.
+        
+        send(pdu) { [unowned self] in self.write($0, completion: completion) }
+    }
+    
+    /**
+     Write Long Characteristic Values
+     
+     This sub-procedure is used to write a Characteristic Value to a server when the client knows the Characteristic Value Handle but the length of the Characteristic Value is longer than can be sent in a single Write Request Attribute Protocol message.
+     
+    ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/WriteLongCharacteristicValues.png)
+     */
+    private func writeLongCharacteristicValue(_ characteristic: Characteristic,
+                                             data: Data,
+                                             reliableWrites: Bool = false,
+                                             completion: @escaping (GATTClientResponse<()>) -> ()) {
+        
+        // The Attribute Protocol Prepare Write Request and Execute Write Request are used to perform this sub-procedure.
+        // The Attribute Handle parameter shall be set to the Characteristic Value Handle of the Characteristic Value to be written.
+        // The Part Attribute Value parameter shall be set to the part of the Attribute Value that is being written.
+        // The Value Offset parameter shall be the offset within the Characteristic Value to be written.
+        // To write the complete Characteristic Value the offset should be set to 0x0000 for the first Prepare Write Request.
+        // The offset for subsequent Prepare Write Requests is the next octet that has yet to be written.
+        // The Prepare Write Request is repeated until the complete Characteristic Value has been transferred,
+        // after which an Executive Write Request is used to write the complete value.
+        
+        guard inLongWrite == false
+            else { completion(.error(GATTClientError.inLongWrite)); return }
+        
+        let bytes = [UInt8](data)
+        
+        let firstValuePart = [UInt8](bytes.prefix(connection.maximumTransmissionUnit - 5))
+        
+        let pdu = ATTPrepareWriteRequest(handle: characteristic.handle.value,
+                                         offset: 0x00,
+                                         partValue: firstValuePart)
+        
+        let operation = WriteOperation(uuid: characteristic.uuid,
+                                       data: bytes,
+                                       reliableWrites: reliableWrites,
+                                       lastRequest: pdu,
+                                       completion: completion)
+        
+        send(pdu) { [unowned self] in self.prepareWrite($0, operation: operation) }
     }
     
     // MARK: - Callbacks
@@ -679,7 +826,7 @@ public final class GATTClient {
      
      An Error Response shall be sent by the server in response to the Write Request if insufficient authentication, insufficient authorization, insufficient encryption key size is used by the client, or if a write operation is not permitted on the Characteristic Value. The Error Code parameter is set as specified in the Attribute Protocol. If the Characteristic Value that is written is the wrong size, or has an invalid value as defined by the profile, then the value shall not be written and an Error Response shall be sent with the Error Code set to Application Error by the server.
      */
-    private func writeResponse(_ response: ATTResponse<ATTWriteResponse>, completion: (GATTClientResponse<()>) -> ()) {
+    private func write(_ response: ATTResponse<ATTWriteResponse>, completion: (GATTClientResponse<()>) -> ()) {
         
         switch response {
             
@@ -690,6 +837,61 @@ public final class GATTClient {
         case .value: // PDU contains no data
             
             completion(.value(()))
+        }
+    }
+    
+    /**
+     Prepare Write Response
+     
+     An Error Response shall be sent by the server in response to the Prepare Write Request if insufficient authentication, insufficient authorization, insufficient encryption key size is used by the client, or if a write operation is not permitted on the Characteristic Value. The Error Code parameter is set as specified in the Attribute Protocol. If the Attribute Value that is written is the wrong size, or has an invalid value as defined by the profile, then the write shall not succeed and an Error Response shall be sent with the Error Code set to Application Error by the server.
+     */
+    private func prepareWrite(_ response: ATTResponse<ATTPrepareWriteResponse>, operation: WriteOperation) {
+        
+        @inline(__always)
+        func complete(_ completion: (WriteOperation) -> ()) {
+            
+            inLongWrite = false
+            completion(operation)
+        }
+        
+        switch response {
+            
+        case let .error(error):
+            
+            complete { $0.error(error) }
+            
+        case let .value(pdu):
+            
+            operation.receivedData += pdu.partValue
+            
+            // verify data sent
+            if operation.reliableWrites {
+                
+                guard pdu.handle == operation.lastRequest.handle,
+                    pdu.offset == operation.lastRequest.offset,
+                    pdu.partValue == operation.lastRequest.partValue
+                    else { complete { $0.completion(.error(GATTClientError.invalidResponse(pdu))) }; return }
+            }
+            
+            let offset = operation.lastRequest.offset + UInt16(operation.lastRequest.partValue.count)
+            
+            // all data sent
+            guard offset < operation.data.count
+                else { complete { $0.success() }; return }
+            
+            // write next part
+            let length = connection.maximumTransmissionUnit - 5
+            let attributeValuePart = [UInt8](operation.data[Int(offset) ..<  Int(offset) + length])
+            assert(attributeValuePart.count == length)
+            
+            let pdu = ATTPrepareWriteRequest(handle: operation.lastRequest.handle,
+                                             offset: offset,
+                                             partValue: attributeValuePart)
+            
+            operation.lastRequest = pdu
+            operation.sentData += attributeValuePart
+            
+            send(pdu) { [unowned self] in self.prepareWrite($0, operation: operation) }
         }
     }
 }
@@ -710,6 +912,9 @@ public enum GATTClientError: Error {
     
     /// The GATT server responded with a PDU that has invalid values.
     case invalidResponse(ATTProtocolDataUnit)
+    
+    /// Already writing long value.
+    case inLongWrite
 }
 
 public enum GATTClientResponse <Value> {
@@ -890,6 +1095,54 @@ private extension GATTClient {
             }
             
             completion(.value(data))
+        }
+        
+        @inline(__always)
+        func error(_ responseError: ATTErrorResponse) {
+            
+            completion(.error(GATTClientError.errorResponse(responseError)))
+        }
+    }
+    
+    final class WriteOperation {
+        
+        typealias Completion = (GATTClientResponse<Void>) -> ()
+        
+        let uuid: BluetoothUUID
+        
+        let completion: Completion
+        
+        let reliableWrites: Bool
+        
+        let data: [UInt8]
+        
+        var sentData: [UInt8]
+        
+        var receivedData: [UInt8]
+        
+        var lastRequest: ATTPrepareWriteRequest
+        
+        init(uuid: BluetoothUUID,
+             data: [UInt8],
+             reliableWrites: Bool,
+             lastRequest: ATTPrepareWriteRequest,
+             completion: @escaping Completion) {
+            
+            precondition(data.isEmpty == false)
+            
+            self.uuid = uuid
+            self.completion = completion
+            self.data = data
+            self.reliableWrites = reliableWrites
+            self.lastRequest = lastRequest
+            self.sentData = lastRequest.partValue
+            self.receivedData = []
+        }
+        
+        @inline(__always)
+        func success() {
+            
+            completion(.value(()))
         }
         
         @inline(__always)
