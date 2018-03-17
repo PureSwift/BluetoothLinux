@@ -875,23 +875,52 @@ public final class GATTClient {
             
             let offset = operation.lastRequest.offset + UInt16(operation.lastRequest.partValue.count)
             
-            // all data sent
-            guard offset < operation.data.count
-                else { complete { $0.success() }; return }
             
-            // write next part
-            let length = connection.maximumTransmissionUnit - 5
-            let attributeValuePart = [UInt8](operation.data[Int(offset) ..<  Int(offset) + length])
-            assert(attributeValuePart.count == length)
+            if offset < operation.data.count {
+                
+                // write next part
+                let length = connection.maximumTransmissionUnit - 5
+                let attributeValuePart = [UInt8](operation.data[Int(offset) ..<  Int(offset) + length])
+                assert(attributeValuePart.count == length)
+                
+                let pdu = ATTPrepareWriteRequest(handle: operation.lastRequest.handle,
+                                                 offset: offset,
+                                                 partValue: attributeValuePart)
+                
+                operation.lastRequest = pdu
+                operation.sentData += attributeValuePart
+                
+                send(pdu) { [unowned self] in self.prepareWrite($0, operation: operation) }
+                
+            } else {
+                
+                // all data sent
+                
+                let pdu = ATTExecuteWriteRequest(flag: .Write)
+                
+                send(pdu) { [unowned self] in self.executeWrite($0, operation: operation) }
+            }
+        }
+    }
+    
+    private func executeWrite(_ response: ATTResponse<ATTExecuteWriteResponse>, operation: WriteOperation) {
+        
+        @inline(__always)
+        func complete(_ completion: (WriteOperation) -> ()) {
             
-            let pdu = ATTPrepareWriteRequest(handle: operation.lastRequest.handle,
-                                             offset: offset,
-                                             partValue: attributeValuePart)
+            inLongWrite = false
+            completion(operation)
+        }
+        
+        switch response {
             
-            operation.lastRequest = pdu
-            operation.sentData += attributeValuePart
+        case let .error(error):
             
-            send(pdu) { [unowned self] in self.prepareWrite($0, operation: operation) }
+            complete { $0.error(error) }
+            
+        case .value:
+            
+            complete { $0.success() }
         }
     }
 }
