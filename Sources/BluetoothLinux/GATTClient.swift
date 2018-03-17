@@ -873,18 +873,18 @@ public final class GATTClient {
                     else { complete { $0.completion(.error(GATTClientError.invalidResponse(pdu))) }; return }
             }
             
-            let offset = operation.lastRequest.offset + UInt16(operation.lastRequest.partValue.count)
+            let offset = Int(operation.lastRequest.offset) + operation.lastRequest.partValue.count
             
             
             if offset < operation.data.count {
                 
                 // write next part
                 let length = connection.maximumTransmissionUnit - 5
-                let attributeValuePart = [UInt8](operation.data[Int(offset) ..<  Int(offset) + length])
+                let attributeValuePart = [UInt8](operation.data[offset ..<  offset + length])
                 assert(attributeValuePart.count == length)
                 
                 let pdu = ATTPrepareWriteRequest(handle: operation.lastRequest.handle,
-                                                 offset: offset,
+                                                 offset: UInt16(offset),
                                                  partValue: attributeValuePart)
                 
                 operation.lastRequest = pdu
