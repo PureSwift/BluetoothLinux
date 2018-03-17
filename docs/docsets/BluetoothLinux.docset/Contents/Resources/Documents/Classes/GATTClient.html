@@ -381,7 +381,8 @@
                       <div class="abstract">
                         <p>Discover All Primary Services</p>
 
-<p>This sub-procedure is used by a client to discover all the primary services on a server.</p>
+<p>This sub-procedure is used by a client to discover all the primary services on a server.
+<img src="https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/DiscoverAllPrimaryServices.png" alt="Image"></p>
 
                       </div>
                       <div class="declaration">
@@ -431,7 +432,8 @@
 
 <p>This sub-procedure is used by a client to discover a specific primary service on a server
 when only the Service UUID is known. The specific primary service may exist multiple times on a server. 
-The primary service being discovered is identified by the service UUID.</p>
+The primary service being discovered is identified by the service UUID.
+<img src="https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/DiscoverPrimaryServiceByServiceUUID.png" alt="Image"></p>
 
                       </div>
                       <div class="declaration">
@@ -494,7 +496,8 @@ The primary service being discovered is identified by the service UUID.</p>
 
 <p>This sub-procedure is used by a client to find all the characteristic declarations within 
 a service definition on a server when only the service handle range is known.
-The service specified is identified by the service handle range.</p>
+The service specified is identified by the service handle range.
+<img src="https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/DiscoverAllCharacteristics.png" alt="Image"></p>
 
                       </div>
                       <div class="declaration">
@@ -505,6 +508,37 @@ The service specified is identified by the service handle range.</p>
                                        <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Enums/GATTClientResponse.html">GATTClientResponse</a></span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Classes/GATTClient/Characteristic.html">Characteristic</a></span><span class="p">]</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>service</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The service.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The completion closure.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -527,7 +561,8 @@ The service specified is identified by the service handle range.</p>
 <p>This sub-procedure is used by a client to discover service characteristics on a server when 
 only the service handle ranges are known and the characteristic UUID is known. 
 The specific service may exist multiple times on a server. 
-The characteristic being discovered is identified by the characteristic UUID.</p>
+The characteristic being discovered is identified by the characteristic UUID.
+<img src="https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/DiscoverCharacteristicsByUUID.png" alt="Image"></p>
 
                       </div>
                       <div class="declaration">
@@ -537,6 +572,80 @@ The characteristic being discovered is identified by the characteristic UUID.</p
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">discoverCharacteristics</span><span class="p">(</span><span class="n">of</span> <span class="nv">service</span><span class="p">:</span> <span class="kt"><a href="../Classes/GATTClient/Service.html">Service</a></span><span class="p">,</span>
                                     <span class="n">by</span> <span class="nv">uuid</span><span class="p">:</span> <span class="kt">BluetoothUUID</span><span class="p">,</span>
                                     <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Enums/GATTClientResponse.html">GATTClientResponse</a></span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Classes/GATTClient/Characteristic.html">Characteristic</a></span><span class="p">]</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>service</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The service of the characteristics to find.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>uuid</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The UUID of the characteristics to find.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The completion closure.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux10GATTClientC36discoverAllCharacteristicDescriptorsyyF"></a>
+                    <a name="//apple_ref/swift/Method/discoverAllCharacteristicDescriptors()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux10GATTClientC36discoverAllCharacteristicDescriptorsyyF">discoverAllCharacteristicDescriptors()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Discover All Characteristic Descriptors</p>
+
+<p>This sub-procedure is used by a client to find all the characteristic descriptor’s Attribute Handles and Attribute Types within a characteristic definition when only the characteristic handle range is known. The characteristic specified is identified by the characteristic handle range.</p>
+
+<p><img src="https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/DiscoverAllCharacteristicDescriptors.png" alt="Image"></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">discoverAllCharacteristicDescriptors</span><span class="p">()</span></code></pre>
 
                         </div>
                       </div>
@@ -556,10 +665,18 @@ The characteristic being discovered is identified by the characteristic UUID.</p
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Read Characteristic Value</p>
+                        <p>The Attribute Protocol Find Information Request shall be used with the Starting Handle set
+to the handle of the specified characteristic value + 1 and the Ending Handle set to the
+ending handle of the specified characteristic.</p>
 
-<p>This sub-procedure is used to read a Characteristic Value from a server when the client knows
-the Characteristic Value Handle.</p>
+<p>Two possible responses can be sent from the server for the Find Information Request: Find Information Response and Error Response.</p>
+
+<p>Error Response is returned if an error occurred on the server.</p>
+
+<p>Find Information Response returns a list of Attribute Handle and Attribute Value pairs corresponding to the characteristic descriptors in the characteristic definition. The Attribute Handle is the handle for the characteristic descriptor declaration. The Attribute Value is the Characteristic Descriptor UUID. The Find Information Request shall be called again with the Starting Handle set to one greater than the last Attribute Handle in the Find Information Response.</p>
+
+<p>The sub-procedure is complete when the Error Response is received and the Error Code is set to Attribute Not Found or the Find Information Response has an Attribute Handle that is equal to the Ending Handle of the request.
+It is permitted to end the sub-procedure early if a desired Characteristic Descriptor is found prior to discovering all the characteristic descriptors of the specified characteristic.</p>
 
                       </div>
                       <div class="declaration">
@@ -592,6 +709,8 @@ the Characteristic Value Handle.</p>
 <p>This sub-procedure is used to read a Characteristic Value from a server when the client
 only knows the characteristic UUID and does not know the handle of the characteristic.</p>
 
+<p><img src="https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/ReadUsingCharacteristicUUID.png" alt="Image"></p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -621,10 +740,13 @@ only knows the characteristic UUID and does not know the handle of the character
                       <div class="abstract">
                         <p>Read Multiple Characteristic Values</p>
 
-<p>This sub-procedure is used to read multiple Characteristic Values from a server when the client knows the Characteristic Value Handles.</p>
+<p>This sub-procedure is used to read multiple Characteristic Values from a server when the client
+knows the Characteristic Value Handles.</p>
+
+<p><img src="https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/ReadMultipleCharacteristicValues.png" alt="Image"></p>
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
-    A client should not use this request for attributes when the Set Of Values parameter could be (ATT_MTU–1)
+    A client should not use this request for attributes when the Set Of Values parameter could be <code>(ATT_MTU–1)</code>
 as it will not be possible to determine if the last attribute value is complete, or if it overflowed.
 
 </div>
@@ -644,9 +766,9 @@ as it will not be possible to determine if the last attribute value is complete,
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14BluetoothLinux10GATTClientC19writeCharacteristicyAC0E0V_10Foundation4DataV4datatF"></a>
-                    <a name="//apple_ref/swift/Method/writeCharacteristic(_:data:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14BluetoothLinux10GATTClientC19writeCharacteristicyAC0E0V_10Foundation4DataV4datatF">writeCharacteristic(_:data:)</a>
+                    <a name="/s:14BluetoothLinux10GATTClientC19writeCharacteristicyAC0E0V_10Foundation4DataV4dataSb14reliableWritesyAA0C8ResponseOyytGcSg10completiontF"></a>
+                    <a name="//apple_ref/swift/Method/writeCharacteristic(_:data:reliableWrites:completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux10GATTClientC19writeCharacteristicyAC0E0V_10Foundation4DataV4dataSb14reliableWritesyAA0C8ResponseOyytGcSg10completiontF">writeCharacteristic(_:data:reliableWrites:completion:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -654,78 +776,9 @@ as it will not be possible to determine if the last attribute value is complete,
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Write Without Response</p>
+                        <p>Write Characteristic</p>
 
-<p>This sub-procedure is used to write a Characteristic Value to a server when the client knows the Characteristic Value Handle and the client does not need an acknowledgement that the write was successfully performed. This sub-procedure only writes the first <code>(ATT_MTU – 3)</code> octets of a Characteristic Value. This sub-procedure cannot be used to write a long characteristic; instead the Write Long Characteristic Values sub-procedure should be used.</p>
-
-<p>If the Characteristic Value write request is the wrong size, or has an invalid value as defined by the profile, then the write shall not succeed and no error shall be generated by the server.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">writeCharacteristic</span><span class="p">(</span><span class="n">_</span> <span class="nv">characteristic</span><span class="p">:</span> <span class="kt"><a href="../Classes/GATTClient/Characteristic.html">Characteristic</a></span><span class="p">,</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14BluetoothLinux10GATTClientC25writeSignedCharacteristicyAC0F0V_10Foundation4DataV4datatF"></a>
-                    <a name="//apple_ref/swift/Method/writeSignedCharacteristic(_:data:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14BluetoothLinux10GATTClientC25writeSignedCharacteristicyAC0F0V_10Foundation4DataV4datatF">writeSignedCharacteristic(_:data:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Signed Write Without Response</p>
-
-<p>This sub-procedure is used to write a Characteristic Value to a server when the client knows the Characteristic Value Handle and the ATT Bearer is not encrypted. This sub-procedure shall only be used if the Characteristic Properties authenticated bit is enabled and the client and server device share a bond.</p>
-
-<p>If the authenticated Characteristic Value that is written is the wrong size, has an invalid value as defined by the profile, or the signed value does not authenticate the client, then the write shall not succeed and no error shall be gener- ated by the server.</p>
-<div class="aside aside-note">
-    <p class="aside-title">Note</p>
-    On BR/EDR, the ATT Bearer is always encrypted, due to the use of Security Mode 4, therefore this sub-procedure shall not be used.
-
-</div>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">writeSignedCharacteristic</span><span class="p">(</span><span class="n">_</span> <span class="nv">characteristic</span><span class="p">:</span> <span class="kt"><a href="../Classes/GATTClient/Characteristic.html">Characteristic</a></span><span class="p">,</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14BluetoothLinux10GATTClientC19writeCharacteristicyAC0E0V_10Foundation4DataV4datayAA0C8ResponseOyytGc10completiontF"></a>
-                    <a name="//apple_ref/swift/Method/writeCharacteristic(_:data:completion:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14BluetoothLinux10GATTClientC19writeCharacteristicyAC0E0V_10Foundation4DataV4datayAA0C8ResponseOyytGc10completiontF">writeCharacteristic(_:data:completion:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Write Characteristic Value</p>
-
-<p>This sub-procedure is used to write a Characteristic Value to a server when the client knows the Characteristic Value Handle. This sub-procedure only writes the first (ATT_MTU – 3) octets of a Characteristic Value. This sub-procedure cannot be used to write a long Attribute; instead the Write Long Characteristic Values sub-procedure should be used.</p>
-
-<p><img src="https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/WriteCharacteristicValue.png" alt="Image"></p>
+<p>Uses the appropriate procecedure to write the characteristic value.</p>
 
                       </div>
                       <div class="declaration">
@@ -734,7 +787,39 @@ as it will not be possible to determine if the last attribute value is complete,
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">writeCharacteristic</span><span class="p">(</span><span class="n">_</span> <span class="nv">characteristic</span><span class="p">:</span> <span class="kt"><a href="../Classes/GATTClient/Characteristic.html">Characteristic</a></span><span class="p">,</span>
                                 <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span>
-                                <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Enums/GATTClientResponse.html">GATTClientResponse</a></span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">())</span></code></pre>
+                                <span class="nv">reliableWrites</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                                <span class="nv">completion</span><span class="p">:</span> <span class="p">((</span><span class="kt"><a href="../Enums/GATTClientResponse.html">GATTClientResponse</a></span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">())?)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux10GATTClientC21registerNotificationsyyF"></a>
+                    <a name="//apple_ref/swift/Method/registerNotifications()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux10GATTClientC21registerNotificationsyyF">registerNotifications()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Notifications</p>
+
+<p>This sub-procedure is used when a server is configured to notify a Characteristic Value to a client without expecting any Attribute Protocol layer acknowledgment that the notification was successfully received.</p>
+
+<p><img src="https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/Notifications.png" alt="Image"></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">registerNotifications</span><span class="p">()</span></code></pre>
 
                         </div>
                       </div>
@@ -809,7 +894,7 @@ as it will not be possible to determine if the last attribute value is complete,
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">PureSwift</a>. All rights reserved. (Last updated: 2018-03-15)</p>
+      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">PureSwift</a>. All rights reserved. (Last updated: 2018-03-16)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

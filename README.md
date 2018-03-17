@@ -89,7 +89,7 @@ License
 [mit-url]: https://tldrlegal.com/license/mit-license
 [build-status-badge]: https://travis-ci.org/PureSwift/BluetoothLinux.svg?branch=master
 [build-status-url]: https://travis-ci.org/PureSwift/BluetoothLinux
-[release-badge]: https://img.shields.io/github/release/PureSwift/BluetoothLinux
+[release-badge]: https://img.shields.io/github/release/PureSwift/BluetoothLinux.svg
 [release-url]: https://github.com/PureSwift/BluetoothLinux/releases
 [spm-badge]: https://img.shields.io/badge/SPM-compatible-4BC51D.svg?style=flat
 [spm-url]: https://github.com/apple/swift-package-manager

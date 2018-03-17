@@ -3,3 +3,4 @@ Packages/*
 Carthage/*
 Headers/*
 build/
+BluetoothLinux.xcodeproj
