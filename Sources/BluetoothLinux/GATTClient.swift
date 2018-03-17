@@ -62,6 +62,7 @@ public final class GATTClient {
     /// Discover All Primary Services
     ///
     /// This sub-procedure is used by a client to discover all the primary services on a server.
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/DiscoverAllPrimaryServices.png)
     ///
     /// - Parameter completion: The completion closure.
     public func discoverAllPrimaryServices(completion: @escaping (GATTClientResponse<[Service]>) -> ()) {
@@ -77,6 +78,7 @@ public final class GATTClient {
     /// This sub-procedure is used by a client to discover a specific primary service on a server
     /// when only the Service UUID is known. The specific primary service may exist multiple times on a server. 
     /// The primary service being discovered is identified by the service UUID.
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/DiscoverPrimaryServiceByServiceUUID.png)
     ///
     /// - Parameter uuid: The UUID of the service to find.
     /// - Parameter completion: The completion closure.
@@ -95,6 +97,10 @@ public final class GATTClient {
     /// This sub-procedure is used by a client to find all the characteristic declarations within 
     /// a service definition on a server when only the service handle range is known.
     /// The service specified is identified by the service handle range.
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/DiscoverAllCharacteristics.png)
+    ///
+    /// - Parameter service: The service.
+    /// - Parameter completion: The completion closure.
     public func discoverAllCharacteristics(of service: Service,
                                            completion: @escaping (GATTClientResponse<[Characteristic]>) -> ()) {
         
@@ -112,6 +118,11 @@ public final class GATTClient {
     /// only the service handle ranges are known and the characteristic UUID is known. 
     /// The specific service may exist multiple times on a server. 
     /// The characteristic being discovered is identified by the characteristic UUID.
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/DiscoverCharacteristicsByUUID.png)
+    ///
+    /// - Parameter service: The service of the characteristics to find.
+    /// - Parameter uuid: The UUID of the characteristics to find.
+    /// - Parameter completion: The completion closure.
     public func discoverCharacteristics(of service: Service,
                                         by uuid: BluetoothUUID,
                                         completion: @escaping (GATTClientResponse<[Characteristic]>) -> ()) {
@@ -123,10 +134,43 @@ public final class GATTClient {
         discoverCharacteristics(uuid: uuid, service: service, completion: completion)
     }
     
+    /**
+     Discover All Characteristic Descriptors
+     
+     This sub-procedure is used by a client to find all the characteristic descriptor’s Attribute Handles and Attribute Types within a characteristic definition when only the characteristic handle range is known. The characteristic specified is identified by the characteristic handle range.
+     
+     ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/DiscoverAllCharacteristicDescriptors.png)
+     
+     
+     */
+    public func discoverAllCharacteristicDescriptors() {
+        
+        /**
+         The Attribute Protocol Find Information Request shall be used with the Starting Handle set
+         to the handle of the specified characteristic value + 1 and the Ending Handle set to the
+         ending handle of the specified characteristic.
+         
+         Two possible responses can be sent from the server for the Find Information Request: Find Information Response and Error Response.
+         
+         Error Response is returned if an error occurred on the server.
+         
+         Find Information Response returns a list of Attribute Handle and Attribute Value pairs corresponding to the characteristic descriptors in the characteristic definition. The Attribute Handle is the handle for the characteristic descriptor declaration. The Attribute Value is the Characteristic Descriptor UUID. The Find Information Request shall be called again with the Starting Handle set to one greater than the last Attribute Handle in the Find Information Response.
+         
+         The sub-procedure is complete when the Error Response is received and the Error Code is set to Attribute Not Found or the Find Information Response has an Attribute Handle that is equal to the Ending Handle of the request.
+         It is permitted to end the sub-procedure early if a desired Characteristic Descriptor is found prior to discovering all the characteristic descriptors of the specified characteristic.
+         
+         */
+        
+        
+        
+    }
+    
     /// Read Characteristic Value
     ///
     /// This sub-procedure is used to read a Characteristic Value from a server when the client knows
     /// the Characteristic Value Handle.
+    ///
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/ReadCharacteristicValue.png)
     public func readCharacteristic(_ characteristic: Characteristic,
                                    completion: @escaping (GATTClientResponse<Data>) -> ()) {
         
@@ -138,6 +182,8 @@ public final class GATTClient {
     ///
     /// This sub-procedure is used to read a Characteristic Value from a server when the client
     /// only knows the characteristic UUID and does not know the handle of the characteristic.
+    ///
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/ReadUsingCharacteristicUUID.png)
     public func readCharacteristics(using uuid: BluetoothUUID,
                                     handleRange: (start: UInt16, end: UInt16) = (.min, .max),
                                     completion: @escaping (GATTClientResponse<[UInt16: Data]>) -> ()) {
@@ -159,9 +205,12 @@ public final class GATTClient {
     
     /// Read Multiple Characteristic Values
     ///
-    /// This sub-procedure is used to read multiple Characteristic Values from a server when the client knows the Characteristic Value Handles.
+    /// This sub-procedure is used to read multiple Characteristic Values from a server when the client
+    /// knows the Characteristic Value Handles.
     ///
-    /// - Note: A client should not use this request for attributes when the Set Of Values parameter could be (ATT_MTU–1)
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/ReadMultipleCharacteristicValues.png)
+    ///
+    /// - Note: A client should not use this request for attributes when the Set Of Values parameter could be `(ATT_MTU–1)`
     /// as it will not be possible to determine if the last attribute value is complete, or if it overflowed.
     public func readCharacteristics(_ characteristics: [Characteristic], completion: @escaping (GATTClientResponse<Data>) -> ()) {
         
@@ -212,6 +261,18 @@ public final class GATTClient {
                                          reliableWrites: reliableWrites,
                                          completion: completion)
         }
+    }
+    
+    /**
+     Notifications
+     
+     This sub-procedure is used when a server is configured to notify a Characteristic Value to a client without expecting any Attribute Protocol layer acknowledgment that the notification was successfully received.
+     
+     ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/Notifications.png)
+     */
+    public func registerNotifications() {
+        
+        
     }
     
     // MARK: - Private Methods
@@ -312,6 +373,8 @@ public final class GATTClient {
     ///
     /// This sub-procedure is used to read a Characteristic Value from a server when the client knows
     /// the Characteristic Value Handle.
+    ///
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/ReadCharacteristicValue.png)
     private func readCharacteristicValue(_ handle: UInt16, completion: @escaping (GATTClientResponse<Data>) -> ()) {
         
         // The Attribute Protocol Read Request is used with the
@@ -331,6 +394,8 @@ public final class GATTClient {
     /// This sub-procedure is used to read a Characteristic Value from a server when the client knows
     /// the Characteristic Value Handle and the length of the Characteristic Value is longer than can
     /// be sent in a single Read Response Attribute Protocol message.
+    ///
+    /// ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/ReadLongCharacteristicValues.png)
     @inline(__always)
     private func readLongCharacteristicValue(_ operation: ReadOperation) {
         
@@ -374,9 +439,11 @@ public final class GATTClient {
      
      If the authenticated Characteristic Value that is written is the wrong size, has an invalid value as defined by the profile, or the signed value does not authenticate the client, then the write shall not succeed and no error shall be gener- ated by the server.
      
+     ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/SignedWriteWithoutResponse.png)
+     
      - Note: On BR/EDR, the ATT Bearer is always encrypted, due to the use of Security Mode 4, therefore this sub-procedure shall not be used.
      */
-    private func writeSignedCharacteristic(_ characteristic: Characteristic, data: Data) {
+    private func writeSignedCharacteristicCommand(_ characteristic: Characteristic, data: Data) {
         
         // This sub-procedure only writes the first (ATT_MTU – 15) octets of an Attribute Value.
         // This sub-procedure cannot be used to write a long Attribute.
@@ -427,7 +494,7 @@ public final class GATTClient {
      
      This sub-procedure is used to write a Characteristic Value to a server when the client knows the Characteristic Value Handle but the length of the Characteristic Value is longer than can be sent in a single Write Request Attribute Protocol message.
      
-    ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/WriteCharacteristicValue.png)
+    ![Image](https://github.com/PureSwift/BluetoothLinux/raw/master/Assets/WriteLongCharacteristicValues.png)
      */
     private func writeLongCharacteristicValue(_ characteristic: Characteristic,
                                              data: Data,
