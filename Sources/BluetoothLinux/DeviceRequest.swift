@@ -15,7 +15,7 @@
 import Foundation
 import Bluetooth
 
-public extension Adapter {
+public extension HostController {
 
     /// Sends a command to the device and waits for a response.
     func deviceRequest<CP: HCICommandParameter, EP: HCIEventParameter>(commandParameter: CP, eventParameterType: EP.Type, timeout: Int = 1000) throws -> EP {
@@ -32,7 +32,7 @@ public extension Adapter {
                                       timeout: timeout)
         
         guard let eventParameter = EP(byteValue: data)
-            else { throw AdapterError.garbageResponse(Data(bytes: data)) }
+            else { throw HostControllerError.garbageResponse(Data(bytes: data)) }
         
         return eventParameter
     }
@@ -48,7 +48,7 @@ public extension Adapter {
         let data = try HCISendRequest(internalSocket, opcode: opcode, event: event, eventParameterLength: EP.length, timeout: timeout)
 
         guard let eventParameter = EP(bytes: data)
-            else { throw AdapterError.GarbageResponse(Data(bytes: data)) }
+            else { throw HostControllerError.GarbageResponse(Data(bytes: data)) }
 
         return eventParameter
     }
@@ -72,7 +72,7 @@ public extension Adapter {
                 else { fatalError("Missing status byte!") }
 
             guard statusByte == 0x00
-                else { throw AdapterError.DeviceRequestStatus(statusByte) }
+                else { throw HostControllerError.DeviceRequestStatus(statusByte) }
         }
     }
 
@@ -91,7 +91,7 @@ public extension Adapter {
                 else { fatalError("Missing status byte!") }
 
             guard statusByte == 0x00
-                else { throw AdapterError.DeviceRequestStatus(statusByte) }
+                else { throw HostControllerError.DeviceRequestStatus(statusByte) }
         }
     }
  
@@ -142,7 +142,7 @@ public extension Adapter {
             else { throw HCIError(rawValue: statusByte)! }
         
         guard let response = Return(byteValue: Array(data.suffix(from: 1)))
-            else { throw AdapterError.garbageResponse(Data(data)) }
+            else { throw HostControllerError.garbageResponse(Data(data)) }
         
         return response
     }
@@ -195,7 +195,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
     func restoreFilter(_ error: Error) -> Error {
 
         guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, filterLength) == 0
-            else { return AdapterError.couldNotRestoreFilter(error, POSIXError.fromErrno!) }
+            else { return HostControllerError.couldNotRestoreFilter(error, POSIXError.fromErrno!) }
 
         return error
     }
@@ -280,7 +280,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
         //var length = actualBytesRead - (1 + HCIEventHeader.length)
 
         guard let eventHeader = HCIEventHeader(bytes: headerData)
-            else { throw restoreFilter(AdapterError.garbageResponse(Data(bytes: headerData))) }
+            else { throw restoreFilter(HostControllerError.garbageResponse(Data(bytes: headerData))) }
         
         //print("Event header data: \(headerData)")
         //print("Event header: \(eventHeader)")
@@ -300,7 +300,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
             let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.CommandStatusParameter.length)))
             
             guard let parameter = HCIGeneralEvent.CommandStatusParameter(byteValue: parameterData)
-                else { throw AdapterError.garbageResponse(Data(bytes: parameterData)) }
+                else { throw HostControllerError.garbageResponse(Data(bytes: parameterData)) }
 
             /// must be command status for sent command
             guard parameter.opcode == opcodePacked else { continue }
@@ -324,7 +324,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
             let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.CommandCompleteParameter.length)))
 
             guard let parameter = HCIGeneralEvent.CommandCompleteParameter(byteValue: parameterData)
-                else { throw AdapterError.garbageResponse(Data(bytes: parameterData)) }
+                else { throw HostControllerError.garbageResponse(Data(bytes: parameterData)) }
             
             guard parameter.opcode == opcodePacked else { continue }
 
@@ -344,7 +344,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
             let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.RemoteNameRequestCompleteParameter.length)))
 
             guard let parameter = HCIGeneralEvent.RemoteNameRequestCompleteParameter(byteValue: parameterData)
-                else { throw AdapterError.garbageResponse(Data(bytes: parameterData)) }
+                else { throw HostControllerError.garbageResponse(Data(bytes: parameterData)) }
 
             if commandParameterData.isEmpty == false {
 
@@ -365,7 +365,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
             let parameterData = eventData
             
             guard let metaParameter = HCIGeneralEvent.LowEnergyMetaParameter(byteValue: parameterData)
-                else { throw AdapterError.garbageResponse(Data(bytes: parameterData)) }
+                else { throw HostControllerError.garbageResponse(Data(bytes: parameterData)) }
             
             // LE event should match
             guard metaParameter.subevent.rawValue == event

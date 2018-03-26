@@ -15,7 +15,7 @@
 import Foundation
 import Bluetooth
 
-public extension Adapter {
+public extension HostController {
     
     func deviceCommand<T: HCICommand>(_ command: T) throws {
         

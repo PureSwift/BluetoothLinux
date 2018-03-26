@@ -18,7 +18,7 @@ import CSwiftBluetoothLinux
 
 // MARK: - Methods
 
-public extension Adapter {
+public extension HostController {
     
     /// Scans for nearby Classic Bluetooth devices.
     ///
@@ -69,7 +69,7 @@ public extension Adapter {
 
 // MARK: - Supporting Types
 
-public extension Adapter {
+public extension HostController {
     
     public typealias DeviceClass = (UInt8, UInt8, UInt8)
     
@@ -108,10 +108,10 @@ public extension Adapter {
 internal func HCIInquiry(_ deviceIdentifier: UInt16,
                          duration: UInt8,
                          scanLimit: UInt8,
-                         deviceClass: Adapter.DeviceClass? = nil,
-                         flags: UInt16) throws -> [Adapter.InquiryResult] {
+                         deviceClass: HostController.DeviceClass? = nil,
+                         flags: UInt16) throws -> [HostController.InquiryResult] {
     
-    typealias InquiryResult = Adapter.InquiryResult
+    typealias InquiryResult = HostController.InquiryResult
     
     let deviceDescriptor = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
     

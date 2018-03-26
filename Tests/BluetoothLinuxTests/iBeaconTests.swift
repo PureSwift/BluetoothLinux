@@ -40,13 +40,10 @@ final class iBeaconTests: XCTestCase {
             memcpy(&parameterBytes, UnsafeRawPointer($0), parameterBytes.count)
         }
         
-        var advertisingDataCommand = LowEnergyCommand.SetAdvertisingDataParameter()
-        
-        SetBeaconData(uuid: identifier,
-                      major: major,
-                      minor: minor,
-                      rssi: UInt8(bitPattern: rssi),
-                      parameter: &advertisingDataCommand)
+        var advertisingDataCommand = iBeacon(uuid: identifier,
+                                            major: major,
+                                            minor: minor,
+                                            rssi: rssi)
         
         XCTAssert(adverstisementDataParameter.length == advertisingDataCommand.length, "Invalid Length: \(adverstisementDataParameter.length) == \(advertisingDataCommand.length)")
         

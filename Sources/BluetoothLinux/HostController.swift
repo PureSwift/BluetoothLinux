@@ -1,5 +1,5 @@
 //
-//  Adapter.swift
+//  HostController.swift
 //  BluetoothLinux
 //
 //  Created by Alsey Coleman Miller on 12/6/15.
@@ -17,16 +17,16 @@ import Bluetooth
 import Foundation
 
 /// Manages connection / communication to the underlying Bluetooth hardware.
-public final class Adapter {
+public final class HostController: BluetoothHostControllerInterface {
     
     public typealias Identifier = UInt16
 
     // MARK: - Properties
 
-    /// The device identifier of the Bluetooth adapter.
+    /// The device identifier of the Bluetooth controller.
     public let identifier: Identifier
     
-    /// The Bluetooth Address of the adapter.
+    /// The Bluetooth Address of the controller.
     public let address: Address
 
     // MARK: - Internal Properties
@@ -40,7 +40,7 @@ public final class Adapter {
         close(internalSocket)
     }
     
-    /// Attempt to initialize an Adapter controller
+    /// Attempt to initialize an controller controller
     public init(identifier: Identifier) throws {
         
         self.identifier = identifier
@@ -48,11 +48,11 @@ public final class Adapter {
         self.internalSocket = try HCIOpenDevice(identifier)
     }
     
-    /// Initializes the Bluetooth Adapter with the specified address.
+    /// Initializes the Bluetooth controller with the specified address.
     public init(address: Address) throws {
         
         guard let deviceIdentifier = try HCIGetRoute(address)
-            else { throw Adapter.Error.adapterNotFound }
+            else { throw HostController.Error.HostControllerNotFound }
         
         self.identifier = deviceIdentifier
         self.address = address
@@ -60,28 +60,28 @@ public final class Adapter {
     }
 }
 
-public extension Adapter {
+public extension HostController {
     
-    private static func requestControllers() throws -> [Adapter] {
+    private static func requestControllers() throws -> [HostController] {
         
         return try HCIRequestDeviceList { (_, list) in
             
             list.sorted(by: { $0.0.identifier < $0.1.identifier })
                 .filter { HCITestBit(.up, $0.options) && $0.identifier >= 0 }
-                .flatMap { try? Adapter(identifier: $0.identifier) }
+                .flatMap { try? HostController(identifier: $0.identifier) }
         }
     }
     
-    public static var controllers: [Adapter] {
+    public static var controllers: [HostController] {
         
         return (try? requestControllers()) ?? []
     }
     
-    public static var `default`: Adapter? {
+    public static var `default`: HostController? {
         
         guard let result = try? HCIGetRoute(nil),
             let deviceIdentifier = result,
-            let controller = try? Adapter(identifier: deviceIdentifier)
+            let controller = try? HostController(identifier: deviceIdentifier)
             else { return nil }
         
         return controller
@@ -96,8 +96,8 @@ public extension Address {
     ///
     /// Attempts to get the address from the underlying Bluetooth hardware.
     ///
-    /// Fails if the Bluetooth adapter was disconnected or hardware failure.
-    public init(deviceIdentifier: Adapter.Identifier) throws {
+    /// Fails if the Bluetooth HostController was disconnected or hardware failure.
+    public init(deviceIdentifier: HostController.Identifier) throws {
         
         self = try HCIDeviceAddress(deviceIdentifier)
     }
@@ -105,17 +105,17 @@ public extension Address {
 
 // MARK: - Errors
 
-public extension Adapter {
+public extension HostController {
     
-    public typealias Error = AdapterError
+    public typealias Error = HostControllerError
 }
 
-public enum AdapterError: Error {
+public enum HostControllerError: Error {
     
-    /// The specified adapter could not be found.
-    case adapterNotFound
+    /// The specified HostController could not be found.
+    case HostControllerNotFound
     
-    /// A method that changed the adapter's filter had en internal error, 
+    /// A method that changed the HostController's filter had en internal error, 
     /// and unsuccessfully tried to restore the previous filter.
     ///
     /// First error is the method's error.

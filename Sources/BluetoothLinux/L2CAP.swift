@@ -38,14 +38,14 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         close(internalSocket)
     }
     
-    /// Create a new L2CAP socket on the adapter with the specified identifier.
-    public init(adapterAddress: Address,
+    /// Create a new L2CAP socket on the HostController with the specified identifier.
+    public init(HostControllerAddress: Address,
                 protocolServiceMultiplexer: UInt16 = 0,
                 channelIdentifier: UInt16 = ATT.CID,
                 addressType: AddressType? = .lowEnergyPublic,
                 securityLevel: SecurityLevel = .low) throws {
         
-        let (internalSocket, internalAddress) = try L2CAPSocket.createSocket(adapterAddress: adapterAddress,
+        let (internalSocket, internalAddress) = try L2CAPSocket.createSocket(HostControllerAddress: HostControllerAddress,
                                                                              protocolServiceMultiplexer: protocolServiceMultiplexer,
                                                                              channelIdentifier: channelIdentifier,
                                                                              addressType: addressType)
@@ -70,11 +70,11 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     }
     
     /// Creates a server socket for an L2CAP connection.
-    public static func lowEnergyServer(adapterAddress: Address = .any,
+    public static func lowEnergyServer(HostControllerAddress: Address = .any,
                                        isRandom: Bool = false,
                                        securityLevel: SecurityLevel = .low) throws -> L2CAPSocket {
         
-        let socket = try L2CAPSocket(adapterAddress: adapterAddress,
+        let socket = try L2CAPSocket(HostControllerAddress: HostControllerAddress,
                                  protocolServiceMultiplexer: 0,
                                  channelIdentifier: ATT.CID,
                                  addressType: isRandom ? .lowEnergyRandom : .lowEnergyPublic,
@@ -86,11 +86,11 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     }
     
     /// Creates a client socket for an L2CAP connection.
-    public static func lowEnergyClient(adapterAddress: Address = .any,
+    public static func lowEnergyClient(HostControllerAddress: Address = .any,
                                        destination: (address: Address, type: AddressType),
                                        securityLevel: SecurityLevel = .low) throws -> L2CAPSocket {
         
-        let socket = try L2CAPSocket(adapterAddress: adapterAddress,
+        let socket = try L2CAPSocket(HostControllerAddress: HostControllerAddress,
                                      protocolServiceMultiplexer: 0,
                                      channelIdentifier: ATT.CID,
                                      addressType: nil,
@@ -127,7 +127,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     
     /// Create the underlying socket for the L2CAP.
     @inline(__always)
-    private static func createSocket(adapterAddress: Address,
+    private static func createSocket(HostControllerAddress: Address,
                                      protocolServiceMultiplexer: UInt16,
                                      channelIdentifier: UInt16,
                                      addressType: AddressType?) throws -> (CInt, sockaddr_l2) {
@@ -143,7 +143,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         var localAddress = sockaddr_l2()
         memset(&localAddress, 0, MemoryLayout<sockaddr_l2>.size)
         localAddress.l2_family = sa_family_t(AF_BLUETOOTH)
-        localAddress.l2_bdaddr = adapterAddress.littleEndian
+        localAddress.l2_bdaddr = HostControllerAddress.littleEndian
         localAddress.l2_psm = protocolServiceMultiplexer.littleEndian
         localAddress.l2_cid = channelIdentifier.littleEndian
         localAddress.l2_bdaddr_type = addressType?.rawValue ?? 0

@@ -16,7 +16,7 @@
 import Foundation
 import Bluetooth
 
-public extension Adapter {
+public extension HostController {
     
     public typealias LowEnergyScannedDevice = LowEnergyEvent.AdvertisingReportEventParameter.Report
     
@@ -75,7 +75,7 @@ public extension Adapter {
 /// Poll for scanned devices
 internal func PollScannedDevices(_ deviceDescriptor: CInt,
                                  shouldContinueScanning: () -> (Bool),
-                                 foundDevice: (Adapter.LowEnergyScannedDevice) -> ()) throws {
+                                 foundDevice: (HostController.LowEnergyScannedDevice) -> ()) throws {
     
     var eventBuffer = [UInt8](repeating: 0, count: HCI.maximumEventSize)
     
@@ -106,7 +106,7 @@ internal func PollScannedDevices(_ deviceDescriptor: CInt,
         guard withUnsafeMutablePointer(to: &oldFilter, {
             let pointer = UnsafeMutableRawPointer($0)
             return setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, pointer, newFilterLength) == 0
-        }) else { return AdapterError.couldNotRestoreFilter(error, POSIXError.fromErrno!) }
+        }) else { return HostControllerError.couldNotRestoreFilter(error, POSIXError.fromErrno!) }
         
         return error
     }
@@ -141,7 +141,7 @@ internal func PollScannedDevices(_ deviceDescriptor: CInt,
         
         // parse LE meta event
         guard let meta = HCIGeneralEvent.LowEnergyMetaParameter(byteValue: eventData)
-            else { throw AdapterError.garbageResponse(Data(eventData)) }
+            else { throw HostControllerError.garbageResponse(Data(eventData)) }
         
         // only want advertising report
         guard meta.subevent == .advertisingReport
@@ -149,7 +149,7 @@ internal func PollScannedDevices(_ deviceDescriptor: CInt,
         
         // parse LE advertising report
         guard let advertisingReport = LowEnergyEvent.AdvertisingReportEventParameter(byteValue: meta.data)
-            else { throw AdapterError.garbageResponse(Data(meta.data)) }
+            else { throw HostControllerError.garbageResponse(Data(meta.data)) }
         
         // call closure on each device found
         advertisingReport.reports.forEach { foundDevice($0) }
