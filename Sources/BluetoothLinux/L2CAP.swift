@@ -296,7 +296,7 @@ public final class L2CAPSocket {
     
 public extension L2CAPSocket {
     
-    public typealias Error = L2CAPSocket
+    public typealias Error = L2CAPSocketError
 }
 
 public enum L2CAPSocketError: Error {
@@ -307,7 +307,7 @@ public enum L2CAPSocketError: Error {
     /// The provided file descriptor was invalid
     case invalidFileDescriptor(CInt)
     
-    case connectionError()
+    case connectionError
 }
 
 public extension L2CAPSocket {

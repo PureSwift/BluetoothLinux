@@ -19,7 +19,7 @@ public extension Adapter {
     
     func deviceCommand<T: HCICommand>(_ command: T) throws {
         
-        try HCISendCommand(internalSocket, opcode: (command.rawValue, T.opcodeGroupField.rawValue))
+        try HCISendCommand(internalSocket, command: command.rawValue)
     }
     
     func deviceCommand<T: HCICommandParameter>(_ commandParameter: T) throws {
@@ -36,13 +36,13 @@ public extension Adapter {
 
 // MARK: - Internal HCI Function
 
-internal func HCISendCommand(_ deviceDescriptor: CInt,
-                             opcode: (commandField: UInt16, groupField: UInt16),
+internal func HCISendCommand <T: HCICommand> (_ deviceDescriptor: CInt,
+                             command: T,
                              parameterData: [UInt8] = []) throws {
     
     let packetType = HCIPacketType.Command.rawValue
     
-    var header = HCICommandHeader()
+    var header = HCICommandHeader(command: command)
     
     header.opcode = HCICommandOpcodePack(opcode.commandField, opcode.groupField).littleEndian
     
@@ -54,11 +54,4 @@ internal func HCISendCommand(_ deviceDescriptor: CInt,
     // write to device descriptor socket
     guard write(deviceDescriptor, &data, data.count) >= 0 // should we check if all data was written?
         else { throw POSIXError.fromErrno! }
-}
-
-/// TODO: Remove
-@inline(__always)
-internal func HCICommandOpcodePack(_ commandField: UInt16, _ groupField: UInt16) -> UInt16 {
-    
-    return (commandField & 0x03ff) | (groupField << 10)
 }

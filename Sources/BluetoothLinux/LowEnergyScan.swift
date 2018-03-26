@@ -155,4 +155,3 @@ internal func PollScannedDevices(_ deviceDescriptor: CInt,
         advertisingReport.reports.forEach { foundDevice($0) }
     }
 }
-
