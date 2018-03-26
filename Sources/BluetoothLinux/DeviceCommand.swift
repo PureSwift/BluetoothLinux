@@ -19,18 +19,16 @@ public extension Adapter {
     
     func deviceCommand<T: HCICommand>(_ command: T) throws {
         
-        try HCISendCommand(internalSocket, command: command.rawValue)
+        try HCISendCommand(internalSocket, command: command)
     }
     
     func deviceCommand<T: HCICommandParameter>(_ commandParameter: T) throws {
         
         let command = T.command
         
-        let opcodeGroupField = type(of: command).opcodeGroupField
-        
         let parameterData = commandParameter.byteValue
         
-        try HCISendCommand(internalSocket, opcode: (command.rawValue, opcodeGroupField.rawValue), parameterData: parameterData)
+        try HCISendCommand(internalSocket, command: command, parameterData: parameterData)
     }
 }
 
@@ -42,11 +40,7 @@ internal func HCISendCommand <T: HCICommand> (_ deviceDescriptor: CInt,
     
     let packetType = HCIPacketType.Command.rawValue
     
-    var header = HCICommandHeader(command: command)
-    
-    header.opcode = HCICommandOpcodePack(opcode.commandField, opcode.groupField).littleEndian
-    
-    header.parameterLength = UInt8(parameterData.count)
+    let header = HCICommandHeader(command: command, parameterLength: UInt8(parameterData.count))
     
     /// data sent to host controller interface
     var data = [packetType] + header.byteValue + parameterData

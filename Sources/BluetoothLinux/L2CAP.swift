@@ -16,8 +16,8 @@ import Foundation
 import Bluetooth
 
 /// L2CAP Bluetooth socket
-public final class L2CAPSocket {
-
+public final class L2CAPSocket: L2CAPSocketProtocol {
+    
     // MARK: - Properties
     
     /// The socket's security level.

@@ -22,12 +22,10 @@ public extension Adapter {
 
         let command = CP.command
 
-        let opcodeGroupField = CP.HCICommandType.opcodeGroupField
-
         let parameterData = commandParameter.byteValue
         
         let data = try HCISendRequest(internalSocket,
-                                      opcode: (command.rawValue, opcodeGroupField.rawValue),
+                                      command: command,
                                       commandParameterData: parameterData,
                                       event: EP.event.rawValue,
                                       eventParameterLength: EP.length,
@@ -102,10 +100,8 @@ public extension Adapter {
     /// Send a command to the controller and wait for response. 
     func deviceRequest<C: HCICommand>(_ command: C, timeout: Int = 1000) throws {
 
-        let opcode = (command.rawValue, C.opcodeGroupField.rawValue)
-
         let data = try HCISendRequest(internalSocket,
-                                      opcode: opcode,
+                                      command: command,
                                       eventParameterLength: 1,
                                       timeout: timeout)
         
@@ -118,11 +114,9 @@ public extension Adapter {
     }
     
     func deviceRequest<CP: HCICommandParameter>(_ commandParameter: CP, timeout: Int = 1000) throws {
-
-        let opcode = (CP.command.rawValue, type(of: CP.command).opcodeGroupField.rawValue)
-
+        
         let data = try HCISendRequest(internalSocket,
-                                      opcode: opcode,
+                                      command: CP.command,
                                       commandParameterData: commandParameter.byteValue,
                                       eventParameterLength: 1,
                                       timeout: timeout)
@@ -136,10 +130,8 @@ public extension Adapter {
     
     func deviceRequest <Return: HCICommandReturnParameter> (_ commandReturnType : Return.Type, timeout: Int = 1000) throws -> Return {
         
-        let opcode = (Return.command.rawValue, Return.HCICommandType.opcodeGroupField.rawValue)
-        
         let data = try HCISendRequest(internalSocket,
-                                      opcode: opcode,
+                                      command: commandReturnType.command,
                                       eventParameterLength: commandReturnType.length + 1, // status code + parameters
                                       timeout: timeout)
         
@@ -159,8 +151,8 @@ public extension Adapter {
 // MARK: - Internal HCI Functions
 
 /// Returns event parameter data.
-internal func HCISendRequest(_ deviceDescriptor: CInt,
-                             opcode: (commandField: UInt16, groupField: UInt16),
+internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
+                             command: Command,
                              commandParameterData: [UInt8] = [],
                              event: UInt8 = 0,
                              eventParameterLength: Int = 0,
@@ -169,10 +161,10 @@ internal func HCISendRequest(_ deviceDescriptor: CInt,
     // assertions
     assert(timeout >= 0, "Negative timeout value")
     assert(timeout <= Int(Int32.max), "Timeout > Int32.max")
-
+    
     // initialize variables
     var timeout = timeout
-    let opcodePacked = HCICommandOpcodePack(opcode.commandField, opcode.groupField).littleEndian
+    let opcodePacked = command.opcode.littleEndian
     var eventBuffer = [UInt8](repeating: 0, count: HCI.maximumEventSize)
     var oldFilter = HCIFilter()
     var newFilter = HCIFilter()
@@ -209,7 +201,7 @@ internal func HCISendRequest(_ deviceDescriptor: CInt,
     }
 
     // send command
-    do { try HCISendCommand(deviceDescriptor, opcode: opcode, parameterData: commandParameterData) }
+    do { try HCISendCommand(deviceDescriptor, command: command, parameterData: commandParameterData) }
     catch { throw restoreFilter(error) }
 
     // retrieve data...
