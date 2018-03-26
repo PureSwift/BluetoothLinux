@@ -29,7 +29,10 @@ public extension Adapter {
     /// - Parameter deviceClass: Device class to filter results by.
     ///
     /// - Parameter options: Array of ```ScanOption```.
-    func scan(duration: Int = 8, limit: Int = 255, deviceClass: DeviceClass? = nil, options: BitMaskOptionSet<ScanOption> = []) throws -> [InquiryResult] {
+    func scan(duration: Int = 8,
+              limit: Int = 255,
+              deviceClass: DeviceClass? = nil,
+              options: BitMaskOptionSet<ScanOption> = []) throws -> [InquiryResult] {
         
         assert(duration > 0, "Scan must be longer than 0 seconds")
         assert(limit > 0, "Must scan at least one device")
@@ -37,7 +40,11 @@ public extension Adapter {
         
         let flags = options.rawValue
         
-        return try HCIInquiry(identifier, duration: duration, scanLimit: limit, deviceClass: deviceClass, flags: flags)
+        return try HCIInquiry(identifier,
+                              duration: UInt8(duration),
+                              scanLimit: UInt8(limit),
+                              deviceClass: deviceClass,
+                              flags: UInt16(flags))
     }
     
     /*
@@ -98,7 +105,11 @@ public extension Adapter {
 
 // MARK: - Internal HCI Functions
 
-internal func HCIInquiry(_ deviceIdentifier: CInt, duration: Int, scanLimit: Int, deviceClass: Adapter.DeviceClass? = nil, flags: CInt) throws -> [Adapter.InquiryResult] {
+internal func HCIInquiry(_ deviceIdentifier: UInt16,
+                         duration: UInt8,
+                         scanLimit: UInt8,
+                         deviceClass: Adapter.DeviceClass? = nil,
+                         flags: UInt16) throws -> [Adapter.InquiryResult] {
     
     typealias InquiryResult = Adapter.InquiryResult
     
@@ -108,7 +119,7 @@ internal func HCIInquiry(_ deviceIdentifier: CInt, duration: Int, scanLimit: Int
     
     defer { close(deviceDescriptor) }
     
-    let bufferSize = MemoryLayout<HCIInquiryRequest>.size + (MemoryLayout<InquiryResult>.size * scanLimit)
+    let bufferSize = MemoryLayout<HCIInquiryRequest>.size + (MemoryLayout<InquiryResult>.size * Int(scanLimit))
     
     let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
     
@@ -118,10 +129,10 @@ internal func HCIInquiry(_ deviceIdentifier: CInt, duration: Int, scanLimit: Int
     
     buffer.withMemoryRebound(to: HCIInquiryRequest.self, capacity: 1) { (inquiryRequest) in
         
-        inquiryRequest.pointee.identifier = UInt16(deviceIdentifier)
-        inquiryRequest.pointee.responseCount = UInt8(scanLimit)
-        inquiryRequest.pointee.length = UInt8(duration)
-        inquiryRequest.pointee.flags = UInt16(flags)
+        inquiryRequest.pointee.identifier = deviceIdentifier
+        inquiryRequest.pointee.responseCount = scanLimit
+        inquiryRequest.pointee.length = duration
+        inquiryRequest.pointee.flags = flags
         inquiryRequest.pointee.lap = deviceClass
         return
     }

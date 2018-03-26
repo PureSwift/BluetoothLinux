@@ -36,7 +36,9 @@ public extension Adapter {
 
 // MARK: - Internal HCI Function
 
-internal func HCISendCommand(_ deviceDescriptor: CInt, opcode: (commandField: UInt16, groupField: UInt16), parameterData: [UInt8] = []) throws {
+internal func HCISendCommand(_ deviceDescriptor: CInt,
+                             opcode: (commandField: UInt16, groupField: UInt16),
+                             parameterData: [UInt8] = []) throws {
     
     let packetType = HCIPacketType.Command.rawValue
     
@@ -54,6 +56,7 @@ internal func HCISendCommand(_ deviceDescriptor: CInt, opcode: (commandField: UI
         else { throw POSIXError.fromErrno! }
 }
 
+/// TODO: Remove
 @inline(__always)
 internal func HCICommandOpcodePack(_ commandField: UInt16, _ groupField: UInt16) -> UInt16 {
     

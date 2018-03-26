@@ -167,7 +167,7 @@ internal final class ATTConnection {
     }
     
     /// Registers a callback for an opcode and returns the ID associated with that callback.
-    public func register<T: ATTProtocolDataUnit>(_ callback: @escaping (T) -> ()) -> UInt {
+    public func register <T: ATTProtocolDataUnit> (_ callback: @escaping (T) -> ()) -> UInt {
         
         let identifier = nextRegisterID
         

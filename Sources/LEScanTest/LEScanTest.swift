@@ -10,7 +10,7 @@ import BluetoothLinux
 import Foundation
 import Bluetooth
 
-/// Tests the Scanning functionality
+/// Tests the Scanning functionality.
 func LEScanTest(adapter: Adapter, duration: TimeInterval) {
     
     print("Scanning for \(duration) seconds...")
@@ -18,7 +18,8 @@ func LEScanTest(adapter: Adapter, duration: TimeInterval) {
     let startDate = Date()
     let endDate = startDate + duration
     
-    do { try adapter.lowEnergyScan(shouldContinueScanning: { Date() < endDate }, foundDevice: { print($0.address) }) }
+    do { try adapter.lowEnergyScan(shouldContinueScanning: { Date() < endDate },
+                                   foundDevice: { print($0.address) }) }
     
     catch { Error("Could not scan: \(error)") }
 }

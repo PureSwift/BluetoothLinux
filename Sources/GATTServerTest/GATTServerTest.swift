@@ -33,7 +33,7 @@ func GATTServerTest(adapter: Adapter) {
         
         print("Enabled LE advertisement")
         
-        let address = adapter.address!
+        let address = adapter.address
         
         let serverSocket = try L2CAPSocket.lowEnergyServer(adapterAddress: address,
                                                            isRandom: false,

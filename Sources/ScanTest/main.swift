@@ -17,15 +17,12 @@ func Error(_ text: String) -> Never {
 
 // get Bluetooth device
 
-let adapter: Adapter
-
-do { adapter = try Adapter() }
-    
-catch { Error("Error: \(error)") }
+guard let adapter = Adapter.default
+    else { Error("No Bluetooth adapters found") }
 
 print("Found Bluetooth adapter with device ID: \(adapter.identifier)")
 
-print("Address: \(adapter.address!)")
+print("Address: \(adapter.address)")
 
 /// Perform Test
 ScanTest(adapter: adapter, timeout: 3)

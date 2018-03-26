@@ -14,7 +14,7 @@ func PeripheralTest(adapter: Adapter) {
 
     do {
         
-        let address = adapter.address!
+        let address = adapter.address
         
         let server = try L2CAPSocket.lowEnergyServer(adapterAddress: address,
                                                      isRandom: false,

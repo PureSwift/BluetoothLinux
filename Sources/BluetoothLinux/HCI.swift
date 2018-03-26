@@ -142,7 +142,7 @@ internal struct HCISocketAddress {
 /* Ioctl requests structures */
 
 /// `hci_dev_req`
-internal struct HCIDeviceRequest {
+internal struct HCIDeviceListItem {
     
     /// uint16_t dev_id;
     var identifier: UInt16 = 0
@@ -154,18 +154,26 @@ internal struct HCIDeviceRequest {
 }
 
 /// `hci_dev_list_req`
-internal struct HCIDeviceListRequest {
+internal struct HCIDeviceList {
+    
+    typealias Item = HCIDeviceListItem
+    
+    static var maximumCount: Int {
+        return HCI.maximumDeviceCount
+    }
     
     /// uint16_t dev_num;
-    var count: UInt16 = 0
+    var numberOfDevices: UInt16 = 0
     
     /// struct hci_dev_req dev_req[0];	/* hci_dev_req structures */
     /// 16 elements
-    var list: (HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest, HCIDeviceRequest) = (HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest(), HCIDeviceRequest())
+    var list: (HCIDeviceListItem, HCIDeviceListItem, HCIDeviceListItem, HCIDeviceListItem, HCIDeviceListItem, HCIDeviceListItem, HCIDeviceListItem, HCIDeviceListItem, HCIDeviceListItem, HCIDeviceListItem, HCIDeviceListItem, HCIDeviceListItem, HCIDeviceListItem, HCIDeviceListItem, HCIDeviceListItem, HCIDeviceListItem) = (HCIDeviceListItem(), HCIDeviceListItem(), HCIDeviceListItem(), HCIDeviceListItem(), HCIDeviceListItem(), HCIDeviceListItem(), HCIDeviceListItem(), HCIDeviceListItem(), HCIDeviceListItem(), HCIDeviceListItem(), HCIDeviceListItem(), HCIDeviceListItem(), HCIDeviceListItem(), HCIDeviceListItem(), HCIDeviceListItem(), HCIDeviceListItem())
     
     init() { }
     
-    subscript (index: Int) -> HCIDeviceRequest {
+    subscript (index: Int) -> HCIDeviceListItem {
+        
+        assert(index < type(of: self).maximumCount, "The request can only contain up to \(type(of: self).maximumCount) devices")
         
         switch index {
             
@@ -188,6 +196,43 @@ internal struct HCIDeviceListRequest {
             
         default: fatalError("Invalid index \(index)")
         }
+    }
+}
+
+extension HCIDeviceList: RandomAccessCollection {
+    
+    public var count: Int {
+        
+        return Int(numberOfDevices)
+    }
+    
+    public subscript(bounds: Range<Int>) -> RandomAccessSlice<HCIDeviceList> {
+        
+        return RandomAccessSlice<HCIDeviceList>(base: self, bounds: bounds)
+    }
+    
+    /// The start `Index`.
+    public var startIndex: Int {
+        return 0
+    }
+    
+    /// The end `Index`.
+    ///
+    /// This is the "one-past-the-end" position, and will always be equal to the `count`.
+    public var endIndex: Int {
+        return count
+    }
+    
+    public func index(before i: Int) -> Int {
+        return i - 1
+    }
+    
+    public func index(after i: Int) -> Int {
+        return i + 1
+    }
+    
+    public func makeIterator() -> IndexingIterator<HCIDeviceList> {
+        return IndexingIterator(_elements: self)
     }
 }
 
@@ -388,7 +433,8 @@ internal struct HCICommandHeader: HCIPacketHeader {
     
     var parameterLength: UInt8
     
-    init(opcode: UInt16 = 0, parameterLength: UInt8 = 0) {
+    init(opcode: UInt16 = 0,
+         parameterLength: UInt8 = 0) {
         
         self.opcode = opcode
         self.parameterLength = parameterLength

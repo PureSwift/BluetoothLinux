@@ -18,11 +18,16 @@ import Foundation
 
 /// Manages connection / communication to the underlying Bluetooth hardware.
 public final class Adapter {
+    
+    public typealias Identifier = UInt16
 
     // MARK: - Properties
 
     /// The device identifier of the Bluetooth adapter.
-    public let identifier: CInt
+    public let identifier: Identifier
+    
+    /// The Bluetooth Address of the adapter.
+    public let address: Address
 
     // MARK: - Internal Properties
 
@@ -34,24 +39,52 @@ public final class Adapter {
 
         close(internalSocket)
     }
-
+    
+    /// Attempt to initialize an Adapter controller
+    public init(identifier: Identifier) throws {
+        
+        self.identifier = identifier
+        self.address = try Address(deviceIdentifier: identifier)
+        self.internalSocket = try HCIOpenDevice(identifier)
+    }
+    
     /// Initializes the Bluetooth Adapter with the specified address.
-    ///
-    /// If no address is specified then it tries to intialize the first Bluetooth adapter.
-    public convenience init(address: Address? = nil) throws {
+    public init(address: Address) throws {
         
         guard let deviceIdentifier = try HCIGetRoute(address)
             else { throw Adapter.Error.adapterNotFound }
         
-        let internalSocket = try HCIOpenDevice(deviceIdentifier)
+        self.identifier = deviceIdentifier
+        self.address = address
+        self.internalSocket = try HCIOpenDevice(deviceIdentifier)
+    }
+}
+
+public extension Adapter {
+    
+    private static func requestControllers() throws -> [Adapter] {
         
-        self.init(identifier: deviceIdentifier, internalSocket: internalSocket)
+        return try HCIRequestDeviceList { (_, list) in
+            
+            list.sorted(by: { $0.0.identifier < $0.1.identifier })
+                .filter { HCITestBit(.up, $0.options) && $0.identifier >= 0 }
+                .flatMap { try? Adapter(identifier: $0.identifier) }
+        }
     }
     
-    private init(identifier: CInt, internalSocket: CInt) {
+    public static var controllers: [Adapter] {
         
-        self.identifier = identifier
-        self.internalSocket = internalSocket
+        return (try? requestControllers()) ?? []
+    }
+    
+    public static var `default`: Adapter? {
+        
+        guard let result = try? HCIGetRoute(nil),
+            let deviceIdentifier = result,
+            let controller = try? Adapter(identifier: deviceIdentifier)
+            else { return nil }
+        
+        return controller
     }
 }
 
@@ -60,20 +93,13 @@ public final class Adapter {
 public extension Address {
     
     /// Extracts the Bluetooth address from the device ID.
-    public init(deviceIdentifier: CInt) throws {
-        
-        self = try HCIDeviceAddress(deviceIdentifier)
-    }
-}
-
-public extension Adapter {
-    
+    ///
     /// Attempts to get the address from the underlying Bluetooth hardware.
     ///
     /// Fails if the Bluetooth adapter was disconnected or hardware failure.
-    public var address: Address? {
+    public init(deviceIdentifier: Adapter.Identifier) throws {
         
-        return try? Address(deviceIdentifier: identifier)
+        self = try HCIDeviceAddress(deviceIdentifier)
     }
 }
 
@@ -102,7 +128,7 @@ public enum AdapterError: Error {
 
 // MARK: - Internal HCI Functions
 
-internal func HCIOpenDevice(_ deviceIdentifier: CInt) throws -> CInt {
+internal func HCIOpenDevice(_ deviceIdentifier: UInt16) throws -> CInt {
     
     // Create HCI socket
     let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
@@ -112,7 +138,7 @@ internal func HCIOpenDevice(_ deviceIdentifier: CInt) throws -> CInt {
     // Bind socket to the HCI device
     var address = HCISocketAddress()
     address.family = sa_family_t(AF_BLUETOOTH)
-    address.deviceIdentifier = UInt16(deviceIdentifier)
+    address.deviceIdentifier = deviceIdentifier
     
     let didBind = withUnsafeMutablePointer(to: &address) {
         $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
@@ -128,21 +154,18 @@ internal func HCIOpenDevice(_ deviceIdentifier: CInt) throws -> CInt {
     return hciSocket
 }
 
-internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(), _ predicate: (_ deviceDescriptor: CInt, _ deviceIdentifier: CInt) throws -> Bool) throws -> CInt? {
-
+internal func HCIRequestDeviceList <T> (_ response: (_ hciSocket: CInt, _ list: inout HCIDeviceList) throws -> T) throws -> T {
+    
     // open HCI socket
-
     let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
-
+    
     guard hciSocket >= 0 else { throw POSIXError.fromErrno! }
-
+    
     defer { close(hciSocket) }
-
+    
     // allocate HCI device list buffer
-
-    var deviceList = HCIDeviceListRequest()
-
-    deviceList.count = UInt16(HCI.maximumDeviceCount)
+    var deviceList = HCIDeviceList()
+    deviceList.numberOfDevices = UInt16(HCI.maximumDeviceCount)
     
     // request device list
     let ioctlValue = withUnsafeMutablePointer(to: &deviceList) {
@@ -151,27 +174,52 @@ internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(
     
     guard ioctlValue >= 0 else { throw POSIXError.fromErrno! }
     
-    for i in 0 ..< Int(deviceList.count) {
-
-        let deviceRequest = deviceList[i]
-
-        guard HCITestBit(flagFilter, deviceRequest.options) else { continue }
-
-        let deviceIdentifier = CInt(deviceRequest.identifier)
-        
-        /* Operation not supported by device */
-        guard deviceIdentifier >= 0 else { throw POSIXError(code: POSIXErrorCode.ENODEV) }
-        
-        if try predicate(hciSocket, deviceIdentifier) {
-
-            return deviceIdentifier
-        }
-    }
-
-    return nil
+    return try response(hciSocket, &deviceList)
 }
 
-internal func HCIGetRoute(_ address: Address? = nil) throws -> CInt? {
+/// Iterate availible HCI devices until the handler returns false.
+internal func HCIDevicesIterate(_ iterator: (_ socket: CInt, _ deviceRequest: HCIDeviceListItem) throws -> (Bool)) throws {
+    
+    try HCIRequestDeviceList { (socket, list) in
+        
+        for item in list {
+            
+            /* Operation not supported by device */
+            guard item.identifier >= 0 else { throw POSIXError(code: .ENODEV) }
+            
+            if try iterator(socket, item) == false {
+                
+                break
+            }
+        }
+    }
+}
+
+internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(), _ predicate: (_ deviceDescriptor: CInt, _ deviceIdentifier: UInt16) throws -> Bool) throws -> UInt16? {
+    
+    var result: UInt16?
+    
+    try HCIDevicesIterate { (hciSocket, device) in
+        
+        guard HCITestBit(flagFilter, device.options) else { return true }
+        
+        let deviceIdentifier = device.identifier
+        
+        if try predicate(hciSocket, deviceIdentifier) {
+            
+            result = deviceIdentifier
+            return false
+            
+        } else {
+            
+            return true
+        }
+    }
+    
+    return result
+}
+
+internal func HCIGetRoute(_ address: Address? = nil) throws -> UInt16? {
 
     return try HCIIdentifierOfDevice { (dd, deviceIdentifier) in
 
@@ -182,14 +230,14 @@ internal func HCIGetRoute(_ address: Address? = nil) throws -> CInt? {
         deviceInfo.identifier = UInt16(deviceIdentifier)
 
         guard withUnsafeMutablePointer(to: &deviceInfo, {
-            IOControl(dd, HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0
+            IOControl(CInt(dd), HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0
             else { throw POSIXError.fromErrno! }
 
         return deviceInfo.address == address
     }
 }
 
-internal func HCIDeviceInfo(_ deviceIdentifier: CInt) throws -> HCIDeviceInformation {
+internal func HCIDeviceInfo(_ deviceIdentifier: UInt16) throws -> HCIDeviceInformation {
     
     // open HCI socket
     
@@ -200,7 +248,7 @@ internal func HCIDeviceInfo(_ deviceIdentifier: CInt) throws -> HCIDeviceInforma
     defer { close(hciSocket) }
     
     var deviceInfo = HCIDeviceInformation()
-    deviceInfo.identifier = UInt16(deviceIdentifier)
+    deviceInfo.identifier = deviceIdentifier
     
     guard withUnsafeMutablePointer(to: &deviceInfo, {
         IOControl(hciSocket, HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0
@@ -209,7 +257,7 @@ internal func HCIDeviceInfo(_ deviceIdentifier: CInt) throws -> HCIDeviceInforma
     return deviceInfo
 }
 
-internal func HCIDeviceAddress(_ deviceIdentifier: CInt) throws -> Address {
+internal func HCIDeviceAddress(_ deviceIdentifier: UInt16) throws -> Address {
     
     let deviceInfo = try HCIDeviceInfo(deviceIdentifier)
     
