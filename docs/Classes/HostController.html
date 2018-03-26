@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>HostController Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Class/HostController" class="dashAnchor"></a>
+
+    <a title="HostController Class Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+          BluetoothLinux Docs
+        </a>
+         (48% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/PureSwift/BluetoothLinux">
+            <img class="header-icon" src="../img/gh.png"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html">BluetoothLinux Reference</a>
+      <img class="carat" src="../img/carat.png" />
+      HostController Class Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/HostController.html">HostController</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/HostController/ScanOption.html">– ScanOption</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/HostController/InquiryResult.html">– InquiryResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/L2CAPSocket.html">L2CAPSocket</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/L2CAPSocket/Options.html">– Options</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/L2CAPSocket/ConnectionResult.html">– ConnectionResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/L2CAPSocket/ConnectionStatus.html">– ConnectionStatus</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Global Variables.html">Global Variables</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global Variables.html#/SOCK_SEQPACKET">SOCK_SEQPACKET</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AddressType.html">AddressType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/BluetoothProtocol.html">BluetoothProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HCIBusType.html">HCIBusType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HCIControllerType.html">HCIControllerType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HCIDeviceEvent.html">HCIDeviceEvent</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HCIDeviceFlag.html">HCIDeviceFlag</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HCIPacketType.html">HCIPacketType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HCISocketOption.html">HCISocketOption</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HostControllerError.html">HostControllerError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/L2CAPSocketError.html">L2CAPSocketError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/LinkMode.html">LinkMode</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Address.html">Address</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/HCIDeviceList.html">HCIDeviceList</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/HCIIOCTL.html">HCIIOCTL</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content">
+            <h1>HostController</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">HostController</span><span class="p">:</span> <span class="kt">BluetoothHostControllerInterface</span></code></pre>
+
+                </div>
+              </div>
+            <p>Manages connection / communication to the underlying Bluetooth hardware.</p>
+
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Properties"></a>
+                <a name="//apple_ref/swift/Section/Properties" class="dashAnchor"></a>
+                <a href="#/Properties">
+                  <h3 class="section-name">Properties</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux14HostControllerC10identifiers6UInt16Vv"></a>
+                    <a name="//apple_ref/swift/Property/identifier" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux14HostControllerC10identifiers6UInt16Vv">identifier</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The device identifier of the Bluetooth controller.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">Identifier</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux14HostControllerC7address0A07AddressVv"></a>
+                    <a name="//apple_ref/swift/Property/address" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux14HostControllerC7address0A07AddressVv">address</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The Bluetooth Address of the controller.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">address</span><span class="p">:</span> <span class="kt">Address</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Initizalization"></a>
+                <a name="//apple_ref/swift/Section/Initizalization" class="dashAnchor"></a>
+                <a href="#/Initizalization">
+                  <h3 class="section-name">Initizalization</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux14HostControllerCACs6UInt16V10identifier_tKcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(identifier:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux14HostControllerCACs6UInt16V10identifier_tKcfc">init(identifier:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Attempt to initialize an controller controller</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">identifier</span><span class="p">:</span> <span class="kt">Identifier</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux14HostControllerCAC0A07AddressV7address_tKcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(address:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux14HostControllerCAC0A07AddressV7address_tKcfc">init(address:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initializes the Bluetooth controller with the specified address.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">address</span><span class="p">:</span> <span class="kt">Address</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Bluetooth0A23HostControllerInterfaceP13deviceCommandyqd__KAA10HCICommandRd__lF"></a>
+                    <a name="//apple_ref/swift/Method/deviceCommand(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Bluetooth0A23HostControllerInterfaceP13deviceCommandyqd__KAA10HCICommandRd__lF">deviceCommand(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">deviceCommand</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">:</span> <span class="kt">HCICommand</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">command</span><span class="p">:</span> <span class="kt">T</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Bluetooth0A23HostControllerInterfaceP13deviceCommandyqd__KAA19HCICommandParameterRd__lF"></a>
+                    <a name="//apple_ref/swift/Method/deviceCommand(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Bluetooth0A23HostControllerInterfaceP13deviceCommandyqd__KAA19HCICommandParameterRd__lF">deviceCommand(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">deviceCommand</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">:</span> <span class="kt">HCICommandParameter</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">commandParameter</span><span class="p">:</span> <span class="kt">T</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux14HostControllerC13deviceRequestq_x16commandParameter_q_m05eventH4TypeSi7timeouttK0A0010HCICommandH0RzAH08HCIEventH0R_r0_lF"></a>
+                    <a name="//apple_ref/swift/Method/deviceRequest(commandParameter:eventParameterType:timeout:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux14HostControllerC13deviceRequestq_x16commandParameter_q_m05eventH4TypeSi7timeouttK0A0010HCICommandH0RzAH08HCIEventH0R_r0_lF">deviceRequest(commandParameter:eventParameterType:timeout:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sends a command to the device and waits for a response.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">deviceRequest</span><span class="o">&lt;</span><span class="kt">CP</span><span class="p">:</span> <span class="kt">HCICommandParameter</span><span class="p">,</span> <span class="kt">EP</span><span class="p">:</span> <span class="kt">HCIEventParameter</span><span class="o">&gt;</span><span class="p">(</span><span class="nv">commandParameter</span><span class="p">:</span> <span class="kt">CP</span><span class="p">,</span> <span class="nv">eventParameterType</span><span class="p">:</span> <span class="kt">EP</span><span class="o">.</span><span class="k">Type</span><span class="p">,</span> <span class="nv">timeout</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">EP</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux14HostControllerC13deviceRequestyx_Si7timeouttK0A010HCICommandRzlF"></a>
+                    <a name="//apple_ref/swift/Method/deviceRequest(_:timeout:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux14HostControllerC13deviceRequestyx_Si7timeouttK0A010HCICommandRzlF">deviceRequest(_:timeout:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Send a command to the controller and wait for response.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">deviceRequest</span><span class="o">&lt;</span><span class="kt">C</span><span class="p">:</span> <span class="kt">HCICommand</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">command</span><span class="p">:</span> <span class="kt">C</span><span class="p">,</span> <span class="nv">timeout</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Bluetooth0A23HostControllerInterfaceP13deviceRequestyqd___Si7timeouttKAA19HCICommandParameterRd__lF"></a>
+                    <a name="//apple_ref/swift/Method/deviceRequest(_:timeout:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Bluetooth0A23HostControllerInterfaceP13deviceRequestyqd___Si7timeouttKAA19HCICommandParameterRd__lF">deviceRequest(_:timeout:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">deviceRequest</span><span class="o">&lt;</span><span class="kt">CP</span><span class="p">:</span> <span class="kt">HCICommandParameter</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">commandParameter</span><span class="p">:</span> <span class="kt">CP</span><span class="p">,</span> <span class="nv">timeout</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Bluetooth0A23HostControllerInterfaceP13deviceRequestqd__qd__m_Si7timeouttKAA25HCICommandReturnParameterRd__lF"></a>
+                    <a name="//apple_ref/swift/Method/deviceRequest(_:timeout:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Bluetooth0A23HostControllerInterfaceP13deviceRequestqd__qd__m_Si7timeouttKAA25HCICommandReturnParameterRd__lF">deviceRequest(_:timeout:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">deviceRequest</span> <span class="o">&lt;</span><span class="kt">Return</span><span class="p">:</span> <span class="kt">HCICommandReturnParameter</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">_</span> <span class="nv">commandReturnType</span> <span class="p">:</span> <span class="kt">Return</span><span class="o">.</span><span class="k">Type</span><span class="p">,</span> <span class="nv">timeout</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Return</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Bluetooth0A23HostControllerInterfaceP11controllersSayxGvZ"></a>
+                    <a name="//apple_ref/swift/Variable/controllers" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Bluetooth0A23HostControllerInterfaceP11controllersSayxGvZ">controllers</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">controllers</span><span class="p">:</span> <span class="p">[</span><span class="kt">HostController</span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Bluetooth0A23HostControllerInterfaceP7defaultxSgvZ"></a>
+                    <a name="//apple_ref/swift/Variable/default" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Bluetooth0A23HostControllerInterfaceP7defaultxSgvZ">default</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">var</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span><span class="p">:</span> <span class="kt">HostController</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux14HostControllerC13lowEnergyScanySb16filterDuplicates_0A003LowF7CommandO03SetG19ParametersParameterV10parametersSi14commandTimeoutSbyc22shouldContinueScanningyAF0jF5EventO017AdvertisingReportuN0V0W0Vc11foundDevicetKF"></a>
+                    <a name="//apple_ref/swift/Method/lowEnergyScan(filterDuplicates:parameters:commandTimeout:shouldContinueScanning:foundDevice:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux14HostControllerC13lowEnergyScanySb16filterDuplicates_0A003LowF7CommandO03SetG19ParametersParameterV10parametersSi14commandTimeoutSbyc22shouldContinueScanningyAF0jF5EventO017AdvertisingReportuN0V0W0Vc11foundDevicetKF">lowEnergyScan(filterDuplicates:parameters:commandTimeout:shouldContinueScanning:foundDevice:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Scan LE devices.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">lowEnergyScan</span><span class="p">(</span><span class="nv">filterDuplicates</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                   <span class="nv">parameters</span><span class="p">:</span> <span class="kt">LowEnergyCommand</span><span class="o">.</span><span class="kt">SetScanParametersParameter</span> <span class="o">=</span> <span class="o">.</span><span class="nf">init</span><span class="p">(),</span>
+                   <span class="n">commandTimeout</span> <span class="nv">timeout</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+                   <span class="nv">shouldContinueScanning</span><span class="p">:</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">Bool</span><span class="p">),</span>
+                   <span class="nv">foundDevice</span><span class="p">:</span> <span class="p">(</span><span class="kt">LowEnergyScannedDevice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">())</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux14HostControllerC13lowEnergyScanSay0A003LowF5EventO017AdvertisingReportI9ParameterV0K0VGSd8duration_Sb16filterDuplicatesAE0hF7CommandO03Setg10ParametersL0V10parametersSi14commandTimeouttKF"></a>
+                    <a name="//apple_ref/swift/Method/lowEnergyScan(duration:filterDuplicates:parameters:commandTimeout:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux14HostControllerC13lowEnergyScanSay0A003LowF5EventO017AdvertisingReportI9ParameterV0K0VGSd8duration_Sb16filterDuplicatesAE0hF7CommandO03Setg10ParametersL0V10parametersSi14commandTimeouttKF">lowEnergyScan(duration:filterDuplicates:parameters:commandTimeout:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">lowEnergyScan</span><span class="p">(</span><span class="nv">duration</span><span class="p">:</span> <span class="kt">TimeInterval</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                   <span class="nv">filterDuplicates</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                   <span class="nv">parameters</span><span class="p">:</span> <span class="kt">LowEnergyCommand</span><span class="o">.</span><span class="kt">SetScanParametersParameter</span> <span class="o">=</span> <span class="o">.</span><span class="nf">init</span><span class="p">(),</span>
+                   <span class="n">commandTimeout</span> <span class="nv">timeout</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">LowEnergyScannedDevice</span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux14HostControllerC4scanSayAC13InquiryResultVGSi8duration_Si5limits5UInt8V_A2KtSg11deviceClass0A016BitMaskOptionSetVyAC04ScanO0OG7optionstKF"></a>
+                    <a name="//apple_ref/swift/Method/scan(duration:limit:deviceClass:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux14HostControllerC4scanSayAC13InquiryResultVGSi8duration_Si5limits5UInt8V_A2KtSg11deviceClass0A016BitMaskOptionSetVyAC04ScanO0OG7optionstKF">scan(duration:limit:deviceClass:options:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Scans for nearby Classic Bluetooth devices.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">scan</span><span class="p">(</span><span class="nv">duration</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+          <span class="nv">limit</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">255</span><span class="p">,</span>
+          <span class="nv">deviceClass</span><span class="p">:</span> <span class="kt"><a href="../Classes/HostController.html#/s:14BluetoothLinux14HostControllerC11DeviceClassa">DeviceClass</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+          <span class="nv">options</span><span class="p">:</span> <span class="kt">BitMaskOptionSet</span><span class="o">&lt;</span><span class="kt"><a href="../Classes/HostController/ScanOption.html">ScanOption</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">[])</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt"><a href="../Classes/HostController/InquiryResult.html">InquiryResult</a></span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>duration</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The duration of the scan. The actual duration lasts for at most 1.28 * <code>duration</code> seconds</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>scanLimit</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The maximum amount of devices to scan.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>deviceClass</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Device class to filter results by.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>options</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Array of <code><a href="../Classes/HostController/ScanOption.html">ScanOption</a></code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux14HostControllerC11DeviceClassa"></a>
+                    <a name="//apple_ref/swift/Alias/DeviceClass" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux14HostControllerC11DeviceClassa">DeviceClass</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">DeviceClass</span> <span class="o">=</span> <span class="p">(</span><span class="kt">UInt8</span><span class="p">,</span> <span class="kt">UInt8</span><span class="p">,</span> <span class="kt">UInt8</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux14HostControllerC10ScanOptionO"></a>
+                    <a name="//apple_ref/swift/Enum/ScanOption" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux14HostControllerC10ScanOptionO">ScanOption</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Options for scanning Bluetooth devices</p>
+
+                        <a href="../Classes/HostController/ScanOption.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ScanOption</span><span class="p">:</span> <span class="kt">Int32</span><span class="p">,</span> <span class="kt">BitMaskOption</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14BluetoothLinux14HostControllerC13InquiryResultV"></a>
+                    <a name="//apple_ref/swift/Struct/InquiryResult" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14BluetoothLinux14HostControllerC13InquiryResultV">InquiryResult</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="../Classes/HostController/InquiryResult.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">InquiryResult</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">PureSwift</a>. All rights reserved. (Last updated: 2018-03-26)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+    </section>
+  </body>
+</div>
+</html>
