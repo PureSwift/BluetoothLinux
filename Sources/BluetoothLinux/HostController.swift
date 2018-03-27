@@ -52,7 +52,7 @@ public final class HostController: BluetoothHostControllerInterface {
     public init(address: Address) throws {
         
         guard let deviceIdentifier = try HCIGetRoute(address)
-            else { throw HostController.Error.HostControllerNotFound }
+            else { throw Error.adapterNotFound }
         
         self.identifier = deviceIdentifier
         self.address = address
@@ -107,23 +107,7 @@ public extension Address {
 
 public extension HostController {
     
-    public typealias Error = HostControllerError
-}
-
-public enum HostControllerError: Error {
-    
-    /// The specified HostController could not be found.
-    case HostControllerNotFound
-    
-    /// A method that changed the HostController's filter had en internal error, 
-    /// and unsuccessfully tried to restore the previous filter.
-    ///
-    /// First error is the method's error.
-    /// The second error is the error while trying to restore the filter.
-    case couldNotRestoreFilter(Error, Error)
-    
-    /// The recieved data could not be parsed correctly.
-    case garbageResponse(Data)
+    public typealias Error = BluetoothHostControllerError
 }
 
 // MARK: - Internal HCI Functions
