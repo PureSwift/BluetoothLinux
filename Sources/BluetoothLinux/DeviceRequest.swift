@@ -18,7 +18,7 @@ import Bluetooth
 public extension HostController {
 
     /// Sends a command to the device and waits for a response.
-    func deviceRequest<CP: HCICommandParameter, EP: HCIEventParameter>(commandParameter: CP, eventParameterType: EP.Type, timeout: Int = HCI.defaultTimeout) throws -> EP {
+    func deviceRequest<CP: HCICommandParameter, EP: HCIEventParameter>(_ commandParameter: CP, _ eventParameterType: EP.Type, timeout: Int = HCI.defaultTimeout) throws -> EP {
         
         let command = CP.command
 
@@ -134,6 +134,29 @@ public extension HostController {
                                       command: commandReturnType.command,
                                       eventParameterLength: commandReturnType.length + 1, // status code + parameters
                                       timeout: timeout)
+        
+        guard let statusByte = data.first
+            else { fatalError("Missing status byte!") }
+        
+        guard statusByte == 0x00
+            else { throw HCIError(rawValue: statusByte)! }
+        
+        guard let response = Return(byteValue: Array(data.suffix(from: 1)))
+            else { throw BluetoothHostControllerError.garbageResponse(Data(data)) }
+        
+        return response
+    }
+    
+    /// Sends a command to the device and waits for a response with return parameter values.
+    func deviceRequest <CP: HCICommandParameter, Return: HCICommandReturnParameter> (_ commandParameter: CP, _ commandReturnType : Return.Type, timeout: Int) throws -> Return {
+        
+        assert(CP.command.opcode == Return.command.opcode)
+        
+        let data = try HCISendRequest(internalSocket,
+                                      command: commandReturnType.command,
+                                      commandParameterData: commandParameter.byteValue,
+                                      eventParameterLength: commandReturnType.length + 1, // status code + parameters
+            timeout: timeout)
         
         guard let statusByte = data.first
             else { fatalError("Missing status byte!") }
@@ -294,7 +317,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
 
         switch eventHeader.event {
 
-        case HCIGeneralEvent.commandStatus.rawValue:
+        case .commandStatus:
             
             let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.CommandStatusParameter.length)))
             
@@ -318,7 +341,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
             let dataLength = min(eventData.count, eventParameterLength)
             return Array(eventData.suffix(dataLength))
 
-        case HCIGeneralEvent.commandComplete.rawValue:
+        case .commandComplete:
             
             let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.CommandCompleteParameter.length)))
 
@@ -330,15 +353,15 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
             // success!
             try done()
             
-            let commandParameterLength = HCIGeneralEvent.CommandCompleteParameter.length
-            let data = eventData.suffix(commandParameterLength)
+            let commandCompleteParameterLength = HCIGeneralEvent.CommandCompleteParameter.length
+            let data = eventData.suffix(eventParameterLength)
             
-            let dataLength = min(data.count, eventParameterLength)
+            let dataLength = max(data.count, commandCompleteParameterLength)
             return Array(data.suffix(dataLength))
 
-        case HCIGeneralEvent.remoteNameRequestComplete.rawValue:
+        case .remoteNameRequestComplete:
 
-            guard eventHeader.event == event else { break }
+            guard eventHeader.event.rawValue == event else { break }
             
             let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.RemoteNameRequestCompleteParameter.length)))
 
@@ -359,7 +382,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
             let dataLength = min(eventData.count - 1, eventParameterLength)
             return Array(eventData.suffix(dataLength))
             
-        case HCIGeneralEvent.lowEnergyMeta.rawValue:
+        case .lowEnergyMeta:
             
             let parameterData = eventData
             
@@ -377,7 +400,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
         // all other events
         default:
 
-            guard eventHeader.event == event else { break }
+            guard eventHeader.event.rawValue == event else { break }
 
             try done()
             let dataLength = min(eventData.count, eventParameterLength)
