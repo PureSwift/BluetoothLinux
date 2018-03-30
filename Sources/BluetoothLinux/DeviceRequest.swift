@@ -155,8 +155,8 @@ public extension HostController {
         let data = try HCISendRequest(internalSocket,
                                       command: commandReturnType.command,
                                       commandParameterData: commandParameter.byteValue,
-                                      eventParameterLength: commandReturnType.length + 1, // status code + parameters
-            timeout: timeout)
+                                      eventParameterLength: commandReturnType.length + 1,
+                                      timeout: timeout)
         
         guard let statusByte = data.first
             else { fatalError("Missing status byte!") }
