@@ -30,9 +30,9 @@ final class iBeaconTests: XCTestCase {
         let rssi: Int8 = -29
         
         var adverstisementDataParameter = beaconAdvertisementData(Array(identifier.data),
-                                                                  CInt(major).littleEndian,
-                                                                  CInt(minor).littleEndian,
-                                                                  CInt(rssi).littleEndian)
+                                                                  CInt(major),
+                                                                  CInt(minor),
+                                                                  CInt(rssi))
         
         var parameterBytes = [UInt8].init(repeating: 0, count: Int(adverstisementDataParameter.length))
         

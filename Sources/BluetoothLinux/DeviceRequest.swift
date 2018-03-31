@@ -18,7 +18,7 @@ import Bluetooth
 public extension HostController {
 
     /// Sends a command to the device and waits for a response.
-    func deviceRequest<CP: HCICommandParameter, EP: HCIEventParameter>(_ commandParameter: CP, _ eventParameterType: EP.Type, timeout: Int = HCI.defaultTimeout) throws -> EP {
+    func deviceRequest<CP: HCICommandParameter, EP: HCIEventParameter>(_ commandParameter: CP, _ eventParameterType: EP.Type, timeout: HCICommandTimeout = .default) throws -> EP {
         
         let command = CP.command
 
@@ -39,7 +39,7 @@ public extension HostController {
     
     /*
     @inline(__always)
-    func deviceRequest<C: HCICommand, EP: HCIEventParameter>(command: C, eventParameterType: EP.Type, timeout: Int = HCI.defaultTimeout) throws -> EP {
+    func deviceRequest<C: HCICommand, EP: HCIEventParameter>(command: C, eventParameterType: EP.Type, timeout: HCICommandTimeout = .default) throws -> EP {
 
         let opcode = (command.rawValue, C.opcodeGroupField.rawValue)
 
@@ -54,7 +54,7 @@ public extension HostController {
     }
 
     @inline(__always)
-    func deviceRequest<CP: HCICommandParameter, E: HCIEvent>(commandParameter: CP, event: E, verifyStatusByte: Bool = true, timeout: Int = HCI.defaultTimeout) throws {
+    func deviceRequest<CP: HCICommandParameter, E: HCIEvent>(commandParameter: CP, event: E, verifyStatusByte: Bool = true, timeout: HCICommandTimeout = .default) throws {
 
         let command = CP.command
 
@@ -77,7 +77,7 @@ public extension HostController {
     }
 
     @inline(__always)
-    func deviceRequest<C: HCICommand, E: HCIEvent>(command: C, event: E, verifyStatusByte: Bool = true, timeout: Int = HCI.defaultTimeout) throws {
+    func deviceRequest<C: HCICommand, E: HCIEvent>(command: C, event: E, verifyStatusByte: Bool = true, timeout: HCICommandTimeout = .default) throws {
 
         let opcode = (command.rawValue, C.opcodeGroupField.rawValue)
 
@@ -98,7 +98,7 @@ public extension HostController {
     */
     
     /// Send a command to the controller and wait for response. 
-    func deviceRequest<C: HCICommand>(_ command: C, timeout: Int = HCI.defaultTimeout) throws {
+    func deviceRequest<C: HCICommand>(_ command: C, timeout: HCICommandTimeout = .default) throws {
 
         let data = try HCISendRequest(internalSocket,
                                       command: command,
@@ -113,7 +113,7 @@ public extension HostController {
         
     }
     
-    func deviceRequest<CP: HCICommandParameter>(_ commandParameter: CP, timeout: Int = HCI.defaultTimeout) throws {
+    func deviceRequest<CP: HCICommandParameter>(_ commandParameter: CP, timeout: HCICommandTimeout = .default) throws {
         
         let data = try HCISendRequest(internalSocket,
                                       command: CP.command,
@@ -128,7 +128,7 @@ public extension HostController {
             else { throw HCIError(rawValue: statusByte)! }
     }
     
-    func deviceRequest <Return: HCICommandReturnParameter> (_ commandReturnType : Return.Type, timeout: Int = HCI.defaultTimeout) throws -> Return {
+    func deviceRequest <Return: HCICommandReturnParameter> (_ commandReturnType : Return.Type, timeout: HCICommandTimeout = .default) throws -> Return {
         
         let data = try HCISendRequest(internalSocket,
                                       command: commandReturnType.command,
@@ -148,7 +148,7 @@ public extension HostController {
     }
     
     /// Sends a command to the device and waits for a response with return parameter values.
-    func deviceRequest <CP: HCICommandParameter, Return: HCICommandReturnParameter> (_ commandParameter: CP, _ commandReturnType : Return.Type, timeout: Int) throws -> Return {
+    func deviceRequest <CP: HCICommandParameter, Return: HCICommandReturnParameter> (_ commandParameter: CP, _ commandReturnType : Return.Type, timeout: HCICommandTimeout = .default) throws -> Return {
         
         assert(CP.command.opcode == Return.command.opcode)
         
@@ -179,14 +179,10 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
                              commandParameterData: [UInt8] = [],
                              event: UInt8 = 0,
                              eventParameterLength: Int = 0,
-                             timeout: Int = HCI.defaultTimeout) throws -> [UInt8] {
-
-    // assertions
-    assert(timeout >= 0, "Negative timeout value")
-    assert(timeout <= Int(Int32.max), "Timeout > Int32.max")
+                             timeout: HCICommandTimeout = .default) throws -> [UInt8] {
     
     // initialize variables
-    var timeout = timeout
+    var timeout = timeout.rawValue
     let opcodePacked = command.opcode.littleEndian
     var eventBuffer = [UInt8](repeating: 0, count: HCI.maximumEventSize)
     var oldFilter = HCIFilter()

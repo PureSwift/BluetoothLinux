@@ -22,13 +22,13 @@ public final class HostController: BluetoothHostControllerInterface {
     public typealias Identifier = UInt16
 
     // MARK: - Properties
-
+    
     /// The device identifier of the Bluetooth controller.
     public let identifier: Identifier
     
     /// The Bluetooth Address of the controller.
     public let address: Address
-
+    
     // MARK: - Internal Properties
 
     internal let internalSocket: CInt
