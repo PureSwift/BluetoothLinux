@@ -325,10 +325,16 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
 
             ///
             guard event == HCIGeneralEvent.commandStatus.rawValue else {
-
-                guard parameter.status == 0
-                    else { throw restoreFilter(HCIError(rawValue: parameter.status) ?? POSIXError(code: .EIO)) }
-
+                
+                switch parameter.status {
+                    
+                case let .error(error):
+                    throw error
+                    
+                case .success:
+                    break
+                }
+                
                 break
             }
 
