@@ -8,7 +8,6 @@
 [![CodeBeat][codebeat-badge]][codebeat-url]
 
 [![SPM compatible][spm-badge]][spm-url]
-[![Carthage compatible][carthage-badge]][carthage-url]
 
 Pure Swift Bluetooth Stack for Linux
 
