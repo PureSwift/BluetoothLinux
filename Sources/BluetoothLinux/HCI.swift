@@ -199,16 +199,11 @@ internal struct HCIDeviceList {
     }
 }
 
-extension HCIDeviceList: RandomAccessCollection {
+extension HCIDeviceList: Collection {
     
     public var count: Int {
         
         return Int(numberOfDevices)
-    }
-    
-    public subscript(bounds: Range<Int>) -> RandomAccessSlice<HCIDeviceList> {
-        
-        return RandomAccessSlice<HCIDeviceList>(base: self, bounds: bounds)
     }
     
     /// The start `Index`.
@@ -231,10 +226,31 @@ extension HCIDeviceList: RandomAccessCollection {
         return i + 1
     }
     
+}
+
+#if swift(>=3.3)
+#elseif swift(>=3.0)
+extension HCIDeviceList {
+        
+    typealias Slice = Swift.RandomAccessSlice
+}
+#endif
+
+#if swift(>=3.1)
+extension HCIDeviceList: RandomAccessCollection {
+
+    public subscript(bounds: Range<Int>) -> Slice<HCIDeviceList> {
+        
+        return Slice<HCIDeviceList>(base: self, bounds: bounds)
+    }
+    
     public func makeIterator() -> IndexingIterator<HCIDeviceList> {
         return IndexingIterator(_elements: self)
     }
 }
+
+#elseif swift(>=3.0)
+#endif
 
 /// `hci_inquiry_req`
 internal struct HCIInquiryRequest {
