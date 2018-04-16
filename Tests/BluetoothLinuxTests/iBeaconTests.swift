@@ -43,7 +43,7 @@ final class iBeaconTests: XCTestCase {
         var advertisingDataCommand = iBeacon(uuid: identifier,
                                             major: major,
                                             minor: minor,
-                                            rssi: rssi)
+                                            rssi: rssi).advertisingData
         
         XCTAssert(adverstisementDataParameter.length == advertisingDataCommand.length, "Invalid Length: \(adverstisementDataParameter.length) == \(advertisingDataCommand.length)")
         
