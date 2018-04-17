@@ -32,7 +32,7 @@ final class iBeaconTests: XCTestCase {
         var adverstisementDataParameter = beaconAdvertisementData(Array(identifier.data),
                                                                   CInt(major),
                                                                   CInt(minor),
-                                                                  CInt(rssi))
+                                                                  CInt(rssi.rawValue))
         
         var parameterBytes = [UInt8].init(repeating: 0, count: Int(adverstisementDataParameter.length))
         
