@@ -27,7 +27,7 @@ final class iBeaconTests: XCTestCase {
         
         let minor: UInt16 = 1
         
-        let rssi: Int8 = -29
+        let rssi = RSSI(rawValue: -29)!
         
         var adverstisementDataParameter = beaconAdvertisementData(Array(identifier.data),
                                                                   CInt(major),
