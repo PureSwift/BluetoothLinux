@@ -8,3 +8,5 @@ BluetoothLinux.xcodeproj
 
 build/
 Docs/
+
+Package.resolved
