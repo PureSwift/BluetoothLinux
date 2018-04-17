@@ -40,7 +40,7 @@ import PackageDescription
 
 let package = Package(
     dependencies: [
-        .Package(url: "https://github.com/PureSwift/BluetoothLinux.git", majorVersion: 2)
+        .Package(url: "https://github.com/PureSwift/BluetoothLinux.git", majorVersion: 3)
         ]
 )
 ```
@@ -55,10 +55,6 @@ jazzy
 ```
 
 Read the documentation [here](http://pureswift.github.io/BluetoothLinux/docs/). For more information, see the [gh-pages](https://github.com/PureSwift/BluetoothLinux/tree/gh-pages) branch.
-
-## Testing
-
-I recommend [LightBlue Explorer](https://itunes.apple.com/us/app/lightblue-explorer-bluetooth/id557428110?mt=8) and [Locate Beacon](https://itunes.apple.com/us/app/locate-beacon/id738709014?mt=8) to verify the iBeacon is advertising. The iBeacon test case is already configured to use a UUID that is preinstalled in the *Locate Beacon* app.
 
 ## Troubleshooting
 
