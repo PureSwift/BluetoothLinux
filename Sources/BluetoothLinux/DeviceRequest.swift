@@ -263,12 +263,6 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
 
             // decrement timeout (why?)
             timeout -= 10
-
-            // make sure its not a negative number
-            if timeout < 0 {
-                
-                timeout = 0
-            }
         }
         
         var actualBytesRead = 0

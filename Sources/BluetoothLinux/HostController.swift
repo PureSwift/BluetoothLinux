@@ -168,9 +168,6 @@ internal func HCIDevicesIterate(_ iterator: (_ socket: CInt, _ deviceRequest: HC
         
         for item in list {
             
-            /* Operation not supported by device */
-            guard item.identifier >= 0 else { throw POSIXError(code: .ENODEV) }
-            
             if try iterator(socket, item) == false {
                 
                 break
