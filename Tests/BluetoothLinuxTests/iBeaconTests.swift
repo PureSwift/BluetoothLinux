@@ -41,15 +41,18 @@ final class iBeaconTests: XCTestCase {
         }
         
         var advertisingDataCommand = iBeacon(uuid: identifier,
-                                            major: major,
-                                            minor: minor,
-                                            rssi: rssi).advertisingData
+                                             major: major,
+                                             minor: minor,
+                                             rssi: rssi).advertisingDataCommand
         
-        XCTAssert(adverstisementDataParameter.length == advertisingDataCommand.length, "Invalid Length: \(adverstisementDataParameter.length) == \(advertisingDataCommand.length)")
+        XCTAssert(adverstisementDataParameter.length == advertisingDataCommand.data.count, "Invalid Length: \(adverstisementDataParameter.length) == \(advertisingDataCommand.data.count)")
         
         let dataPointer1 = withUnsafePointer(to: &adverstisementDataParameter.data) { return UnsafeRawPointer($0) }
-        let dataPointer2 = withUnsafePointer(to: &advertisingDataCommand.data) { return UnsafeRawPointer($0) }
+        let dataPointer2 = withUnsafePointer(to: &advertisingDataCommand.data.bytes) { return UnsafeRawPointer($0) }
         
-        XCTAssert(memcmp(dataPointer1, dataPointer2, Int(advertisingDataCommand.length)) == 0, "Invalid generated data: \n\(adverstisementDataParameter.data)\n == \n\(advertisingDataCommand.data))")
+        XCTAssert(memcmp(dataPointer1, dataPointer2, Int(advertisingDataCommand.data.count)) == 0, "Invalid generated data: \n\(adverstisementDataParameter.data)\n == \n\(advertisingDataCommand.data.bytes)")
     }
 }
+
+
+
