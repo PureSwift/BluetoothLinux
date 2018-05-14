@@ -17,7 +17,7 @@ import Bluetooth
 
 public extension HostController {
 
-    /// Sends a command to the device and waits for a response.
+    /// Send an HCI command with parameters to the controller and waits for a response.
     func deviceRequest<CP: HCICommandParameter, EP: HCIEventParameter>(_ commandParameter: CP, _ eventParameterType: EP.Type, timeout: HCICommandTimeout = .default) throws -> EP {
         
         let command = CP.command
@@ -27,6 +27,21 @@ public extension HostController {
         let data = try HCISendRequest(internalSocket,
                                       command: command,
                                       commandParameterData: parameterData,
+                                      event: EP.event.rawValue,
+                                      eventParameterLength: EP.length,
+                                      timeout: timeout)
+        
+        guard let eventParameter = EP(byteValue: data)
+            else { throw BluetoothHostControllerError.garbageResponse(Data(bytes: data)) }
+        
+        return eventParameter
+    }
+    
+    /// Send an HCI command to the controller and waits for a response.
+    public func deviceRequest<C, EP>(_ command: C, _ eventParameterType: EP.Type, timeout: HCICommandTimeout) throws -> EP where C : HCICommand, EP : HCIEventParameter {
+        
+        let data = try HCISendRequest(internalSocket,
+                                      command: command,
                                       event: EP.event.rawValue,
                                       eventParameterLength: EP.length,
                                       timeout: timeout)
