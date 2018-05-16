@@ -45,7 +45,7 @@ final class iBeaconTests: XCTestCase {
                                              minor: minor,
                                              rssi: rssi).advertisingDataCommand
         
-        XCTAssert(adverstisementDataParameter.length.hashValue == advertisingDataCommand.data.count, "Invalid Length: \(adverstisementDataParameter.length) == \(advertisingDataCommand.data.count)")
+        XCTAssert(Int(adverstisementDataParameter.length) == advertisingDataCommand.data.count, "Invalid Length: \(adverstisementDataParameter.length) == \(advertisingDataCommand.data.count)")
         
         let dataPointer1 = withUnsafePointer(to: &adverstisementDataParameter.data) { return UnsafeRawPointer($0) }
         let dataPointer2 = withUnsafePointer(to: &advertisingDataCommand.data.bytes) { return UnsafeRawPointer($0) }
