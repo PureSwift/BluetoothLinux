@@ -21,7 +21,7 @@ public extension HostController {
         
         try HCIPollEvent(internalSocket, shouldContinue: shouldContinue, event: eventCode) {
             
-            guard let eventParameter = T.init(byteValue: $0)
+            guard let eventParameter = T.init(data: $0)
                 else { throw Error.garbageResponse(Data($0)) }
             
             try event(eventParameter)
@@ -33,7 +33,7 @@ public extension HostController {
 internal func HCIPollEvent(_ deviceDescriptor: CInt,
                            shouldContinue: () -> (Bool),
                            event: UInt8,
-                           eventDataCallback: ([UInt8]) throws -> ()) throws {
+                           eventDataCallback: (Data) throws -> ()) throws {
     
     var eventBuffer = [UInt8](repeating: 0, count: HCI.maximumEventSize)
     
@@ -95,7 +95,7 @@ internal func HCIPollEvent(_ deviceDescriptor: CInt,
             }
         }
         
-        let eventData = Array(eventBuffer[(1 + HCIEventHeader.length) ..< actualBytesRead])
+        let eventData = Data(eventBuffer[(1 + HCIEventHeader.length) ..< actualBytesRead])
         
         try eventDataCallback(eventData)
     }

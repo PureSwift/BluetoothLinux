@@ -18,11 +18,11 @@ import Bluetooth
 public extension HostController {
 
     /// Send an HCI command with parameters to the controller and waits for a response.
-    func deviceRequest<CP: HCICommandParameter, EP: HCIEventParameter>(_ commandParameter: CP, _ eventParameterType: EP.Type, timeout: HCICommandTimeout = .default) throws -> EP {
+    func deviceRequest<CP: HCICommandParameter, EP: HCIEventParameter> (_ commandParameter: CP, _ eventParameterType: EP.Type, timeout: HCICommandTimeout = .default) throws -> EP {
         
         let command = CP.command
 
-        let parameterData = commandParameter.byteValue
+        let parameterData = commandParameter.data
         
         let data = try HCISendRequest(internalSocket,
                                       command: command,
@@ -31,8 +31,8 @@ public extension HostController {
                                       eventParameterLength: EP.length,
                                       timeout: timeout)
         
-        guard let eventParameter = EP(byteValue: data)
-            else { throw BluetoothHostControllerError.garbageResponse(Data(bytes: data)) }
+        guard let eventParameter = EP(data: data)
+            else { throw BluetoothHostControllerError.garbageResponse(data) }
         
         return eventParameter
     }
@@ -46,8 +46,8 @@ public extension HostController {
                                       eventParameterLength: EP.length,
                                       timeout: timeout)
         
-        guard let eventParameter = EP(byteValue: data)
-            else { throw BluetoothHostControllerError.garbageResponse(Data(bytes: data)) }
+        guard let eventParameter = EP(data: data)
+            else { throw BluetoothHostControllerError.garbageResponse(data) }
         
         return eventParameter
     }
@@ -132,7 +132,7 @@ public extension HostController {
         
         let data = try HCISendRequest(internalSocket,
                                       command: CP.command,
-                                      commandParameterData: commandParameter.byteValue,
+                                      commandParameterData: commandParameter.data,
                                       eventParameterLength: 1,
                                       timeout: timeout)
         
@@ -156,7 +156,7 @@ public extension HostController {
         guard statusByte == 0x00
             else { throw HCIError(rawValue: statusByte)! }
         
-        guard let response = Return(byteValue: Array(data.suffix(from: 1)))
+        guard let response = Return(data: Data(data.suffix(from: 1)))
             else { throw BluetoothHostControllerError.garbageResponse(Data(data)) }
         
         return response
@@ -169,7 +169,7 @@ public extension HostController {
         
         let data = try HCISendRequest(internalSocket,
                                       command: commandReturnType.command,
-                                      commandParameterData: commandParameter.byteValue,
+                                      commandParameterData: commandParameter.data,
                                       eventParameterLength: commandReturnType.length + 1,
                                       timeout: timeout)
         
@@ -179,7 +179,7 @@ public extension HostController {
         guard statusByte == 0x00
             else { throw HCIError(rawValue: statusByte)! }
         
-        guard let response = Return(byteValue: Array(data.suffix(from: 1)))
+        guard let response = Return(data: Data(data.suffix(from: 1)))
             else { throw BluetoothHostControllerError.garbageResponse(Data(data)) }
         
         return response
@@ -191,10 +191,10 @@ public extension HostController {
 /// Returns event parameter data.
 internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
                              command: Command,
-                             commandParameterData: [UInt8] = [],
+                             commandParameterData: Data = Data(),
                              event: UInt8 = 0,
                              eventParameterLength: Int = 0,
-                             timeout: HCICommandTimeout = .default) throws -> [UInt8] {
+                             timeout: HCICommandTimeout = .default) throws -> Data {
     
     // initialize variables
     var timeout = timeout.rawValue
@@ -302,12 +302,12 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
             }
         }
         
-        let headerData = Array(eventBuffer[1 ..< 1 + HCIEventHeader.length])
-        let eventData = Array(eventBuffer[(1 + HCIEventHeader.length) ..< actualBytesRead])
+        let headerData = Data(eventBuffer[1 ..< 1 + HCIEventHeader.length])
+        let eventData = Data(eventBuffer[(1 + HCIEventHeader.length) ..< actualBytesRead])
         //var length = actualBytesRead - (1 + HCIEventHeader.length)
 
-        guard let eventHeader = HCIEventHeader(bytes: headerData)
-            else { throw restoreFilter(BluetoothHostControllerError.garbageResponse(Data(bytes: headerData))) }
+        guard let eventHeader = HCIEventHeader(data: headerData)
+            else { throw restoreFilter(BluetoothHostControllerError.garbageResponse(headerData)) }
         
         //print("Event header data: \(headerData)")
         //print("Event header: \(eventHeader)")
@@ -324,10 +324,10 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
 
         case .commandStatus:
             
-            let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.CommandStatusParameter.length)))
+            let parameterData = Data(eventData.prefix(min(eventData.count, HCICommandStatus.length)))
             
-            guard let parameter = HCIGeneralEvent.CommandStatusParameter(byteValue: parameterData)
-                else { throw BluetoothHostControllerError.garbageResponse(Data(bytes: parameterData)) }
+            guard let parameter = HCICommandStatus(data: parameterData)
+                else { throw BluetoothHostControllerError.garbageResponse(parameterData) }
 
             /// must be command status for sent command
             guard parameter.opcode == opcodePacked else { continue }
@@ -350,40 +350,40 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
             // success!
             try done()
             let dataLength = min(eventData.count, eventParameterLength)
-            return Array(eventData.suffix(dataLength))
+            return Data(eventData.suffix(dataLength))
 
         case .commandComplete:
             
-            let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.CommandCompleteParameter.length)))
+            let parameterData = Data(eventData.prefix(min(eventData.count, HCICommandComplete.length)))
 
-            guard let parameter = HCIGeneralEvent.CommandCompleteParameter(byteValue: parameterData)
-                else { throw BluetoothHostControllerError.garbageResponse(Data(bytes: parameterData)) }
+            guard let parameter = HCICommandComplete(data: parameterData)
+                else { throw BluetoothHostControllerError.garbageResponse(parameterData) }
             
             guard parameter.opcode == opcodePacked else { continue }
 
             // success!
             try done()
             
-            let commandCompleteParameterLength = HCIGeneralEvent.CommandCompleteParameter.length
+            let commandCompleteParameterLength = HCICommandComplete.length
             let data = eventData.suffix(eventParameterLength)
             
             let dataLength = max(data.count, commandCompleteParameterLength)
-            return Array(data.suffix(dataLength))
+            return Data(data.suffix(dataLength))
 
         case .remoteNameRequestComplete:
 
             guard eventHeader.event.rawValue == event else { break }
             
-            let parameterData = Array(eventData.prefix(min(eventData.count, HCIGeneralEvent.RemoteNameRequestCompleteParameter.length)))
+            let parameterData = Data(eventData.prefix(min(eventData.count, HCIRemoteNameRequestComplete.length)))
 
-            guard let parameter = HCIGeneralEvent.RemoteNameRequestCompleteParameter(byteValue: parameterData)
-                else { throw BluetoothHostControllerError.garbageResponse(Data(bytes: parameterData)) }
+            guard let parameter = HCIRemoteNameRequestComplete(data: parameterData)
+                else { throw BluetoothHostControllerError.garbageResponse(parameterData) }
 
             if commandParameterData.isEmpty == false {
 
-                guard let commandParameter = LinkControlCommand.RemoteNameRequestParameter(byteValue: commandParameterData)
+                guard let commandParameter = HCIRemoteNameRequest(data: commandParameterData)
                     else { fatalError("HCI Command 'RemoteNameRequest' was sent, but the event parameter data does not correspond to 'RemoteNameRequestParameter'") }
-
+                
                 // must be different, for some reason
                 guard commandParameter.address != parameter.address else { continue }
             }
@@ -391,14 +391,14 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
             // success!
             try done()
             let dataLength = min(eventData.count - 1, eventParameterLength)
-            return Array(eventData.suffix(dataLength))
+            return Data(eventData.suffix(dataLength))
             
         case .lowEnergyMeta:
             
             let parameterData = eventData
             
-            guard let metaParameter = HCIGeneralEvent.LowEnergyMetaParameter(byteValue: parameterData)
-                else { throw BluetoothHostControllerError.garbageResponse(Data(bytes: parameterData)) }
+            guard let metaParameter = HCILowEnergyMetaEvent(data: parameterData)
+                else { throw BluetoothHostControllerError.garbageResponse(parameterData) }
             
             // LE event should match
             guard metaParameter.subevent.rawValue == event
@@ -406,7 +406,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
             
             // success!
             try done()
-            return metaParameter.data
+            return metaParameter.eventData
 
         // all other events
         default:
@@ -415,7 +415,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
 
             try done()
             let dataLength = min(eventData.count, eventParameterLength)
-            return Array(eventData.suffix(dataLength))
+            return Data(eventData.suffix(dataLength))
         }
     }
 

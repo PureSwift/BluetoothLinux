@@ -26,7 +26,7 @@ public extension HostController {
         
         let command = T.command
         
-        let parameterData = commandParameter.byteValue
+        let parameterData = commandParameter.data
         
         try HCISendCommand(internalSocket, command: command, parameterData: parameterData)
     }
@@ -36,14 +36,14 @@ public extension HostController {
 
 internal func HCISendCommand <T: HCICommand> (_ deviceDescriptor: CInt,
                              command: T,
-                             parameterData: [UInt8] = []) throws {
+                             parameterData: Data = Data()) throws {
     
     let packetType = HCIPacketType.Command.rawValue
     
     let header = HCICommandHeader(command: command, parameterLength: UInt8(parameterData.count))
     
     /// data sent to host controller interface
-    var data = [packetType] + header.byteValue + parameterData
+    var data = [UInt8]([packetType]) + [UInt8](header.data) + [UInt8](parameterData)
     
     // write to device descriptor socket
     guard write(deviceDescriptor, &data, data.count) >= 0 // should we check if all data was written?
