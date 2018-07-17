@@ -17,16 +17,34 @@ public enum AddressType: UInt8 {
     case lowEnergyRandom    = 0x02
     
     public init() { self = .bredr }
+}
+
+public extension AddressType {
+    
+    /// Initialize with LE address type. 
+    public init(lowEnergy addressType: LowEnergyAddressType) {
+        
+        switch addressType {
+            
+        case .public,
+             .publicIdentity:
+            self = .lowEnergyPublic
+        case .random,
+             .randomIdentity:
+            self = .lowEnergyRandom
+        }
+    }
     
     /// Whether the Bluetooth address type is LE.
     public var isLowEnergy: Bool {
         
         switch self {
             
-        case .lowEnergyPublic, .lowEnergyRandom:
+        case .lowEnergyPublic,
+             .lowEnergyRandom:
             return true
-        
-        default:
+            
+        case .bredr:
             return false
         }
     }
