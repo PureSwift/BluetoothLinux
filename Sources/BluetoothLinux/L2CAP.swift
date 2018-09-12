@@ -229,9 +229,14 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         // error accepting new connection
         guard client >= 0 else { throw POSIXError.fromErrno! }
 
-        return L2CAPSocket(clientSocket: client,
-                           remoteAddress: remoteAddress,
-                           securityLevel: securityLevel)
+        let newSocket = L2CAPSocket(clientSocket: client,
+                                    remoteAddress: remoteAddress,
+                                    securityLevel: securityLevel)
+        
+        // make socket non-blocking
+        try newSocket.setNonblocking()
+        
+        return newSocket
     }
     
     /// Connect to another L2CAP server.
@@ -252,6 +257,9 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
                 connect(internalSocket, $0, socklen_t(MemoryLayout<sockaddr_l2>.size)) == 0
             })
         }) else { throw POSIXError.fromErrno! }
+        
+        // make socket non-blocking
+        try setNonblocking()
     }
 
     /// Reads from the socket.
@@ -286,9 +294,22 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         guard fdCount != -1
             else { throw POSIXError.fromErrno! }
                 
-        return readSockets.contains(internalSocket)
+        return fdCount > 0
     }
-
+    
+    private func setNonblocking() throws {
+        
+        var flags = fcntl(internalSocket, F_GETFL, 0)
+        
+        guard flags != -1
+            else { throw POSIXError.fromErrno! }
+        
+        flags = fcntl(internalSocket, F_SETFL, flags | O_NONBLOCK);
+        
+        guard flags != -1
+            else { throw POSIXError.fromErrno! }
+    }
+    
     /// Write to the socket.
     public func send(_ data: Data) throws {
         
