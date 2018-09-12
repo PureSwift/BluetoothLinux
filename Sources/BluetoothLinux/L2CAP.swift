@@ -14,6 +14,7 @@
 
 import Foundation
 import Bluetooth
+import CSwiftBluetoothLinux
 
 /// L2CAP Bluetooth socket
 public final class L2CAPSocket: L2CAPSocketProtocol {
@@ -133,7 +134,9 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
                                      addressType: AddressType?) throws -> (CInt, sockaddr_l2) {
         
         // open socket
-        let internalSocket = socket(AF_BLUETOOTH, SOCK_SEQPACKET, BluetoothProtocol.l2cap.rawValue)
+        let internalSocket = socket(AF_BLUETOOTH,
+                                    SOCK_SEQPACKET,
+                                    BluetoothProtocol.l2cap.rawValue)
         
         // error creating socket
         guard internalSocket >= 0
@@ -226,9 +229,14 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         // error accepting new connection
         guard client >= 0 else { throw POSIXError.fromErrno! }
 
-        return L2CAPSocket(clientSocket: client,
-                           remoteAddress: remoteAddress,
-                           securityLevel: securityLevel)
+        let newSocket = L2CAPSocket(clientSocket: client,
+                                    remoteAddress: remoteAddress,
+                                    securityLevel: securityLevel)
+        
+        // make socket non-blocking
+        try newSocket.setNonblocking()
+        
+        return newSocket
     }
     
     /// Connect to another L2CAP server.
@@ -249,11 +257,19 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
                 connect(internalSocket, $0, socklen_t(MemoryLayout<sockaddr_l2>.size)) == 0
             })
         }) else { throw POSIXError.fromErrno! }
+        
+        // make socket non-blocking
+        try setNonblocking()
     }
 
     /// Reads from the socket.
-    public func recieve(_ bufferSize: Int = 1024) throws -> Data {
-
+    public func recieve(_ bufferSize: Int = 1024) throws -> Data? {
+        
+        // check if reading buffer has data.
+        guard try canRead()
+            else { return nil }
+        
+        // read socket
         var buffer = [UInt8](repeating: 0, count: bufferSize)
 
         let actualByteCount = read(internalSocket, &buffer, bufferSize)
@@ -264,7 +280,36 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
 
         return Data(bytes: actualBytes)
     }
-
+    
+    private func canRead() throws -> Bool {
+        
+        var readSockets = FileDescriptorSet()
+        readSockets.zero()
+        readSockets.add(internalSocket)
+        
+        var time = timeval()
+        
+        let fdCount = select(internalSocket + 1, &readSockets, nil, nil, &time)
+        
+        guard fdCount != -1
+            else { throw POSIXError.fromErrno! }
+                
+        return fdCount > 0
+    }
+    
+    private func setNonblocking() throws {
+        
+        var flags = fcntl(internalSocket, F_GETFL, 0)
+        
+        guard flags != -1
+            else { throw POSIXError.fromErrno! }
+        
+        flags = fcntl(internalSocket, F_SETFL, flags | O_NONBLOCK);
+        
+        guard flags != -1
+            else { throw POSIXError.fromErrno! }
+    }
+    
     /// Write to the socket.
     public func send(_ data: Data) throws {
         
@@ -389,8 +434,8 @@ struct bt_security {
 
 #if os(Linux)
     
-    public let SOCK_SEQPACKET: CInt = 5
-    
+let SOCK_SEQPACKET: CInt = CInt(Glibc.SOCK_SEQPACKET.rawValue)
+
 #endif
 
 // MARK: - OS X support
@@ -400,5 +445,5 @@ struct bt_security {
 let SO_PROTOCOL: CInt = 38
     
 let SO_DOMAIN: CInt = 39
-    
+
 #endif
