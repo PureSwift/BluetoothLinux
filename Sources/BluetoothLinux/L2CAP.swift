@@ -351,8 +351,6 @@ public enum L2CAPSocketError: Error {
     
     /// The provided file descriptor was invalid
     case invalidFileDescriptor(CInt)
-    
-    case connectionError
 }
 
 public extension L2CAPSocket {
