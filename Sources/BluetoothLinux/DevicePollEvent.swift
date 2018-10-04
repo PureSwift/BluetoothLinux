@@ -69,23 +69,34 @@ internal func HCIPollEvent(_ deviceDescriptor: CInt,
         return error
     }
     
+    let queue = DispatchQueue(label: "Host Controller Event Polling Queue")
+    
     // poll until timeout
     while shouldContinue() {
         
-        var actualBytesRead = 0
+        var bytesRead = 0
+        var didRead = false
         
-        func doRead() { actualBytesRead = read(deviceDescriptor, &eventBuffer, eventBuffer.count) }
+        queue.async {
+            bytesRead = read(deviceDescriptor, &eventBuffer, eventBuffer.count)
+            didRead = true
+        }
         
-        doRead()
+        while didRead == false {
+            
+            guard shouldContinue()
+                else { return }
+            
+            usleep(1000)
+        }
         
         // try for errors
-        while actualBytesRead < 0 {
+        while bytesRead < 0 {
             
             // ignore these errors
             if (errno == EAGAIN || errno == EINTR) {
                 
                 // try again
-                doRead()
                 continue
                 
             } else {
@@ -95,7 +106,10 @@ internal func HCIPollEvent(_ deviceDescriptor: CInt,
             }
         }
         
-        let eventData = Data(eventBuffer[(1 + HCIEventHeader.length) ..< actualBytesRead])
+        guard bytesRead > 0
+            else { continue }
+        
+        let eventData = Data(eventBuffer[(1 + HCIEventHeader.length) ..< bytesRead])
         
         try eventDataCallback(eventData)
     }
