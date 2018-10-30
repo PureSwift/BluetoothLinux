@@ -71,7 +71,7 @@ License
 
 **BluetoothLinux** is released under the MIT license. See LICENSE for details.
 
-[swift-badge]: https://img.shields.io/badge/Swift-3.2-orange.svg?style=flat
+[swift-badge]: https://img.shields.io/badge/Swift-4.1-orange.svg?style=flat
 [swift-url]: https://swift.org
 [platform-badge]: https://img.shields.io/badge/platform-linux-lightgrey.svg
 [platform-url]: https://swift.org
