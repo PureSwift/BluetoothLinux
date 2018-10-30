@@ -66,9 +66,9 @@ public extension HostController {
         
         return try HCIRequestDeviceList { (_, list) in
             
-            list.sorted(by: { $0.0.identifier < $0.1.identifier })
+            list.sorted(by: { $0.identifier < $1.identifier })
                 .filter { HCITestBit(.up, $0.options) && $0.identifier >= 0 }
-                .flatMap { try? HostController(identifier: $0.identifier) }
+                .compactMap { try? HostController(identifier: $0.identifier) }
         }
     }
     

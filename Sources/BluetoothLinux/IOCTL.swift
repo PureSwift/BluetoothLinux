@@ -58,8 +58,12 @@ internal struct IOC {
     static func IOC(_ direction: CUnsignedInt, _ type: CInt,  _ nr: CInt, _ size: CInt) -> CUnsignedLong {
         
         let dir = CInt(direction)
-        
-        return CUnsignedLong(bitPattern: CLong(((dir) << DIRSHIFT) | ((type) << TYPESHIFT) | ((nr) << NRSHIFT) | ((size) << SIZESHIFT)))
+        let dirValue = dir << DIRSHIFT
+        let typeValue = type << TYPESHIFT
+        let nrValue = nr << NRSHIFT
+        let sizeValue = size << SIZESHIFT
+        let value = CLong(dirValue | typeValue | nrValue | sizeValue)
+        return CUnsignedLong(bitPattern: value)
     }
     
     @inline(__always)

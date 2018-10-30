@@ -123,7 +123,7 @@ internal func HCIInquiry(_ deviceIdentifier: UInt16,
     
     let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
     
-    defer { buffer.deallocate(capacity: bufferSize) }
+    defer { buffer.deallocate() }
     
     let deviceClass = deviceClass ?? (0x33, 0x8b, 0x9e)
     

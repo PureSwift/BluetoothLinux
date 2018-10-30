@@ -1,25 +1,20 @@
+// swift-tools-version:4.1
 import PackageDescription
 
-let package = Package(
-    name: "BluetoothLinux",
-    targets: [
-        Target(
-            name: "BluetoothLinux",
+_ = Package(name: "BluetoothLinux",
+            products: [
+                .library(
+                    name: "BluetoothLinux",
+                    targets: ["BluetoothLinux"]
+                )
+            ],
             dependencies: [
-                .Target(name: "CSwiftBluetoothLinux")
-            ]),
-        Target(
-            name: "CSwiftBluetoothLinux"),
-        Target(
-            name: "CSwiftBluetoothLinuxTest"),
-        Target(
-            name: "BluetoothLinuxTests",
-            dependencies: [
-                .Target(name: "BluetoothLinux"),
-                .Target(name: "CSwiftBluetoothLinuxTest")
-            ])
-    ],
-    dependencies: [
-        .Package(url: "https://github.com/PureSwift/Bluetooth.git", majorVersion: 2)
-    ]
-)
+                .package(url: "https://github.com/PureSwift/Bluetooth.git", .branch("master"))
+            ],
+            targets: [
+                .target(name: "BluetoothLinux", dependencies: ["Bluetooth", "CSwiftBluetoothLinux"]),
+                .target(name: "CSwiftBluetoothLinux"),
+                .target(name: "CSwiftBluetoothLinuxTest"),
+                .testTarget(name: "BluetoothLinuxTests", dependencies: ["BluetoothLinux", "CSwiftBluetoothLinuxTest"])
+            ],
+            swiftLanguageVersions: [4])
