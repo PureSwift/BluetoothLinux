@@ -243,7 +243,7 @@ internal func HCIDeviceAddress(_ deviceIdentifier: UInt16) throws -> Address {
     let deviceInfo = try HCIDeviceInfo(deviceIdentifier)
     
     guard HCITestBit(HCI.DeviceFlag.up, deviceInfo.flags)
-        else { throw POSIXError(code: .ENETDOWN) }
+        else { throw POSIXError(.ENETDOWN) }
     
     return deviceInfo.address
 }

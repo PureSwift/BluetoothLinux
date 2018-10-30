@@ -274,7 +274,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
             
             // poll timed out
             guard pollStatus != 0
-                else { throw restoreFilter(POSIXError(code: .ETIMEDOUT)) }
+                else { throw restoreFilter(POSIXError(.ETIMEDOUT)) }
 
             // decrement timeout (why?)
             timeout -= 10
@@ -420,7 +420,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
     }
 
     // throw timeout error
-    throw POSIXError(code: .ETIMEDOUT)
+    throw POSIXError(.ETIMEDOUT)
 }
 
 // MARK: - Internal Constants
