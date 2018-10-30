@@ -19,15 +19,10 @@ Does not require [BlueZ](https://www.bluez.org), communicates directly with the 
 import Bluetooth
 import BluetoothLinux
 
-guard let adapter = try? Adapter()
+guard let hostController = HostController.default
     else { Error("No Bluetooth adapters found") }
-
-print("Found Bluetooth adapter with device ID: \(adapter.identifier)")
-
 let iBeaconUUID = Foundation.UUID(rawValue: "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0")!
-
-do { try adapter.enableBeacon(uuid: iBeaconUUID, major: 1, minor: 1, rssi: -29) }
-    
+do { try hostController.enableBeacon(uuid: iBeaconUUID, major: 1, minor: 1, rssi: -29) }
 catch { print("Error enabling iBeacon: \(error)") }
 ```
 
@@ -60,7 +55,7 @@ Read the documentation [here](http://pureswift.github.io/BluetoothLinux/docs/). 
 
 Do not test in Parallels or VMware with the built in Bluetooth adapter found in Macs. You can, however, use VMWare or Parallels, with a Linux compatible Bluetooth LE USB adapter plugged in. VirtualBox will work with the builtin adapter on Macs.
 
-For best results, test with Swift 3.0.2 on an ARM board running Linux (e.g. BeagleBoneBlack, Raspberry Pi, Orange Pi, etc) and a Linux comaptible Bluetooth dongle (e.g. CSR8510 A10).
+For best results, test with Swift 4.1.2 on an ARM board running Linux (e.g. BeagleBoneBlack, Raspberry Pi, Orange Pi, etc) and a Linux comaptible Bluetooth dongle (e.g. CSR8510 A10).
 
 ## See Also
 
