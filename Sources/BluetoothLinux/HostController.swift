@@ -27,7 +27,7 @@ public final class HostController: BluetoothHostControllerInterface {
     public let identifier: Identifier
     
     /// The Bluetooth Address of the controller.
-    public let address: Address
+    public let address: BluetoothAddress
     
     // MARK: - Internal Properties
 
@@ -44,12 +44,12 @@ public final class HostController: BluetoothHostControllerInterface {
     public init(identifier: Identifier) throws {
         
         self.identifier = identifier
-        self.address = try Address(deviceIdentifier: identifier)
+        self.address = try BluetoothAddress(deviceIdentifier: identifier)
         self.internalSocket = try HCIOpenDevice(identifier)
     }
     
     /// Initializes the Bluetooth controller with the specified address.
-    public init(address: Address) throws {
+    public init(address: BluetoothAddress) throws {
         
         guard let deviceIdentifier = try HCIGetRoute(address)
             else { throw Error.adapterNotFound }
@@ -90,7 +90,7 @@ public extension HostController {
 
 // MARK: - Address Extensions
 
-public extension Address {
+public extension BluetoothAddress {
     
     /// Extracts the Bluetooth address from the device ID.
     ///
@@ -200,7 +200,7 @@ internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(
     return result
 }
 
-internal func HCIGetRoute(_ address: Address? = nil) throws -> UInt16? {
+internal func HCIGetRoute(_ address: BluetoothAddress? = nil) throws -> UInt16? {
 
     return try HCIIdentifierOfDevice { (dd, deviceIdentifier) in
 
@@ -238,7 +238,7 @@ internal func HCIDeviceInfo(_ deviceIdentifier: UInt16) throws -> HCIDeviceInfor
     return deviceInfo
 }
 
-internal func HCIDeviceAddress(_ deviceIdentifier: UInt16) throws -> Address {
+internal func HCIDeviceAddress(_ deviceIdentifier: UInt16) throws -> BluetoothAddress {
     
     let deviceInfo = try HCIDeviceInfo(deviceIdentifier)
     
@@ -275,7 +275,5 @@ internal func HCITestBit(_ flag: HCI.DeviceFlag, _ options: UInt32) -> Bool {
 // MARK: - Darwin Stubs
 
 #if os(OSX) || os(iOS)
-
-    var SOCK_CLOEXEC: CInt { stub() }
-    
+var SOCK_CLOEXEC: CInt { stub() }
 #endif

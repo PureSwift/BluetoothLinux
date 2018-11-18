@@ -40,7 +40,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     }
     
     /// Create a new L2CAP socket on the HostController with the specified identifier.
-    public init(controllerAddress: Address,
+    public init(controllerAddress: BluetoothAddress,
                 protocolServiceMultiplexer: UInt16 = 0,
                 channelIdentifier: UInt16 = ATT.CID,
                 addressType: AddressType? = .lowEnergyPublic,
@@ -71,7 +71,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     }
     
     /// Creates a server socket for an L2CAP connection.
-    public static func lowEnergyServer(controllerAddress: Address = .any,
+    public static func lowEnergyServer(controllerAddress: BluetoothAddress = .any,
                                        isRandom: Bool = false,
                                        securityLevel: SecurityLevel = .low) throws -> L2CAPSocket {
         
@@ -87,8 +87,8 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     }
     
     /// Creates a client socket for an L2CAP connection.
-    public static func lowEnergyClient(controllerAddress: Address = .any,
-                                       destination: (address: Address, type: AddressType),
+    public static func lowEnergyClient(controllerAddress: BluetoothAddress = .any,
+                                       destination: (address: BluetoothAddress, type: AddressType),
                                        securityLevel: SecurityLevel = .low) throws -> L2CAPSocket {
         
         let socket = try L2CAPSocket(controllerAddress: controllerAddress,
@@ -128,7 +128,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     
     /// Create the underlying socket for the L2CAP.
     @inline(__always)
-    private static func createSocket(controllerAddress: Address,
+    private static func createSocket(controllerAddress: BluetoothAddress,
                                      protocolServiceMultiplexer: UInt16,
                                      channelIdentifier: UInt16,
                                      addressType: AddressType?) throws -> (CInt, sockaddr_l2) {
@@ -164,9 +164,9 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     // MARK: - Accessors
     
     /// Bluetooth address
-    public var address: Address {
+    public var address: BluetoothAddress {
         
-        return Address(littleEndian: internalAddress.l2_bdaddr)
+        return BluetoothAddress(littleEndian: internalAddress.l2_bdaddr)
     }
     
     public var addressType: AddressType {
@@ -240,7 +240,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     }
     
     /// Connect to another L2CAP server.
-    public func openConnection(to address: Address,
+    public func openConnection(to address: BluetoothAddress,
                                type addressType: AddressType = .lowEnergyPublic) throws {
         
         // Set up destination address
@@ -415,7 +415,7 @@ let L2CAP_OPTIONS: CInt = 0x01
 struct sockaddr_l2 {
     var l2_family: sa_family_t = 0
     var l2_psm: CUnsignedShort = 0
-    var l2_bdaddr: Address = .zero
+    var l2_bdaddr: BluetoothAddress = .zero
     var l2_cid: CUnsignedShort = 0
     var l2_bdaddr_type: UInt8 = 0
     init() { }

@@ -89,7 +89,7 @@ public extension HostController {
     public struct InquiryResult {
         
         /// Device Address
-        public var address = Address()
+        public var address = BluetoothAddress()
         
         public var pscanRepMode: UInt8 = 0
         
