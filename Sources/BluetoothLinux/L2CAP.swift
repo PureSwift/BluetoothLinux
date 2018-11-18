@@ -71,7 +71,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     }
     
     /// Creates a server socket for an L2CAP connection.
-    public static func lowEnergyServer(controllerAddress: BluetoothAddress = .any,
+    public static func lowEnergyServer(controllerAddress: BluetoothAddress = .zero,
                                        isRandom: Bool = false,
                                        securityLevel: SecurityLevel = .low) throws -> L2CAPSocket {
         
@@ -87,7 +87,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     }
     
     /// Creates a client socket for an L2CAP connection.
-    public static func lowEnergyClient(controllerAddress: BluetoothAddress = .any,
+    public static func lowEnergyClient(controllerAddress: BluetoothAddress = .zero,
                                        destination: (address: BluetoothAddress, type: AddressType),
                                        securityLevel: SecurityLevel = .low) throws -> L2CAPSocket {
         
