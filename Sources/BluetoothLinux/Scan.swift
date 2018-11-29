@@ -81,9 +81,7 @@ public extension HostController {
         /// even if the devices aren't in range anymore.
         case flushCache = 0x0001
         
-        public static let all: Set<ScanOption> = [.flushCache]
-        
-        public typealias RawValue = Int32
+        public static let allCases: Set<ScanOption> = [.flushCache]
     }
     
     public struct InquiryResult {
