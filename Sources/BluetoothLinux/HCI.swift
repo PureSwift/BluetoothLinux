@@ -228,15 +228,6 @@ extension HCIDeviceList: Collection {
     
 }
 
-#if swift(>=3.3)
-#elseif swift(>=3.0)
-extension HCIDeviceList {
-        
-    typealias Slice = Swift.RandomAccessSlice
-}
-#endif
-
-#if swift(>=3.1)
 extension HCIDeviceList: RandomAccessCollection {
 
     public subscript(bounds: Range<Int>) -> Slice<HCIDeviceList> {
@@ -248,9 +239,6 @@ extension HCIDeviceList: RandomAccessCollection {
         return IndexingIterator(_elements: self)
     }
 }
-
-#elseif swift(>=3.0)
-#endif
 
 /// `hci_inquiry_req`
 internal struct HCIInquiryRequest {
