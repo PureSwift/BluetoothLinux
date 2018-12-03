@@ -41,15 +41,16 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     
     /// Create a new L2CAP socket on the HostController with the specified identifier.
     public init(controllerAddress: BluetoothAddress,
-                protocolServiceMultiplexer: UInt16 = 0,
-                channelIdentifier: UInt16 = ATT.CID,
+                protocolServiceMultiplexer: ProtocolServiceMultiplexer? = nil,
+                channelIdentifier: ChannelIdentifier = .att,
                 addressType: AddressType? = .lowEnergyPublic,
                 securityLevel: SecurityLevel = .low) throws {
         
-        let (internalSocket, internalAddress) = try L2CAPSocket.createSocket(controllerAddress: controllerAddress,
-                                                                             protocolServiceMultiplexer: protocolServiceMultiplexer,
-                                                                             channelIdentifier: channelIdentifier,
-                                                                             addressType: addressType)
+        let (internalSocket, internalAddress) = try L2CAPSocket.createSocket(
+            controllerAddress: controllerAddress,
+            protocolServiceMultiplexer: UInt16(protocolServiceMultiplexer?.rawValue ?? 0),
+            channelIdentifier: channelIdentifier.rawValue,
+            addressType: addressType)
         
         // store values
         self.internalSocket = internalSocket
@@ -76,10 +77,10 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
                                        securityLevel: SecurityLevel = .low) throws -> L2CAPSocket {
         
         let socket = try L2CAPSocket(controllerAddress: controllerAddress,
-                                 protocolServiceMultiplexer: 0,
-                                 channelIdentifier: ATT.CID,
-                                 addressType: isRandom ? .lowEnergyRandom : .lowEnergyPublic,
-                                 securityLevel: securityLevel)
+                                     protocolServiceMultiplexer: nil,
+                                     channelIdentifier: .att,
+                                     addressType: isRandom ? .lowEnergyRandom : .lowEnergyPublic,
+                                     securityLevel: securityLevel)
         
         try socket.startListening()
         
@@ -92,8 +93,8 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
                                        securityLevel: SecurityLevel = .low) throws -> L2CAPSocket {
         
         let socket = try L2CAPSocket(controllerAddress: controllerAddress,
-                                     protocolServiceMultiplexer: 0,
-                                     channelIdentifier: ATT.CID,
+                                     protocolServiceMultiplexer: nil,
+                                     channelIdentifier: .att,
                                      addressType: nil,
                                      securityLevel: securityLevel)
         
@@ -184,9 +185,9 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     ///
     /// L2CAP channel endpoints are identified to their clients by a Channel Identifier (CID).
     /// This is assigned by L2CAP, and each L2CAP channel endpoint on any device has a different CID.
-    public var channelIdentifier: UInt16 {
+    public var channelIdentifier: ChannelIdentifier {
         
-        return UInt16(littleEndian: internalAddress.l2_cid)
+        return ChannelIdentifier(rawValue: UInt16(littleEndian: internalAddress.l2_cid))
     }
 
     // MARK: - Methods
