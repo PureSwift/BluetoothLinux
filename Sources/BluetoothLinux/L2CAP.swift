@@ -114,7 +114,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
             var optionLength = socklen_t(MemoryLayout<CInt>.size)
             
             guard getsockopt(fileDescriptor, SOL_SOCKET, socketOption, &optionValue, &optionLength) == 0
-                else { throw POSIXError.fromErrno! }
+                else { throw POSIXError.errorno }
             
             return optionValue
         }
@@ -141,7 +141,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         
         // error creating socket
         guard internalSocket >= 0
-            else { throw POSIXError.fromErrno! }
+            else { throw POSIXError.errorno }
         
         // set source address
         var localAddress = sockaddr_l2()
@@ -157,7 +157,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
             $0.withMemoryRebound(to: sockaddr.self, capacity: 1, {
                 bind(internalSocket, $0, socklen_t(MemoryLayout<sockaddr_l2>.size)) == 0
             })
-        }) else { close(internalSocket); throw POSIXError.fromErrno! }
+        }) else { close(internalSocket); throw POSIXError.errorno }
         
         return (internalSocket, localAddress)
     }
@@ -200,7 +200,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         security.level = securityLevel.rawValue
         
         guard setsockopt(internalSocket, SOL_BLUETOOTH, BT_SECURITY, &security, socklen_t(MemoryLayout<bt_security>.size)) == 0
-            else { throw POSIXError.fromErrno! }
+            else { throw POSIXError.errorno }
         
         self.securityLevel = securityLevel
     }
@@ -210,7 +210,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         
         // put socket into listening mode
         guard listen(internalSocket, Int32(queueLimit)) == 0
-            else { throw POSIXError.fromErrno! }
+            else { throw POSIXError.errorno }
     }
 
     /// Blocks the caller until a new connection is recieved.
@@ -228,7 +228,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         })
         
         // error accepting new connection
-        guard client >= 0 else { throw POSIXError.fromErrno! }
+        guard client >= 0 else { throw POSIXError.errorno }
 
         let newSocket = L2CAPSocket(clientSocket: client,
                                     remoteAddress: remoteAddress,
@@ -257,7 +257,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
             $0.withMemoryRebound(to: sockaddr.self, capacity: 1, {
                 connect(internalSocket, $0, socklen_t(MemoryLayout<sockaddr_l2>.size)) == 0
             })
-        }) else { throw POSIXError.fromErrno! }
+        }) else { throw POSIXError.errorno }
         
         // make socket non-blocking
         try setNonblocking()
@@ -275,13 +275,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
 
         let actualByteCount = read(internalSocket, &buffer, bufferSize)
 
-        guard actualByteCount >= 0 else {
-            if let error = POSIXError.fromErrno {
-                throw error
-            } else {
-                return nil
-            }
-        }
+        guard actualByteCount >= 0 else { throw POSIXError.errorno }
 
         let actualBytes = Array(buffer.prefix(actualByteCount))
 
@@ -299,7 +293,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         let fdCount = select(internalSocket + 1, &readSockets, nil, nil, &time)
         
         guard fdCount != -1
-            else { throw POSIXError.fromErrno! }
+            else { throw POSIXError.errorno }
                 
         return fdCount > 0
     }
@@ -309,12 +303,12 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         var flags = fcntl(internalSocket, F_GETFL, 0)
         
         guard flags != -1
-            else { throw POSIXError.fromErrno! }
+            else { throw POSIXError.errorno }
         
         flags = fcntl(internalSocket, F_SETFL, flags | O_NONBLOCK);
         
         guard flags != -1
-            else { throw POSIXError.fromErrno! }
+            else { throw POSIXError.errorno }
     }
     
     /// Write to the socket.
@@ -325,7 +319,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         let actualByteCount = write(internalSocket, &buffer, buffer.count)
         
         guard actualByteCount >= 0
-            else { throw POSIXError.fromErrno! }
+            else { throw POSIXError.errorno }
         
         guard actualByteCount == buffer.count
             else { throw L2CAPSocketError.sentLessBytes(actualByteCount) }
@@ -338,7 +332,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         var optionLength = socklen_t(MemoryLayout<Options>.size)
         
         guard getsockopt(internalSocket, SOL_L2CAP, L2CAP_OPTIONS, &optionValue, &optionLength) == 0
-            else { throw POSIXError.fromErrno! }
+            else { throw POSIXError.errorno }
         
         return optionValue
     }

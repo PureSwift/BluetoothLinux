@@ -59,7 +59,7 @@ public extension HostController {
         defer { nameBuffer.deallocateCapacity(maxNameLength) }
         
         guard hci_read_remote_name(internalSocket, &address, CInt(maxNameLength), nameBuffer, CInt(timeout)) == CInt(0)
-            else { throw POSIXError.fromErrno! }
+            else { throw POSIXError.errorno }
         
         let name = String.fromCString(nameBuffer)
         
@@ -113,7 +113,7 @@ internal func HCIInquiry(_ deviceIdentifier: UInt16,
     
     let deviceDescriptor = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
     
-    guard deviceDescriptor >= 0 else { throw POSIXError.fromErrno! }
+    guard deviceDescriptor >= 0 else { throw POSIXError.errorno }
     
     defer { close(deviceDescriptor) }
     
@@ -136,7 +136,7 @@ internal func HCIInquiry(_ deviceIdentifier: UInt16,
     }
     
     guard IOControl(deviceDescriptor, HCI.IOCTL.Inquiry, UnsafeMutableRawPointer(buffer) ) >= 0
-        else { throw POSIXError.fromErrno! }
+        else { throw POSIXError.errorno }
     
     let resultCount = buffer.withMemoryRebound(to: HCIInquiryRequest.self, capacity: 1) { (inquiryRequest) in
         Int(inquiryRequest.pointee.responseCount)
