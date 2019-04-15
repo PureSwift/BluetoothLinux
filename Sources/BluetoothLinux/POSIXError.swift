@@ -11,10 +11,10 @@ import Foundation
 internal extension POSIXError {
     
     /// Creates error from C ```errno```.
-    static var errorno: POSIXError {
+    static var fromErrno: POSIXError? {
         
         guard let code = POSIXError.Code(rawValue: POSIXError.Code.RawValue(errno))
-            else { return POSIXError(.EIO) } // default error
+            else { return nil }
         
         return self.init(code)
     }
