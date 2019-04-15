@@ -285,7 +285,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
 
         let actualBytes = Array(buffer.prefix(actualByteCount))
 
-        return Data(bytes: actualBytes)
+        return Data(actualBytes)
     }
     
     private func canRead() throws -> Bool {

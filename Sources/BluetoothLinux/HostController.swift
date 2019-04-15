@@ -79,12 +79,16 @@ public extension HostController {
     
     static var `default`: HostController? {
         
-        guard let result = try? HCIGetRoute(nil),
-            let deviceIdentifier = result,
-            let controller = try? HostController(identifier: deviceIdentifier)
+        #if swift(>=5.0)
+        guard let deviceIdentifier = try? HCIGetRoute(nil)
             else { return nil }
+        #else
+        guard let result = try? HCIGetRoute(nil),
+            let deviceIdentifier = result
+            else { return nil }
+        #endif
         
-        return controller
+        return try? HostController(identifier: deviceIdentifier)
     }
 }
 
