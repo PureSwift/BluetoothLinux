@@ -24,7 +24,7 @@ public enum AddressType: UInt8 {
 public extension AddressType {
     
     /// Initialize with LE address type. 
-    public init(lowEnergy addressType: LowEnergyAddressType) {
+    init(lowEnergy addressType: LowEnergyAddressType) {
         
         switch addressType {
             
@@ -38,7 +38,7 @@ public extension AddressType {
     }
     
     /// Whether the Bluetooth address type is LE.
-    public var isLowEnergy: Bool {
+    var isLowEnergy: Bool {
         
         switch self {
             

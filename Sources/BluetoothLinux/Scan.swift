@@ -71,10 +71,10 @@ public extension HostController {
 
 public extension HostController {
     
-    public typealias DeviceClass = (UInt8, UInt8, UInt8)
+    typealias DeviceClass = (UInt8, UInt8, UInt8)
     
     /// Options for scanning Bluetooth devices
-    public enum ScanOption: Int32, BitMaskOption {
+    enum ScanOption: Int32, BitMaskOption {
         
         /// The cache of previously detected devices is flushed before performing the current inquiry. 
         /// Otherwise, if flags is set to 0, then the results of previous inquiries may be returned, 
@@ -84,7 +84,7 @@ public extension HostController {
         public static let allCases: Set<ScanOption> = [.flushCache]
     }
     
-    public struct InquiryResult {
+    struct InquiryResult {
         
         /// Device Address
         public var address = BluetoothAddress()

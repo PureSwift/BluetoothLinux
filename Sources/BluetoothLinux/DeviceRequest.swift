@@ -38,7 +38,7 @@ public extension HostController {
     }
     
     /// Send an HCI command to the controller and waits for a response.
-    public func deviceRequest<C, EP>(_ command: C, _ eventParameterType: EP.Type, timeout: HCICommandTimeout) throws -> EP where C : HCICommand, EP : HCIEventParameter {
+    func deviceRequest<C, EP>(_ command: C, _ eventParameterType: EP.Type, timeout: HCICommandTimeout) throws -> EP where C : HCICommand, EP : HCIEventParameter {
         
         let data = try HCISendRequest(internalSocket,
                                       command: command,

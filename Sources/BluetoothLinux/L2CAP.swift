@@ -348,7 +348,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     
 public extension L2CAPSocket {
     
-    public typealias Error = L2CAPSocketError
+    typealias Error = L2CAPSocketError
 }
 
 public enum L2CAPSocketError: Error {
@@ -363,7 +363,7 @@ public enum L2CAPSocketError: Error {
 public extension L2CAPSocket {
     
     /// L2CAP Socket Options
-    public struct Options {
+    struct Options {
         
         public var outputMaximumTransmissionUnit: UInt16 // omtu
         public var inputMaximumTransmissionUnit: UInt16 // imtu
@@ -385,7 +385,7 @@ public extension L2CAPSocket {
         }
     }
     
-    public enum ConnectionResult: UInt16 {
+    enum ConnectionResult: UInt16 {
         
         case success    = 0x0000
         case pending    = 0x0001
@@ -394,7 +394,7 @@ public extension L2CAPSocket {
         case noMemory   = 0x0004
     }
     
-    public enum ConnectionStatus: UInt16 {
+    enum ConnectionStatus: UInt16 {
         
         case noInfo                 = 0x0000
         case authenticationPending  = 0x0001

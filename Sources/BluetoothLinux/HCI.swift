@@ -19,15 +19,15 @@ public extension HCI {
     
     // MARK: - Typealiases
     
-    public typealias DeviceFlag             = HCIDeviceFlag
+    typealias DeviceFlag             = HCIDeviceFlag
     
-    public typealias DeviceEvent            = HCIDeviceEvent
+    typealias DeviceEvent            = HCIDeviceEvent
     
-    public typealias ControllerType         = HCIControllerType
+    typealias ControllerType         = HCIControllerType
     
-    public typealias BusType                = HCIBusType
+    typealias BusType                = HCIBusType
     
-    public typealias IOCTL                  = HCIIOCTL
+    typealias IOCTL                  = HCIIOCTL
 }
 
 /// HCI device flags
