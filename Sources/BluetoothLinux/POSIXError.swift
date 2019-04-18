@@ -22,26 +22,65 @@ internal extension POSIXError {
         guard let code = POSIXErrorCode(rawValue: errno)
             else { return nil }
         
-        return self.init(code)
-    }
-    
-    /// Initializes `POSIXError` from an error code.
-    init(_ errorCode: POSIXErrorCode) {
-        
-        var userInfo = [String: Any](minimumCapacity: 1)
-        
-        if let description = String(cString: strerror(errorCode.rawValue), encoding: .ascii) {
-            userInfo[NSLocalizedDescriptionKey] = description
-        }
-        
-        let nsError = NSError(
-            domain: NSPOSIXErrorDomain,
-            code: Int(errorCode.rawValue),
-            userInfo: userInfo)
-        
-        self.init(_nsError: nsError)
+        return POSIXError(_nsError: NSPOSIXError(code))
     }
 }
+
+#if os(Linux) || os(Android) || Xcode
+internal final class NSPOSIXError: NSError {
+    
+    internal let posixError: POSIXErrorCode
+    
+    init(_ code: POSIXErrorCode) {
+        self.posixError = code
+        super.init(domain: NSPOSIXErrorDomain,
+                   code: Int(code.rawValue),
+                   userInfo: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError()
+    }
+    
+    override var domain: String { return NSPOSIXErrorDomain }
+    
+    override var code: Int {
+        return Int(posixError.rawValue)
+    }
+    
+    override var localizedDescription: String {
+        if let localizedDescription = userInfo[NSLocalizedDescriptionKey] as? String {
+            return localizedDescription
+        } else {
+            // placeholder values
+            return "The operation couldn’t be completed." + " " + (self.localizedFailureReason ?? "(\(domain) error \(code).)")
+        }
+    }
+    
+    override var localizedFailureReason: String? {
+        
+        if let localizedFailureReason = userInfo[NSLocalizedFailureReasonErrorKey] as? String {
+            return localizedFailureReason
+        } else {
+            return String(cString: strerror(Int32(code)), encoding: .ascii)
+        }
+    }
+    
+    override var description: String {
+        return "Error Domain=\(domain) Code=\(code) \"\(localizedFailureReason ?? "(null)")\""
+    }
+}
+#elseif os(macOS)
+// Use Objective-C implementation on Darwin
+internal typealias NSPOSIXError = NSError
+internal extension NSError {
+    convenience init(_ code: POSIXErrorCode) {
+        self.init(domain: NSPOSIXErrorDomain,
+                   code: Int(code.rawValue),
+                   userInfo: nil)
+    }
+}
+#endif
 
 #if !swift(>=5.1) && (os(Linux) || os(Android))
 
