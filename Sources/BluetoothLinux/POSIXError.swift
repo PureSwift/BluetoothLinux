@@ -26,10 +26,21 @@ internal extension POSIXError {
     }
 }
 
-#if os(Linux) || os(Android) || Xcode
+// MARK: - CustomStringConvertible
+
+// https://github.com/apple/swift/pull/24149
+// https://github.com/apple/swift-corelibs-foundation/pull/2140
+extension POSIXError: CustomStringConvertible {
+    public var description: String {
+        return _nsError.description
+    }
+}
+
+// MARK: - Supporting Types
+
 internal final class NSPOSIXError: NSError {
     
-    internal let posixError: POSIXErrorCode
+    let posixError: POSIXErrorCode
     
     init(_ code: POSIXErrorCode) {
         self.posixError = code
@@ -38,8 +49,8 @@ internal final class NSPOSIXError: NSError {
                    userInfo: nil)
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError()
+    required init?(coder decoder: NSCoder) {
+        return nil
     }
     
     override var domain: String { return NSPOSIXErrorDomain }
@@ -49,38 +60,21 @@ internal final class NSPOSIXError: NSError {
     }
     
     override var localizedDescription: String {
-        if let localizedDescription = userInfo[NSLocalizedDescriptionKey] as? String {
-            return localizedDescription
-        } else {
-            // placeholder values
-            return "The operation couldn’t be completed." + " " + (self.localizedFailureReason ?? "(\(domain) error \(code).)")
-        }
+        return errorMessage
     }
     
     override var localizedFailureReason: String? {
-        
-        if let localizedFailureReason = userInfo[NSLocalizedFailureReasonErrorKey] as? String {
-            return localizedFailureReason
-        } else {
-            return String(cString: strerror(Int32(code)), encoding: .ascii)
-        }
+        return errorMessage
+    }
+    
+    internal var errorMessage: String {
+        return String(cString: strerror(posixError.rawValue), encoding: .utf8)!
     }
     
     override var description: String {
-        return "Error Domain=\(domain) Code=\(code) \"\(localizedFailureReason ?? "(null)")\""
+        return "Error Domain=\(domain) Code=\(code) \"\(errorMessage)\""
     }
 }
-#elseif os(macOS)
-// Use Objective-C implementation on Darwin
-internal typealias NSPOSIXError = NSError
-internal extension NSError {
-    convenience init(_ code: POSIXErrorCode) {
-        self.init(domain: NSPOSIXErrorDomain,
-                   code: Int(code.rawValue),
-                   userInfo: nil)
-    }
-}
-#endif
 
 #if !swift(>=5.1) && (os(Linux) || os(Android))
 
