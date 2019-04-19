@@ -22,7 +22,11 @@ internal extension POSIXError {
         guard let code = POSIXErrorCode(rawValue: errno)
             else { return nil }
         
-        return POSIXError(_nsError: NSPOSIXError(code))
+        return POSIXError(code)
+    }
+    
+    init(_ code: POSIXErrorCode) {
+        self.init(_nsError: NSPOSIXError(code))
     }
 }
 
@@ -41,6 +45,14 @@ extension POSIXError: CustomStringConvertible {
         return _nsError.description
     }
 }
+
+#if os(macOS)
+extension POSIXErrorCode {
+    public var description: String {
+        return rawValue.description
+    }
+}
+#endif
 
 // MARK: - LocalizedError
 
@@ -82,7 +94,7 @@ internal final class NSPOSIXError: NSError {
     }
     
     override var description: String {
-        return "Error Domain=\(domain) Code=\(code) \"\(posixError.errorMessage)\""
+        return "\(posixError.errorMessage) (\(posixError))"
     }
 }
 
