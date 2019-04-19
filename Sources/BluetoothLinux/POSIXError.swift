@@ -26,6 +26,12 @@ internal extension POSIXError {
     }
 }
 
+internal extension POSIXErrorCode {
+    var errorMessage: String {
+        return String(cString: strerror(rawValue), encoding: .utf8)!
+    }
+}
+
 // MARK: - CustomStringConvertible
 
 // https://github.com/apple/swift/pull/24149
@@ -33,6 +39,14 @@ internal extension POSIXError {
 extension POSIXError: CustomStringConvertible {
     public var description: String {
         return _nsError.description
+    }
+}
+
+// MARK: - LocalizedError
+
+extension POSIXError: LocalizedError {
+    public var localizedDescription: String {
+        return POSIXErrorCode(rawValue: Int32(errorCode))?.errorMessage ?? "Invalid error \(errorCode)"
     }
 }
 
@@ -60,19 +74,15 @@ internal final class NSPOSIXError: NSError {
     }
     
     override var localizedDescription: String {
-        return errorMessage
+        return posixError.errorMessage
     }
     
     override var localizedFailureReason: String? {
-        return errorMessage
-    }
-    
-    internal var errorMessage: String {
-        return String(cString: strerror(posixError.rawValue), encoding: .utf8)!
+        return posixError.errorMessage
     }
     
     override var description: String {
-        return "Error Domain=\(domain) Code=\(code) \"\(errorMessage)\""
+        return "Error Domain=\(domain) Code=\(code) \"\(posixError.errorMessage)\""
     }
 }
 

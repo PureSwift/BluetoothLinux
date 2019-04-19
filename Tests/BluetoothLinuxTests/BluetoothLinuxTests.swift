@@ -32,21 +32,23 @@ final class BluetoothLinuxTests: XCTestCase {
         for (errorCode, string) in errors {
             
             let error = POSIXError(_nsError: NSPOSIXError(errorCode))
+            
             #if os(macOS) || swift(>=5.1)
             // https://github.com/apple/swift-corelibs-foundation/pull/2113
             XCTAssertEqual(error.code, errorCode)
-            #endif
-            #if os(macOS)
-            // https://github.com/apple/swift-corelibs-foundation/pull/2140
-            XCTAssertEqual(error.localizedDescription, string)
             #endif
             XCTAssertEqual(error.errorCode, Int(errorCode.rawValue))
             XCTAssertEqual(error._nsError.localizedFailureReason, string)
             XCTAssertEqual(error._nsError.localizedDescription, string)
             XCTAssertEqual(error._nsError.domain, NSPOSIXErrorDomain)
             XCTAssertEqual(error._nsError.code, Int(errorCode.rawValue))
-            let errorDescription = "Error Domain=\(NSPOSIXErrorDomain) Code=\(errorCode.rawValue) \"\(string)\""
-            XCTAssertEqual("\(error)", errorDescription)
+            
+            do { throw error } // deal with protocol and not concrete type
+            catch {
+                XCTAssertEqual(error.localizedDescription, string)
+                let errorDescription = "Error Domain=\(NSPOSIXErrorDomain) Code=\(errorCode.rawValue) \"\(string)\""
+                XCTAssertEqual("\(error)", errorDescription)
+            }
         }
     }
 }
