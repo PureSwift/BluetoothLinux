@@ -45,7 +45,9 @@ final class BluetoothLinuxTests: XCTestCase {
             
             do { throw error } // deal with protocol and not concrete type
             catch {
+                #if os(macOS)
                 XCTAssertEqual(error.localizedDescription, string)
+                #endif
                 let errorDescription = "Error Domain=\(NSPOSIXErrorDomain) Code=\(errorCode.rawValue) \"\(string)\""
                 XCTAssertEqual("\(error)", errorDescription)
             }
