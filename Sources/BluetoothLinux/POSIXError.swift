@@ -17,16 +17,26 @@ import Glibc
 internal extension POSIXError {
     
     /// Creates error from C ```errno```.
-    static var fromErrno: POSIXError? {
+    static func fromErrno(file: StaticString = #file,
+                          line: UInt = #line,
+                          function: StaticString = #function) -> POSIXError {
         
         guard let code = POSIXErrorCode(rawValue: errno)
-            else { return nil }
+            else { fatalError("Invalid POSIX Error \(errno)") }
         
-        return POSIXError(code)
+        return POSIXError(code, function: function, file: file, line: line)
     }
     
-    init(_ code: POSIXErrorCode) {
-        self.init(_nsError: NSPOSIXError(code))
+    init(_ code: POSIXErrorCode,
+         function: StaticString = #function,
+         file: StaticString = #file,
+         line: UInt = #line) {
+        
+        self.init(_nsError: NSPOSIXError(code, function: function, file: file, line: line))
+    }
+    
+    var debugInformation: String? {
+        return userInfo[NSPOSIXError.debugInformationKey] as? String
     }
 }
 
@@ -47,7 +57,7 @@ extension POSIXError: CustomStringConvertible {
 }
 
 #if os(macOS)
-extension POSIXErrorCode {
+extension POSIXErrorCode: CustomStringConvertible {
     public var description: String {
         return rawValue.description
     }
@@ -64,15 +74,26 @@ extension POSIXError: LocalizedError {
 
 // MARK: - Supporting Types
 
+/// NSError subclass for POSIX Errors
 internal final class NSPOSIXError: NSError {
     
     let posixError: POSIXErrorCode
     
-    init(_ code: POSIXErrorCode) {
+    init(_ code: POSIXErrorCode,
+         function: StaticString = #function,
+         file: StaticString = #file,
+         line: UInt = #line) {
+        
+        var userInfo = [String: Any](minimumCapacity: 1)
+        userInfo[NSPOSIXError.debugInformationKey] = NSPOSIXError.debugInformation(
+            function: function,
+            file: file,
+            line: line)
+        
         self.posixError = code
         super.init(domain: NSPOSIXErrorDomain,
                    code: Int(code.rawValue),
-                   userInfo: nil)
+                   userInfo: userInfo)
     }
     
     required init?(coder decoder: NSCoder) {
@@ -95,6 +116,30 @@ internal final class NSPOSIXError: NSError {
     
     override var description: String {
         return "\(posixError.errorMessage) (\(posixError))"
+    }
+    
+    var debugInformation: String? {
+        return userInfo[NSPOSIXError.debugInformationKey] as? String
+    }
+}
+
+internal extension NSPOSIXError {
+    
+    /// Contains
+    static let debugInformationKey: String = "NSPOSIXErrorDebugInformation"
+}
+
+private extension NSPOSIXError {
+    
+    static let module = NSStringFromClass(NSPOSIXError.self).components(separatedBy:".")[0]
+    
+    static func debugInformation(function: StaticString,
+                                 file: StaticString,
+                                 line: UInt) -> String {
+        
+        let file = "\(file)"
+        let fileName = file.components(separatedBy: "/").last ?? file
+        return "\(module):\(fileName):\(function):\(line)"
     }
 }
 

@@ -121,7 +121,7 @@ internal func HCIOpenDevice(_ deviceIdentifier: UInt16) throws -> CInt {
     // Create HCI socket
     let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
     
-    guard hciSocket >= 0 else { throw POSIXError.fromErrno! }
+    guard hciSocket >= 0 else { throw POSIXError.fromErrno() }
     
     // Bind socket to the HCI device
     var address = HCISocketAddress()
@@ -136,7 +136,7 @@ internal func HCIOpenDevice(_ deviceIdentifier: UInt16) throws -> CInt {
     
     guard didBind else {
         close(hciSocket)
-        throw POSIXError.fromErrno!
+        throw POSIXError.fromErrno()
     }
     
     return hciSocket
@@ -147,7 +147,7 @@ internal func HCIRequestDeviceList <T> (_ response: (_ hciSocket: CInt, _ list: 
     // open HCI socket
     let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
     
-    guard hciSocket >= 0 else { throw POSIXError.fromErrno! }
+    guard hciSocket >= 0 else { throw POSIXError.fromErrno() }
     
     defer { close(hciSocket) }
     
@@ -160,7 +160,7 @@ internal func HCIRequestDeviceList <T> (_ response: (_ hciSocket: CInt, _ list: 
         IOControl(hciSocket, HCI.IOCTL.GetDeviceList, $0)
     }
     
-    guard ioctlValue >= 0 else { throw POSIXError.fromErrno! }
+    guard ioctlValue >= 0 else { throw POSIXError.fromErrno() }
     
     return try response(hciSocket, &deviceList)
 }
@@ -216,7 +216,7 @@ internal func HCIGetRoute(_ address: BluetoothAddress? = nil) throws -> UInt16? 
 
         guard withUnsafeMutablePointer(to: &deviceInfo, {
             IOControl(CInt(dd), HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0
-            else { throw POSIXError.fromErrno! }
+            else { throw POSIXError.fromErrno() }
 
         return deviceInfo.address == address
     }
@@ -228,7 +228,7 @@ internal func HCIDeviceInfo(_ deviceIdentifier: UInt16) throws -> HCIDeviceInfor
     
     let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
     
-    guard hciSocket >= 0 else { throw POSIXError.fromErrno! }
+    guard hciSocket >= 0 else { throw POSIXError.fromErrno() }
     
     defer { close(hciSocket) }
     
@@ -237,7 +237,7 @@ internal func HCIDeviceInfo(_ deviceIdentifier: UInt16) throws -> HCIDeviceInfor
     
     guard withUnsafeMutablePointer(to: &deviceInfo, {
         IOControl(hciSocket, HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0
-        else { throw POSIXError.fromErrno! }
+        else { throw POSIXError.fromErrno() }
     
     return deviceInfo
 }

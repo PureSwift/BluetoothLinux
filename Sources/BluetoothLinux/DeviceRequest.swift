@@ -208,7 +208,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
 
     // get old filter
     guard getsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, &filterLength) == 0
-        else { throw POSIXError.fromErrno! }
+        else { throw POSIXError.fromErrno() }
     
     // configure new filter
     newFilter.clear()
@@ -222,13 +222,13 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
     
     // set new filter
     guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, newFilterPointer, filterLength) == 0
-        else { throw POSIXError.fromErrno! }
+        else { throw POSIXError.fromErrno() }
 
     // restore old filter in case of error
     func restoreFilter(_ error: Error) -> Error {
 
         guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, filterLength) == 0
-            else { return BluetoothHostControllerError.couldNotRestoreFilter(error, POSIXError.fromErrno!) }
+            else { return BluetoothHostControllerError.couldNotRestoreFilter(error, POSIXError.fromErrno()) }
 
         return error
     }
@@ -268,7 +268,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
                 } else {
 
                     // attempt to restore filter and throw
-                    throw restoreFilter(POSIXError.fromErrno!)
+                    throw restoreFilter(POSIXError.fromErrno())
                 }
             }
             
@@ -298,7 +298,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
             } else {
 
                 // attempt to restore filter and throw
-                throw restoreFilter(POSIXError.fromErrno!)
+                throw restoreFilter(POSIXError.fromErrno())
             }
         }
         
@@ -317,7 +317,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
         func done() throws {
 
             guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, filterLength) == 0
-                else { throw POSIXError.fromErrno! }
+                else { throw POSIXError.fromErrno() }
         }
 
         switch eventHeader.event {
