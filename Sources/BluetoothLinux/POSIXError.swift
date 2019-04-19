@@ -34,6 +34,9 @@ internal extension POSIXError {
         
         self.init(_nsError: NSPOSIXError(code, function: function, file: file, line: line))
     }
+}
+
+public extension POSIXError {
     
     var debugInformation: String? {
         return userInfo[NSPOSIXError.debugInformationKey] as? String
