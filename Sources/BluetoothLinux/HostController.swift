@@ -26,10 +26,8 @@ public final class HostController: BluetoothHostControllerInterface {
     /// The device identifier of the Bluetooth controller.
     public let identifier: Identifier
     
-    // MARK: - Internal Properties
-
     internal let internalSocket: CInt
-
+    
     // MARK: - Initizalization
 
     deinit {
@@ -59,9 +57,8 @@ public extension HostController {
     private static func requestControllers() throws -> [HostController] {
         
         return try HCIRequestDeviceList { (_, list) in
-            
-            list.sorted(by: { $0.identifier < $1.identifier })
-                .filter { HCITestBit(.up, $0.options) && $0.identifier >= 0 }
+            return list
+                .sorted { $0.identifier < $1.identifier }
                 .compactMap { try? HostController(identifier: $0.identifier) }
         }
     }
@@ -205,9 +202,8 @@ internal func HCIGetRoute(_ address: BluetoothAddress? = nil) throws -> UInt16? 
         guard let address = address else { return true }
 
         var deviceInfo = HCIDeviceInformation()
-
         deviceInfo.identifier = UInt16(deviceIdentifier)
-
+        
         guard withUnsafeMutablePointer(to: &deviceInfo, {
             IOControl(CInt(dd), HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0
             else { throw POSIXError.fromErrno() }
@@ -240,7 +236,7 @@ internal func HCIDeviceAddress(_ deviceIdentifier: UInt16) throws -> BluetoothAd
     
     let deviceInfo = try HCIDeviceInfo(deviceIdentifier)
     
-    guard HCITestBit(HCI.DeviceFlag.up, deviceInfo.flags)
+    guard HCITestBit(.up, deviceInfo.flags)
         else { throw POSIXError(.ENETDOWN) }
     
     return deviceInfo.address

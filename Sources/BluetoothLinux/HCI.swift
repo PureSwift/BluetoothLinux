@@ -271,7 +271,7 @@ internal struct HCIDeviceInformation {
     var name: (CChar, CChar, CChar, CChar, CChar, CChar, CChar, CChar) = (0, 0, 0, 0, 0, 0, 0, 0)
     
     /// bdaddr_t bdaddr;
-    var address: BluetoothAddress = BluetoothAddress()
+    var address: BluetoothAddress = .zero
     
     /// uint32_t flags;
     var flags: UInt32 = 0
