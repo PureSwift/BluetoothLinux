@@ -52,11 +52,10 @@ public extension HostController {
     
     private static func requestControllers() throws -> [HostController] {
         
-        return try HCIRequestDeviceList { (_, list) in
-            return list
-                .sorted { $0.identifier < $1.identifier }
-                .compactMap { try? HostController(identifier: $0.identifier) }
-        }
+        let socket = try HostController.Socket()
+        return try socket.deviceList()
+            .sorted { $0.identifier < $1.identifier }
+            .compactMap { try? HostController(identifier: $0.identifier) }
     }
     
     static var controllers: [HostController] {
@@ -66,11 +65,14 @@ public extension HostController {
     
     static var `default`: HostController? {
         
+        guard let socket = try? HostController.Socket()
+            else { return nil }
+        
         #if swift(>=5.0)
-        guard let deviceIdentifier = try? HCIGetRoute(nil)
+        guard let deviceIdentifier = try? HCIGetRoute(nil, socket)
             else { return nil }
         #else
-        guard let result = try? HCIGetRoute(nil),
+        guard let result = try? HCIGetRoute(nil, socket),
             let deviceIdentifier = result
             else { return nil }
         #endif
@@ -138,6 +140,21 @@ internal extension HostController.Socket {
         
         return deviceInfo
     }
+    
+    func deviceList() throws -> HCIDeviceList {
+        
+        // allocate HCI device list buffer
+        var deviceList = HCIDeviceList()
+        deviceList.numberOfDevices = UInt16(HCI.maximumDeviceCount)
+        
+        // request device list
+        let ioctlValue = withUnsafeMutablePointer(to: &deviceList) {
+            IOControl(fileDescriptor, HCI.IOCTL.GetDeviceList, $0)
+        }
+        guard ioctlValue >= 0 else { throw POSIXError.fromErrno() }
+        
+        return deviceList
+    }
 }
 
 // MARK: - Errors
@@ -147,81 +164,21 @@ public extension HostController {
     typealias Error = BluetoothHostControllerError
 }
 
-// MARK: - Internal HCI Functions
-
-internal func HCIRequestDeviceList <T> (_ response: (_ hciSocket: CInt, _ list: inout HCIDeviceList) throws -> T) throws -> T {
-    
-    // open HCI socket
-    let hciSocket = try HostController.Socket()
-    
-    // allocate HCI device list buffer
-    var deviceList = HCIDeviceList()
-    deviceList.numberOfDevices = UInt16(HCI.maximumDeviceCount)
-    
-    // request device list
-    let ioctlValue = withUnsafeMutablePointer(to: &deviceList) {
-        IOControl(hciSocket.fileDescriptor, HCI.IOCTL.GetDeviceList, $0)
-    }
-    guard ioctlValue >= 0 else { throw POSIXError.fromErrno() }
-    
-    return try response(hciSocket.fileDescriptor, &deviceList)
-}
-
-/// Iterate availible HCI devices until the handler returns false.
-internal func HCIDevicesIterate(_ iterator: (_ socket: CInt, _ deviceRequest: HCIDeviceListItem) throws -> (Bool)) throws {
-    
-    try HCIRequestDeviceList { (socket, list) in
-        
-        for item in list {
-            
-            if try iterator(socket, item) == false {
-                
-                break
-            }
-        }
-    }
-}
-
-internal func HCIIdentifierOfDevice(_ flagFilter: [HCIDeviceFlag] = [], _ predicate: (_ deviceDescriptor: CInt, _ deviceIdentifier: UInt16) throws -> Bool) throws -> UInt16? {
-    
-    var result: UInt16?
-    
-    try HCIDevicesIterate { (hciSocket, device) in
-        
-        for flag in flagFilter {
-            guard HCITestBit(flag, device.options)
-                else { return true }
-        }
-        
-        let deviceIdentifier = device.identifier
-        
-        if try predicate(hciSocket, deviceIdentifier) {
-            result = deviceIdentifier
-            return false
-        } else {
-            
-            return true
-        }
-    }
-    
-    return result
-}
+// MARK: - HCI Functions
 
 internal func HCIGetRoute(_ address: BluetoothAddress? = nil) throws -> UInt16? {
-
-    return try HCIIdentifierOfDevice { (dd, deviceIdentifier) in
-
-        guard let address = address else { return true }
-
-        var deviceInfo = HCIDeviceInformation()
-        deviceInfo.identifier = UInt16(deviceIdentifier)
-        
-        guard withUnsafeMutablePointer(to: &deviceInfo, {
-            IOControl(CInt(dd), HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0
-            else { throw POSIXError.fromErrno() }
-
-        return deviceInfo.address == address
+    
+    let socket = try HostController.Socket()
+    let list = try socket.deviceList()
+    let device: HCIDeviceListItem?
+    if let address = address {
+        device = try list.first {
+            try socket.deviceInformation($0.identifier).address == address // filter by address
+        }
+    } else {
+        device = list.first
     }
+    return device?.identifier
 }
 
 // MARK: - Linux Support
