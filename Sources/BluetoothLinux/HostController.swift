@@ -26,9 +26,6 @@ public final class HostController: BluetoothHostControllerInterface {
     /// The device identifier of the Bluetooth controller.
     public let identifier: Identifier
     
-    /// The Bluetooth Address of the controller.
-    public let address: BluetoothAddress
-    
     // MARK: - Internal Properties
 
     internal let internalSocket: CInt
@@ -36,7 +33,6 @@ public final class HostController: BluetoothHostControllerInterface {
     // MARK: - Initizalization
 
     deinit {
-
         close(internalSocket)
     }
     
@@ -44,7 +40,6 @@ public final class HostController: BluetoothHostControllerInterface {
     public init(identifier: Identifier) throws {
         
         self.identifier = identifier
-        self.address = try BluetoothAddress(deviceIdentifier: identifier)
         self.internalSocket = try HCIOpenDevice(identifier)
     }
     
@@ -55,7 +50,6 @@ public final class HostController: BluetoothHostControllerInterface {
             else { throw Error.adapterNotFound }
         
         self.identifier = deviceIdentifier
-        self.address = address
         self.internalSocket = try HCIOpenDevice(deviceIdentifier)
     }
 }
