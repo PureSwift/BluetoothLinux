@@ -95,7 +95,7 @@ public enum HCISocketOption: CInt {
 }
 
 /// HCI `ioctl()` defines
-public struct HCIIOCTL {
+public enum HCIIOCTL {
     
     private static let H                    = CInt(UnicodeScalar(unicodeScalarLiteral: "H").value)
     

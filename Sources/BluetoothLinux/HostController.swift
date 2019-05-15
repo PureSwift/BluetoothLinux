@@ -83,6 +83,30 @@ public extension HostController {
     }
 }
 
+// MARK: - Linux Driver Extensions
+
+public extension HostController {
+    
+    /// Connection to the Linux Bluetooth subsystem.
+    final class Driver {
+        
+        internal init() throws {
+            
+            // open HCI socket
+            let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
+            guard hciSocket >= 0 else { throw POSIXError.fromErrno() }
+            defer { close(hciSocket) }
+        }
+    }
+    
+    /// Open and initialize HCI device.
+    func enable() throws {
+        
+        guard IOControl(internalSocket, HCI.IOCTL.DeviceUp, CInt(identifier)) >= 0
+            else { throw POSIXError.fromErrno() }
+    }
+}
+
 // MARK: - Address Extensions
 
 public extension BluetoothAddress {
@@ -111,7 +135,6 @@ internal func HCIOpenDevice(_ deviceIdentifier: UInt16) throws -> CInt {
     
     // Create HCI socket
     let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
-    
     guard hciSocket >= 0 else { throw POSIXError.fromErrno() }
     
     // Bind socket to the HCI device
@@ -137,9 +160,7 @@ internal func HCIRequestDeviceList <T> (_ response: (_ hciSocket: CInt, _ list: 
     
     // open HCI socket
     let hciSocket = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
-    
     guard hciSocket >= 0 else { throw POSIXError.fromErrno() }
-    
     defer { close(hciSocket) }
     
     // allocate HCI device list buffer
@@ -150,7 +171,6 @@ internal func HCIRequestDeviceList <T> (_ response: (_ hciSocket: CInt, _ list: 
     let ioctlValue = withUnsafeMutablePointer(to: &deviceList) {
         IOControl(hciSocket, HCI.IOCTL.GetDeviceList, $0)
     }
-    
     guard ioctlValue >= 0 else { throw POSIXError.fromErrno() }
     
     return try response(hciSocket, &deviceList)

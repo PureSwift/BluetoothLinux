@@ -19,10 +19,23 @@
  @param request Device-dependent request code.
  @param pointer Untyped pointer to memory.
  */
-static inline int swift_bluetooth_ioctl(int fd, unsigned long int request, void *pointer)
+static inline int swift_bluetooth_ioctl_raw(int fd, unsigned long int request, void *pointer)
 __attribute__((swift_name("IOControl(_:_:_:)")))
 {
     return ioctl(fd, request, pointer);
+}
+
+/**
+ @brief Manipulates the underlying device parameters of special files.
+ @discussion @c int ioctl(int d, int request, ...);
+ @param fd An open file descriptor.
+ @param request Device-dependent request code.
+ @param dev Device identifier.
+ */
+static inline int swift_bluetooth_ioctl_dev(int fd, unsigned long int request, int dev)
+__attribute__((swift_name("IOControl(_:_:_:)")))
+{
+    return ioctl(fd, request, dev);
 }
 
 /**
