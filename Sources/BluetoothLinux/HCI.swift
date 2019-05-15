@@ -263,81 +263,90 @@ internal struct HCIInquiryRequest {
 public struct HCIDeviceInformation {
     
     /// uint16_t dev_id;
-    var identifier: UInt16 = 0
+    public internal(set) var identifier: UInt16 = 0
     
     /// char name[8];
-    var name: (CChar, CChar, CChar, CChar, CChar, CChar, CChar, CChar) = (0, 0, 0, 0, 0, 0, 0, 0)
+    internal let nameCharacters: (CChar, CChar, CChar, CChar, CChar, CChar, CChar, CChar) = (0, 0, 0, 0, 0, 0, 0, 0)
+    
+    public var name: String {
+        var bytes = nameCharacters
+        return withUnsafePointer(to: &bytes) {
+            $0.withMemoryRebound(to: CChar.self, capacity: 8) {
+                return String(cString: $0)
+            }
+        }
+    }
     
     /// bdaddr_t bdaddr;
-    var address: BluetoothAddress = .zero
+    public let address: BluetoothAddress = .zero
     
     /// uint32_t flags;
-    var flags: UInt32 = 0
+    public let flags: UInt32 = 0
     
     /// uint8_t type;
-    var type: UInt8 = 0
+    public let type: UInt8 = 0
     
     /// uint8_t  features[8];
-    var features: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8) = (0, 0, 0, 0, 0, 0, 0, 0)
+    public let features: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8) = (0, 0, 0, 0, 0, 0, 0, 0)
     
     /// uint32_t pkt_type;
-    var packetType: UInt32 = 0
+    public let packetType: UInt32 = 0
     
     /// uint32_t link_policy;
-    var linkPolicy: UInt32 = 0
+    public let linkPolicy: UInt32 = 0
     
     /// uint32_t link_mode;
-    var linkMode: UInt32 = 0
+    public let linkMode: UInt32 = 0
     
     /// uint16_t acl_mtu;
-    var aclMaximumTransmissionUnit: UInt16 = 0
+    public let aclMaximumTransmissionUnit: UInt16 = 0
     
     /// uint16_t acl_pkts;
-    var aclPacketSize: UInt16 = 0
+    public let aclPacketSize: UInt16 = 0
     
     /// uint16_t sco_mtu;
-    var scoMaximumTransmissionUnit: UInt16 = 0
+    public let scoMaximumTransmissionUnit: UInt16 = 0
     
     /// uint16_t sco_pkts;
-    var scoPacketSize: UInt16 = 0
+    public let scoPacketSize: UInt16 = 0
     
     /// struct hci_dev_stats stat;
-    var stat: HCIDeviceStats = HCIDeviceStats()
+    public let statistics: HCIDeviceStatistics = HCIDeviceStatistics()
     
     internal init() { }
 }
 
-internal struct HCIDeviceStats {
+public struct HCIDeviceStatistics {
     
     /// uint32_t err_rx;
-    var errorRX: UInt32 = 0
+    public let errorRX: UInt32 = 0
     
     /// uint32_t err_tx;
-    var errorTX: UInt32 = 0
+    public let errorTX: UInt32 = 0
     
     /// uint32_t cmd_tx;
-    var commandTX: UInt32 = 0
+    public let commandTX: UInt32 = 0
     
     /// uint32_t evt_rx;
-    var eventRX: UInt32 = 0
+    public let eventRX: UInt32 = 0
     
     /// uint32_t acl_tx;
-    var alcTX: UInt32 = 0
+    public let alcTX: UInt32 = 0
     
     /// uint32_t acl_rx;
-    var alcRX: UInt32 = 0
+    public let alcRX: UInt32 = 0
     
     /// uint32_t sco_tx;
-    var scoTX: UInt32 = 0
+    public let scoTX: UInt32 = 0
     
     /// uint32_t sco_rx;
-    var scoRX: UInt32 = 0
+    public let scoRX: UInt32 = 0
     
     /// uint32_t byte_rx;
-    var byteRX: UInt32 = 0
+    public let byteRX: UInt32 = 0
     
     /// uint32_t byte_tx;
-    var byteTX: UInt32 = 0
+    public let byteTX: UInt32 = 0
     
     internal init() { }
 }
@@ -399,13 +408,11 @@ internal struct HCIFilter {
     }
 }
 
-@inline (__always)
 internal func HCITestBit(_ flag: CInt,  _ options: UInt32) -> Bool {
     
     return (options + (UInt32(bitPattern: flag) >> 5)) & (1 << (UInt32(bitPattern: flag) & 31)) != 0
 }
 
-@inline (__always)
 internal func HCITestBit(_ flag: HCI.DeviceFlag, _ options: UInt32) -> Bool {
     
     return HCITestBit(flag.rawValue, options)
