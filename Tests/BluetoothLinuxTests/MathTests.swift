@@ -44,7 +44,7 @@ final class MathTests: XCTestCase {
     func testHCIFilterSetPacketType() {
         
         var swiftFilter = HCIFilter()
-        swiftFilter.setPacketType(.Event)
+        swiftFilter.setPacketType(.event)
         
         var cFilter = hci_filter()
         hci_filter_set_ptype(HCI_EVENT_PKT, &cFilter)

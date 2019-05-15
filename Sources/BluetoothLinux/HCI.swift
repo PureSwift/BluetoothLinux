@@ -130,7 +130,7 @@ internal struct HCISocketAddress {
     
     var family = sa_family_t()
     
-    var deviceIdentifier: UInt16 = 0
+    var device: UInt16 = 0
     
     var channel: UInt16 = 0
     

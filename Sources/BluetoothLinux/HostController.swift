@@ -30,7 +30,7 @@ public final class HostController: BluetoothHostControllerInterface {
     
     // MARK: - Initizalization
     
-    /// Attempt to initialize an controller controller
+    /// Attempt to initialize an Bluetooth controller
     public init(identifier: Identifier) throws {
         
         self.identifier = identifier
@@ -40,11 +40,12 @@ public final class HostController: BluetoothHostControllerInterface {
     /// Initializes the Bluetooth controller with the specified address.
     public init(address: BluetoothAddress) throws {
         
-        guard let deviceIdentifier = try HCIGetRoute(address)
+        let socket = try Socket()
+        guard let deviceIdentifier = try HCIGetRoute(address, socket)
             else { throw Error.adapterNotFound }
-        
+        try socket.bind(deviceIdentifier)
         self.identifier = deviceIdentifier
-        self.internalSocket = try Socket(device: deviceIdentifier)
+        self.internalSocket = socket
     }
 }
 
@@ -65,16 +66,12 @@ public extension HostController {
     
     static var `default`: HostController? {
         
-        #if swift(>=5.0)
-        guard let deviceIdentifier = try? HCIGetRoute(nil)
+        guard let socket = try? HostController.Socket(),
+            let list = try? socket.deviceList(),
+            let device = list.first
             else { return nil }
-        #else
-        guard let result = try? HCIGetRoute(nil),
-            let deviceIdentifier = result
-            else { return nil }
-        #endif
         
-        return try? HostController(identifier: deviceIdentifier)
+        return try? HostController(identifier: device.identifier)
     }
 }
 
@@ -91,32 +88,28 @@ internal extension HostController {
         }
         
         init() throws {
-            
             let fileDescriptor = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
             guard fileDescriptor >= 0 else { throw POSIXError.fromErrno() }
             self.fileDescriptor = fileDescriptor
         }
         
         convenience init(device: HostController.Identifier) throws {
-            
             try self.init()
-            
-            // Bind socket to the HCI device
-            var address = HCISocketAddress()
-            address.family = sa_family_t(AF_BLUETOOTH)
-            address.deviceIdentifier = device
-            
-            let didBind = withUnsafeMutablePointer(to: &address) {
-                $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-                    bind(fileDescriptor, $0, socklen_t(MemoryLayout<HCISocketAddress>.size)) >= 0
-                }
-            }
-            guard didBind else { throw POSIXError.fromErrno() }
+            try bind(device)
         }
     }
 }
 
 internal extension HostController.Socket {
+    
+    func bind(_ identifier: HostController.Identifier) throws {
+        
+        // Bind socket to the HCI device
+        var address = HCISocketAddress()
+        address.family = sa_family_t(AF_BLUETOOTH)
+        address.device = identifier
+        try BluetoothLinux.bind(fileDescriptor, &address)
+    }
     
     /// Open and initialize HCI device.
     func enable(_ identifier: HostController.Identifier) throws {
@@ -163,9 +156,8 @@ public extension HostController {
 
 // MARK: - HCI Functions
 
-internal func HCIGetRoute(_ address: BluetoothAddress? = nil) throws -> UInt16? {
+internal func HCIGetRoute(_ address: BluetoothAddress? = nil, _ socket: HostController.Socket) throws -> UInt16? {
     
-    let socket = try HostController.Socket()
     let list = try socket.deviceList()
     let device: HCIDeviceListItem?
     if let address = address {
@@ -176,6 +168,16 @@ internal func HCIGetRoute(_ address: BluetoothAddress? = nil) throws -> UInt16? 
         device = list.first
     }
     return device?.identifier
+}
+
+internal func bind(_ fileDescriptor: CInt, _ address: inout HCISocketAddress) throws {
+    
+    let didBind = withUnsafeMutablePointer(to: &address) {
+        $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+            bind(fileDescriptor, $0, socklen_t(MemoryLayout<HCISocketAddress>.size)) >= 0
+        }
+    }
+    guard didBind else { throw POSIXError.fromErrno() }
 }
 
 // MARK: - Linux Support
