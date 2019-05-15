@@ -281,7 +281,7 @@ public struct HCIDeviceInformation {
     public let address: BluetoothAddress = .zero
     
     /// uint32_t flags;
-    public let flags: UInt32 = 0
+    public let flags = HCIDeviceOptions(rawValue: 0)
     
     /// uint8_t type;
     public let type: UInt8 = 0
@@ -316,7 +316,7 @@ public struct HCIDeviceInformation {
     internal init() { }
 }
 
-public struct HCIDeviceStatistics {
+public struct HCIDeviceStatistics: Equatable, Hashable {
     
     /// uint32_t err_rx;
     public let errorRX: UInt32 = 0
@@ -349,6 +349,22 @@ public struct HCIDeviceStatistics {
     public let byteTX: UInt32 = 0
     
     internal init() { }
+}
+
+public struct HCIDeviceOptions: RawRepresentable, Equatable, Hashable {
+    
+    public let rawValue: UInt32
+    
+    public init(rawValue: UInt32) {
+        self.rawValue = rawValue
+    }
+}
+
+public extension HCIDeviceOptions {
+    
+    func contains(_ flag: HCIDeviceFlag) -> Bool {
+        return HCITestBit(flag, rawValue)
+    }
 }
 
 internal struct HCIFilter {
