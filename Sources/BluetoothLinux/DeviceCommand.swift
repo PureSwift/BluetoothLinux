@@ -38,7 +38,7 @@ internal func HCISendCommand <T: HCICommand> (_ deviceDescriptor: CInt,
                              command: T,
                              parameterData: Data = Data()) throws {
     
-    let packetType = HCIPacketType.Command.rawValue
+    let packetType = HCIPacketType.command.rawValue
     
     let header = HCICommandHeader(command: command, parameterLength: UInt8(parameterData.count))
     

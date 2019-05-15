@@ -43,19 +43,19 @@ internal func HCIPollEvent(_ deviceDescriptor: CInt,
     // get old filter
     guard withUnsafeMutablePointer(to: &oldFilter, {
         let pointer = UnsafeMutableRawPointer($0)
-        return getsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, pointer, &oldFilterLength) == 0
+        return getsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.filter.rawValue, pointer, &oldFilterLength) == 0
     }) else { throw POSIXError.fromErrno() }
     
     var newFilter = HCIFilter()
     newFilter.clear()
-    newFilter.setPacketType(.Event)
+    newFilter.setPacketType(.event)
     newFilter.setEvent(event)
     
     // set new filter
     var newFilterLength = socklen_t(MemoryLayout<HCIFilter>.size)
     guard withUnsafeMutablePointer(to: &newFilter, {
         let pointer = UnsafeMutableRawPointer($0)
-        return setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, pointer, newFilterLength) == 0
+        return setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.filter.rawValue, pointer, newFilterLength) == 0
     }) else { throw POSIXError.fromErrno() }
     
     // restore old filter in case of error
@@ -63,7 +63,7 @@ internal func HCIPollEvent(_ deviceDescriptor: CInt,
         
         guard withUnsafeMutablePointer(to: &oldFilter, {
             let pointer = UnsafeMutableRawPointer($0)
-            return setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, pointer, newFilterLength) == 0
+            return setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.filter.rawValue, pointer, newFilterLength) == 0
         }) else { return BluetoothHostControllerError.couldNotRestoreFilter(error, POSIXError.fromErrno()) }
         
         return error

@@ -190,11 +190,11 @@ public extension HostController {
 
 /// Returns event parameter data.
 internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
-                             command: Command,
-                             commandParameterData: Data = Data(),
-                             event: UInt8 = 0,
-                             eventParameterLength: Int = 0,
-                             timeout: HCICommandTimeout = .default) throws -> Data {
+                                                    command: Command,
+                                                    commandParameterData: Data = Data(),
+                                                    event: UInt8 = 0,
+                                                    eventParameterLength: Int = 0,
+                                                    timeout: HCICommandTimeout = .default) throws -> Data {
     
     // initialize variables
     var timeout = timeout.rawValue
@@ -207,7 +207,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
     var filterLength = socklen_t(MemoryLayout<HCIFilter>.size)
 
     // get old filter
-    guard getsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, &filterLength) == 0
+    guard getsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.filter.rawValue, oldFilterPointer, &filterLength) == 0
         else { throw POSIXError.fromErrno() }
     
     // configure new filter
@@ -221,13 +221,13 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
     newFilter.opcode = opcodePacked
     
     // set new filter
-    guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, newFilterPointer, filterLength) == 0
+    guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.filter.rawValue, newFilterPointer, filterLength) == 0
         else { throw POSIXError.fromErrno() }
 
     // restore old filter in case of error
     func restoreFilter(_ error: Error) -> Error {
 
-        guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, filterLength) == 0
+        guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.filter.rawValue, oldFilterPointer, filterLength) == 0
             else { return BluetoothHostControllerError.couldNotRestoreFilter(error, POSIXError.fromErrno()) }
 
         return error
@@ -316,7 +316,7 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
         /// restores the old filter option before exiting
         func done() throws {
 
-            guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.Filter.rawValue, oldFilterPointer, filterLength) == 0
+            guard setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.filter.rawValue, oldFilterPointer, filterLength) == 0
                 else { throw POSIXError.fromErrno() }
         }
 

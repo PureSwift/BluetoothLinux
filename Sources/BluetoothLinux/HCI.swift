@@ -51,49 +51,49 @@ public enum HCIDeviceFlag: CInt {
 /// HCI controller types
 public enum HCIControllerType: UInt8 {
     
-    case BREDR                              = 0x00
-    case AMP                                = 0x01
+    case bredr                              = 0x00
+    case amp                                = 0x01
 }
 
 /// HCI bus types
 public enum HCIBusType: CInt {
     
-    case Virtual
-    case USB
-    case PCCard
-    case UART
-    case RS232
-    case PCI
-    case SDIO
+    case virtual
+    case usb
+    case pcCard
+    case uart
+    case rs232
+    case pci
+    case sdio
 }
 
 /// HCI dev events
 public enum HCIDeviceEvent: CInt {
     
-    case Register                           = 1
-    case Unregister
-    case Up
-    case Down
-    case Suspend
-    case Resume
+    case register                           = 1
+    case unregister
+    case up
+    case down
+    case suspend
+    case resume
 }
 
 /// HCI Packet types
 public enum HCIPacketType: UInt8 {
     
-    case Command                            = 0x01
-    case ACL                                = 0x02
-    case SCO                                = 0x03
-    case Event                              = 0x04
-    case Vendor                             = 0xff
+    case command                            = 0x01
+    case acl                                = 0x02
+    case sco                                = 0x03
+    case event                              = 0x04
+    case vendor                             = 0xff
 }
 
 /// HCI Socket Option
 public enum HCISocketOption: CInt {
     
-    case DataDirection                      = 1
-    case Filter                             = 2
-    case TimeStamp                          = 3
+    case dataDirection                      = 1
+    case filter                             = 2
+    case timeStamp                          = 3
 }
 
 /// HCI `ioctl()` defines
@@ -371,7 +371,7 @@ internal struct HCIFilter {
     @inline(__always)
     mutating func setPacketType(_ type: HCIPacketType) {
         
-        let bit = type == .Vendor ? 0 : CInt(type.rawValue) & HCIFilter.Bits.FilterType
+        let bit = type == .vendor ? 0 : CInt(type.rawValue) & HCIFilter.Bits.FilterType
         
         HCISetBit(bit, &typeMask)
     }
