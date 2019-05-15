@@ -260,7 +260,7 @@ internal struct HCIInquiryRequest {
 }
 
 /// `hci_dev_info`
-internal struct HCIDeviceInformation {
+public struct HCIDeviceInformation {
     
     /// uint16_t dev_id;
     var identifier: UInt16 = 0
@@ -290,21 +290,21 @@ internal struct HCIDeviceInformation {
     var linkMode: UInt32 = 0
     
     /// uint16_t acl_mtu;
-    var ACLMaximumTransmissionUnit: UInt16 = 0
+    var aclMaximumTransmissionUnit: UInt16 = 0
     
     /// uint16_t acl_pkts;
-    var ACLPacketSize: UInt16 = 0
+    var aclPacketSize: UInt16 = 0
     
     /// uint16_t sco_mtu;
-    var SCOMaximumTransmissionUnit: UInt16 = 0
+    var scoMaximumTransmissionUnit: UInt16 = 0
     
     /// uint16_t sco_pkts;
-    var SCOPacketSize: UInt16 = 0
+    var scoPacketSize: UInt16 = 0
     
     /// struct hci_dev_stats stat;
     var stat: HCIDeviceStats = HCIDeviceStats()
     
-    init() { }
+    internal init() { }
 }
 
 internal struct HCIDeviceStats {
@@ -322,16 +322,16 @@ internal struct HCIDeviceStats {
     var eventRX: UInt32 = 0
     
     /// uint32_t acl_tx;
-    var ALC_TX: UInt32 = 0
+    var alcTX: UInt32 = 0
     
     /// uint32_t acl_rx;
-    var ALC_RX: UInt32 = 0
+    var alcRX: UInt32 = 0
     
     /// uint32_t sco_tx;
-    var SCO_TX: UInt32 = 0
+    var scoTX: UInt32 = 0
     
     /// uint32_t sco_rx;
-    var SCO_RX: UInt32 = 0
+    var scoRX: UInt32 = 0
     
     /// uint32_t byte_rx;
     var byteRX: UInt32 = 0
@@ -339,7 +339,7 @@ internal struct HCIDeviceStats {
     /// uint32_t byte_tx;
     var byteTX: UInt32 = 0
     
-    init() { }
+    internal init() { }
 }
 
 internal struct HCIFilter {
@@ -397,4 +397,16 @@ internal struct HCIFilter {
         eventMask.0 += UInt32(event2) << 0o10
         eventMask.0 += UInt32(event1) << 0o00
     }
+}
+
+@inline (__always)
+internal func HCITestBit(_ flag: CInt,  _ options: UInt32) -> Bool {
+    
+    return (options + (UInt32(bitPattern: flag) >> 5)) & (1 << (UInt32(bitPattern: flag) & 31)) != 0
+}
+
+@inline (__always)
+internal func HCITestBit(_ flag: HCI.DeviceFlag, _ options: UInt32) -> Bool {
+    
+    return HCITestBit(flag.rawValue, options)
 }

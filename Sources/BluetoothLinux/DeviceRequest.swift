@@ -24,7 +24,7 @@ public extension HostController {
 
         let parameterData = commandParameter.data
         
-        let data = try HCISendRequest(internalSocket,
+        let data = try HCISendRequest(internalSocket.fileDescriptor,
                                       command: command,
                                       commandParameterData: parameterData,
                                       event: EP.event.rawValue,
@@ -40,7 +40,7 @@ public extension HostController {
     /// Send an HCI command to the controller and waits for a response.
     func deviceRequest<C, EP>(_ command: C, _ eventParameterType: EP.Type, timeout: HCICommandTimeout) throws -> EP where C : HCICommand, EP : HCIEventParameter {
         
-        let data = try HCISendRequest(internalSocket,
+        let data = try HCISendRequest(internalSocket.fileDescriptor,
                                       command: command,
                                       event: EP.event.rawValue,
                                       eventParameterLength: EP.length,
@@ -115,7 +115,7 @@ public extension HostController {
     /// Send a command to the controller and wait for response. 
     func deviceRequest<C: HCICommand>(_ command: C, timeout: HCICommandTimeout = .default) throws {
 
-        let data = try HCISendRequest(internalSocket,
+        let data = try HCISendRequest(internalSocket.fileDescriptor,
                                       command: command,
                                       eventParameterLength: 1,
                                       timeout: timeout)
@@ -130,7 +130,7 @@ public extension HostController {
     
     func deviceRequest<CP: HCICommandParameter>(_ commandParameter: CP, timeout: HCICommandTimeout = .default) throws {
         
-        let data = try HCISendRequest(internalSocket,
+        let data = try HCISendRequest(internalSocket.fileDescriptor,
                                       command: CP.command,
                                       commandParameterData: commandParameter.data,
                                       eventParameterLength: 1,
@@ -145,7 +145,7 @@ public extension HostController {
     
     func deviceRequest <Return: HCICommandReturnParameter> (_ commandReturnType : Return.Type, timeout: HCICommandTimeout = .default) throws -> Return {
         
-        let data = try HCISendRequest(internalSocket,
+        let data = try HCISendRequest(internalSocket.fileDescriptor,
                                       command: commandReturnType.command,
                                       eventParameterLength: commandReturnType.length + 1, // status code + parameters
                                       timeout: timeout)
@@ -167,7 +167,7 @@ public extension HostController {
         
         assert(CP.command.opcode == Return.command.opcode)
         
-        let data = try HCISendRequest(internalSocket,
+        let data = try HCISendRequest(internalSocket.fileDescriptor,
                                       command: commandReturnType.command,
                                       commandParameterData: commandParameter.data,
                                       eventParameterLength: commandReturnType.length + 1,

@@ -19,7 +19,7 @@ public extension HostController {
     
     func deviceCommand<T: HCICommand>(_ command: T) throws {
         
-        try HCISendCommand(internalSocket, command: command)
+        try HCISendCommand(internalSocket.fileDescriptor, command: command)
     }
     
     func deviceCommand<T: HCICommandParameter>(_ commandParameter: T) throws {
@@ -28,7 +28,7 @@ public extension HostController {
         
         let parameterData = commandParameter.data
         
-        try HCISendCommand(internalSocket, command: command, parameterData: parameterData)
+        try HCISendCommand(internalSocket.fileDescriptor, command: command, parameterData: parameterData)
     }
 }
 

@@ -19,7 +19,7 @@ public extension HostController {
         
         let eventCode = T.event.rawValue
         
-        try HCIPollEvent(internalSocket, shouldContinue: shouldContinue, event: eventCode) {
+        try HCIPollEvent(internalSocket.fileDescriptor, shouldContinue: shouldContinue, event: eventCode) {
             
             guard let eventParameter = T.init(data: $0)
                 else { throw Error.garbageResponse(Data($0)) }
