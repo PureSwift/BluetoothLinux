@@ -268,6 +268,6 @@ internal func HCITestBit(_ flag: HCI.DeviceFlag, _ options: UInt32) -> Bool {
 
 // MARK: - Darwin Stubs
 
-#if os(OSX) || os(iOS)
+#if os(macOS) || os(iOS)
 var SOCK_CLOEXEC: CInt { stub() }
 #endif
