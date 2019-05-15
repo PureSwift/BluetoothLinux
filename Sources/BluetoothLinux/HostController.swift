@@ -75,6 +75,24 @@ public extension HostController {
     }
 }
 
+public extension HostController {
+    
+    /// Open and initialize HCI device.
+    func enable() throws {
+        try internalSocket.enable(identifier)
+    }
+    
+    /// Disable the HCI device.
+    func disable() throws {
+        try internalSocket.disable(identifier)
+    }
+    
+    /// Get device information.
+    func deviceInformation() throws -> HCIDeviceInformation {
+        return try internalSocket.deviceInformation(identifier)
+    }
+}
+
 // MARK: - Supporting Types
 
 internal extension HostController {
@@ -118,6 +136,13 @@ internal extension HostController.Socket {
             else { throw POSIXError.fromErrno() }
     }
     
+    /// Close the HCI device.
+    func disable(_ identifier: HostController.Identifier) throws {
+        
+        guard IOControl(fileDescriptor, HCI.IOCTL.DeviceDown, CInt(identifier)) >= 0
+            else { throw POSIXError.fromErrno() }
+    }
+    
     /// Get device information.
     func deviceInformation(_ identifier: HostController.Identifier) throws -> HCIDeviceInformation {
         
@@ -125,12 +150,13 @@ internal extension HostController.Socket {
         deviceInfo.identifier = identifier
         
         guard withUnsafeMutablePointer(to: &deviceInfo, {
-            IOControl(fileDescriptor, HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) }) == 0
+            IOControl(fileDescriptor, HCI.IOCTL.GetDeviceInfo, UnsafeMutableRawPointer($0)) == 0 })
             else { throw POSIXError.fromErrno() }
         
         return deviceInfo
     }
     
+    /// List all HCI devices.
     func deviceList() throws -> HCIDeviceList {
         
         // allocate HCI device list buffer
@@ -138,10 +164,9 @@ internal extension HostController.Socket {
         deviceList.numberOfDevices = UInt16(HCI.maximumDeviceCount)
         
         // request device list
-        let ioctlValue = withUnsafeMutablePointer(to: &deviceList) {
-            IOControl(fileDescriptor, HCI.IOCTL.GetDeviceList, $0)
-        }
-        guard ioctlValue >= 0 else { throw POSIXError.fromErrno() }
+        guard withUnsafeMutablePointer(to: &deviceList, {
+            IOControl(fileDescriptor, HCI.IOCTL.GetDeviceList, $0) >= 0 })
+            else { throw POSIXError.fromErrno() }
         
         return deviceList
     }
