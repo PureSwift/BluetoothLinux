@@ -65,14 +65,11 @@ public extension HostController {
     
     static var `default`: HostController? {
         
-        guard let socket = try? HostController.Socket()
-            else { return nil }
-        
         #if swift(>=5.0)
-        guard let deviceIdentifier = try? HCIGetRoute(nil, socket)
+        guard let deviceIdentifier = try? HCIGetRoute(nil)
             else { return nil }
         #else
-        guard let result = try? HCIGetRoute(nil, socket),
+        guard let result = try? HCIGetRoute(nil),
             let deviceIdentifier = result
             else { return nil }
         #endif
