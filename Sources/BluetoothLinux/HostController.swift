@@ -171,21 +171,22 @@ internal func HCIDevicesIterate(_ iterator: (_ socket: CInt, _ deviceRequest: HC
     }
 }
 
-internal func HCIIdentifierOfDevice(_ flagFilter: HCIDeviceFlag = HCIDeviceFlag(), _ predicate: (_ deviceDescriptor: CInt, _ deviceIdentifier: UInt16) throws -> Bool) throws -> UInt16? {
+internal func HCIIdentifierOfDevice(_ flagFilter: [HCIDeviceFlag] = [], _ predicate: (_ deviceDescriptor: CInt, _ deviceIdentifier: UInt16) throws -> Bool) throws -> UInt16? {
     
     var result: UInt16?
     
     try HCIDevicesIterate { (hciSocket, device) in
         
-        guard HCITestBit(flagFilter, device.options) else { return true }
+        for flag in flagFilter {
+            guard HCITestBit(flag, device.options)
+                else { return true }
+        }
         
         let deviceIdentifier = device.identifier
         
         if try predicate(hciSocket, deviceIdentifier) {
-            
             result = deviceIdentifier
             return false
-            
         } else {
             
             return true

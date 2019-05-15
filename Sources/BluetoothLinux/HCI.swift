@@ -44,8 +44,6 @@ public enum HCIDeviceFlag: CInt {
     case inquiry
     
     case raw
-    
-    public init() { self = .up }
 }
 
 /// HCI controller types
