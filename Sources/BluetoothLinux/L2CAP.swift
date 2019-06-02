@@ -276,7 +276,12 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         let actualByteCount = read(internalSocket, &buffer, bufferSize)
 
         guard actualByteCount >= 0 else {
-            throw POSIXError.fromErrno()
+            switch errno {
+            case EINTR, EAGAIN:
+                return nil
+            default:
+                throw POSIXError.fromErrno()
+            }
         }
         
         let actualBytes = Array(buffer.prefix(actualByteCount))
