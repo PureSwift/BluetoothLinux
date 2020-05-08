@@ -9,4 +9,6 @@ BluetoothLinux.xcodeproj
 build/
 Docs/
 
+# SwiftPM
 Package.resolved
+.swiftpm
