@@ -19,10 +19,11 @@ Does not require [BlueZ](https://www.bluez.org), communicates directly with the 
 import Bluetooth
 import BluetoothLinux
 
-guard let hostController = HostController.default
-    else { Error("No Bluetooth adapters found") }
-let iBeaconUUID = Foundation.UUID(rawValue: "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0")!
-do { try hostController.enableBeacon(uuid: iBeaconUUID, major: 1, minor: 1, rssi: -29) }
+guard let hostController = BluetoothLinux.HostController.default
+    else { fatalError("No Bluetooth adapters found") }
+let uuid = UUID(rawValue: "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0")!
+let beacon = AppleBeacon(uuid: uuid, major: 1, minor: 1, rssi: -29)
+do { try hostController.iBeacon(beacon) }
 catch { print("Error enabling iBeacon: \(error)") }
 ```
 
@@ -35,7 +36,10 @@ import PackageDescription
 
 let package = Package(
     dependencies: [
-        .Package(url: "https://github.com/PureSwift/BluetoothLinux.git", majorVersion: 3)
+        .package(
+			url: "https://github.com/PureSwift/BluetoothLinux.git",
+    		.branch("master")
+    		)
         ]
 )
 ```
@@ -55,14 +59,12 @@ Read the documentation [here](http://pureswift.github.io/BluetoothLinux/docs/). 
 
 Do not test in Parallels or VMware with the built in Bluetooth adapter found in Macs. You can, however, use VMWare or Parallels, with a Linux compatible Bluetooth LE USB adapter plugged in. VirtualBox will work with the builtin adapter on Macs.
 
-For best results, test with Swift 4.1.2 on an ARM board running Linux (e.g. BeagleBoneBlack, Raspberry Pi, Orange Pi, etc) and a Linux comaptible Bluetooth dongle (e.g. CSR8510 A10).
+For best results, test with [Swift 5.1.5 on ARMv7](https://github.com/uraimo/buildSwiftOnARM) and a Linux-comptible Bluetooth dongle (e.g. CSR8510 A10).
 
 ## See Also
 
 - [Bluetooth](https://github.com/PureSwift/Bluetooth) - Pure Swift Bluetooth Definitions.
 - [GATT](https://github.com/PureSwift/GATT) - Bluetooth Generic Attribute Profile (GATT) for Swift
-- [SwiftFoundation](https://github.com/PureSwift/SwiftFoundation) - Cross-Platform, Protocol-Oriented Programming base library to complement the Swift Standard Library.
-- [Cacao](https://github.com/PureSwift/Cacao) - Pure Swift Cross-platform UIKit
 - [Silica](https://github.com/PureSwift/Silica) - Pure Swift CoreGraphics (Quartz2D) implementation
 - [Predicate](https://github.com/PureSwift/Predicate) - Pure Swift Predicate implementation 
 
@@ -71,7 +73,7 @@ License
 
 **BluetoothLinux** is released under the MIT license. See LICENSE for details.
 
-[swift-badge]: https://img.shields.io/badge/Swift-4.1-orange.svg?style=flat
+[swift-badge]: https://img.shields.io/badge/Swift-5.1-orange.svg?style=flat
 [swift-url]: https://swift.org
 [platform-badge]: https://img.shields.io/badge/platform-linux-lightgrey.svg
 [platform-url]: https://swift.org
