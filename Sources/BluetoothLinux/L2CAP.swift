@@ -7,14 +7,13 @@
 //
 
 #if os(Linux)
-    import Glibc
-#elseif os(macOS) || os(iOS)
-    import Darwin.C
+import Glibc
+#elseif canImport(Darwin)
+import Darwin.C
 #endif
 
 import Foundation
 import Bluetooth
-import BluetoothGATT
 import BluetoothHCI
 import CSwiftBluetoothLinux
 
@@ -37,7 +36,6 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     // MARK: - Initialization
 
     deinit {
-
         close(internalSocket)
     }
     
@@ -85,7 +83,6 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
                                      securityLevel: securityLevel)
         
         try socket.startListening()
-        
         return socket
     }
     
@@ -101,7 +98,6 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
                                      securityLevel: securityLevel)
         
         try socket.openConnection(to: destination.address, type: destination.type)
-        
         return socket
     }
     

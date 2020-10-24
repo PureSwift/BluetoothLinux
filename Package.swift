@@ -21,7 +21,6 @@ let package = Package(
             dependencies: [
                 "Bluetooth",
                 "BluetoothHCI",
-                "BluetoothGATT",
                 "CSwiftBluetoothLinux"
             ]
         ),
