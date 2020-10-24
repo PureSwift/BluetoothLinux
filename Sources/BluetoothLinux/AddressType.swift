@@ -7,6 +7,7 @@
 //
 
 import Bluetooth
+import BluetoothHCI
 
 /// Bluetooth Address type
 ///

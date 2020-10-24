@@ -7,14 +7,15 @@
 //
 
 #if os(Linux)
-    import Glibc
-#elseif os(macOS) || os(iOS)
-    import Darwin.C
+import Glibc
+#elseif canImport(Darwin)
+import Darwin.C
 #endif
 
-import CSwiftBluetoothLinux
-import Bluetooth
 import Foundation
+import CSwiftBluetoothLinux
+import BluetoothHCI
+
 
 /// Manages connection / communication to the underlying Bluetooth hardware.
 public final class HostController: BluetoothHostControllerInterface {

@@ -8,7 +8,7 @@
 
 import Foundation
 import XCTest
-import Bluetooth
+import BluetoothHCI
 import CSwiftBluetoothLinux
 import CSwiftBluetoothLinuxTest
 @testable import BluetoothLinux

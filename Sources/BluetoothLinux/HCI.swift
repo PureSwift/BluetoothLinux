@@ -12,7 +12,7 @@
     import Darwin.C
 #endif
 
-import Bluetooth
+import BluetoothHCI
 import CSwiftBluetoothLinux
 
 public extension HCI {

@@ -13,7 +13,7 @@
 #endif
 
 import Foundation
-import Bluetooth
+import BluetoothHCI
 
 public extension HostController {
     

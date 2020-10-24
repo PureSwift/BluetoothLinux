@@ -14,6 +14,8 @@
 
 import Foundation
 import Bluetooth
+import BluetoothGATT
+import BluetoothHCI
 import CSwiftBluetoothLinux
 
 /// L2CAP Bluetooth socket

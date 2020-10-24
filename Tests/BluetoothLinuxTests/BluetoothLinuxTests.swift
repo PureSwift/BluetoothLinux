@@ -8,6 +8,7 @@
 import Foundation
 import XCTest
 import Bluetooth
+import BluetoothHCI
 @testable import BluetoothLinux
 
 final class BluetoothLinuxTests: XCTestCase {
