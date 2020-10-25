@@ -1,19 +1,51 @@
 name: Swift
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push, pull_request]
 
 jobs:
-  build:
 
-    runs-on: macos-latest
+    macOS-swift-51:
+        name: macOS (Swift 5.1)
+        runs-on: macOS-latest
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v1
+        - name: Make Logs Directory
+          run: mkdir logs
+        - name: Xcode Version
+          run: |
+            sudo xcode-select -s /Applications/Xcode_11.3.1.app
+            xcodebuild -version
+            swift --version
+        - name: Swift Version
+          run: swift --version
+        - name: Build (Release)
+          run: swift build -c release
+        - name: Upload Logs
+          uses: actions/upload-artifact@v1
+          if: always()
+          with:
+            name: logs
+            path: logs
 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build
-      run: swift build -v
-    - name: Run tests
-      run: swift test -v
+
+    linux-swift-51:
+        name: Linux (Swift 5.1)
+        runs-on: ubuntu-18.04
+        container: swift:5.1
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v1
+        - name: Make Logs Directory
+          run: mkdir logs
+        - name: Swift Version
+          run: swift --version
+        - name: Build (Release)
+          run: swift build -c release
+        - name: Upload Logs
+          uses: actions/upload-artifact@v1
+          if: always()
+          with:
+            name: logs
+            path: logs
+
