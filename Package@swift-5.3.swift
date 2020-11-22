@@ -19,8 +19,14 @@ let package = Package(
         .target(
             name: "BluetoothLinux",
             dependencies: [
-                "Bluetooth",
-                "BluetoothHCI",
+                .product(
+                    name: "Bluetooth",
+                    package: "Bluetooth"
+                ),
+                .product(
+                    name: "BluetoothHCI",
+                    package: "Bluetooth"
+                ),
                 "CSwiftBluetoothLinux"
             ]
         ),
