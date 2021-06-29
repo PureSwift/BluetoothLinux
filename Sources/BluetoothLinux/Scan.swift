@@ -80,8 +80,6 @@ public extension HostController {
         /// Otherwise, if flags is set to 0, then the results of previous inquiries may be returned, 
         /// even if the devices aren't in range anymore.
         case flushCache = 0x0001
-        
-        public static let allCases: Set<ScanOption> = [.flushCache]
     }
     
     struct InquiryResult {

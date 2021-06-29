@@ -44,11 +44,13 @@ public extension POSIXError {
 }
 
 internal extension POSIXErrorCode {
+    
     var errorMessage: String {
         return String(cString: strerror(rawValue), encoding: .utf8)!
     }
 }
 
+#if !swift(>=5.4)
 // MARK: - CustomStringConvertible
 
 // https://github.com/apple/swift/pull/24149
@@ -56,13 +58,6 @@ internal extension POSIXErrorCode {
 extension POSIXError: CustomStringConvertible {
     public var description: String {
         return _nsError.description
-    }
-}
-
-#if os(macOS)
-extension POSIXErrorCode: CustomStringConvertible {
-    public var description: String {
-        return rawValue.description
     }
 }
 #endif
