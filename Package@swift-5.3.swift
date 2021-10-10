@@ -13,6 +13,10 @@ let package = Package(
         .package(
             url: "https://github.com/PureSwift/Bluetooth.git",
             .branch("master")
+        ),
+        .package(
+            url: "https://github.com/PureSwift/swift-system.git",
+            .branch("master")
         )
     ],
     targets: [
@@ -27,7 +31,11 @@ let package = Package(
                     name: "BluetoothHCI",
                     package: "Bluetooth"
                 ),
-                "CSwiftBluetoothLinux"
+                "CSwiftBluetoothLinux",
+                .product(
+                    name: "SystemPackage",
+                    package: "swift-system"
+                )
             ]
         ),
         .target(
