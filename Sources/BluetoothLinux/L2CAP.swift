@@ -117,9 +117,9 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
             return optionValue
         }
         
-        //. socket domain and protocol
+        // socket domain and protocol
         guard try value(for: SO_DOMAIN) == AF_BLUETOOTH,
-            try value(for: SO_PROTOCOL) == BluetoothProtocol.l2cap.rawValue
+            try value(for: SO_PROTOCOL) == BluetoothSocketProtocol.l2cap.rawValue
             else { return false }
         
         return true
@@ -135,7 +135,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         // open socket
         let internalSocket = socket(AF_BLUETOOTH,
                                     SOCK_SEQPACKET,
-                                    BluetoothProtocol.l2cap.rawValue)
+                                    BluetoothSocketProtocol.l2cap.rawValue)
         
         // error creating socket
         guard internalSocket >= 0
@@ -164,18 +164,15 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     
     /// Bluetooth address
     public var address: BluetoothAddress {
-        
         return BluetoothAddress(littleEndian: internalAddress.l2_bdaddr)
     }
     
     public var addressType: AddressType {
-        
         return AddressType(rawValue: internalAddress.l2_bdaddr_type)!
     }
     
     /// Protocol/Service Multiplexer (PSM)
     public var protocolServiceMultiplexer: UInt16 {
-        
         return UInt16(littleEndian: internalAddress.l2_psm)
     }
     
@@ -260,7 +257,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         // make socket non-blocking
         try setNonblocking()
     }
-
+    
     /// Reads from the socket.
     public func recieve(_ bufferSize: Int = 1024) throws -> Data? {
         
@@ -285,6 +282,16 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         let actualBytes = Array(buffer.prefix(actualByteCount))
 
         return Data(actualBytes)
+    }
+    
+    /// Blocks until data is ready.
+    public func waitForEvents(timeout: TimeInterval) {
+        var pollData = pollfd(
+            fd: internalSocket,
+            events: Int16(POLLIN) & Int16(POLLOUT) & Int16(POLLPRI) & Int16(POLLERR) & Int16(POLLHUP) & Int16(POLLNVAL),
+            revents: 0
+        )
+        poll(&pollData, 1, 0)
     }
     
     private func canRead() throws -> Bool {

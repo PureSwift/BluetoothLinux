@@ -44,11 +44,6 @@ final class BluetoothLinuxTests: XCTestCase {
             XCTAssertEqual(error._nsError.domain, NSPOSIXErrorDomain)
             XCTAssertEqual(error._nsError.code, Int(errorCode.rawValue))
             
-            #if Xcode
-            print("Description:", error.description)
-            print("Debug Information:", error.debugInformation ?? "")
-            #endif
-            
             do { throw error } // deal with protocol and not concrete type
             catch {
                 XCTAssert("\(error)".contains(string))

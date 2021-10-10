@@ -107,7 +107,7 @@ internal extension HostController {
         }
         
         init() throws {
-            let fileDescriptor = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothProtocol.hci.rawValue)
+            let fileDescriptor = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothSocketProtocol.hci.rawValue)
             guard fileDescriptor >= 0 else { throw POSIXError.fromErrno() }
             self.fileDescriptor = fileDescriptor
         }

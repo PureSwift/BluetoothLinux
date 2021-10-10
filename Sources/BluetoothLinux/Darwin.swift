@@ -6,11 +6,12 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-#if os(macOS) || os(iOS)
-    
-    internal func stub() -> Never {
-        
-        fatalError("Method not implemented. This code only runs on Linux.")
-    }
-    
+#if canImport(Darwin)
+internal func stub() -> Never {
+    fatalError("Method not implemented. This code only runs on Linux.")
+}
+#endif
+
+#if !os(Linux)
+#warning("This module will only run on Linux")
 #endif

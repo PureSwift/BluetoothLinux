@@ -52,7 +52,7 @@ internal func HCIPollEvent(_ deviceDescriptor: CInt,
     newFilter.setEvent(event)
     
     // set new filter
-    var newFilterLength = socklen_t(MemoryLayout<HCIFilter>.size)
+    let newFilterLength = socklen_t(MemoryLayout<HCIFilter>.size)
     guard withUnsafeMutablePointer(to: &newFilter, {
         let pointer = UnsafeMutableRawPointer($0)
         return setsockopt(deviceDescriptor, SOL_HCI, HCISocketOption.filter.rawValue, pointer, newFilterLength) == 0
