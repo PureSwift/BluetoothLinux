@@ -402,32 +402,3 @@ public extension L2CAPSocket {
         case authorizationPending   = 0x0002
     }
 }
-
-// MARK: - Internal Supporting Types
-
-let SOL_BLUETOOTH: CInt = 274
-
-let BT_SECURITY: CInt = 4
-
-let BT_FLUSHABLE: CInt = 8
-
-let SOL_L2CAP: CInt	= 6
-
-let L2CAP_OPTIONS: CInt = 0x01
-
-/// L2CAP socket address (not packed)
-struct sockaddr_l2 {
-    var l2_family: sa_family_t = 0
-    var l2_psm: CUnsignedShort = 0
-    var l2_bdaddr: BluetoothAddress = .zero
-    var l2_cid: CUnsignedShort = 0
-    var l2_bdaddr_type: UInt8 = 0
-    init() { }
-}
-
-/// Bluetooth security level (not packed)
-struct bt_security {
-    var level: UInt8 = 0
-    var key_size: UInt8 = 0
-    init() { }
-}
