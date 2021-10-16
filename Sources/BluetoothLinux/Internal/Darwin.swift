@@ -10,8 +10,16 @@ import SystemPackage
 
 #if !os(Linux)
 #warning("This module will only run on Linux")
+
+@usableFromInline
 internal func stub(function: StaticString = #function) -> Never {
     fatalError("\(function) not implemented. This code only runs on Linux.")
+}
+
+internal extension SocketOptionLevel {
+    
+    @_alwaysEmitIntoClient
+    static var bluetooth: SocketOptionLevel { stub() }
 }
 
 internal extension SocketAddressFamily {
