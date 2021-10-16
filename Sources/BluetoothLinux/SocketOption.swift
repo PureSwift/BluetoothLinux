@@ -8,11 +8,25 @@
 import Bluetooth
 import SystemPackage
 
+/// Bluetooth Socket Options
 public enum BluetoothSocketOption: CInt, SocketOptionID {
     
     public static var optionLevel: SocketOptionLevel { .bluetooth }
     
-    case security = 4
+    /// Bluetooth Security socket option
+    case security       = 4 // BT_SECURITY
+    
+    /// Defer setup boolean option
+    case deferSetup     = 7 // BT_DEFER_SETUP
+    
+    /// Flushable boolean option
+    case flushable      = 8
+    
+    /// Bluetooth power socket option
+    case power          = 9
+    
+    /// Bluetooth Channel Policy socket option
+    case channelPolicy  = 10 // BT_CHANNEL_POLICY
 }
 
 public extension BluetoothSocketOption {
