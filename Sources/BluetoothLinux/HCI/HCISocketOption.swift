@@ -12,7 +12,7 @@ import SystemPackage
 /// Bluetooth HCI Socket Option Identifier
 public enum HCISocketOption: Int32, SocketOptionID {
     
-    public static var optionLevel: SocketOptionLevel { .bluetoothHCI }
+    public static var optionLevel: SocketOptionLevel { .hostControllerInterface }
     
     case dataDirection                      = 1
     case filter                             = 2
@@ -22,7 +22,7 @@ public enum HCISocketOption: Int32, SocketOptionID {
 public extension HCISocketOption {
     
     /// HCI Filter Socket Option
-    public struct Filter: SocketOption {
+    struct Filter: SocketOption {
         
         public static var id: HCISocketOption { .filter }
         
@@ -51,16 +51,9 @@ public extension HCISocketOption {
         }
         
         public static func withUnsafeBytes(_ body: (UnsafeMutableRawBufferPointer) throws -> ()) rethrows -> Self {
-            var value = CInterop.HCIFilterSocketOption()
-            try Swift.withUnsafeMutableBytes(of: &value, body)
-            return Self.init(value)
+            var value = self.init()
+            try Swift.withUnsafeMutableBytes(of: &value.bytes, body)
+            return value
         }
     }
-}
-
-public extension SocketOptionLevel {
-    
-    /// Bluetooth HCI Socket Option Level
-    @_alwaysEmitIntoClient
-    static var bluetoothHCI: SocketOptionLevel { SocketOptionLevel(rawValue: 0) }
 }
