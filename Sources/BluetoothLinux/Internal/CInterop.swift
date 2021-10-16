@@ -35,6 +35,35 @@ extension CInterop.HCISocketAddress: CSocketAddress {
     static var family: SocketAddressFamily { .bluetooth }
 }
 
+public extension CInterop {
+    
+    /// `sockaddr_l2` L2CAP socket address (not packed)
+    struct L2CAPSocketAddress: Equatable, Hashable {
+        var l2_family: sa_family_t = 0
+        var l2_psm: CUnsignedShort = 0
+        var l2_bdaddr: BluetoothAddress = .zero
+        var l2_cid: CUnsignedShort = 0
+        var l2_bdaddr_type: UInt8 = 0
+        init() { }
+    }
+}
+
+extension CInterop.L2CAPSocketAddress: CSocketAddress {
+    
+    @usableFromInline
+    static var family: SocketAddressFamily { .bluetooth }
+}
+    
+public extension CInterop {
+
+    /// `bt_security` Bluetooth security level (not packed)
+    struct BluetoothSocketSecurity: Equatable, Hashable {
+        var level: UInt8 = 0
+        var key_size: UInt8 = 0
+        init() { }
+    }
+}
+
 /* Ioctl requests structures */
 
 public extension CInterop {
