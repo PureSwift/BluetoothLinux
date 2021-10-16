@@ -53,6 +53,31 @@ extension CInterop.L2CAPSocketAddress: CSocketAddress {
     @usableFromInline
     static var family: SocketAddressFamily { .bluetooth }
 }
+
+public extension CInterop {
+    
+    /// `l2cap_conninfo`
+    struct L2CAPConnectionInfo {
+        public var handle: UInt16
+        public var deviceClass: (UInt8, UInt8, UInt8)
+        public init(handle: UInt16 = 0,
+                    deviceClass: (UInt8, UInt8, UInt8) = (0,0,0)) {
+            self.handle = handle
+            self.deviceClass = deviceClass
+        }
+    }
+}
+
+public extension CInterop {
+    
+    /// bt_power
+    struct BluetoothPower {
+        public var forceActive: UInt8
+        public init(forceActive: UInt8 = 0) {
+            self.forceActive = forceActive
+        }
+    };
+}
     
 public extension CInterop {
 
