@@ -12,6 +12,7 @@ import BluetoothHCI
 /// Bluetooth Address type
 ///
 /// - SeeAlso: [Ten Important Differences between Bluetooth BR/EDR and Bluetooth Smart](http://blog.bluetooth.com/ten-important-differences-between-bluetooth-bredr-and-bluetooth-smart/)
+@frozen
 public enum AddressType: UInt8 {
     
     /// Bluetooth Basic Rate/Enhanced Data Rate
