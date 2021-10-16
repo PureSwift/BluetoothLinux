@@ -6,7 +6,7 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-//import System
+import SystemPackage
 
 /// Bluetooth Socket Protocol
 public enum BluetoothSocketProtocol: Int32, Codable {
@@ -36,7 +36,6 @@ public enum BluetoothSocketProtocol: Int32, Codable {
     case avdtp      = 7
 }
 
-/*
 extension BluetoothSocketProtocol: SocketProtocol {
         
     @_alwaysEmitIntoClient
@@ -56,4 +55,3 @@ extension BluetoothSocketProtocol: SocketProtocol {
         }
     }
 }
-*/
