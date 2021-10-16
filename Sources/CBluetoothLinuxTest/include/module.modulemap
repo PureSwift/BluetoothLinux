@@ -1,0 +1,4 @@
+module CBluetoothLinuxTest [system] {
+    header "shim.h"
+    export *
+}

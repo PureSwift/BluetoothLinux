@@ -31,7 +31,7 @@ let package = Package(
                     name: "BluetoothHCI",
                     package: "Bluetooth"
                 ),
-                "CSwiftBluetoothLinux",
+                "CBluetoothLinux",
                 .product(
                     name: "SystemPackage",
                     package: "swift-system"
@@ -39,16 +39,16 @@ let package = Package(
             ]
         ),
         .target(
-            name: "CSwiftBluetoothLinux"
+            name: "CBluetoothLinux"
         ),
         .target(
-            name: "CSwiftBluetoothLinuxTest"
+            name: "CBluetoothLinuxTest"
         ),
         .testTarget(
             name: "BluetoothLinuxTests",
             dependencies: [
                 "BluetoothLinux",
-                "CSwiftBluetoothLinuxTest"
+                "CBluetoothLinuxTest"
             ]
         )
     ]

@@ -6,16 +6,11 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-#if os(Linux)
-import Glibc
-#elseif canImport(Darwin)
-import Darwin.C
-#endif
-
 import Foundation
 import Bluetooth
 import BluetoothHCI
-import CSwiftBluetoothLinux
+import CBluetoothLinux
+import SystemPackage
 
 /// L2CAP Bluetooth socket
 public final class L2CAPSocket: L2CAPSocketProtocol {
@@ -410,10 +405,6 @@ public extension L2CAPSocket {
 
 // MARK: - Internal Supporting Types
 
-let AF_BLUETOOTH: CInt = 31
-
-//let BTPROTO_L2CAP: CInt = 0 // BluetoothProtocol.L2CAP
-
 let SOL_BLUETOOTH: CInt = 274
 
 let BT_SECURITY: CInt = 4
@@ -440,21 +431,3 @@ struct bt_security {
     var key_size: UInt8 = 0
     init() { }
 }
-
-// MARK: - Linux Support
-
-#if os(Linux)
-    
-let SOCK_SEQPACKET: CInt = CInt(Glibc.SOCK_SEQPACKET.rawValue)
-
-#endif
-
-// MARK: - OS X support
-
-#if os(macOS)
-    
-let SO_PROTOCOL: CInt = 38
-    
-let SO_DOMAIN: CInt = 39
-
-#endif

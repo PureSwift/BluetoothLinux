@@ -6,36 +6,32 @@
 //  Copyright © 2015 PureSwift. All rights reserved.
 //
 
-#if os(Linux)
-import Glibc
-#elseif canImport(Darwin)
-import Darwin.C
-#endif
-
 import Foundation
-import CSwiftBluetoothLinux
+import CBluetoothLinux
 import BluetoothHCI
-
+import SystemPackage
 
 /// Manages connection / communication to the underlying Bluetooth hardware.
 public final class HostController: BluetoothHostControllerInterface {
-    
-    public typealias Identifier = UInt16
-
+        
     // MARK: - Properties
     
     /// The device identifier of the Bluetooth controller.
-    public let identifier: Identifier
+    public let id: ID
     
-    internal let internalSocket: Socket
+    /// Internal file descriptor for HCI socket
+    internal let fileDescriptor: FileDescriptor
     
     // MARK: - Initizalization
     
     /// Attempt to initialize an Bluetooth controller
-    public init(identifier: Identifier) throws {
-        
-        self.identifier = identifier
-        self.internalSocket = try Socket(device: identifier)
+    public init(id: ID) throws {
+        let fileDescriptor = try FileDescriptor.bluetooth()
+        do {
+            fileDescriptor.bind()
+        } catch {
+            
+        }
     }
     
     /// Initializes the Bluetooth controller with the specified address.
@@ -47,6 +43,19 @@ public final class HostController: BluetoothHostControllerInterface {
         try socket.bind(deviceIdentifier)
         self.identifier = deviceIdentifier
         self.internalSocket = socket
+    }
+}
+
+public extension HostController {
+    
+    @frozen
+    struct ID: RawRepresentable, Equatable, Hashable, Codable {
+        
+        public let rawValue: UInt16
+        
+        public init(rawValue: UInt16) {
+            self.rawValue = rawValue
+        }
     }
 }
 
@@ -107,9 +116,6 @@ internal extension HostController {
         }
         
         init() throws {
-            let fileDescriptor = socket(AF_BLUETOOTH, SOCK_RAW | SOCK_CLOEXEC, BluetoothSocketProtocol.hci.rawValue)
-            guard fileDescriptor >= 0 else { throw POSIXError.fromErrno() }
-            self.fileDescriptor = fileDescriptor
         }
         
         convenience init(device: HostController.Identifier) throws {
@@ -205,21 +211,3 @@ internal func bind(_ fileDescriptor: CInt, _ address: inout HCISocketAddress) th
     }
     guard didBind else { throw POSIXError.fromErrno() }
 }
-
-// MARK: - Linux Support
-
-#if os(Linux)
-
-    let SOCK_RAW = CInt(Glibc.SOCK_RAW.rawValue)
-
-    let SOCK_CLOEXEC = CInt(Glibc.SOCK_CLOEXEC.rawValue)
-    
-    typealias sa_family_t = Glibc.sa_family_t
-
-#endif
-
-// MARK: - Darwin Stubs
-
-#if os(macOS) || os(iOS)
-var SOCK_CLOEXEC: CInt { stub() }
-#endif

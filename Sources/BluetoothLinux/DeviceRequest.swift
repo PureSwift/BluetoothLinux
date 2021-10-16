@@ -6,12 +6,6 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
-#if os(Linux)
-    import Glibc
-#elseif os(macOS) || os(iOS)
-    import Darwin.C
-#endif
-
 import Foundation
 import BluetoothHCI
 
@@ -422,7 +416,3 @@ internal func HCISendRequest <Command: HCICommand> (_ deviceDescriptor: CInt,
     // throw timeout error
     throw POSIXError(.ETIMEDOUT)
 }
-
-// MARK: - Internal Constants
-
-let SOL_HCI: CInt = 0

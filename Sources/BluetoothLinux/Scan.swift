@@ -6,15 +6,9 @@
 //  Copyright © 2015 PureSwift. All rights reserved.
 //
 
-#if os(Linux)
-    import Glibc
-#elseif os(macOS) || os(iOS)
-    import Darwin.C
-#endif
-
 import Foundation
 import BluetoothHCI
-import CSwiftBluetoothLinux
+import CBluetoothLinux
 
 // MARK: - Methods
 
@@ -40,7 +34,7 @@ public extension HostController {
         
         let flags = options.rawValue
         
-        return try HCIInquiry(identifier,
+        return try HCIInquiry(id,
                               duration: UInt8(duration),
                               scanLimit: UInt8(limit),
                               deviceClass: deviceClass,

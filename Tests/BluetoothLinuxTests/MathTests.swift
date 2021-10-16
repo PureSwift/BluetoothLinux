@@ -9,8 +9,8 @@
 import Foundation
 import XCTest
 import BluetoothHCI
-import CSwiftBluetoothLinux
-import CSwiftBluetoothLinuxTest
+import CBluetoothLinux
+import CBluetoothLinuxTest
 @testable import BluetoothLinux
 
 final class MathTests: XCTestCase {
@@ -30,11 +30,11 @@ final class MathTests: XCTestCase {
         
         var cDestination: UInt32 = 0
         
-        CSwiftBluetoothLinuxTest.hci_set_bit(bit, &cDestination)
+        CBluetoothLinuxTest.hci_set_bit(bit, &cDestination)
         
         var swiftDestination: UInt32 = 0
         
-        CSwiftBluetoothLinux.HCISetBit(bit, &swiftDestination)
+        CBluetoothLinux.HCISetBit(bit, &swiftDestination)
         
         XCTAssert(cDestination == swiftDestination, "\(cDestination) == \(swiftDestination)")
         XCTAssert(swiftDestination == 32768, "\(swiftDestination)")

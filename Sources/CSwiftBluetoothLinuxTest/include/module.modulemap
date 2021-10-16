@@ -1,4 +1,0 @@
-module CSwiftBluetoothLinuxTest [system] {
-    header "shim.h"
-    export *
-}

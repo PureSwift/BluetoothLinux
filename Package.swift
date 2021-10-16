@@ -24,21 +24,21 @@ let package = Package(
             name: "BluetoothLinux",
             dependencies: [
                 "Bluetooth",
-                "CSwiftBluetoothLinux",
+                "CBluetoothLinux",
                 "SystemPackage"
             ]
         ),
         .target(
-            name: "CSwiftBluetoothLinux"
+            name: "CBluetoothLinux"
         ),
         .target(
-            name: "CSwiftBluetoothLinuxTest"
+            name: "CBluetoothLinuxTest"
         ),
         .testTarget(
             name: "BluetoothLinuxTests",
             dependencies: [
                 "BluetoothLinux",
-                "CSwiftBluetoothLinuxTest"
+                "CBluetoothLinuxTest"
             ]
         )
     ]

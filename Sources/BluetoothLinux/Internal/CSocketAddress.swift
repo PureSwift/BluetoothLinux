@@ -4,8 +4,6 @@ import SystemPackage
 internal protocol CSocketAddress {
     
     static var family: SocketAddressFamily { get }
-    
-    init()
 }
 
 internal extension CSocketAddress {
