@@ -31,27 +31,33 @@ public extension BluetoothIO {
     static var deviceUp: BluetoothIO        { IOW(H, 201, CInt.self) }
     
     // #define HCIDEVDOWN    _IOW('H', 202, int)
+    @_alwaysEmitIntoClient
     static var deviceDown: BluetoothIO      { IOW(H, 202, CInt.self) }
     
     // #define HCIDEVRESET    _IOW('H', 203, int)
+    @_alwaysEmitIntoClient
     static var deviceReset: BluetoothIO     { IOW(H, 203, CInt.self) }
     
     // #define HCIDEVRESTAT    _IOW('H', 204, int)
+    @_alwaysEmitIntoClient
     static var deviceRestat: BluetoothIO    { IOW(H, 204, CInt.self) }
     
     // #define HCIGETDEVLIST    _IOR('H', 210, int)
+    @_alwaysEmitIntoClient
     static var getDeviceList: BluetoothIO   { IOR(H, 210, CInt.self) }
     
     // #define HCIGETDEVINFO    _IOR('H', 211, int)
+    @_alwaysEmitIntoClient
     static var getDeviceInfo: BluetoothIO   { IOR(H, 211, CInt.self) }
     
     // #define HCIINQUIRY    _IOR('H', 240, int)
+    @_alwaysEmitIntoClient
     static var inquiry: BluetoothIO         { IOR(H, 240, CInt.self) }
 }
 
-private extension BluetoothIO {
+internal extension BluetoothIO {
     
-    @_alwaysEmitIntoClient
+    @usableFromInline
     static var H: CInt { CInt(UnicodeScalar(unicodeScalarLiteral: "H").value) }
     
     @usableFromInline
@@ -64,34 +70,49 @@ private extension BluetoothIO {
         return BluetoothIO(rawValue: _IOR(type, nr, size))
     }
     
+    @usableFromInline
     static var NRBITS: CInt       { CInt(8) }
     
+    @usableFromInline
     static var TYPEBITS: CInt     { CInt(8) }
     
+    @usableFromInline
     static var SIZEBITS: CInt     { CInt(14) }
     
+    @usableFromInline
     static var DIRBITS: CInt      { CInt(2) }
     
+    @usableFromInline
     static var NRMASK: CInt       { CInt((1 << NRBITS)-1) }
     
+    @usableFromInline
     static var TYPEMASK: CInt     { CInt((1 << TYPEBITS)-1) }
     
+    @usableFromInline
     static var SIZEMASK: CInt     { CInt((1 << SIZEBITS)-1) }
     
+    @usableFromInline
     static var DIRMASK: CInt      { CInt((1 << DIRBITS)-1) }
     
+    @usableFromInline
     static var NRSHIFT: CInt      { CInt(0) }
     
+    @usableFromInline
     static var TYPESHIFT: CInt    { CInt(NRSHIFT+NRBITS) }
     
+    @usableFromInline
     static var SIZESHIFT: CInt    { CInt(TYPESHIFT+TYPEBITS) }
     
+    @usableFromInline
     static var DIRSHIFT: CInt     { CInt(SIZESHIFT+SIZEBITS) }
     
+    @usableFromInline
     static var NONE: CUnsignedInt         { CUnsignedInt(0) }
     
+    @usableFromInline
     static var WRITE: CUnsignedInt        { CUnsignedInt(1) }
     
+    @usableFromInline
     static var READ: CUnsignedInt         { CUnsignedInt(2) }
     
     @usableFromInline
@@ -124,7 +145,7 @@ private extension BluetoothIO {
     static func _IOW<T>(_ type: CInt, _ nr: CInt, _ size: T.Type) -> CUnsignedLong {
         return _IOC(WRITE, type, nr, _TYPECHECK(size))
     }
-
+    
     @usableFromInline
     static func _IOR<T>(_ type: CInt, _ nr: CInt, _ size: T.Type) -> CUnsignedLong {
         return _IOC(READ, type, nr, _TYPECHECK(size))
