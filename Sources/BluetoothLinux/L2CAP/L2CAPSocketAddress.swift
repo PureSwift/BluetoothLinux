@@ -46,6 +46,15 @@ public struct L2CAPSocketAddress: Equatable, Hashable, SocketAddress {
         self.channel = channel
     }
     
+    public static var none: L2CAPSocketAddress {
+        return L2CAPSocketAddress(
+            address: .zero,
+            addressType: nil,
+            protocolServiceMultiplexer: nil,
+            channel: 0
+        )
+    }
+    
     public init(
         lowEnergy address: BluetoothAddress,
         isRandom: Bool

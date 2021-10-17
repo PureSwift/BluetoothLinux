@@ -71,7 +71,7 @@ public final class L2CAPSocket {
             lowEnergy: address,
             isRandom: isRandom
         )
-        let fileDescriptor = try FileDescriptor.l2cap(address)
+        let fileDescriptor = try FileDescriptor.l2cap(address, [.closeOnExec])
         try fileDescriptor.closeIfThrows {
             try fileDescriptor.listen(backlog: backlog)
         }
@@ -175,36 +175,24 @@ public final class L2CAPSocket {
         return socketOption.level
     }
 
-    /// Blocks the caller until a new connection is recieved.
-    public func waitForConnection() throws -> L2CAPSocket {
-
-        var remoteAddress = sockaddr_l2()
-
-        var socketLength = socklen_t(MemoryLayout<sockaddr_l2>.size)
-        
-        // accept new client
-        let client = withUnsafeMutablePointer(to: &remoteAddress, {
-            $0.withMemoryRebound(to: sockaddr.self, capacity: 1, {
-                accept(internalSocket, $0, &socketLength)
-            })
-        })
-        
-        // error accepting new connection
-        guard client >= 0 else { throw POSIXError.fromErrno() }
-
-        let newSocket = L2CAPSocket(clientSocket: client,
-                                    remoteAddress: remoteAddress,
-                                    securityLevel: securityLevel)
-        
-        // make socket non-blocking
-        try newSocket.setNonblocking()
-        
+    /// Attempt to accept an incomping connection.
+    public func accept() throws -> L2CAPSocket {
+        let (clientFileDescriptor, clientAddress) = try fileDescriptor.accept(L2CAPSocketAddress.self)
+        let newSocket = L2CAPSocket(
+            fileDescriptor: clientFileDescriptor,
+            address: clientAddress
+        )
         return newSocket
     }
     
     /// Reads from the socket.
     public func recieve(_ bufferSize: Int = 1024) throws -> Data? {
         
+        var buffer = Data(repeating: 0, count: bufferSize)
+        try buffer.withUnsafeMutableBytes {
+            try fileDescriptor.read(into: $0)
+        }
+                
         // check if reading buffer has data.
         guard try canRead()
             else { return nil }
