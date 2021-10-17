@@ -43,7 +43,9 @@ public final class HostController: BluetoothHostControllerInterface {
     
     /// Initializes the Bluetooth controller with the specified address.
     public init(address: BluetoothAddress) throws {
-        
+        #warning("HCIGetRoute()")
+        fatalError()
+        /*
         guard let deviceIdentifier = try HCIGetRoute(address, socket)
             else { throw Error.adapterNotFound }
         let address = HCISocketAddress(
@@ -58,6 +60,7 @@ public final class HostController: BluetoothHostControllerInterface {
         }
         self.id = id
         self.fileDescriptor = fileDescriptor
+        */
     }
 }
 
@@ -65,11 +68,13 @@ public final class HostController: BluetoothHostControllerInterface {
 public extension HostController {
     
     private static func requestControllers() throws -> [HostController] {
-        
-        let socket = try HostController.Socket()
-        return try socket.deviceList()
-            .sorted { $0.identifier < $1.identifier }
-            .compactMap { try? HostController(identifier: $0.identifier) }
+        let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
+        return try fileDescriptor.closeAfter {
+            try fileDescriptor.deviceList()
+                .lazy
+                .sorted { $0.id.rawValue < $1.id.rawValue }
+                .compactMap { try? HostController(id: $0.id) }
+        }
     }
     
     static var controllers: [HostController] {
@@ -77,16 +82,20 @@ public extension HostController {
     }
     
     static var `default`: HostController? {
-        
-        guard let socket = try? HostController.Socket(),
-            let list = try? socket.deviceList(),
-            let device = list.first
-            else { return nil }
-        
-        return try? HostController(identifier: device.identifier)
+        do {
+            let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
+            return try fileDescriptor.closeAfter {
+                try fileDescriptor.deviceList(count: 1)
+                    .first
+                    .map { try HostController(id: $0.id) }
+            }
+        } catch {
+            assertionFailure("Could not initialize HCI device. \(error)")
+            return nil
+        }
     }
 }
-
+/*
 public extension HostController {
     
     /// Open and initialize HCI device.
@@ -104,7 +113,7 @@ public extension HostController {
         return try internalSocket.deviceInformation(identifier)
     }
 }
-
+*/
 // MARK: - Supporting Types
 
 public extension HostController {
