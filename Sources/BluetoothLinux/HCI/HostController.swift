@@ -43,24 +43,13 @@ public final class HostController: BluetoothHostControllerInterface {
     
     /// Initializes the Bluetooth controller with the specified address.
     public init(address: BluetoothAddress) throws {
-        #warning("HCIGetRoute()")
-        fatalError()
-        /*
-        guard let deviceIdentifier = try HCIGetRoute(address, socket)
-            else { throw Error.adapterNotFound }
-        let address = HCISocketAddress(
-            device: id,
-            channel: .raw
-        )
-        do {
-            try fileDescriptor.bind(address)
-        } catch {
-            try? fileDescriptor.close()
-            throw error
-        }
-        self.id = id
-        self.fileDescriptor = fileDescriptor
-        */
+        let fileDescriptor = try FileDescriptor.bluetooth(.hci)
+        guard let deviceInfo = try fileDescriptor.closeAfter({
+            try fileDescriptor.deviceList().first(where: {
+                try fileDescriptor.deviceInformation(for: $0.id).address == address
+            })
+        }) else { throw Error.adapterNotFound }
+        try self.init(id: deviceInfo.id)
     }
 }
 
