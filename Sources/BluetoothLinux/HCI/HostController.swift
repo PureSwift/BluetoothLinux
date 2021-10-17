@@ -27,7 +27,10 @@ public final class HostController: BluetoothHostControllerInterface {
     /// Attempt to initialize an Bluetooth controller
     public init(id: ID) throws {
         let fileDescriptor = try FileDescriptor.bluetooth(.hci)
-        let address = HCISocketAddress(device: id)
+        let address = HCISocketAddress(
+            device: id,
+            channel: .raw
+        )
         do {
             try fileDescriptor.bind(address)
         } catch {
@@ -41,34 +44,23 @@ public final class HostController: BluetoothHostControllerInterface {
     /// Initializes the Bluetooth controller with the specified address.
     public init(address: BluetoothAddress) throws {
         
-        let socket = try Socket()
         guard let deviceIdentifier = try HCIGetRoute(address, socket)
             else { throw Error.adapterNotFound }
-        try socket.bind(deviceIdentifier)
-        self.identifier = deviceIdentifier
-        self.internalSocket = socket
-    }
-}
-
-public extension HostController {
-    
-    @frozen
-    struct ID: RawRepresentable, Equatable, Hashable, Codable {
-        
-        public let rawValue: UInt16
-        
-        public init(rawValue: UInt16) {
-            self.rawValue = rawValue
+        let address = HCISocketAddress(
+            device: id,
+            channel: .raw
+        )
+        do {
+            try fileDescriptor.bind(address)
+        } catch {
+            try? fileDescriptor.close()
+            throw error
         }
+        self.id = id
+        self.fileDescriptor = fileDescriptor
     }
 }
 
-public extension HostController.ID {
-    
-    static var none: HostController.ID {
-        return .init(rawValue: 0xffff)
-    }
-}
 
 public extension HostController {
     
@@ -81,7 +73,6 @@ public extension HostController {
     }
     
     static var controllers: [HostController] {
-        
         return (try? requestControllers()) ?? []
     }
     
@@ -114,9 +105,29 @@ public extension HostController {
     }
 }
 
-// MARK: - Errors
+// MARK: - Supporting Types
 
 public extension HostController {
     
     typealias Error = BluetoothHostControllerError
+}
+
+public extension HostController {
+    
+    @frozen
+    struct ID: RawRepresentable, Equatable, Hashable, Codable {
+        
+        public let rawValue: UInt16
+        
+        public init(rawValue: UInt16) {
+            self.rawValue = rawValue
+        }
+    }
+}
+
+public extension HostController.ID {
+    
+    static var none: HostController.ID {
+        return .init(rawValue: 0xffff)
+    }
 }
