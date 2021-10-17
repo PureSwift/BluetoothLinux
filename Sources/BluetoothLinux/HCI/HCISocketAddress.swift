@@ -6,37 +6,46 @@
 //
 
 import Bluetooth
-import BluetoothHCI
 import SystemPackage
 
 /// Bluetooth HCI Socket Address
 @frozen
 public struct HCISocketAddress: Equatable, Hashable {
     
-    internal let bytes: CInterop.HCISocketAddress
+    // MARK: - Properties
     
-    internal init(bytes: CInterop.HCISocketAddress) {
-        self.bytes = bytes
-    }
+    /// HCI device identifier
+    public var device: HostController.ID
+    
+    /// Channel identifier
+    public var channel: HCIChannel
+    
+    // MARK: - Initialization
     
     /// Initialize with device and channel identifiers.
-    public init(device: HostController.ID, channel: BluetoothHCI.ChannelIdentifier) {
+    public init(
+        device: HostController.ID = .none,
+        channel: HCIChannel = .raw
+    ) {
+        self.device = device
+        self.channel = channel
+    }
+}
+
+internal extension HCISocketAddress {
+    
+    init(_ bytes: CInterop.HCISocketAddress) {
         self.init(
-            bytes: CInterop.HCISocketAddress(
-                device: device.rawValue,
-                channel: channel.rawValue
-            )
+            device: HostController.ID(rawValue: bytes.device),
+            channel: HCIChannel(rawValue: bytes.channel) ?? .raw
         )
     }
     
-    /// HCI device identifier
-    public var device: HostController.ID {
-        return .init(rawValue: bytes.device)
-    }
-    
-    /// Channel identifier
-    public var channel: ChannelIdentifier {
-        return .init(rawValue: bytes.channel)
+    var bytes: CInterop.HCISocketAddress {
+        CInterop.HCISocketAddress(
+            device: device.rawValue,
+            channel: channel.rawValue
+        )
     }
 }
 
@@ -44,7 +53,7 @@ extension HCISocketAddress: CustomStringConvertible, CustomDebugStringConvertibl
     
     @inline(never)
     public var description: String {
-        return "HCISocketAddress(device: \(device), channel: \(channel))"
+        return "HCISocketAddress(device: \(device.rawValue), channel: \(channel))"
     }
     
     public var debugDescription: String {
@@ -70,6 +79,6 @@ extension HCISocketAddress: SocketAddress {
     ) rethrows -> Self {
         var bytes = CInterop.HCISocketAddress()
         try bytes.withUnsafeMutablePointer(body)
-        return Self.init(bytes: bytes)
+        return Self.init(bytes)
     }
 }
