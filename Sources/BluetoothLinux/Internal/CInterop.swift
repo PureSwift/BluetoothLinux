@@ -56,7 +56,7 @@ extension CInterop.L2CAPSocketAddress: CSocketAddress {
 
 public extension CInterop {
     
-    /// `l2cap_conninfo`
+    /// `l2cap_conninfo` L2CAP Connection Information
     struct L2CAPConnectionInfo {
         public var handle: UInt16
         public var deviceClass: (UInt8, UInt8, UInt8)
@@ -70,7 +70,32 @@ public extension CInterop {
 
 public extension CInterop {
     
-    /// bt_power
+    /// `l2cap_options` L2CAP Socket Options
+    struct L2CAPSocketOptions {
+        
+        public var outputMaximumTransmissionUnit: UInt16 // omtu
+        public var inputMaximumTransmissionUnit: UInt16 // imtu
+        public var flushTo: UInt16 // flush_to
+        public var mode: UInt8
+        public var fcs: UInt8
+        public var maxTX: UInt8 // max_tx
+        public var txwinSize: UInt8 // txwin_size
+        
+        public init() {
+            self.outputMaximumTransmissionUnit = 0
+            self.inputMaximumTransmissionUnit = 0
+            self.flushTo = 0
+            self.mode = 0
+            self.fcs = 0
+            self.maxTX = 0
+            self.txwinSize = 0
+        }
+    }
+}
+
+public extension CInterop {
+    
+    /// `bt_power` Bluetooth power options
     struct BluetoothPower {
         public var forceActive: UInt8
         public init(forceActive: UInt8 = 0) {
