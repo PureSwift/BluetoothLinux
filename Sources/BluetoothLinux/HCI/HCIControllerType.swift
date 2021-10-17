@@ -8,6 +8,6 @@
 /// HCI controller types
 public enum HCIControllerType: UInt8 {
     
-    case bredr                              = 0x00
-    case amp                                = 0x01
+    case bredr      = 0x00
+    case amp        = 0x01
 }
