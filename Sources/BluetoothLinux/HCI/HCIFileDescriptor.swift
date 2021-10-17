@@ -12,6 +12,18 @@ import SystemPackage
 
 internal extension FileDescriptor {
     
+    /// Creates an HCI socket binded to the specified address.
+    static func hci(
+        _ address: HCISocketAddress,
+        flags: SocketFlags = [.closeOnExec]
+    ) throws -> FileDescriptor {
+        try bluetooth(
+            .hci,
+            bind: address,
+            flags: flags
+        )
+    }
+    
     /// Sends an HCI command without waiting for an event.
     func sendCommand<Command: HCICommand>(
         _ command: Command,

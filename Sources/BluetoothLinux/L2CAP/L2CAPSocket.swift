@@ -13,91 +13,130 @@ import CBluetoothLinux
 import SystemPackage
 
 /// L2CAP Bluetooth socket
-public final class L2CAPSocket { //: L2CAPSocketProtocol {
+public final class L2CAPSocket {
     
     // MARK: - Properties
     
-    /// The socket's security level.
-    public private(set) var securityLevel: SecurityLevel
-
-    // MARK: - Internal Properties
-    
     /// Internal socket file descriptor
-    internal let fileDesciptor: FileDescriptor
+    internal let fileDescriptor: FileDescriptor
     
-    /// Internal L2CAP Socket address
+    /// L2CAP Socket address
     public let address: L2CAPSocketAddress
     
     // MARK: - Initialization
 
     deinit {
-        close(internalSocket)
+        try? fileDescriptor.close()
     }
     
-    /// Create a new L2CAP socket on the HostController with the specified identifier.
-    public init(controllerAddress: BluetoothAddress,
-                protocolServiceMultiplexer: ProtocolServiceMultiplexer? = nil,
-                channelIdentifier: ChannelIdentifier = .att,
-                addressType: AddressType? = .lowEnergyPublic,
-                securityLevel: SecurityLevel = .low) throws {
-        
-        let (internalSocket, internalAddress) = try L2CAPSocket.createSocket(
-            controllerAddress: controllerAddress,
-            protocolServiceMultiplexer: UInt16(protocolServiceMultiplexer?.rawValue ?? 0),
-            channelIdentifier: channelIdentifier.rawValue,
-            addressType: addressType)
-        
-        // store values
-        self.internalSocket = internalSocket
-        self.internalAddress = internalAddress
-        self.securityLevel = .sdp
-        
-        // configure socket
-        try self.setSecurityLevel(securityLevel)
+    internal init(
+        fileDescriptor: FileDescriptor,
+        address: L2CAPSocketAddress
+    ) {
+        self.fileDescriptor = fileDescriptor
+        self.address = address
     }
     
-    /// For new incoming connections for server.
-    internal init(clientSocket: CInt,
-                  remoteAddress: sockaddr_l2,
-                  securityLevel: SecurityLevel) {
-        
-        self.internalSocket = clientSocket
-        self.internalAddress = remoteAddress
-        self.securityLevel = securityLevel
+    /// Create a new L2CAP socket with the specified address.
+    public init(address: L2CAPSocketAddress) throws {
+        self.fileDescriptor = try .l2cap(address, [.closeOnExec])
+        self.address = address
+    }
+    
+    /// Create a new L2CAP socket on the `HostController` with the specified identifier.
+    public init(
+        hostController: HostController,
+        type: AddressType? = nil,
+        protocolServiceMultiplexer: ProtocolServiceMultiplexer? = nil,
+        channel: ChannelIdentifier
+    ) throws {
+        let deviceAddress = try hostController.readDeviceAddress()
+        let socketAddress = L2CAPSocketAddress(
+            address: deviceAddress,
+            addressType: type,
+            protocolServiceMultiplexer: protocolServiceMultiplexer,
+            channel: channel
+        )
+        self.fileDescriptor = try .l2cap(socketAddress, [.closeOnExec])
+        self.address = socketAddress
     }
     
     /// Creates a server socket for an L2CAP connection.
-    public static func lowEnergyServer(controllerAddress: BluetoothAddress = .zero,
-                                       isRandom: Bool = false,
-                                       securityLevel: SecurityLevel = .low) throws -> L2CAPSocket {
-        
-        let socket = try L2CAPSocket(controllerAddress: controllerAddress,
-                                     protocolServiceMultiplexer: nil,
-                                     channelIdentifier: .att,
-                                     addressType: isRandom ? .lowEnergyRandom : .lowEnergyPublic,
-                                     securityLevel: securityLevel)
-        
-        try socket.startListening()
-        return socket
+    public static func lowEnergyServer(
+        address: BluetoothAddress,
+        isRandom: Bool = false,
+        backlog: Int = 10
+    ) throws -> L2CAPSocket {
+        let address = L2CAPSocketAddress(
+            lowEnergy: address,
+            isRandom: isRandom
+        )
+        let fileDescriptor = try FileDescriptor.l2cap(address)
+        try fileDescriptor.closeIfThrows {
+            try fileDescriptor.listen(backlog: backlog)
+        }
+        return L2CAPSocket(
+            fileDescriptor: fileDescriptor,
+            address: address
+        )
+    }
+    
+    /// Creates a server socket for an L2CAP connection.
+    public static func lowEnergyServer(
+        hostController: HostController,
+        isRandom: Bool = false,
+        backlog: Int = 10
+    ) throws -> L2CAPSocket {
+        let address = try hostController.readDeviceAddress()
+        return try lowEnergyServer(
+            address: address,
+            isRandom: isRandom,
+            backlog: backlog
+        )
     }
     
     /// Creates a client socket for an L2CAP connection.
-    public static func lowEnergyClient(controllerAddress: BluetoothAddress = .zero,
-                                       destination: (address: BluetoothAddress, type: AddressType),
-                                       securityLevel: SecurityLevel = .low) throws -> L2CAPSocket {
-        
-        let socket = try L2CAPSocket(controllerAddress: controllerAddress,
-                                     protocolServiceMultiplexer: nil,
-                                     channelIdentifier: .att,
-                                     addressType: nil,
-                                     securityLevel: securityLevel)
-        
-        try socket.openConnection(to: destination.address, type: destination.type)
-        return socket
+    public static func lowEnergyClient(
+        localAddress: BluetoothAddress,
+        destinationAddress: BluetoothAddress,
+        destinationAddressType: LowEnergyAddressType
+    ) throws -> L2CAPSocket {
+        let localSocketAddress = L2CAPSocketAddress(
+            address: localAddress,
+            addressType: nil,
+            protocolServiceMultiplexer: nil,
+            channel: .att
+        )
+        let destinationSocketAddress = L2CAPSocketAddress(
+            address: destinationAddress,
+            addressType: AddressType(lowEnergy: destinationAddressType),
+            protocolServiceMultiplexer: nil,
+            channel: .att
+        )
+        let fileDescriptor = try FileDescriptor.l2cap(localSocketAddress, [.closeOnExec])
+        try fileDescriptor.closeIfThrows {
+            try fileDescriptor.connect(to: destinationSocketAddress)
+        }
+        return L2CAPSocket(
+            fileDescriptor: fileDescriptor,
+            address: localSocketAddress
+        )
+    }
+    
+    /// Creates a client socket for an L2CAP connection.
+    public static func lowEnergyClient(
+        localAddress: BluetoothAddress,
+        destination: HCILEAdvertisingReport.Report
+    ) throws -> L2CAPSocket {
+        return try lowEnergyClient(
+            localAddress: localAddress,
+            destinationAddress: destination.address,
+            destinationAddressType: destination.addressType
+        )
     }
     
     // MARK: - Static Methods
-    
+    /*
     /// Check whether the file descriptor is a L2CAP socket.
     public static func validate(fileDescriptor: CInt) throws -> Bool {
         
@@ -118,89 +157,22 @@ public final class L2CAPSocket { //: L2CAPSocketProtocol {
             else { return false }
         
         return true
-    }
-    
-    /// Create the underlying socket for the L2CAP.
-    @inline(__always)
-    private static func createSocket(controllerAddress: BluetoothAddress,
-                                     protocolServiceMultiplexer: UInt16,
-                                     channelIdentifier: UInt16,
-                                     addressType: AddressType?) throws -> (CInt, sockaddr_l2) {
-        
-        // open socket
-        let internalSocket = socket(AF_BLUETOOTH,
-                                    SOCK_SEQPACKET,
-                                    BluetoothSocketProtocol.l2cap.rawValue)
-        
-        // error creating socket
-        guard internalSocket >= 0
-            else { throw POSIXError.fromErrno() }
-        
-        // set source address
-        var localAddress = sockaddr_l2()
-        memset(&localAddress, 0, MemoryLayout<sockaddr_l2>.size)
-        localAddress.l2_family = sa_family_t(AF_BLUETOOTH)
-        localAddress.l2_bdaddr = controllerAddress.littleEndian
-        localAddress.l2_psm = protocolServiceMultiplexer.littleEndian
-        localAddress.l2_cid = channelIdentifier.littleEndian
-        localAddress.l2_bdaddr_type = addressType?.rawValue ?? 0
-        
-        // bind socket to port and address
-        guard withUnsafeMutablePointer(to: &localAddress, {
-            $0.withMemoryRebound(to: sockaddr.self, capacity: 1, {
-                bind(internalSocket, $0, socklen_t(MemoryLayout<sockaddr_l2>.size)) == 0
-            })
-        }) else { close(internalSocket); throw POSIXError.fromErrno() }
-        
-        return (internalSocket, localAddress)
-    }
-    
-    // MARK: - Accessors
-    
-    /// Bluetooth address
-    public var address: BluetoothAddress {
-        return BluetoothAddress(littleEndian: internalAddress.l2_bdaddr)
-    }
-    
-    public var addressType: AddressType {
-        return AddressType(rawValue: internalAddress.l2_bdaddr_type)!
-    }
-    
-    /// Protocol/Service Multiplexer (PSM)
-    public var protocolServiceMultiplexer: UInt16 {
-        return UInt16(littleEndian: internalAddress.l2_psm)
-    }
-    
-    /// Channel Identifier (CID)
-    ///
-    /// L2CAP channel endpoints are identified to their clients by a Channel Identifier (CID).
-    /// This is assigned by L2CAP, and each L2CAP channel endpoint on any device has a different CID.
-    public var channelIdentifier: ChannelIdentifier {
-        
-        return ChannelIdentifier(rawValue: UInt16(littleEndian: internalAddress.l2_cid))
-    }
+    }*/
 
     // MARK: - Methods
     
     /// Attempts to change the socket's security level.
     public func setSecurityLevel(_ securityLevel: SecurityLevel) throws {
-        
-        // set security level
-        var security = bt_security()
-        security.level = securityLevel.rawValue
-        
-        guard setsockopt(internalSocket, SOL_BLUETOOTH, BT_SECURITY, &security, socklen_t(MemoryLayout<bt_security>.size)) == 0
-            else { throw POSIXError.fromErrno() }
-        
-        self.securityLevel = securityLevel
+        let socketOption = BluetoothSocketOption.Security(
+            level: securityLevel,
+            keySize: 0
+        )
+        try fileDescriptor.setSocketOption(socketOption)
     }
     
-    /// Put socket into listening mode.
-    public func startListening(queueLimit: Int = 10) throws {
-        
-        // put socket into listening mode
-        guard listen(internalSocket, Int32(queueLimit)) == 0
-            else { throw POSIXError.fromErrno() }
+    public func securityLevel() throws -> SecurityLevel {
+        let socketOption = try fileDescriptor.getSocketOption(BluetoothSocketOption.Security.self)
+        return socketOption.level
     }
 
     /// Blocks the caller until a new connection is recieved.
@@ -228,29 +200,6 @@ public final class L2CAPSocket { //: L2CAPSocketProtocol {
         try newSocket.setNonblocking()
         
         return newSocket
-    }
-    
-    /// Connect to another L2CAP server.
-    public func openConnection(to address: BluetoothAddress,
-                               type addressType: AddressType = .lowEnergyPublic) throws {
-        
-        // Set up destination address
-        var destinationAddress = sockaddr_l2()
-        memset(&destinationAddress, 0, MemoryLayout<sockaddr_l2>.size)
-        destinationAddress.l2_family = sa_family_t(AF_BLUETOOTH)
-        destinationAddress.l2_bdaddr = address.littleEndian
-        destinationAddress.l2_psm = internalAddress.l2_psm
-        destinationAddress.l2_cid = internalAddress.l2_cid
-        destinationAddress.l2_bdaddr_type = addressType.rawValue
-        
-        guard withUnsafeMutablePointer(to: &destinationAddress, {
-            $0.withMemoryRebound(to: sockaddr.self, capacity: 1, {
-                connect(internalSocket, $0, socklen_t(MemoryLayout<sockaddr_l2>.size)) == 0
-            })
-        }) else { throw POSIXError.fromErrno() }
-        
-        // make socket non-blocking
-        try setNonblocking()
     }
     
     /// Reads from the socket.

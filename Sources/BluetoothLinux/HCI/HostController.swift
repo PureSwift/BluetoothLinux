@@ -30,9 +30,8 @@ public final class HostController: BluetoothHostControllerInterface {
             device: id,
             channel: .raw
         )
-        let fileDescriptor = try FileDescriptor.bluetooth(
-            .hci,
-            bind: address,
+        let fileDescriptor = try FileDescriptor.hci(
+            address,
             flags: [.closeOnExec]
         )
         self.id = id
@@ -41,12 +40,14 @@ public final class HostController: BluetoothHostControllerInterface {
     
     /// Initializes the Bluetooth controller with the specified address.
     public convenience init(address: BluetoothAddress) throws {
+        // open socket to query devices with ioctl()`
         let fileDescriptor = try FileDescriptor.bluetooth(.hci)
         guard let deviceInfo = try fileDescriptor.closeAfter({
             try fileDescriptor.deviceList().first(where: {
                 try fileDescriptor.deviceInformation(for: $0.id).address == address
             })
-        }) else { throw Error.adapterNotFound }
+        }) else { throw Errno.noSuchAddressOrDevice }
+        // initialize with new file descriptor
         try self.init(id: deviceInfo.id)
     }
 }

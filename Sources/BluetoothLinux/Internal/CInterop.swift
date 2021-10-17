@@ -40,12 +40,14 @@ public extension CInterop {
     
     /// `sockaddr_l2` L2CAP socket address (not packed)
     struct L2CAPSocketAddress: Equatable, Hashable {
-        var l2_family: sa_family_t = 0
+        let l2_family: sa_family_t
         var l2_psm: CUnsignedShort = 0
         var l2_bdaddr: BluetoothAddress = .zero
         var l2_cid: CUnsignedShort = 0
         var l2_bdaddr_type: UInt8 = 0
-        init() { }
+        init() {
+            self.l2_family = .init(Self.family.rawValue)
+        }
     }
 }
 
@@ -205,9 +207,15 @@ public extension CInterop {
         /// 16 elements
         public private(set) var list: (Element, Element, Element, Element, Element, Element, Element, Element, Element, Element, Element, Element, Element, Element, Element, Element)
         
-        init() {
+        public init() {
             self.numberOfDevices = 0
             self.list = (Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element())
+        }
+        
+        internal static func request(count: UInt16 = UInt16(Self.capacity)) -> Self {
+            var value = self.init()
+            value.numberOfDevices = count
+            return value
         }
     }
 }
@@ -239,10 +247,9 @@ extension CInterop.HCIDeviceList: Collection {
     
     public subscript (index: Int) -> Element {
         
-        assert(index < capacity, "HCIDeviceList can only contain up to \(capacity) devices")
+        assert(index < Self.capacity, "HCIDeviceList can only contain up to \(Self.capacity) devices")
         
         switch index {
-            
         case 0:  return list.0
         case 1:  return list.1
         case 2:  return list.2
@@ -259,12 +266,11 @@ extension CInterop.HCIDeviceList: Collection {
         case 13: return list.13
         case 14: return list.14
         case 15: return list.15
-            
         default: fatalError("Invalid index \(index)")
         }
     }
     
-    public var capacity: Int {
+    public static var capacity: Int {
         return 16
     }
     
@@ -335,7 +341,7 @@ public extension CInterop {
     struct HCIDeviceInformation {
         
         /// uint16_t dev_id;
-        public var id: UInt16
+        public let id: UInt16
         
         /// char name[8];
         public var name: (CChar, CChar, CChar, CChar, CChar, CChar, CChar, CChar) = (0, 0, 0, 0, 0, 0, 0, 0)
@@ -427,7 +433,7 @@ public extension CInterop {
         /// uint32_t byte_tx;
         public let byteTX: UInt32 = 0
         
-        public init() { }
+        internal init() { }
     }
 }
 
@@ -447,23 +453,15 @@ public extension CInterop {
 
 internal extension CInterop.HCIFilterSocketOption {
     
-    enum Bits {
-        
-        static var filterType: CInt           { CInt(31) }
-        static var event: CInt                { CInt(63) }
-        static var opcodeGroupField: CInt     { CInt(63) }
-        static var opcodeCommandField: CInt   { CInt(127) }
-    }
-        
     @usableFromInline
     mutating func setPacketType(_ type: HCIPacketType) {
-        let bit = type == .vendor ? 0 : CInt(type.rawValue) & CInterop.HCIFilterSocketOption.Bits.filterType
+        let bit = type == .vendor ? 0 : CInt(type.rawValue) & 31
         HCISetBit(bit, &typeMask)
     }
     
     @usableFromInline
     mutating func setEvent(_ event: UInt8) {
-        let bit = (CInt(event) & CInterop.HCIFilterSocketOption.Bits.event)
+        let bit = (CInt(event) & 63)
         HCISetBit(bit, &eventMask.0)
     }
     

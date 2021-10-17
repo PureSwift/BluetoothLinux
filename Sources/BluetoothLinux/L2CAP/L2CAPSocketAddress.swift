@@ -5,12 +5,13 @@
 //  Created by Alsey Coleman Miller on 16/10/21.
 //
 
-import Bluetooth
 import SystemPackage
+import Bluetooth
+import BluetoothHCI
 
 /// Bluetooth L2CAP Socket
 @frozen
-public struct L2CAPSocketAddress {
+public struct L2CAPSocketAddress: Equatable, Hashable, SocketAddress {
     
     public typealias ProtocolID = BluetoothSocketProtocol
     
@@ -18,20 +19,67 @@ public struct L2CAPSocketAddress {
     
     // MARK: - Properties
     
-    /// HCI device identifier
-    public var device: HostController.ID
+    /// Bluetooth address
+    public var address: BluetoothAddress
     
-    /// Channel identifier
-    public var channel: HCIChannel
+    /// Bluetooth address type
+    public var addressType: AddressType?
+    
+    /// Protocol Service Multiplexer
+    public var protocolServiceMultiplexer: ProtocolServiceMultiplexer?
+    
+    /// Channel
+    public var channel: ChannelIdentifier
     
     // MARK: - Initialization
     
     /// Initialize with device and channel identifiers.
     public init(
-        device: HostController.ID = .none,
-        channel: HCIChannel = .raw
+        address: BluetoothAddress,
+        addressType: AddressType? = nil,
+        protocolServiceMultiplexer: ProtocolServiceMultiplexer? = nil,
+        channel: ChannelIdentifier
     ) {
-        self.device = device
+        self.address = address
+        self.addressType = addressType
+        self.protocolServiceMultiplexer = protocolServiceMultiplexer
         self.channel = channel
+    }
+    
+    public init(
+        lowEnergy address: BluetoothAddress,
+        isRandom: Bool
+    ) {
+        self.init(
+            address: address,
+            addressType: isRandom ? .lowEnergyRandom : .lowEnergyPublic,
+            protocolServiceMultiplexer: nil,
+            channel: .att
+        )
+    }
+    
+    public func withUnsafePointer<Result>(
+      _ body: (UnsafePointer<CInterop.SocketAddress>, UInt32) throws -> Result
+    ) rethrows -> Result {
+        var value = CInterop.L2CAPSocketAddress()
+        value.l2_bdaddr = address.littleEndian
+        // FIXME: PSM enum should be UInt16 not UInt8
+        value.l2_psm = UInt16(protocolServiceMultiplexer?.rawValue ?? 0).littleEndian
+        value.l2_cid = channel.rawValue.littleEndian
+        value.l2_bdaddr_type = addressType?.rawValue ?? 0
+        return try value.withUnsafePointer(body)
+    }
+    
+    public static func withUnsafePointer(
+        _ body: (UnsafeMutablePointer<CInterop.SocketAddress>, UInt32) throws -> ()
+    ) rethrows -> Self {
+        var value = CInterop.L2CAPSocketAddress()
+        try value.withUnsafeMutablePointer(body)
+        return Self.init(
+            address: .init(littleEndian: value.l2_bdaddr),
+            addressType: .init(rawValue: value.l2_bdaddr_type),
+            protocolServiceMultiplexer: .init(rawValue: UInt8(UInt16(littleEndian: value.l2_psm))),
+            channel: .init(rawValue: .init(littleEndian: value.l2_cid))
+        )
     }
 }
