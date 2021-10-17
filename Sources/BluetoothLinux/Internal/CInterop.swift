@@ -12,6 +12,7 @@ import CBluetoothLinux
 
 public extension CInterop {
     
+    /// `sockaddr_hci`
     struct HCISocketAddress: Equatable, Hashable {
         
         public var family: CInterop.SocketAddressFamily //sa_family_t()
@@ -49,6 +50,48 @@ public extension CInterop {
 }
 
 extension CInterop.L2CAPSocketAddress: CSocketAddress {
+    
+    @usableFromInline
+    static var family: SocketAddressFamily { .bluetooth }
+}
+
+public extension CInterop {
+    
+    /// `sockaddr_rc` RFCOMM socket address
+    struct RFCOMMSocketAddress: Equatable, Hashable {
+        
+        public let family: CInterop.SocketAddressFamily
+        public var address: BluetoothAddress
+        public var channel: UInt8
+        
+        public init(address: BluetoothAddress = .zero, channel: UInt8 = 0) {
+            self.family = .init(Self.family.rawValue)
+            self.address = address
+            self.channel = channel
+        }
+    }
+}
+
+extension CInterop.RFCOMMSocketAddress: CSocketAddress {
+    
+    @usableFromInline
+    static var family: SocketAddressFamily { .bluetooth }
+}
+
+public extension CInterop {
+    
+    /// `sockaddr_sco` SCO Socket Address
+    struct SCOSocketAddress: Equatable, Hashable {
+        public let family: CInterop.SocketAddressFamily
+        public var address: BluetoothAddress
+        public init(address: BluetoothAddress = .zero) {
+            self.family = .init(Self.family.rawValue)
+            self.address = address
+        }
+    }
+}
+
+extension CInterop.SCOSocketAddress: CSocketAddress {
     
     @usableFromInline
     static var family: SocketAddressFamily { .bluetooth }
@@ -114,7 +157,41 @@ public extension CInterop {
     }
 }
 
-/* Ioctl requests structures */
+public extension CInterop {
+    
+    /// `rfcomm_conninfo` RFCOMM Connection Information
+    struct RFCOMMConnectionInfo {
+        public var handle: UInt16
+        public var deviceClass: (UInt8, UInt8, UInt8)
+        public init(handle: UInt16 = 0,
+                    deviceClass: (UInt8, UInt8, UInt8) = (0,0,0)) {
+            self.handle = handle
+            self.deviceClass = deviceClass
+        }
+    }
+}
+
+public extension CInterop {
+    
+    /// `rfcomm_dev_req`
+    struct RFCOMMDeviceRequest {
+        
+    }
+}
+
+public extension CInterop {
+    
+    /// `sco_conninfo` SCO Connection Information
+    struct SCOConnectionInfo {
+        public var handle: UInt16
+        public var deviceClass: (UInt8, UInt8, UInt8)
+        public init(handle: UInt16 = 0,
+                    deviceClass: (UInt8, UInt8, UInt8) = (0,0,0)) {
+            self.handle = handle
+            self.deviceClass = deviceClass
+        }
+    }
+}
 
 public extension CInterop {
     
