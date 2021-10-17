@@ -8,10 +8,10 @@
 /// HCI dev events
 public enum HCIDeviceEvent: CInt {
     
-    case register                           = 1
-    case unregister
-    case up
-    case down
-    case suspend
-    case resume
+    case register       = 1
+    case unregister     = 2
+    case up             = 3
+    case down           = 4
+    case suspend        = 5
+    case resume         = 6
 }
