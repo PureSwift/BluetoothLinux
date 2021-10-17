@@ -11,19 +11,15 @@ import BluetoothHCI
 public extension HostController {
     
     /// Polls and waits for events.
-    func pollEvent <T: HCIEventParameter> (_ eventParameterType: T.Type,
-                                            shouldContinue: () -> (Bool),
-                                            event: (T) throws -> ()) throws {
-        
-        assert(T.event is HCIGeneralEvent, "Can only parse \(HCIGeneralEvent.self)")
-        
+    func pollEvent <T: HCIEventParameter> (
+        _ eventParameterType: T.Type,
+        shouldContinue: () -> (Bool),
+        event: (T) throws -> ()
+    ) throws where T.HCIEventType == HCIGeneralEvent {
         let eventCode = T.event.rawValue
-        
-        try HCIPollEvent(fileDescriptor, shouldContinue: shouldContinue, event: eventCode) {
-            
+        try HCIPollEvent(fileDescriptor.rawValue, shouldContinue: shouldContinue, event: eventCode) {
             guard let eventParameter = T.init(data: $0)
                 else { throw Error.garbageResponse(Data($0)) }
-            
             try event(eventParameter)
         }
     }
@@ -34,7 +30,7 @@ internal func HCIPollEvent(_ deviceDescriptor: CInt,
                            shouldContinue: () -> (Bool),
                            event: UInt8,
                            eventDataCallback: (Data) throws -> ()) throws {
-    
+    /*
     var eventBuffer = [UInt8](repeating: 0, count: HCI.maximumEventSize)
     
     var oldFilterLength = socklen_t(MemoryLayout<HCIFilter>.size)
@@ -112,5 +108,8 @@ internal func HCIPollEvent(_ deviceDescriptor: CInt,
         let eventData = Data(eventBuffer[(1 + HCIEventHeader.length) ..< bytesRead])
         
         try eventDataCallback(eventData)
+        
     }
+     */
+     fatalError()
 }
