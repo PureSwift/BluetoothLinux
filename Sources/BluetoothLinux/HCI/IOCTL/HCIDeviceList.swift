@@ -10,6 +10,7 @@ import SystemPackage
 
 public extension HostControllerIO {
     
+    /// HCI Device List 
     struct DeviceList: IOControlValue {
         
         @_alwaysEmitIntoClient
@@ -21,8 +22,8 @@ public extension HostControllerIO {
             self.bytes = bytes
         }
         
-        public init() {
-            self.init(.request())
+        public init(request count: Int = CInterop.HCIDeviceList.capacity) {
+            self.init(.request(count: numericCast(count)))
         }
         
         public mutating func withUnsafeMutablePointer<Result>(_ body: (UnsafeMutableRawPointer) throws -> (Result)) rethrows -> Result {
@@ -46,7 +47,7 @@ extension HostControllerIO.DeviceList: CustomStringConvertible, CustomDebugStrin
     }
 }
 
-// MARK: - CustomStringConvertible
+// MARK: - RandomAccessCollection
 
 extension HostControllerIO.DeviceList: RandomAccessCollection {
     
@@ -111,8 +112,8 @@ internal extension FileDescriptor {
     
     /// List all HCI devices.
     @usableFromInline
-    func deviceList() throws -> HostControllerIO.DeviceList {
-        var deviceList = HostControllerIO.DeviceList()
+    func deviceList(count: Int = 16) throws -> HostControllerIO.DeviceList {
+        var deviceList = HostControllerIO.DeviceList(request: count)
         try inputOutput(&deviceList)
         return deviceList
     }
