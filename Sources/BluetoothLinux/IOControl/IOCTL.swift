@@ -10,89 +10,101 @@ import SystemPackage
 
 /// Bluetooth HCI `ioctl` requests
 @frozen
-public struct BluetoothIO: Equatable, Hashable, RawRepresentable, IOControlID {
+public enum HostControllerIO: Equatable, Hashable, RawRepresentable, IOControlID, CaseIterable {
     
-    public let rawValue: UInt
+    case deviceUp
+    case deviceDown
+    case deviceReset
+    case deviceRestat
+    case getDeviceList
+    case getDeviceInfo
+    case getConnectionList
+    case getConnectionInfo
+    case getAuthenticationInfo
+    case setRaw
+    case setScan
+    case setAuthentication
+    case setEncrypt
+    case setPacketType
+    case setLinkPolicy
+    case setLinkMode
+    case setACLMTU
+    case setSCOMTU
+    case blockAddress
+    case unblockAddress
+    case inquiry
     
-    public init(rawValue: UInt) {
-        self.rawValue = rawValue
+    public init?(rawValue: UInt) {
+        guard let value = Self.allCases.first(where: { $0.rawValue == rawValue }) else {
+            return nil
+        }
+        self = value
     }
     
-    private init(_ raw: UInt) {
-        self.init(rawValue: raw)
+    @inline(never)
+    public var rawValue: UInt {
+        switch self {
+        case .deviceUp:                 return HostControllerIO.HCIDEVUP
+        case .deviceDown:               return HostControllerIO.HCIDEVDOWN
+        case .deviceReset:              return HostControllerIO.HCIDEVRESET
+        case .deviceRestat:             return HostControllerIO.HCIDEVRESTAT
+        case .getDeviceList:            return HostControllerIO.HCIGETDEVLIST
+        case .getDeviceInfo:            return HostControllerIO.HCIGETDEVINFO
+        case .getConnectionList:        return HostControllerIO.HCIGETCONNLIST
+        case .getConnectionInfo:        return HostControllerIO.HCIGETCONNINFO
+        case .getAuthenticationInfo:    return HostControllerIO.HCIGETAUTHINFO
+        case .setRaw:                   return HostControllerIO.HCISETRAW
+        case .setScan:                  return HostControllerIO.HCISETSCAN
+        case .setAuthentication:        return HostControllerIO.HCISETAUTH
+        case .setEncrypt:               return HostControllerIO.HCISETENCRYPT
+        case .setPacketType:            return HostControllerIO.HCISETPTYPE
+        case .setLinkPolicy:            return HostControllerIO.HCISETLINKPOL
+        case .setLinkMode:              return HostControllerIO.HCISETLINKMODE
+        case .setACLMTU:                return HostControllerIO.HCISETACLMTU
+        case .setSCOMTU:                return HostControllerIO.HCISETSCOMTU
+        case .blockAddress:             return HostControllerIO.HCIBLOCKADDR
+        case .unblockAddress:           return HostControllerIO.HCIUNBLOCKADDR
+        case .inquiry:                  return HostControllerIO.HCIINQUIRY
+        }
     }
 }
 
-// TODO: All HCI ioctl defines
-public extension BluetoothIO {
-    
-    // #define HCIDEVUP    _IOW('H', 201, int)
-    @_alwaysEmitIntoClient
-    static var deviceUp: BluetoothIO            { IOW(H, 201, CInt.self) }
-    
-    // #define HCIDEVDOWN    _IOW('H', 202, int)
-    @_alwaysEmitIntoClient
-    static var deviceDown: BluetoothIO          { IOW(H, 202, CInt.self) }
-    
-    // #define HCIDEVRESET    _IOW('H', 203, int)
-    @_alwaysEmitIntoClient
-    static var deviceReset: BluetoothIO         { IOW(H, 203, CInt.self) }
-    
-    // #define HCIDEVRESTAT    _IOW('H', 204, int)
-    @_alwaysEmitIntoClient
-    static var deviceRestat: BluetoothIO        { IOW(H, 204, CInt.self) }
-    
-    // #define HCIGETDEVLIST    _IOR('H', 210, int)
-    @_alwaysEmitIntoClient
-    static var getDeviceList: BluetoothIO       { IOR(H, 210, CInt.self) }
-    
-    // #define HCIGETDEVINFO    _IOR('H', 211, int)
-    @_alwaysEmitIntoClient
-    static var getDeviceInfo: BluetoothIO       { IOR(H, 211, CInt.self) }
-    
-    // #define HCIGETCONNLIST    _IOR('H', 212, int)
-    @_alwaysEmitIntoClient
-    static var getConnectionList: BluetoothIO   { IOR(H, 212, CInt.self) }
-    
-    // #define HCIGETCONNINFO    _IOR('H', 213, int)
-    @_alwaysEmitIntoClient
-    static var getConnectionInfo: BluetoothIO   { IOR(H, 213, CInt.self) }
-    
-    // #define HCIGETAUTHINFO    _IOR('H', 215, int)
-    static var getAuthenticationInfo: BluetoothIO   { IOR(H, 213, CInt.self) }
+/* HCI ioctl defines */
 
-    //#define HCISETRAW    _IOW('H', 220, int)
-    //#define HCISETSCAN    _IOW('H', 221, int)
-    //#define HCISETAUTH    _IOW('H', 222, int)
-    //#define HCISETENCRYPT    _IOW('H', 223, int)
-    //#define HCISETPTYPE    _IOW('H', 224, int)
-    //#define HCISETLINKPOL    _IOW('H', 225, int)
-    //#define HCISETLINKMODE    _IOW('H', 226, int)
-    //#define HCISETACLMTU    _IOW('H', 227, int)
-    //#define HCISETSCOMTU    _IOW('H', 228, int)
-
-    //#define HCIBLOCKADDR    _IOW('H', 230, int)
-    //#define HCIUNBLOCKADDR    _IOW('H', 231, int)
+internal extension HostControllerIO {
     
-    // #define HCIINQUIRY    _IOR('H', 240, int)
-    @_alwaysEmitIntoClient
-    static var inquiry: BluetoothIO         { IOR(H, 240, CInt.self) }
+    static var HCIDEVUP: CUnsignedLong          { _IOW(H, 201, CInt.self) }
+    
+    static var HCIDEVDOWN: CUnsignedLong        { _IOW(H, 202, CInt.self) }
+    static var HCIDEVRESET: CUnsignedLong       { _IOW(H, 203, CInt.self) }
+    static var HCIDEVRESTAT: CUnsignedLong      { _IOW(H, 204, CInt.self) }
+
+    static var HCIGETDEVLIST: CUnsignedLong     { _IOR(H, 210, CInt.self) }
+    static var HCIGETDEVINFO: CUnsignedLong     { _IOR(H, 211, CInt.self) }
+    static var HCIGETCONNLIST: CUnsignedLong    { _IOR(H, 212, CInt.self) }
+    static var HCIGETCONNINFO: CUnsignedLong    { _IOR(H, 213, CInt.self) }
+    static var HCIGETAUTHINFO: CUnsignedLong    { _IOR(H, 215, CInt.self) }
+
+    static var HCISETRAW: CUnsignedLong         { _IOW(H, 220, CInt.self) }
+    static var HCISETSCAN: CUnsignedLong        { _IOW(H, 221, CInt.self) }
+    static var HCISETAUTH: CUnsignedLong        { _IOW(H, 222, CInt.self) }
+    static var HCISETENCRYPT: CUnsignedLong     { _IOW(H, 223, CInt.self) }
+    static var HCISETPTYPE: CUnsignedLong       { _IOW(H, 224, CInt.self) }
+    static var HCISETLINKPOL: CUnsignedLong     { _IOW(H, 225, CInt.self) }
+    static var HCISETLINKMODE: CUnsignedLong    { _IOW(H, 226, CInt.self) }
+    static var HCISETACLMTU: CUnsignedLong      { _IOW(H, 227, CInt.self) }
+    static var HCISETSCOMTU: CUnsignedLong      { _IOW(H, 228, CInt.self) }
+
+    static var HCIBLOCKADDR: CUnsignedLong      { _IOW(H, 230, CInt.self) }
+    static var HCIUNBLOCKADDR: CUnsignedLong    { _IOW(H, 231, CInt.self) }
+    
+    static var HCIINQUIRY: CUnsignedLong        { _IOR(H, 240, CInt.self) }
 }
 
-internal extension BluetoothIO {
+internal extension HostControllerIO {
     
     @usableFromInline
     static var H: CInt { CInt(UnicodeScalar(unicodeScalarLiteral: "H").value) }
-    
-    @usableFromInline
-    static func IOW<T>(_ type: CInt, _ nr: CInt, _ size: T.Type) -> BluetoothIO {
-        return BluetoothIO(rawValue: _IOW(type, nr, size))
-    }
-    
-    @usableFromInline
-    static func IOR<T>(_ type: CInt, _ nr: CInt, _ size: T.Type) -> BluetoothIO {
-        return BluetoothIO(rawValue: _IOR(type, nr, size))
-    }
     
     @usableFromInline
     static var NRBITS: CInt       { CInt(8) }
