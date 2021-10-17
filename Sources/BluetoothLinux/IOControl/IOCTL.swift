@@ -28,27 +28,51 @@ public extension BluetoothIO {
     
     // #define HCIDEVUP    _IOW('H', 201, int)
     @_alwaysEmitIntoClient
-    static var deviceUp: BluetoothIO        { IOW(H, 201, CInt.self) }
+    static var deviceUp: BluetoothIO            { IOW(H, 201, CInt.self) }
     
     // #define HCIDEVDOWN    _IOW('H', 202, int)
     @_alwaysEmitIntoClient
-    static var deviceDown: BluetoothIO      { IOW(H, 202, CInt.self) }
+    static var deviceDown: BluetoothIO          { IOW(H, 202, CInt.self) }
     
     // #define HCIDEVRESET    _IOW('H', 203, int)
     @_alwaysEmitIntoClient
-    static var deviceReset: BluetoothIO     { IOW(H, 203, CInt.self) }
+    static var deviceReset: BluetoothIO         { IOW(H, 203, CInt.self) }
     
     // #define HCIDEVRESTAT    _IOW('H', 204, int)
     @_alwaysEmitIntoClient
-    static var deviceRestat: BluetoothIO    { IOW(H, 204, CInt.self) }
+    static var deviceRestat: BluetoothIO        { IOW(H, 204, CInt.self) }
     
     // #define HCIGETDEVLIST    _IOR('H', 210, int)
     @_alwaysEmitIntoClient
-    static var getDeviceList: BluetoothIO   { IOR(H, 210, CInt.self) }
+    static var getDeviceList: BluetoothIO       { IOR(H, 210, CInt.self) }
     
     // #define HCIGETDEVINFO    _IOR('H', 211, int)
     @_alwaysEmitIntoClient
-    static var getDeviceInfo: BluetoothIO   { IOR(H, 211, CInt.self) }
+    static var getDeviceInfo: BluetoothIO       { IOR(H, 211, CInt.self) }
+    
+    // #define HCIGETCONNLIST    _IOR('H', 212, int)
+    @_alwaysEmitIntoClient
+    static var getConnectionList: BluetoothIO   { IOR(H, 212, CInt.self) }
+    
+    // #define HCIGETCONNINFO    _IOR('H', 213, int)
+    @_alwaysEmitIntoClient
+    static var getConnectionInfo: BluetoothIO   { IOR(H, 213, CInt.self) }
+    
+    // #define HCIGETAUTHINFO    _IOR('H', 215, int)
+    static var getAuthenticationInfo: BluetoothIO   { IOR(H, 213, CInt.self) }
+
+    //#define HCISETRAW    _IOW('H', 220, int)
+    //#define HCISETSCAN    _IOW('H', 221, int)
+    //#define HCISETAUTH    _IOW('H', 222, int)
+    //#define HCISETENCRYPT    _IOW('H', 223, int)
+    //#define HCISETPTYPE    _IOW('H', 224, int)
+    //#define HCISETLINKPOL    _IOW('H', 225, int)
+    //#define HCISETLINKMODE    _IOW('H', 226, int)
+    //#define HCISETACLMTU    _IOW('H', 227, int)
+    //#define HCISETSCOMTU    _IOW('H', 228, int)
+
+    //#define HCIBLOCKADDR    _IOW('H', 230, int)
+    //#define HCIUNBLOCKADDR    _IOW('H', 231, int)
     
     // #define HCIINQUIRY    _IOR('H', 240, int)
     @_alwaysEmitIntoClient
