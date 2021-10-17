@@ -12,6 +12,7 @@ import SystemPackage
 
 internal extension FileDescriptor {
     
+    /// Sends an HCI command without waiting for an event.
     func sendCommand<Command: HCICommand>(
         _ command: Command,
         parameter parameterData: Data = Data()
@@ -34,7 +35,7 @@ internal extension FileDescriptor {
         try writeAll(data)
     }
     
-    /// Returns event parameter data.
+    /// Sends an HCI command and waits for expected event parameter data.
     func sendRequest <Command: HCICommand> (
         command: Command,
         commandParameterData: Data = Data(),
