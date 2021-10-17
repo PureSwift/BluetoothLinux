@@ -16,7 +16,7 @@ public extension HCISocketOption {
         
         public static var id: HCISocketOption { .filter }
         
-        internal private(set) var bytes: CInterop.HCIFilterSocketOption
+        internal var bytes: CInterop.HCIFilterSocketOption
         
         internal init(_ bytes: CInterop.HCIFilterSocketOption) {
             self.bytes = bytes
@@ -24,6 +24,16 @@ public extension HCISocketOption {
         
         public init() {
             self.init(CInterop.HCIFilterSocketOption())
+        }
+        
+        public var typeMask: UInt32 {
+            get { return bytes.typeMask }
+            set { bytes.typeMask = newValue }
+        }
+        
+        public var opcode: UInt16 {
+            get { return bytes.opcode }
+            set { bytes.opcode = newValue }
         }
         
         public mutating func setPacketType(_ type: HCIPacketType) {
