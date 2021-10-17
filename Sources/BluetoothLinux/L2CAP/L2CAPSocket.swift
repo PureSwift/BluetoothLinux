@@ -23,10 +23,10 @@ public final class L2CAPSocket { //: L2CAPSocketProtocol {
     // MARK: - Internal Properties
     
     /// Internal socket file descriptor
-    internal let internalSocket: CInt
+    internal let fileDesciptor: FileDescriptor
     
     /// Internal L2CAP Socket address
-    internal let internalAddress: sockaddr_l2
+    public let address: L2CAPSocketAddress
     
     // MARK: - Initialization
 

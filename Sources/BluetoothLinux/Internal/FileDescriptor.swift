@@ -16,10 +16,18 @@ internal extension FileDescriptor {
         _ socketProtocol: BluetoothSocketProtocol,
         flags: SocketFlags = [.closeOnExec]
     ) throws -> FileDescriptor {
-        return try FileDescriptor.socket(
+        return try socket(
             socketProtocol,
             flags: flags
         )
+    }
+    
+    static func bluetooth<Address: SocketAddress>(
+        _ socketProtocol: Address.ProtocolID,
+        bind address: Address,
+        flags: SocketFlags = [.closeOnExec]
+    ) throws -> FileDescriptor where Address.ProtocolID == BluetoothSocketProtocol {
+        return try socket(socketProtocol, bind: address, flags: flags)
     }
 }
 

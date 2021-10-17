@@ -30,7 +30,6 @@ internal extension SocketAddressFamily {
 
 internal extension FileDescriptor {
     
-    @usableFromInline
     static func socket<T: SocketProtocol>(
         _ protocolID: T,
         flags: SocketFlags,
@@ -39,9 +38,8 @@ internal extension FileDescriptor {
         stub()
     }
     
-    @usableFromInline
-    static func socket<Address: SocketAddress, ProtocolID: SocketProtocol>(
-        _ protocolID: ProtocolID,
+    static func socket<Address: SocketAddress>(
+        _ protocolID: Address.ProtocolID,
         bind address: Address,
         flags: SocketFlags,
         retryOnInterrupt: Bool = true

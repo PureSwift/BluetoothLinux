@@ -12,6 +12,10 @@ import SystemPackage
 @frozen
 public struct HCISocketAddress: Equatable, Hashable {
     
+    public typealias ProtocolID = BluetoothSocketProtocol
+    
+    public static var protocolID: ProtocolID { .hci }
+    
     // MARK: - Properties
     
     /// HCI device identifier
