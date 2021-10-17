@@ -29,8 +29,20 @@ internal extension SocketAddressFamily {
 }
 
 internal extension FileDescriptor {
+    
+    @usableFromInline
     static func socket<T: SocketProtocol>(
         _ protocolID: T,
+        flags: SocketFlags,
+        retryOnInterrupt: Bool = true
+    ) throws -> FileDescriptor {
+        stub()
+    }
+    
+    @usableFromInline
+    static func socket<Address: SocketAddress, ProtocolID: SocketProtocol>(
+        _ protocolID: ProtocolID,
+        bind address: Address,
         flags: SocketFlags,
         retryOnInterrupt: Bool = true
     ) throws -> FileDescriptor {

@@ -26,23 +26,21 @@ public final class HostController: BluetoothHostControllerInterface {
     
     /// Attempt to initialize an Bluetooth controller
     public init(id: ID) throws {
-        let fileDescriptor = try FileDescriptor.bluetooth(.hci)
         let address = HCISocketAddress(
             device: id,
             channel: .raw
         )
-        do {
-            try fileDescriptor.bind(address)
-        } catch {
-            try? fileDescriptor.close()
-            throw error
-        }
+        let fileDescriptor = try FileDescriptor.bluetooth(
+            .hci,
+            bind: address,
+            flags: [.closeOnExec]
+        )
         self.id = id
         self.fileDescriptor = fileDescriptor
     }
     
     /// Initializes the Bluetooth controller with the specified address.
-    public init(address: BluetoothAddress) throws {
+    public convenience init(address: BluetoothAddress) throws {
         let fileDescriptor = try FileDescriptor.bluetooth(.hci)
         guard let deviceInfo = try fileDescriptor.closeAfter({
             try fileDescriptor.deviceList().first(where: {
@@ -52,7 +50,6 @@ public final class HostController: BluetoothHostControllerInterface {
         try self.init(id: deviceInfo.id)
     }
 }
-
 
 public extension HostController {
     
