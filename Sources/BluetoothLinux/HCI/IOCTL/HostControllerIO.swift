@@ -9,7 +9,7 @@ import SystemPackage
 
 /// Bluetooth HCI `ioctl` requests
 @frozen
-public enum HostControllerIO: Equatable, Hashable, RawRepresentable, IOControlID, CaseIterable {
+public enum HostControllerIO: Hashable, CaseIterable, IOControlID {
     
     case deviceUp
     case deviceDown
@@ -68,29 +68,50 @@ public enum HostControllerIO: Equatable, Hashable, RawRepresentable, IOControlID
     }
 }
 
-var _HCIDEVUP: CUnsignedLong          { _IOW("H", 201, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCIDEVUP: CUnsignedLong          { _IOW("H", 201, CInt.self) }
 
-var _HCIDEVDOWN: CUnsignedLong        { _IOW("H", 202, CInt.self) }
-var _HCIDEVRESET: CUnsignedLong       { _IOW("H", 203, CInt.self) }
-var _HCIDEVRESTAT: CUnsignedLong      { _IOW("H", 204, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCIDEVDOWN: CUnsignedLong        { _IOW("H", 202, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCIDEVRESET: CUnsignedLong       { _IOW("H", 203, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCIDEVRESTAT: CUnsignedLong      { _IOW("H", 204, CInt.self) }
 
-var _HCIGETDEVLIST: CUnsignedLong     { _IOR("H", 210, CInt.self) }
-var _HCIGETDEVINFO: CUnsignedLong     { _IOR("H", 211, CInt.self) }
-var _HCIGETCONNLIST: CUnsignedLong    { _IOR("H", 212, CInt.self) }
-var _HCIGETCONNINFO: CUnsignedLong    { _IOR("H", 213, CInt.self) }
-var _HCIGETAUTHINFO: CUnsignedLong    { _IOR("H", 215, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCIGETDEVLIST: CUnsignedLong     { _IOR("H", 210, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCIGETDEVINFO: CUnsignedLong     { _IOR("H", 211, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCIGETCONNLIST: CUnsignedLong    { _IOR("H", 212, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCIGETCONNINFO: CUnsignedLong    { _IOR("H", 213, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCIGETAUTHINFO: CUnsignedLong    { _IOR("H", 215, CInt.self) }
 
-var _HCISETRAW: CUnsignedLong         { _IOW("H", 220, CInt.self) }
-var _HCISETSCAN: CUnsignedLong        { _IOW("H", 221, CInt.self) }
-var _HCISETAUTH: CUnsignedLong        { _IOW("H", 222, CInt.self) }
-var _HCISETENCRYPT: CUnsignedLong     { _IOW("H", 223, CInt.self) }
-var _HCISETPTYPE: CUnsignedLong       { _IOW("H", 224, CInt.self) }
-var _HCISETLINKPOL: CUnsignedLong     { _IOW("H", 225, CInt.self) }
-var _HCISETLINKMODE: CUnsignedLong    { _IOW("H", 226, CInt.self) }
-var _HCISETACLMTU: CUnsignedLong      { _IOW("H", 227, CInt.self) }
-var _HCISETSCOMTU: CUnsignedLong      { _IOW("H", 228, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCISETRAW: CUnsignedLong         { _IOW("H", 220, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCISETSCAN: CUnsignedLong        { _IOW("H", 221, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCISETAUTH: CUnsignedLong        { _IOW("H", 222, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCISETENCRYPT: CUnsignedLong     { _IOW("H", 223, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCISETPTYPE: CUnsignedLong       { _IOW("H", 224, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCISETLINKPOL: CUnsignedLong     { _IOW("H", 225, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCISETLINKMODE: CUnsignedLong    { _IOW("H", 226, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCISETACLMTU: CUnsignedLong      { _IOW("H", 227, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCISETSCOMTU: CUnsignedLong      { _IOW("H", 228, CInt.self) }
 
-var _HCIBLOCKADDR: CUnsignedLong      { _IOW("H", 230, CInt.self) }
-var _HCIUNBLOCKADDR: CUnsignedLong    { _IOW("H", 231, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCIBLOCKADDR: CUnsignedLong      { _IOW("H", 230, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCIUNBLOCKADDR: CUnsignedLong    { _IOW("H", 231, CInt.self) }
 
-var _HCIINQUIRY: CUnsignedLong        { _IOR("H", 240, CInt.self) }
+@_alwaysEmitIntoClient
+internal var _HCIINQUIRY: CUnsignedLong        { _IOR("H", 240, CInt.self) }
