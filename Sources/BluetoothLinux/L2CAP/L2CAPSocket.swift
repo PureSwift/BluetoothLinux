@@ -13,7 +13,7 @@ import CBluetoothLinux
 import SystemPackage
 
 /// L2CAP Bluetooth socket
-public final class L2CAPSocket: L2CAPSocketProtocol {
+public final class L2CAPSocket { //: L2CAPSocketProtocol {
     
     // MARK: - Properties
     
@@ -362,29 +362,6 @@ public enum L2CAPSocketError: Error {
 }
 
 public extension L2CAPSocket {
-    
-    /// L2CAP Socket Options
-    struct Options {
-        
-        public var outputMaximumTransmissionUnit: UInt16 // omtu
-        public var inputMaximumTransmissionUnit: UInt16 // imtu
-        public var flushTo: UInt16 // flush_to
-        public var mode: UInt8
-        public var fcs: UInt8
-        public var maxTX: UInt8 // max_tx
-        public var txwinSize: UInt8 // txwin_size
-        
-        fileprivate init() {
-            
-            self.outputMaximumTransmissionUnit = 0
-            self.inputMaximumTransmissionUnit = 0
-            self.flushTo = 0
-            self.mode = 0
-            self.fcs = 0
-            self.maxTX = 0
-            self.txwinSize = 0
-        }
-    }
     
     enum ConnectionResult: UInt16 {
         
