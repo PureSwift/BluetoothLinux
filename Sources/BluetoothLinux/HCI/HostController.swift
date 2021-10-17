@@ -63,6 +63,13 @@ public extension HostController {
     }
 }
 
+public extension HostController.ID {
+    
+    static var none: HostController.ID {
+        return .init(rawValue: 0xffff)
+    }
+}
+
 public extension HostController {
     
     private static func requestControllers() throws -> [HostController] {
