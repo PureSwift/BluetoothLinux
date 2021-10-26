@@ -22,6 +22,4 @@ internal extension FileDescriptor {
             flags: flags
         )
     }
-    
-    
 }

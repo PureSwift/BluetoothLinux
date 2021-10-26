@@ -29,7 +29,6 @@ public extension AddressType {
     init(lowEnergy addressType: LowEnergyAddressType) {
         
         switch addressType {
-            
         case .public,
              .publicIdentity:
             self = .lowEnergyPublic
@@ -43,11 +42,9 @@ public extension AddressType {
     var isLowEnergy: Bool {
         
         switch self {
-            
         case .lowEnergyPublic,
              .lowEnergyRandom:
             return true
-            
         case .bredr:
             return false
         }
