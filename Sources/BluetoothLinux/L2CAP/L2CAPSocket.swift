@@ -186,117 +186,46 @@ public final class L2CAPSocket {
     }
     
     /// Reads from the socket.
-    public func recieve(_ bufferSize: Int = 1024) throws -> Data? {
+    public func recieve(_ bufferSize: Int = 1024) throws -> Data {
         
         var buffer = Data(repeating: 0, count: bufferSize)
-        try buffer.withUnsafeMutableBytes {
+        let recievedByteCount = try buffer.withUnsafeMutableBytes {
             try fileDescriptor.read(into: $0)
         }
-                
-        // check if reading buffer has data.
-        guard try canRead()
-            else { return nil }
-        
-        // read socket
-        var buffer = [UInt8](repeating: 0, count: bufferSize)
-
-        let actualByteCount = read(internalSocket, &buffer, bufferSize)
-
-        guard actualByteCount >= 0 else {
-            switch errno {
-            case EINTR, EAGAIN:
-                return nil
-            default:
-                throw POSIXError.fromErrno()
-            }
-        }
-        
-        let actualBytes = Array(buffer.prefix(actualByteCount))
-
-        return Data(actualBytes)
+        return Data(buffer.prefix(recievedByteCount))
     }
     
     /// Blocks until data is ready.
-    public func waitForEvents(timeout: TimeInterval) {
-        var pollData = pollfd(
-            fd: internalSocket,
-            events: Int16(POLLIN) & Int16(POLLOUT) & Int16(POLLPRI) & Int16(POLLERR) & Int16(POLLHUP) & Int16(POLLNVAL),
-            revents: 0
+    public func waitForEvents(timeout: TimeInterval) throws {
+        
+        let _ = try fileDescriptor.poll(
+            for: [.read, .write, .error, .readUrgent, .hangup, .invalidRequest],
+            timeout: Int(timeout)
         )
-        poll(&pollData, 1, 0)
-    }
-    
-    private func canRead() throws -> Bool {
-        
-        var readSockets = FileDescriptorSet()
-        readSockets.zero()
-        readSockets.add(internalSocket)
-        
-        var time = timeval()
-        
-        let fdCount = select(internalSocket + 1, &readSockets, nil, nil, &time)
-        
-        guard fdCount != -1
-            else { throw POSIXError.fromErrno() }
-                
-        return fdCount > 0
     }
     
     private func setNonblocking() throws {
         
-        var flags = fcntl(internalSocket, F_GETFL, 0)
-        
-        guard flags != -1
-            else { throw POSIXError.fromErrno() }
-        
-        flags = fcntl(internalSocket, F_SETFL, flags | O_NONBLOCK);
-        
-        guard flags != -1
-            else { throw POSIXError.fromErrno() }
+        var flags = try fileDescriptor.getStatus()
+        flags.insert(.nonBlocking)
+        try fileDescriptor.setStatus(flags)
     }
     
     /// Write to the socket.
     public func send(_ data: Data) throws {
         
-        var buffer = Array(data)
-        
-        let actualByteCount = write(internalSocket, &buffer, buffer.count)
-        
-        guard actualByteCount >= 0
-            else { throw POSIXError.fromErrno() }
-        
-        guard actualByteCount == buffer.count
-            else { throw L2CAPSocketError.sentLessBytes(actualByteCount) }
+        let _ = try data.withUnsafeBytes {
+            try fileDescriptor.write($0)
+        }
     }
     
     /// Attempt to get L2CAP socket options.
-    public func requestSocketOptions() throws -> Options {
-        
-        var optionValue = Options()
-        var optionLength = socklen_t(MemoryLayout<Options>.size)
-        
-        guard getsockopt(internalSocket, SOL_L2CAP, L2CAP_OPTIONS, &optionValue, &optionLength) == 0
-            else { throw POSIXError.fromErrno() }
-        
-        return optionValue
+    public func getSocketOptions() throws -> L2CAPSocketOption.Options {
+        return try fileDescriptor.getSocketOption(L2CAPSocketOption.Options.self)
     }
 }
 
 // MARK: - Supporting Types
-    
-public extension L2CAPSocket {
-    
-    typealias Error = L2CAPSocketError
-}
-
-public enum L2CAPSocketError: Error {
-    
-    /// Sent less bytes than expected.
-    case sentLessBytes(Int)
-    
-    /// The provided file descriptor was invalid
-    case invalidFileDescriptor(CInt)
-}
 
 public extension L2CAPSocket {
     
