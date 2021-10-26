@@ -26,7 +26,7 @@ final class MathTests: XCTestCase {
         
         let event = HCIGeneralEvent.commandStatus.rawValue
         
-        let bit = (CInt(event) & HCIFilter.Bits.Event)
+        let bit = (CInt(event) & HCI_FLT_EVENT_BITS)
         
         var cDestination: UInt32 = 0
         
@@ -43,7 +43,7 @@ final class MathTests: XCTestCase {
     
     func testHCIFilterSetPacketType() {
         
-        var swiftFilter = HCIFilter()
+        var swiftFilter = HCISocketOption.Filter()
         swiftFilter.setPacketType(.event)
         
         var cFilter = hci_filter()
@@ -56,63 +56,46 @@ final class MathTests: XCTestCase {
     
     func testHCIFilterSetEvent() {
         
-        let event = HCIGeneralEvent.commandComplete.rawValue
+        let event = HCIGeneralEvent.commandComplete
         
-        var swiftFilter = HCIFilter()
+        var swiftFilter = HCISocketOption.Filter()
         
-        swiftFilter.setEvent(HCIGeneralEvent.commandStatus.rawValue)
-        swiftFilter.setEvent(HCIGeneralEvent.commandComplete.rawValue)
-        swiftFilter.setEvent(HCIGeneralEvent.lowEnergyMeta.rawValue)
+        swiftFilter.setEvent(HCIGeneralEvent.commandStatus)
+        swiftFilter.setEvent(HCIGeneralEvent.commandComplete)
+        swiftFilter.setEvent(HCIGeneralEvent.lowEnergyMeta)
         swiftFilter.setEvent(event)
         
         var cFilter = hci_filter()
         hci_filter_set_event(CInt(HCIGeneralEvent.commandStatus.rawValue), &cFilter)
         hci_filter_set_event(CInt(HCIGeneralEvent.commandComplete.rawValue), &cFilter)
         hci_filter_set_event(CInt(HCIGeneralEvent.lowEnergyMeta.rawValue), &cFilter)
-        hci_filter_set_event(CInt(event), &cFilter)
+        hci_filter_set_event(CInt(event.rawValue), &cFilter)
         
-        XCTAssert(swiftFilter.eventMask.0 == cFilter.event_mask.0 && swiftFilter.eventMask.1 == cFilter.event_mask.1,
-                  "\(swiftFilter.eventMask) == \(cFilter.event_mask)")
+        XCTAssert(swiftFilter.bytes.eventMask.0 == cFilter.event_mask.0 && swiftFilter.bytes.eventMask.1 == cFilter.event_mask.1,
+                  "\(swiftFilter.bytes.eventMask) == \(cFilter.event_mask)")
         
-        swiftFilter.clear()
-        swiftFilter.setEvent(HCIGeneralEvent.commandStatus.rawValue,
+        swiftFilter = .init()
+        swiftFilter.bytes.setEvent(HCIGeneralEvent.commandStatus.rawValue,
                              HCIGeneralEvent.commandComplete.rawValue,
                              HCIGeneralEvent.lowEnergyMeta.rawValue,
-                             event)
+                                   event.rawValue)
         
         //XCTAssert(swiftFilter.eventMask.0 == cFilter.event_mask.0 && swiftFilter.eventMask.1 == cFilter.event_mask.1, "\(swiftFilter.eventMask) == \(cFilter.event_mask)")
     }
     
     func testIOCTLConstants() {
         
-        let swiftDefinitionList = [
-            HCI.IOCTL.DeviceUp,
-            HCI.IOCTL.DeviceDown,
-            HCI.IOCTL.DeviceReset,
-            HCI.IOCTL.DeviceRestat,
-            HCI.IOCTL.GetDeviceList,
-            HCI.IOCTL.GetDeviceInfo
-        ]
-        
-        var cListCopy = hci_ioctl_list
-        
-        withUnsafeMutablePointer(to: &cListCopy) {
-            
+        let swiftDefinitionList = HostControllerIO.allCases
+        withUnsafePointer(to: hci_ioctl_list) {
             $0.withMemoryRebound(to: Int32.self, capacity: 9) { (cListPointer) in
-                
                 for (index, swiftDefinition) in swiftDefinitionList.enumerated() {
-                    
                     let cDefinition = CUnsignedLong(bitPattern: CLong(cListPointer[index]))
-                    
-                    guard swiftDefinition == cDefinition else {
-                        
+                    guard swiftDefinition.rawValue == cDefinition else {
                         XCTFail("\(swiftDefinition) == \(cDefinition) at definition \(index + 1)")
                         return
                     }
                 }
-                
             }
         }
-        
     }
 }

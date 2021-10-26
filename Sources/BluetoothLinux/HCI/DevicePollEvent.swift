@@ -15,7 +15,7 @@ public extension HostController {
         _ eventParameterType: T.Type,
         shouldContinue: () -> (Bool),
         event: (T) throws -> ()
-    ) throws where T.HCIEventType == HCIGeneralEvent {
+    ) throws { // where T.HCIEventType == HCIGeneralEvent {
         let eventCode = T.event.rawValue
         try HCIPollEvent(fileDescriptor.rawValue, shouldContinue: shouldContinue, event: eventCode) {
             guard let eventParameter = T.init(data: $0)

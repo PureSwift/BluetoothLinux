@@ -47,7 +47,6 @@ final class BluetoothLinuxTests: XCTestCase {
             do { throw error } // deal with protocol and not concrete type
             catch {
                 XCTAssert("\(error)".contains(string))
-                XCTAssertNotNil((error as? POSIXError)?.userInfo[NSPOSIXError.debugInformationKey])
                 #if os(macOS)
                 XCTAssertEqual(error.localizedDescription, string)
                 #endif

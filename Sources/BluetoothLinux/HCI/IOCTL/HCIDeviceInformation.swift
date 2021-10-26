@@ -45,6 +45,10 @@ public extension HostControllerIO.DeviceInformation {
     var address: BluetoothAddress {
         return BluetoothAddress(bytes: bytes.address)
     }
+    
+    var flags: HCIDeviceOptions {
+        return .init(rawValue: bytes.flags)
+    }
 }
 
 
