@@ -337,6 +337,34 @@ public extension CInterop {
 
 public extension CInterop {
     
+    struct HCIInquiryResult {
+        
+        /// Device Address
+        public let address: BluetoothAddress
+        
+        public let pscanRepMode: UInt8
+        
+        public let pscanPeriodMode: UInt8
+        
+        public let pscanMode: UInt8
+        
+        public let deviceClass: (UInt8, UInt8, UInt8)
+        
+        public let clockOffset: UInt16
+        
+        public init() {
+            self.address = .zero
+            self.pscanRepMode = 0
+            self.pscanPeriodMode = 0
+            self.pscanMode = 0
+            self.deviceClass = (0, 0, 0)
+            self.clockOffset = 0
+        }
+    }
+}
+
+public extension CInterop {
+    
     /// `hci_dev_info`
     struct HCIDeviceInformation {
         
