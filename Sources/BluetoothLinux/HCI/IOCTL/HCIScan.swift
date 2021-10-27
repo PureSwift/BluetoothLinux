@@ -147,8 +147,10 @@ public extension HostControllerIO {
             let resultCount = buffer.withMemoryRebound(to: CInterop.HCIInquiryRequest.self, capacity: 1) {
                 Int($0.pointee.responseCount)
             }
-            var response = [HostController.InquiryResult]()
-            response.reserveCapacity(resultCount)
+            
+            self.response.removeAll(keepingCapacity: true)
+            self.response.reserveCapacity(resultCount)
+            
             for index in 0 ..< resultCount {
                 let offset = MemoryLayout<CInterop.HCIInquiryRequest>.size + (MemoryLayout<CInterop.HCIInquiryResult>.size * index)
                 buffer.advanced(by: offset).withMemoryRebound(to: CInterop.HCIInquiryResult.self, capacity: 1) {
@@ -160,10 +162,9 @@ public extension HostControllerIO {
                         deviceClass: $0.pointee.deviceClass,
                         clockOffset: $0.pointee.clockOffset
                     )
-                    response.append(element)
+                    self.response.append(element)
                 }
             }
-            self.response = response
             
             return result
         }

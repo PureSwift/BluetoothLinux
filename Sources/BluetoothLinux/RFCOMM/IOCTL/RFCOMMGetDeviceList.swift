@@ -27,7 +27,6 @@ public extension RFCOMMIO {
             precondition(limit <= Self.maxLimit, "Only \(Self.maxLimit) maximum devices is allowed")
             self.limit = limit
             self.response = []
-            self.response.reserveCapacity(limit)
         }
         
         public mutating func withUnsafeMutablePointer<Result>(_ body: (UnsafeMutableRawPointer) throws -> (Result)) rethrows -> Result {
@@ -48,6 +47,9 @@ public extension RFCOMMIO {
             let resultCount = buffer.withMemoryRebound(to: CInterop.RFCOMMDeviceListRequest.self, capacity: 1) {
                 Int($0.pointee.count)
             }
+            
+            self.response.removeAll(keepingCapacity: true)
+            self.response.reserveCapacity(resultCount)
             
             for index in 0 ..< resultCount {
                 let offset = MemoryLayout<CInterop.RFCOMMDeviceListRequest>.size + (MemoryLayout<CInterop.RFCOMMDeviceInformation>.size * index)
