@@ -8,6 +8,7 @@
 import Bluetooth
 
 /// RFCOMM Flags
+@frozen
 public enum RFCOMMFlag: UInt32, CaseIterable, BitMaskOption {
     
     case reuseDLC           = 0x01 // RFCOMM_REUSE_DLC

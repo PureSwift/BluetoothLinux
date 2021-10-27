@@ -1,8 +1,8 @@
 //
-//  RFCOMMCreateDevice.swift
+//  RFCOMMReleaseDevice.swift
 //  
 //
-//  Created by Alsey Coleman Miller on 26/10/21.
+//  Created by Alsey Coleman Miller on 27/10/21.
 //
 
 import Bluetooth
@@ -10,11 +10,11 @@ import SystemPackage
 
 public extension RFCOMMIO {
     
-    /// RFCOMM Create Device
-    struct CreateDevice: Equatable, Hashable, IOControlValue {
+    /// RFCOMM Release Device
+    struct ReleaseDevice: Equatable, Hashable, IOControlValue {
         
         @_alwaysEmitIntoClient
-        public static var id: RFCOMMIO { .createDevice }
+        public static var id: RFCOMMIO { .releaseDevice }
         
         @usableFromInline
         internal private(set) var bytes: CInterop.RFCOMMDeviceRequest
@@ -27,17 +27,14 @@ public extension RFCOMMIO {
         @_alwaysEmitIntoClient
         public init(
             id: HostController.ID,
-            flags: BitMaskOptionSet<RFCOMMFlag>,
-            source: BluetoothAddress,
-            destination: BluetoothAddress,
-            channel: UInt8
+            flags: BitMaskOptionSet<RFCOMMFlag>
         ) {
             self.init(CInterop.RFCOMMDeviceRequest(
                 device: id.rawValue,
                 flags: flags.rawValue,
-                source: source,
-                destination: destination,
-                channel: channel)
+                source: .zero,
+                destination: .zero,
+                channel: 0x00)
             )
         }
         
@@ -50,7 +47,7 @@ public extension RFCOMMIO {
     }
 }
 
-public extension RFCOMMIO.CreateDevice {
+public extension RFCOMMIO.ReleaseDevice {
     
     @_alwaysEmitIntoClient
     var id: HostController.ID {
@@ -61,42 +58,20 @@ public extension RFCOMMIO.CreateDevice {
     var flags: BitMaskOptionSet<RFCOMMFlag> {
         return .init(rawValue: bytes.flags)
     }
-    
-    @_alwaysEmitIntoClient
-    var source: BluetoothAddress {
-        return bytes.source
-    }
-    
-    @_alwaysEmitIntoClient
-    var destination: BluetoothAddress {
-        return bytes.destination
-    }
-    
-    @_alwaysEmitIntoClient
-    var channel: UInt8 {
-        return bytes.channel
-    }
 }
-
 
 // MARK: - File Descriptor
 
 internal extension FileDescriptor {
     
     @usableFromInline
-    func rfcommCreateDevice(
+    func rfcommReleaseDevice(
         id: HostController.ID,
-        flags: BitMaskOptionSet<RFCOMMFlag> = [],
-        source: BluetoothAddress,
-        destination: BluetoothAddress,
-        channel: UInt8
+        flags: BitMaskOptionSet<RFCOMMFlag> = []
     ) throws {
-        var request = RFCOMMIO.CreateDevice(
+        var request = RFCOMMIO.ReleaseDevice(
             id: id,
-            flags: flags,
-            source: source,
-            destination: destination,
-            channel: channel
+            flags: flags
         )
         try inputOutput(&request)
     }
