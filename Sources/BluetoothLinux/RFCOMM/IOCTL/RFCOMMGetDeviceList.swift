@@ -54,14 +54,7 @@ public extension RFCOMMIO {
             for index in 0 ..< resultCount {
                 let offset = MemoryLayout<CInterop.RFCOMMDeviceListRequest>.size + (MemoryLayout<CInterop.RFCOMMDeviceInformation>.size * index)
                 buffer.advanced(by: offset).withMemoryRebound(to: CInterop.RFCOMMDeviceInformation.self, capacity: 1) {
-                    let element = RFCOMMDevice(
-                        id: .init(rawValue: $0.pointee.id),
-                        flags: .init(rawValue: $0.pointee.flags),
-                        state: .init(rawValue: $0.pointee.state) ?? .unknown,
-                        source: $0.pointee.source,
-                        destination: $0.pointee.destination,
-                        channel: $0.pointee.channel
-                    )
+                    let element = RFCOMMDevice($0.pointee)
                     self.response.append(element)
                 }
             }

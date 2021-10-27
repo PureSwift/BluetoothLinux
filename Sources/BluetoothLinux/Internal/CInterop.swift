@@ -213,7 +213,7 @@ public extension CInterop {
     
     /// `rfcomm_dev_info`
     struct RFCOMMDeviceInformation: Equatable, Hashable {
-        
+                
         /// int16_t        id;
         public let id: UInt16
         
@@ -231,6 +231,32 @@ public extension CInterop {
         
         /// uint8_t        channel;
         public var channel: UInt8
+        
+        public init(
+            id: UInt16,
+            flags: UInt32,
+            state: UInt16,
+            source: BluetoothAddress,
+            destination: BluetoothAddress,
+            channel: UInt8
+        ) {
+            self.id = id
+            self.flags = flags
+            self.state = state
+            self.source = source
+            self.destination = destination
+            self.channel = channel
+        }
+        
+        @usableFromInline
+        internal init(id: UInt16) {
+            self.id = id
+            self.flags = 0
+            self.state = 0
+            self.source = .zero
+            self.destination = .zero
+            self.channel = 0
+        }
     }
 }
 

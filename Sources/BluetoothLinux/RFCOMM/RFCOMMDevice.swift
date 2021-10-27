@@ -24,3 +24,16 @@ public struct RFCOMMDevice: Equatable, Hashable {
 }
 
 extension RFCOMMDevice: Identifiable { }
+
+internal extension RFCOMMDevice {
+    
+    @usableFromInline
+    init(_ cValue: CInterop.RFCOMMDeviceInformation) {
+        self.id = .init(rawValue: cValue.id)
+        self.flags = .init(rawValue: cValue.flags)
+        self.state = .init(rawValue: cValue.state) ?? .unknown
+        self.source = cValue.source
+        self.destination = cValue.source
+        self.channel = cValue.channel
+    }
+}
