@@ -40,13 +40,13 @@ public extension CInterop {
     
     /// `sockaddr_l2` L2CAP socket address (not packed)
     struct L2CAPSocketAddress: Equatable, Hashable {
-        let l2_family: sa_family_t
+        let l2_family: SocketAddressFamily
         var l2_psm: CUnsignedShort = 0
         var l2_bdaddr: BluetoothAddress = .zero
         var l2_cid: CUnsignedShort = 0
         var l2_bdaddr_type: UInt8 = 0
         init() {
-            self.l2_family = .init(Self.family.rawValue)
+            self.l2_family = SocketAddressFamily(Self.family.rawValue)
         }
     }
 }
