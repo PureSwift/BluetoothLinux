@@ -176,8 +176,36 @@ public extension CInterop {
 public extension CInterop {
     
     /// `rfcomm_dev_req`
-    struct RFCOMMDeviceRequest {
+    struct RFCOMMDeviceRequest: Equatable, Hashable {
         
+        /// int16_t        dev_id;
+        public let device: UInt16
+        
+        /// uint32_t    flags;
+        public var flags: UInt32
+        
+        /// bdaddr_t    src;
+        public var source: BluetoothAddress
+        
+        /// bdaddr_t    dst;
+        public var destination: BluetoothAddress
+        
+        /// uint8_t    channel;
+        public var channel: UInt8
+        
+        public init(
+            device: UInt16,
+            flags: UInt32,
+            source: BluetoothAddress,
+            destination: BluetoothAddress,
+            channel: UInt8
+        ) {
+            self.device = device
+            self.flags = flags
+            self.source = source
+            self.destination = destination
+            self.channel = channel
+        }
     }
 }
 
