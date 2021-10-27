@@ -12,10 +12,6 @@ import SystemPackage
 @frozen
 public struct HCISocketAddress: Equatable, Hashable {
     
-    public typealias ProtocolID = BluetoothSocketProtocol
-    
-    public static var protocolID: ProtocolID { .hci }
-    
     // MARK: - Properties
     
     /// HCI device identifier
@@ -67,9 +63,9 @@ extension HCISocketAddress: CustomStringConvertible, CustomDebugStringConvertibl
 
 extension HCISocketAddress: SocketAddress {
     
-    /// Socket Address Family
-    @_alwaysEmitIntoClient
-    public static var family: SocketAddressFamily { .bluetooth }
+    public typealias ProtocolID = BluetoothSocketProtocol
+    
+    public static var protocolID: ProtocolID { .hci }
     
     /// Unsafe pointer closure
     public func withUnsafePointer<Result>(

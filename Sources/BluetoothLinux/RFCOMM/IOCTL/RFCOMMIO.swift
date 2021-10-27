@@ -7,6 +7,7 @@
 
 import SystemPackage
 
+/// RFCOMM IO
 public enum RFCOMMIO: Hashable, CaseIterable, IOControlID {
     
     case createDevice
