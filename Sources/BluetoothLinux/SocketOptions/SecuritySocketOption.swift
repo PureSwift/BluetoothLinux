@@ -12,10 +12,12 @@ public extension BluetoothSocketOption {
     
     struct Security: Equatable, Hashable, SocketOption {
         
+        @_alwaysEmitIntoClient
         public static var id: BluetoothSocketOption { .security }
         
         internal private(set) var bytes: CInterop.BluetoothSocketSecurity
         
+        @usableFromInline
         internal init(_ bytes: CInterop.BluetoothSocketSecurity) {
             self.bytes = bytes
         }

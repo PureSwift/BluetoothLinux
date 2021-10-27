@@ -213,8 +213,10 @@ public extension CInterop {
     
     /// `sco_conninfo` SCO Connection Information
     struct SCOConnectionInfo {
+        
         public var handle: UInt16
         public var deviceClass: (UInt8, UInt8, UInt8)
+        
         public init(handle: UInt16 = 0,
                     deviceClass: (UInt8, UInt8, UInt8) = (0,0,0)) {
             self.handle = handle
@@ -240,6 +242,7 @@ public extension CInterop {
             self.list = (Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element(), Element())
         }
         
+        @usableFromInline
         internal static func request(count: UInt16 = UInt16(Self.capacity)) -> Self {
             var value = self.init()
             value.numberOfDevices = count

@@ -11,6 +11,7 @@ import SystemPackage
 /// Bluetooth Socket Options
 public enum BluetoothSocketOption: CInt, SocketOptionID {
     
+    @_alwaysEmitIntoClient
     public static var optionLevel: SocketOptionLevel { .bluetooth }
     
     /// Bluetooth Security socket option

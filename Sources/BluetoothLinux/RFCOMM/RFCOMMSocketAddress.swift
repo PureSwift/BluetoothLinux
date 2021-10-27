@@ -20,7 +20,9 @@ public struct RFCOMMSocketAddress: Equatable, Hashable {
     
     // MARK: - Initialization
     
-    public init(address: BluetoothAddress, channel: UInt8){
+    public init(address: BluetoothAddress,
+                channel: UInt8) {
+        
         self.address = address
         self.channel = channel
     }
@@ -30,15 +32,18 @@ extension RFCOMMSocketAddress: SocketAddress {
     
     public typealias ProtocolID = BluetoothSocketProtocol
     
+    @_alwaysEmitIntoClient
     public static var protocolID: ProtocolID { .rfcomm }
     
     /// Unsafe pointer closure
+    @_alwaysEmitIntoClient
     public func withUnsafePointer<Result>(
       _ body: (UnsafePointer<CInterop.SocketAddress>, UInt32) throws -> Result
     ) rethrows -> Result {
         try bytes.withUnsafePointer(body)
     }
     
+    @_alwaysEmitIntoClient
     public static func withUnsafePointer(
         _ body: (UnsafeMutablePointer<CInterop.SocketAddress>, UInt32) throws -> ()
     ) rethrows -> Self {
@@ -50,6 +55,7 @@ extension RFCOMMSocketAddress: SocketAddress {
 
 internal extension RFCOMMSocketAddress {
     
+    @usableFromInline
     init(_ bytes: CInterop.RFCOMMSocketAddress) {
         self.init(
             address: bytes.address,
@@ -57,6 +63,7 @@ internal extension RFCOMMSocketAddress {
         )
     }
     
+    @usableFromInline
     var bytes: CInterop.RFCOMMSocketAddress {
         CInterop.RFCOMMSocketAddress(
             address: address,

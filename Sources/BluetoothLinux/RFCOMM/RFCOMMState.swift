@@ -6,16 +6,17 @@
 //
 
 /// RFCOMM State
+@frozen
 public enum RFCOMMState: CInt, CaseIterable, Codable {
     
-    case unknown = 0x00
-    case connected
-    case clean
-    case bound
-    case listening
-    case connecting
-    case connecting
-    case config
-    case disconnecting
-    case closed
+    case unknown            = 0x00
+    case connected          = 0x01
+    case clean              = 0x02
+    case bound              = 0x03
+    case listening          = 0x04
+    case connecting1        = 0x05
+    case connecting2        = 0x06 // FIXME: Duplicate connecting definitions
+    case config             = 0x07
+    case disconnecting      = 0x08
+    case closed             = 0x09
 }

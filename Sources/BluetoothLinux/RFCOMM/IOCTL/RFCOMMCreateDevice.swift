@@ -16,28 +16,32 @@ public extension RFCOMMIO {
         @_alwaysEmitIntoClient
         public static var id: RFCOMMIO { .createDevice }
         
+        @usableFromInline
         internal private(set) var bytes: CInterop.RFCOMMDeviceRequest
         
+        @usableFromInline
         internal init(_ bytes: CInterop.RFCOMMDeviceRequest) {
             self.bytes = bytes
         }
         
+        @_alwaysEmitIntoClient
         public init(
             device: HostController.ID,
-            flags: UInt32,
+            flags: BitMaskOptionSet<RFCOMMFlag>,
             source: BluetoothAddress,
             destination: BluetoothAddress,
             channel: UInt8
         ) {
             self.init(CInterop.RFCOMMDeviceRequest(
                 device: device.rawValue,
-                flags: flags,
+                flags: flags.rawValue,
                 source: source,
                 destination: destination,
                 channel: channel)
             )
         }
         
+        @_alwaysEmitIntoClient
         public mutating func withUnsafeMutablePointer<Result>(_ body: (UnsafeMutableRawPointer) throws -> (Result)) rethrows -> Result {
             try Swift.withUnsafeMutableBytes(of: &bytes) { buffer in
                 try body(buffer.baseAddress!)
@@ -48,22 +52,27 @@ public extension RFCOMMIO {
 
 public extension RFCOMMIO.CreateDevice {
     
+    @_alwaysEmitIntoClient
     var id: HostController.ID {
         return .init(rawValue: bytes.device)
     }
     
-    var flags: UInt32 {
-        return bytes.flags
+    @_alwaysEmitIntoClient
+    var flags: BitMaskOptionSet<RFCOMMFlag> {
+        return .init(rawValue: bytes.flags)
     }
     
+    @_alwaysEmitIntoClient
     var source: BluetoothAddress {
         return bytes.source
     }
     
+    @_alwaysEmitIntoClient
     var destination: BluetoothAddress {
         return bytes.destination
     }
     
+    @_alwaysEmitIntoClient
     var channel: UInt8 {
         return bytes.channel
     }
@@ -74,9 +83,10 @@ public extension RFCOMMIO.CreateDevice {
 
 internal extension FileDescriptor {
     
+    @usableFromInline
     func rfcommCreateDevice(
-        device: HostController.ID,
-        flags: UInt32,
+        device id: HostController.ID,
+        flags: BitMaskOptionSet<RFCOMMFlag> = [],
         source: BluetoothAddress,
         destination: BluetoothAddress,
         channel: UInt8
@@ -89,6 +99,5 @@ internal extension FileDescriptor {
             channel: channel
         )
         try inputOutput(&request)
-        return request
     }
 }

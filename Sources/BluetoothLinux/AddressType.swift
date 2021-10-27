@@ -20,12 +20,14 @@ public enum AddressType: UInt8 {
     case lowEnergyPublic    = 0x01
     case lowEnergyRandom    = 0x02
     
+    @_alwaysEmitIntoClient
     public init() { self = .bredr }
 }
 
 public extension AddressType {
     
-    /// Initialize with LE address type. 
+    /// Initialize with LE address type.
+    @_alwaysEmitIntoClient
     init(lowEnergy addressType: LowEnergyAddressType) {
         
         switch addressType {
@@ -39,6 +41,7 @@ public extension AddressType {
     }
     
     /// Whether the Bluetooth address type is LE.
+    @_alwaysEmitIntoClient
     var isLowEnergy: Bool {
         
         switch self {
