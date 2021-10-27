@@ -18,8 +18,8 @@ public enum L2CAPSocketOption: CInt, SocketOptionID {
     /// L2CAP Connection Info
     case connectionInfo = 0x02
     
-    /// L2CAP LM
-    case lm             = 0x03
+    /// L2CAP Link Mode
+    case linkMode       = 0x03
 }
 
 public extension L2CAPSocketOption {
