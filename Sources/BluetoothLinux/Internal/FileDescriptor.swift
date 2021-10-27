@@ -22,11 +22,11 @@ internal extension FileDescriptor {
         )
     }
     
-    static func bluetooth<Address: SocketAddress>(
-        _ socketProtocol: Address.ProtocolID,
+    static func bluetooth<Address: BluetoothSocketAddress>(
+        _ socketProtocol: BluetoothSocketProtocol,
         bind address: Address,
         flags: SocketFlags = [.closeOnExec]
-    ) throws -> FileDescriptor where Address.ProtocolID == BluetoothSocketProtocol {
+    ) throws -> FileDescriptor {
         return try socket(socketProtocol, bind: address, flags: flags)
     }
 }

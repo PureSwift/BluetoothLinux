@@ -28,12 +28,10 @@ public struct RFCOMMSocketAddress: Equatable, Hashable {
     }
 }
 
-extension RFCOMMSocketAddress: SocketAddress {
-    
-    public typealias ProtocolID = BluetoothSocketProtocol
-    
+extension RFCOMMSocketAddress: BluetoothSocketAddress {
+        
     @_alwaysEmitIntoClient
-    public static var protocolID: ProtocolID { .rfcomm }
+    public static var protocolID: BluetoothSocketProtocol { .rfcomm }
     
     /// Unsafe pointer closure
     @_alwaysEmitIntoClient

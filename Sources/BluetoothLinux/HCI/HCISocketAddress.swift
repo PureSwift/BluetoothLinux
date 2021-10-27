@@ -23,6 +23,7 @@ public struct HCISocketAddress: Equatable, Hashable {
     // MARK: - Initialization
     
     /// Initialize with device and channel identifiers.
+    @_alwaysEmitIntoClient
     public init(
         device: HostController.ID = .none,
         channel: HCIChannel = .raw
@@ -34,6 +35,7 @@ public struct HCISocketAddress: Equatable, Hashable {
 
 internal extension HCISocketAddress {
     
+    @usableFromInline
     init(_ bytes: CInterop.HCISocketAddress) {
         self.init(
             device: HostController.ID(rawValue: bytes.device),
@@ -41,6 +43,7 @@ internal extension HCISocketAddress {
         )
     }
     
+    @usableFromInline
     var bytes: CInterop.HCISocketAddress {
         CInterop.HCISocketAddress(
             device: device.rawValue,
@@ -49,23 +52,10 @@ internal extension HCISocketAddress {
     }
 }
 
-extension HCISocketAddress: CustomStringConvertible, CustomDebugStringConvertible {
+extension HCISocketAddress: BluetoothSocketAddress {
     
-    @inline(never)
-    public var description: String {
-        return "HCISocketAddress(device: \(device.rawValue), channel: \(channel))"
-    }
-    
-    public var debugDescription: String {
-        return description
-    }
-}
-
-extension HCISocketAddress: SocketAddress {
-    
-    public typealias ProtocolID = BluetoothSocketProtocol
-    
-    public static var protocolID: ProtocolID { .hci }
+    @_alwaysEmitIntoClient
+    public static var protocolID: BluetoothSocketProtocol { .hci }
     
     /// Unsafe pointer closure
     public func withUnsafePointer<Result>(
