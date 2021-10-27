@@ -6,8 +6,11 @@
 //  Copyright © 2016 PureSwift. All rights reserved.
 //
 
+#ifdef __linux__
+
 #import <stdint.h>
-#import "ioctl.h"
+#import <sys/types.h>
+#import <sys/ioctl.h>
 
 /* HCI ioctl defines */
 #define HCIDEVUP	_IOW('H', 201, int)
@@ -36,7 +39,6 @@
 
 #define HCIINQUIRY	_IOR('H', 240, int)
 
-// TODO: Complete all HCI IOCTL definitions
 static int hci_ioctl_list[] = {
     HCIDEVUP,
     HCIDEVDOWN,
@@ -49,3 +51,4 @@ static int hci_ioctl_list[] = {
     HCIGETAUTHINFO
 };
 
+#endif
