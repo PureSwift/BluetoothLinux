@@ -15,12 +15,14 @@ import CBluetoothLinuxTest
 
 final class BluetoothLinuxTests: XCTestCase {
     
+#if os(Linux)
     static let allTests = [
         ("testHCISetBit", testHCISetBit),
         ("testHCIFilterSetPacketType", testHCIFilterSetPacketType),
         ("testHCIFilterSetEvent", testHCIFilterSetEvent),
         ("testIOCTLConstants", testIOCTLConstants)
     ]
+#endif
     
     func testHCISetBit() {
         
@@ -78,6 +80,7 @@ final class BluetoothLinuxTests: XCTestCase {
         //XCTAssert(swiftFilter.eventMask.0 == cFilter.event_mask.0 && swiftFilter.eventMask.1 == cFilter.event_mask.1, "\(swiftFilter.eventMask) == \(cFilter.event_mask)")
     }
     
+    #if os(Linux)
     func testIOCTLConstants() {
         
         let swiftDefinitionList: [CUnsignedLong] = [
@@ -104,4 +107,5 @@ final class BluetoothLinuxTests: XCTestCase {
             }
         }
     }
+    #endif
 }
