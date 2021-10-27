@@ -211,6 +211,44 @@ public extension CInterop {
 
 public extension CInterop {
     
+    /// `rfcomm_dev_info`
+    struct RFCOMMDeviceInformation: Equatable, Hashable {
+        
+        /// int16_t        id;
+        public let id: UInt16
+        
+        /// uint32_t    flags;
+        public var flags: UInt32
+        
+        /// uint16_t    state;
+        public var state: UInt16
+        
+        /// bdaddr_t    src;
+        public var source: BluetoothAddress
+        
+        /// bdaddr_t    dst;
+        public var destination: BluetoothAddress
+        
+        /// uint8_t        channel;
+        public var channel: UInt8
+    }
+}
+
+public extension CInterop {
+    
+    /// `rfcomm_dev_list_req`
+    struct RFCOMMDeviceListRequest {
+        
+        public var count: UInt16
+        
+        public init(count: UInt16) {
+            self.count = count
+        }
+    }
+}
+
+public extension CInterop {
+    
     /// `sco_conninfo` SCO Connection Information
     struct SCOConnectionInfo {
         

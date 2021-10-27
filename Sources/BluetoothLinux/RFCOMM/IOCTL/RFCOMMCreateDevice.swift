@@ -30,7 +30,7 @@ public extension RFCOMMIO {
             flags: BitMaskOptionSet<RFCOMMFlag>,
             source: BluetoothAddress,
             destination: BluetoothAddress,
-            channel: UInt8
+            channel: UInt8 = 1
         ) {
             self.init(CInterop.RFCOMMDeviceRequest(
                 device: id.rawValue,
@@ -89,7 +89,7 @@ internal extension FileDescriptor {
         flags: BitMaskOptionSet<RFCOMMFlag> = [],
         source: BluetoothAddress,
         destination: BluetoothAddress,
-        channel: UInt8
+        channel: UInt8 = 1
     ) throws {
         var request = RFCOMMIO.CreateDevice(
             id: id,
