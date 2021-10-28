@@ -83,23 +83,24 @@ final class BluetoothLinuxTests: XCTestCase {
     #if os(Linux)
     func testIOCTLConstants() {
         
-        let swiftDefinitionList: [CUnsignedLong] = [
-            _HCIDEVUP,
-            _HCIDEVDOWN,
-            _HCIDEVRESET,
-            _HCIDEVRESTAT,
-            _HCIGETDEVLIST,
-            _HCIGETDEVINFO,
-            _HCIGETCONNLIST,
-            _HCIGETCONNINFO,
-            _HCIGETAUTHINFO
+        let swiftDefinitionList: [HostControllerIO] = [
+            .deviceUp,
+            .deviceDown,
+            .deviceReset,
+            .deviceRestat,
+            .getDeviceList,
+            .getDeviceInfo,
+            .getConnectionList,
+            .getConnectionInfo,
+            .getAuthenticationInfo
         ]
         
+        XCTAssertEqual(swiftDefinitionList.count, 9)
         withUnsafePointer(to: hci_ioctl_list) {
-            $0.withMemoryRebound(to: Int32.self, capacity: 9) { (cListPointer) in
+            $0.withMemoryRebound(to: Int32.self, capacity: swiftDefinitionList.count) { (cListPointer) in
                 for (index, swiftDefinition) in swiftDefinitionList.enumerated() {
                     let cDefinition = CUnsignedLong(bitPattern: CLong(cListPointer[index]))
-                    guard swiftDefinition == cDefinition else {
+                    guard swiftDefinition.rawValue == cDefinition else {
                         XCTFail("\(swiftDefinition) == \(cDefinition) at definition \(index + 1)")
                         return
                     }

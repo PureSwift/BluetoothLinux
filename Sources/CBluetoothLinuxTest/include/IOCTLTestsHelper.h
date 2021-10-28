@@ -50,5 +50,6 @@ static int hci_ioctl_list[] = {
     HCIGETCONNINFO,
     HCIGETAUTHINFO
 };
-
+#else
+static int hci_ioctl_list[] = {};
 #endif
