@@ -112,7 +112,7 @@ internal extension FileDescriptor {
     
     /// List all HCI devices.
     @usableFromInline
-    func deviceList(count: Int = 16) throws -> HostControllerIO.DeviceList {
+    func deviceList(count: Int = CInterop.HCIDeviceList.capacity) throws -> HostControllerIO.DeviceList {
         var deviceList = HostControllerIO.DeviceList(request: count)
         try inputOutput(&deviceList)
         return deviceList

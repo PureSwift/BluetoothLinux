@@ -12,6 +12,7 @@ import SystemPackage
 
 internal extension FileDescriptor {
     
+    @usableFromInline
     static func bluetooth(
         _ socketProtocol: BluetoothSocketProtocol,
         flags: SocketFlags = [.closeOnExec]
@@ -22,6 +23,7 @@ internal extension FileDescriptor {
         )
     }
     
+    @usableFromInline
     static func bluetooth<Address: BluetoothSocketAddress>(
         _ socketProtocol: BluetoothSocketProtocol,
         bind address: Address,

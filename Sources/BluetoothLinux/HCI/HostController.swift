@@ -20,6 +20,7 @@ public final class HostController: BluetoothHostControllerInterface {
     public let id: ID
     
     /// Internal file descriptor for HCI socket
+    @usableFromInline
     internal let fileDescriptor: FileDescriptor
     
     // MARK: - Initizalization
@@ -54,7 +55,8 @@ public final class HostController: BluetoothHostControllerInterface {
 
 public extension HostController {
     
-    private static func requestControllers() throws -> [HostController] {
+    @usableFromInline
+    internal static func requestControllers() throws -> [HostController] {
         let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
         return try fileDescriptor.closeAfter {
             try fileDescriptor.deviceList()
@@ -64,10 +66,12 @@ public extension HostController {
         }
     }
     
+    @inline(__always)
     static var controllers: [HostController] {
         return (try? requestControllers()) ?? []
     }
     
+    @inline(never)
     static var `default`: HostController? {
         do {
             let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
