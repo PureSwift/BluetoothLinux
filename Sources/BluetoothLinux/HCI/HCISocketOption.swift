@@ -12,6 +12,7 @@ import SystemPackage
 /// Bluetooth HCI Socket Option Identifier
 public enum HCISocketOption: Int32, SocketOptionID {
     
+    @_alwaysEmitIntoClient
     public static var optionLevel: SocketOptionLevel { .hostControllerInterface }
     
     case dataDirection                      = 1

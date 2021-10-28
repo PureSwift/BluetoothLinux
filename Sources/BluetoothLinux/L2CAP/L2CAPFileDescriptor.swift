@@ -12,6 +12,7 @@ import SystemPackage
 internal extension FileDescriptor {
     
     /// Creates an L2CAP socket binded to the specified address.
+    @usableFromInline
     static func l2cap(
         _ address: L2CAPSocketAddress,
         _ flags: SocketFlags
