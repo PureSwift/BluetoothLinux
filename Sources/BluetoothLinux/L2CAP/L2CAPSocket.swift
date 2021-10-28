@@ -13,11 +13,12 @@ import CBluetoothLinux
 import SystemPackage
 
 /// L2CAP Bluetooth socket
-public final class L2CAPSocket {
+public final class L2CAPSocket: L2CAPSocketProtocol {
     
     // MARK: - Properties
     
     /// Internal socket file descriptor
+    @usableFromInline
     internal let fileDescriptor: FileDescriptor
     
     /// L2CAP Socket address
@@ -116,6 +117,7 @@ public final class L2CAPSocket {
         let fileDescriptor = try FileDescriptor.l2cap(localSocketAddress, [.closeOnExec])
         try fileDescriptor.closeIfThrows {
             try fileDescriptor.connect(to: destinationSocketAddress)
+            try fileDescriptor.setNonblocking()
         }
         return L2CAPSocket(
             fileDescriptor: fileDescriptor,
@@ -170,7 +172,7 @@ public final class L2CAPSocket {
         try fileDescriptor.setSocketOption(socketOption)
     }
     
-    public func securityLevel() throws -> SecurityLevel {
+    internal func _securityLevel() throws -> SecurityLevel {
         let socketOption = try fileDescriptor.getSocketOption(BluetoothSocketOption.Security.self)
         return socketOption.level
     }
@@ -178,15 +180,26 @@ public final class L2CAPSocket {
     /// Attempt to accept an incomping connection.
     public func accept() throws -> L2CAPSocket {
         let (clientFileDescriptor, clientAddress) = try fileDescriptor.accept(L2CAPSocketAddress.self)
-        let newSocket = L2CAPSocket(
+        try clientFileDescriptor.closeIfThrows {
+            try clientFileDescriptor.setNonblocking()
+        }
+        return L2CAPSocket(
             fileDescriptor: clientFileDescriptor,
             address: clientAddress
         )
-        return newSocket
     }
     
     /// Reads from the socket.
-    public func recieve(_ bufferSize: Int = 1024) throws -> Data {
+    public func recieve(_ bufferSize: Int = 1024) throws -> Data? {
+        
+        let events = try fileDescriptor.poll(
+            for: [.read],
+            timeout: 0
+        )
+        
+        guard events.contains(.read) else {
+            return nil
+        }
         
         var buffer = Data(repeating: 0, count: bufferSize)
         let recievedByteCount = try buffer.withUnsafeMutableBytes {
@@ -204,13 +217,6 @@ public final class L2CAPSocket {
         )
     }
     
-    private func setNonblocking() throws {
-        
-        var flags = try fileDescriptor.getStatus()
-        flags.insert(.nonBlocking)
-        try fileDescriptor.setStatus(flags)
-    }
-    
     /// Write to the socket.
     public func send(_ data: Data) throws {
         
@@ -222,6 +228,15 @@ public final class L2CAPSocket {
     /// Attempt to get L2CAP socket options.
     public func getSocketOptions() throws -> L2CAPSocketOption.Options {
         return try fileDescriptor.getSocketOption(L2CAPSocketOption.Options.self)
+    }
+}
+
+public extension L2CAPSocket {
+    
+    /// The socket's security level.
+    @available(*, deprecated, message: "Use throwing 'securityLevel()'")
+    var securityLevel: SecurityLevel {
+        return (try? _securityLevel()) ?? .sdp
     }
 }
 
