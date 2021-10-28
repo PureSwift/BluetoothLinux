@@ -1,6 +1,12 @@
 // swift-tools-version:5.1
 import PackageDescription
 
+#if os(Linux)
+let systemLibraryName = "System"
+#else
+let systemLibraryName = "SystemPackage"
+#endif
+
 let package = Package(
     name: "BluetoothLinux",
     products: [
