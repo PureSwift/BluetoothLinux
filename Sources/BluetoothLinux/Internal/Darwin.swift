@@ -48,6 +48,7 @@ internal extension FileDescriptor {
     }
 }
 
+@usableFromInline
 internal struct SocketFlags: OptionSet, Hashable, Codable {
     
     /// The raw C file events.
@@ -66,10 +67,10 @@ extension SocketFlags {
     
     /// Set the `O_NONBLOCK` file status flag on the open file description referred to by the new file
     /// descriptor.  Using this flag saves extra calls to `fcntl()` to achieve the same result.
-    static var nonBlocking: SocketFlags { stub() }
+    public static var nonBlocking: SocketFlags { stub() }
     
     /// Set the close-on-exec (`FD_CLOEXEC`) flag on the new file descriptor.
-    static var closeOnExec: SocketFlags { stub() }
+    public static var closeOnExec: SocketFlags { stub() }
 }
 
 #endif

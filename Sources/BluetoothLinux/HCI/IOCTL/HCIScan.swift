@@ -96,6 +96,7 @@ public extension HostControllerIO {
     
     struct Inquiry: IOControlValue {
         
+        @_alwaysEmitIntoClient
         public static var id: HostControllerIO { .inquiry }
         
         public var device: HostController.ID
@@ -175,6 +176,7 @@ public extension HostControllerIO {
 
 internal extension FileDescriptor {
     
+    @usableFromInline
     func inquiry(
         device id: HostController.ID,
         duration: UInt8 = 8,

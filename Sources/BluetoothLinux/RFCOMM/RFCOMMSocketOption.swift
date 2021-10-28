@@ -28,6 +28,7 @@ public extension RFCOMMSocketOption {
     @frozen
     struct ConnectionInfo: SocketOption {
         
+        @_alwaysEmitIntoClient
         public static var id: RFCOMMSocketOption { .connectionInfo }
         
         public private(set) var handle: UInt16
@@ -58,6 +59,7 @@ public extension RFCOMMSocketOption {
     @frozen
     struct LinkMode: SocketOption {
         
+        @_alwaysEmitIntoClient
         public static var id: RFCOMMSocketOption { .connectionInfo }
         
         public var linkMode: BitMaskOptionSet<RFCOMMLinkMode>

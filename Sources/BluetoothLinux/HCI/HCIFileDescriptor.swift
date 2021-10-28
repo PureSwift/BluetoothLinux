@@ -13,6 +13,7 @@ import SystemPackage
 internal extension FileDescriptor {
     
     /// Creates an HCI socket binded to the specified address.
+    @usableFromInline
     static func hci(
         _ address: HCISocketAddress,
         flags: SocketFlags = [.closeOnExec]
@@ -25,6 +26,7 @@ internal extension FileDescriptor {
     }
     
     /// Sends an HCI command without waiting for an event.
+    @usableFromInline
     func sendCommand<Command: HCICommand>(
         _ command: Command,
         parameter parameterData: Data = Data()
@@ -48,6 +50,7 @@ internal extension FileDescriptor {
     }
     
     /// Sends an HCI command and waits for expected event parameter data.
+    @usableFromInline
     func sendRequest <Command: HCICommand> (
         command: Command,
         commandParameterData: Data = Data(),

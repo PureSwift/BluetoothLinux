@@ -8,6 +8,8 @@
 import Bluetooth
 import SystemPackage
 
+/// RFCOMM Device Information
+@frozen
 public struct RFCOMMDevice: Equatable, Hashable {
     
     public let id: HostController.ID

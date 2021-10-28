@@ -115,6 +115,7 @@ public extension HostController {
         
         public let rawValue: UInt16
         
+        @_alwaysEmitIntoClient
         public init(rawValue: UInt16) {
             self.rawValue = rawValue
         }
@@ -123,6 +124,7 @@ public extension HostController {
 
 public extension HostController.ID {
     
+    @_alwaysEmitIntoClient
     static var none: HostController.ID {
         return .init(rawValue: 0xffff)
     }
