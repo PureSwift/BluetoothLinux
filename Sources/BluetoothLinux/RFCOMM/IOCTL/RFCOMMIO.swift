@@ -13,7 +13,7 @@ public struct RFCOMMIO: RawRepresentable, Hashable, Codable, IOControlID {
   
     /// The raw C value.
     public let rawValue: UInt
-
+    
     /// Creates a strongly-typed file handle from a raw C value.
     public init?(rawValue: UInt) {
         let value = RFCOMMIO(rawValue)
