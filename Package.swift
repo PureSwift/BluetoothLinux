@@ -1,6 +1,12 @@
 // swift-tools-version:5.1
 import PackageDescription
 
+#if os(Linux)
+let systemLibraryName = "System"
+#else
+let systemLibraryName = "SystemPackage"
+#endif
+
 let package = Package(
     name: "BluetoothLinux",
     products: [
@@ -24,21 +30,21 @@ let package = Package(
             name: "BluetoothLinux",
             dependencies: [
                 "Bluetooth",
-                "CSwiftBluetoothLinux",
+                "CBluetoothLinux",
                 "SystemPackage"
             ]
         ),
         .target(
-            name: "CSwiftBluetoothLinux"
+            name: "CBluetoothLinux"
         ),
         .target(
-            name: "CSwiftBluetoothLinuxTest"
+            name: "CBluetoothLinuxTest"
         ),
         .testTarget(
             name: "BluetoothLinuxTests",
             dependencies: [
                 "BluetoothLinux",
-                "CSwiftBluetoothLinuxTest"
+                "CBluetoothLinuxTest"
             ]
         )
     ]

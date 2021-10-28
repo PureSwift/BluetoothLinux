@@ -1,4 +1,0 @@
-module CSwiftBluetoothLinux [system] {
-    header "bluetooth.h"
-    export *
-}
