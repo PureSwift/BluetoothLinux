@@ -1,5 +1,5 @@
 //
-//  HCIDeviceUp.swift
+//  DeviceDown.swift
 //  
 //
 //  Created by Alsey Coleman Miller on 16/10/21.
@@ -9,10 +9,10 @@ import SystemPackage
 
 public extension HostControllerIO {
     
-    struct DeviceUp: IOControlInteger {
+    struct DeviceDown: IOControlInteger {
         
         @_alwaysEmitIntoClient
-        public static var id: HostControllerIO { .deviceUp }
+        public static var id: HostControllerIO { .deviceDown }
         
         public var device: HostController.ID
         
@@ -32,7 +32,7 @@ public extension HostControllerIO {
 internal extension FileDescriptor {
     
     @usableFromInline
-    func deviceUp(for id: HostController.ID) throws {
-        try inputOutput(HostControllerIO.DeviceUp(device: id))
+    func deviceDown(for id: HostController.ID) throws {
+        try inputOutput(HostControllerIO.DeviceDown(device: id))
     }
 }
