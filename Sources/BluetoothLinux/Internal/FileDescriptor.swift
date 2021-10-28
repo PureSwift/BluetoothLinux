@@ -31,5 +31,12 @@ internal extension FileDescriptor {
     ) throws -> FileDescriptor {
         return try socket(socketProtocol, bind: address, flags: flags)
     }
+    
+    @usableFromInline
+    func setNonblocking(retryOnInterrupt: Bool = true) throws {
+        
+        var flags = try getStatus(retryOnInterrupt: retryOnInterrupt)
+        flags.insert(.nonBlocking)
+        try setStatus(flags, retryOnInterrupt: retryOnInterrupt)
+    }
 }
-
