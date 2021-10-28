@@ -52,6 +52,7 @@ public extension RFCOMMIO {
 
 extension RFCOMMIO: CustomStringConvertible, CustomDebugStringConvertible {
     
+    @_alwaysEmitIntoClient
     internal static var _allCases: [RFCOMMIO: String] {
         return [
             .createDevice:  ".createDevice",

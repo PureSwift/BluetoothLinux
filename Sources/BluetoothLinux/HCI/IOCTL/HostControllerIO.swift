@@ -37,51 +37,73 @@ extension HostControllerIO: CaseIterable {
 
 public extension HostControllerIO {
     
+    @_alwaysEmitIntoClient
     static var deviceUp: HostControllerIO               { IOW("H", 201, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var deviceDown: HostControllerIO             { IOW("H", 202, CInt.self)}
-    
+
+    @_alwaysEmitIntoClient
     static var deviceReset: HostControllerIO            { IOW("H", 203, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var deviceRestat: HostControllerIO           { IOW("H", 204, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var getDeviceList: HostControllerIO          { IOR("H", 210, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var getDeviceInfo: HostControllerIO          { IOR("H", 211, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var getConnectionList: HostControllerIO      { IOR("H", 212, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var getConnectionInfo: HostControllerIO      { IOR("H", 213, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var getAuthenticationInfo: HostControllerIO  { IOR("H", 215, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var setRaw: HostControllerIO                 { IOW("H", 220, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var setScan: HostControllerIO                { IOW("H", 221, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var setAuthentication: HostControllerIO      { IOW("H", 222, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var setEncrypt: HostControllerIO             { IOW("H", 223, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var setPacketType: HostControllerIO          { IOW("H", 224, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var setLinkPolicy: HostControllerIO          { IOW("H", 225, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var setLinkMode: HostControllerIO            { IOW("H", 226, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var setACLMTU: HostControllerIO              { IOW("H", 227, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var setSCOMTU: HostControllerIO              { IOW("H", 228, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var blockAddress: HostControllerIO           { IOW("H", 230, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var unblockAddress: HostControllerIO         { IOW("H", 231, CInt.self) }
-    
+
+    @_alwaysEmitIntoClient
     static var inquiry: HostControllerIO                { IOR("H", 240, CInt.self) }
 }
 
 extension HostControllerIO: CustomStringConvertible, CustomDebugStringConvertible {
     
+    @_alwaysEmitIntoClient
     internal static var _allCases: [HostControllerIO: String] {
         return [
             .deviceUp:                  ".deviceUp",

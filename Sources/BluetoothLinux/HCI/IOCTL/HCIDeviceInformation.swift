@@ -12,10 +12,13 @@ public extension HostControllerIO {
     
     struct DeviceInformation: IOControlValue {
         
+        @_alwaysEmitIntoClient
         public static var id: HostControllerIO { .getDeviceInfo }
         
+        @usableFromInline
         internal private(set) var bytes: CInterop.HCIDeviceInformation
         
+        @usableFromInline
         internal init(_ bytes: CInterop.HCIDeviceInformation) {
             self.bytes = bytes
         }
@@ -56,6 +59,7 @@ public extension HostControllerIO.DeviceInformation {
 
 internal extension FileDescriptor {
     
+    @usableFromInline
     func deviceInformation(for id: HostController.ID) throws -> HostControllerIO.DeviceInformation {
         var request = HostControllerIO.DeviceInformation(request: id)
         try inputOutput(&request)
