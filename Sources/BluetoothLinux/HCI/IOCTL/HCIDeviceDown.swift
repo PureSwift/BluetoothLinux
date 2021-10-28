@@ -36,3 +36,21 @@ internal extension FileDescriptor {
         try inputOutput(HostControllerIO.DeviceDown(device: id))
     }
 }
+
+// MARK: - Host Controller
+
+public extension HostController {
+    
+    /// Disable the HCI device.
+    func disable() throws {
+        try fileDescriptor.deviceDown(for: id)
+    }
+    
+    /// Disable the HCI device.
+    static func disable(device id: HostController.ID) throws {
+        let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
+        try fileDescriptor.closeAfter {
+            try fileDescriptor.deviceDown(for: id)
+        }
+    }
+}

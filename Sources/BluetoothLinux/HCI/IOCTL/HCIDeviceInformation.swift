@@ -66,3 +66,11 @@ internal extension FileDescriptor {
         return request
     }
 }
+
+public extension HostController {
+    
+    /// Get device information.
+    func deviceInformation() throws -> HostControllerIO.DeviceInformation {
+        return try fileDescriptor.deviceInformation(for: id)
+    }
+}

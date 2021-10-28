@@ -86,25 +86,7 @@ public extension HostController {
         }
     }
 }
-/*
-public extension HostController {
-    
-    /// Open and initialize HCI device.
-    func enable() throws {
-        try internalSocket.enable(identifier)
-    }
-    
-    /// Disable the HCI device.
-    func disable() throws {
-        try internalSocket.disable(identifier)
-    }
-    
-    /// Get device information.
-    func deviceInformation() throws -> HCIDeviceInformation {
-        return try internalSocket.deviceInformation(identifier)
-    }
-}
-*/
+
 // MARK: - Supporting Types
 
 public extension HostController {
