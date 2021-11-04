@@ -67,10 +67,15 @@ internal extension FileDescriptor {
     }
 }
 
+// MARK: - Host Controller
+
 public extension HostController {
     
     /// Get device information.
-    func deviceInformation() throws -> HostControllerIO.DeviceInformation {
-        return try fileDescriptor.deviceInformation(for: id)
+    static func deviceInformation(for id: HostController.ID) throws -> HostControllerIO.DeviceInformation {
+        let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
+        return try fileDescriptor.closeAfter {
+            try fileDescriptor.deviceInformation(for: id)
+        }
     }
 }

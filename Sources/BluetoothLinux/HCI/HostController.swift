@@ -42,7 +42,7 @@ public final class HostController: BluetoothHostControllerInterface {
     /// Initializes the Bluetooth controller with the specified address.
     public convenience init(address: BluetoothAddress) throws {
         // open socket to query devices with ioctl()`
-        let fileDescriptor = try FileDescriptor.bluetooth(.hci)
+        let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
         guard let deviceInfo = try fileDescriptor.closeAfter({
             try fileDescriptor.deviceList().first(where: {
                 try fileDescriptor.deviceInformation(for: $0.id).address == address

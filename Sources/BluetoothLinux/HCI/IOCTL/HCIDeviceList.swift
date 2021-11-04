@@ -16,8 +16,10 @@ public extension HostControllerIO {
         @_alwaysEmitIntoClient
         public static var id: HostControllerIO { .getDeviceList }
         
+        @usableFromInline
         internal private(set) var bytes: CInterop.HCIDeviceList
         
+        @usableFromInline
         internal init(_ bytes: CInterop.HCIDeviceList) {
             self.bytes = bytes
         }
@@ -99,6 +101,7 @@ public extension HostControllerIO.DeviceList {
         
         public let options: HCIDeviceOptions
         
+        @usableFromInline
         internal init(_ bytes: CInterop.HCIDeviceList.Element) {
             self.id = .init(rawValue: bytes.id)
             self.options = .init(rawValue: bytes.options)
@@ -116,5 +119,18 @@ internal extension FileDescriptor {
         var deviceList = HostControllerIO.DeviceList(request: count)
         try inputOutput(&deviceList)
         return deviceList
+    }
+}
+
+// MARK: - Host Controller
+
+public extension HostController {
+    
+    /// Get device information.
+    static func deviceList(count: Int = CInterop.HCIDeviceList.capacity) throws -> HostControllerIO.DeviceList {
+        let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
+        return try fileDescriptor.closeAfter {
+            try fileDescriptor.deviceList(count: count)
+        }
     }
 }
