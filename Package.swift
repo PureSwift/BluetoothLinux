@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.5
 import PackageDescription
 
 #if os(Linux)
@@ -29,9 +29,19 @@ let package = Package(
         .target(
             name: "BluetoothLinux",
             dependencies: [
-                "Bluetooth",
+                .product(
+                    name: "Bluetooth",
+                    package: "Bluetooth"
+                ),
+                .product(
+                    name: "BluetoothHCI",
+                    package: "Bluetooth"
+                ),
                 "CBluetoothLinux",
-                "SystemPackage"
+                .product(
+                    name: systemLibraryName,
+                    package: "swift-system"
+                )
             ]
         ),
         .target(
