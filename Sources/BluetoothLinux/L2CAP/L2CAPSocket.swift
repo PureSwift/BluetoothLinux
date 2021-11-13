@@ -209,7 +209,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     }
     
     /// Blocks until data is ready.
-    public func waitForEvents(timeout: TimeInterval) throws {
+    public func waitForEvents(timeout: Foundation.TimeInterval) throws {
         
         let _ = try fileDescriptor.poll(
             for: [.read, .write, .error, .readUrgent, .hangup, .invalidRequest],
