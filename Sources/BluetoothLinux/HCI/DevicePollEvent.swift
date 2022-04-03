@@ -10,26 +10,21 @@ import Bluetooth
 import BluetoothHCI
 import SystemPackage
 
-@available(macOS 12.0, *)
 public extension HostController {
     
     /// Polls and waits for events.
     func poll<Event>(
         for event: Event.Type
     ) -> AsyncThrowingStream<Event, Swift.Error> where Event: HCIEventParameter, Event.HCIEventType == HCIGeneralEvent {
-        return fileDescriptor.poll(for: Event.self)
+        return socket.fileDescriptor.poll(for: Event.self)
     }
-}
-
-public extension HostController {
     
-    @available(*, deprecated)
-    func pollEvent<EP>(_ eventParameterType: EP.Type, shouldContinue: () -> (Bool), event: (EP) throws -> ()) throws where EP : HCIEventParameter {
+    func pollEvent<EP>(_ eventParameterType: EP.Type, shouldContinue: () -> (Bool), event: (EP) async throws -> ()) async throws where EP : HCIEventParameter {
+        #warning("Implement polling")
         fatalError()
     }
 }
 
-@available(macOS 12.0, *)
 internal extension FileDescriptor {
     
     func poll<Event>(

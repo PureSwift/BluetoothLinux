@@ -33,7 +33,7 @@ public extension HostController {
         assert(limit > 0, "Must scan at least one device")
         assert(limit <= 255, "Cannot be larger than UInt8.max")
         
-        return try fileDescriptor.inquiry(
+        return try socket.fileDescriptor.inquiry(
             device: id,
             duration: UInt8(duration),
             limit: UInt8(limit),

@@ -12,12 +12,12 @@ import SystemPackage
 
 public extension HostController {
     
-    func deviceCommand<T: HCICommand>(_ command: T) throws {
-        try fileDescriptor.sendCommand(command)
+    func deviceCommand<T: HCICommand>(_ command: T) async throws {
+        try await socket.sendCommand(command)
     }
     
-    func deviceCommand<T: HCICommandParameter>(_ commandParameter: T) throws {
-        try fileDescriptor.sendCommand(
+    func deviceCommand<T: HCICommandParameter>(_ commandParameter: T) async throws {
+        try await socket.sendCommand(
             T.command,
             parameter: commandParameter.data
         )

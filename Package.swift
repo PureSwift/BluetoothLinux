@@ -1,14 +1,14 @@
 // swift-tools-version:5.5
 import PackageDescription
 
-#if os(Linux)
-let systemLibraryName = "System"
-#else
-let systemLibraryName = "SystemPackage"
-#endif
-
 let package = Package(
     name: "BluetoothLinux",
+    platforms: [
+        .macOS(.v10_15),
+        .iOS(.v13),
+        .watchOS(.v6),
+        .tvOS(.v13),
+    ],
     products: [
         .library(
             name: "BluetoothLinux",
@@ -18,11 +18,15 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/PureSwift/Bluetooth.git",
-            .branch("master")
+            .branch("feature/async")
         ),
         .package(
             url: "https://github.com/PureSwift/swift-system.git",
             .branch("master")
+        ),
+        .package(
+            url: "https://github.com/PureSwift/Socket.git",
+            .branch("main")
         )
     ],
     targets: [
@@ -39,9 +43,10 @@ let package = Package(
                 ),
                 "CBluetoothLinux",
                 .product(
-                    name: systemLibraryName,
+                    name: "SystemPackage",
                     package: "swift-system"
-                )
+                ),
+                "Socket"
             ]
         ),
         .target(

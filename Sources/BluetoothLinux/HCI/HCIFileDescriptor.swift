@@ -9,66 +9,16 @@ import Foundation
 import Bluetooth
 import BluetoothHCI
 import SystemPackage
+import Socket
 
-internal extension FileDescriptor {
-    
-    /// Creates an HCI socket binded to the specified address.
-    @usableFromInline
-    static func hci(
-        _ address: HCISocketAddress,
-        flags: SocketFlags = [.closeOnExec]
-    ) throws -> FileDescriptor {
-        try bluetooth(
-            .hci,
-            bind: address,
-            flags: flags
-        )
-    }
-    
-    @available(macOS 12.0.0, *)
-    func setFilter<R>(_ newFilter: HCISocketOption.Filter, _ body: () async throws -> (R)) async throws -> R {
-        let oldFilter = try getSocketOption(HCISocketOption.Filter.self)
-        try setSocketOption(newFilter)
-        let result: R
-        do { result = try await body() }
-        catch let error {
-            // restore filter
-            do { try setSocketOption(oldFilter) }
-            catch let restoreError {
-                throw BluetoothHostControllerError.couldNotRestoreFilter(error, restoreError)
-            }
-            throw error
-        }
-        // restore filter on success
-        try setSocketOption(oldFilter)
-        return result
-    }
-    
-    @available(*, deprecated)
-    func setFilter<R>(_ newFilter: HCISocketOption.Filter, _ body: () throws -> (R)) throws -> R {
-        let oldFilter = try getSocketOption(HCISocketOption.Filter.self)
-        try setSocketOption(newFilter)
-        let result: R
-        do { result = try body() }
-        catch let error {
-            // restore filter
-            do { try setSocketOption(oldFilter) }
-            catch let restoreError {
-                throw BluetoothHostControllerError.couldNotRestoreFilter(error, restoreError)
-            }
-            throw error
-        }
-        // restore filter on success
-        try setSocketOption(oldFilter)
-        return result
-    }
+internal extension Socket {
     
     /// Sends an HCI command without waiting for an event.
     @usableFromInline
     func sendCommand<Command: HCICommand>(
         _ command: Command,
         parameter parameterData: Data = Data()
-    ) throws {
+    ) async throws {
         // build data buffer to write
         assert(parameterData.count <= UInt8.max)
         let header = HCICommandHeader(
@@ -84,7 +34,7 @@ internal extension FileDescriptor {
         }
         assert(data.count == dataLength)
         // write data to socket
-        try writeAll(data)
+        try await write(data)
     }
     
     /// Sends an HCI command and waits for expected event parameter data.
@@ -95,12 +45,12 @@ internal extension FileDescriptor {
         event: UInt8 = 0,
         eventParameterLength: Int = 0,
         timeout: HCICommandTimeout = .default
-    ) throws -> Data {
+    ) async throws -> Data {
         
         // initialize variables
         var timeout = timeout.rawValue
         let opcodePacked = command.opcode.littleEndian
-        var eventBuffer = [UInt8](repeating: 0, count: HCIEventHeader.maximumSize)
+        var eventBuffer = Data()
         
         // configure new filter
         var newFilter = HCISocketOption.Filter()
@@ -112,10 +62,10 @@ internal extension FileDescriptor {
         newFilter.bytes.setEvent(event)
         newFilter.opcode = opcodePacked
         
-        return try setFilter(newFilter) { () throws -> (Data) in
+        return try await fileDescriptor.setFilter(newFilter) { () throws -> (Data) in
             
             // send command
-            try sendCommand(command, parameter: commandParameterData)
+            try await sendCommand(command, parameter: commandParameterData)
 
             // retrieve data...
             var attempts = 10
@@ -129,7 +79,7 @@ internal extension FileDescriptor {
                     var pollStatus: FileEvents = []
                     while pollStatus.contains(.read) == false {
                         // check for data
-                        do { pollStatus = try poll(for: [.read], timeout: Int(timeout)) }
+                        do { pollStatus = try await fileDescriptor.poll(for: [.read], timeout: timeout) }
                         // ignore these errors
                         catch Errno.resourceTemporarilyUnavailable {
                             continue
@@ -150,9 +100,8 @@ internal extension FileDescriptor {
                 var actualBytesRead = 0
                 while actualBytesRead < 0 {
                     do {
-                        actualBytesRead = try eventBuffer.withUnsafeMutableBytes {
-                            try read(into: $0)
-                        }
+                        eventBuffer = try await read(HCIEventHeader.maximumSize)
+                        actualBytesRead = eventBuffer.count
                     }
                     // ignore these errors
                     catch Errno.resourceTemporarilyUnavailable {
@@ -270,5 +219,39 @@ internal extension FileDescriptor {
             // throw timeout error
             throw Errno.timedOut
         }
+    }
+}
+
+internal extension FileDescriptor {
+    
+    /// Creates an HCI socket binded to the specified address.
+    @usableFromInline
+    static func hci(
+        _ address: HCISocketAddress,
+        flags: SocketFlags = [.closeOnExec]
+    ) throws -> FileDescriptor {
+        try bluetooth(
+            .hci,
+            bind: address,
+            flags: flags
+        )
+    }
+    
+    func setFilter<R>(_ newFilter: HCISocketOption.Filter, _ body: () async throws -> (R)) async throws -> R {
+        let oldFilter = try getSocketOption(HCISocketOption.Filter.self)
+        try setSocketOption(newFilter)
+        let result: R
+        do { result = try await body() }
+        catch let error {
+            // restore filter
+            do { try setSocketOption(oldFilter) }
+            catch let restoreError {
+                throw BluetoothHostControllerError.couldNotRestoreFilter(error, restoreError)
+            }
+            throw error
+        }
+        // restore filter on success
+        try setSocketOption(oldFilter)
+        return result
     }
 }

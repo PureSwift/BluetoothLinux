@@ -10,10 +10,11 @@ import Foundation
 import CBluetoothLinux
 import BluetoothHCI
 import SystemPackage
+import Socket
 
 /// Manages connection / communication to the underlying Bluetooth hardware.
 public final class HostController: BluetoothHostControllerInterface {
-        
+    
     // MARK: - Properties
     
     /// The device identifier of the Bluetooth controller.
@@ -21,7 +22,7 @@ public final class HostController: BluetoothHostControllerInterface {
     
     /// Internal file descriptor for HCI socket
     @usableFromInline
-    internal let fileDescriptor: FileDescriptor
+    internal let socket: Socket
     
     // MARK: - Initizalization
     
@@ -31,12 +32,9 @@ public final class HostController: BluetoothHostControllerInterface {
             device: id,
             channel: .raw
         )
-        let fileDescriptor = try FileDescriptor.hci(
-            address,
-            flags: [.closeOnExec]
-        )
+        let fileDescriptor = try FileDescriptor.hci(address, flags: [.closeOnExec, .nonBlocking])
         self.id = id
-        self.fileDescriptor = fileDescriptor
+        self.socket = Socket(fileDescriptor: fileDescriptor)
     }
     
     /// Initializes the Bluetooth controller with the specified address.
@@ -66,7 +64,6 @@ public extension HostController {
         }
     }
     
-    @inline(__always)
     static var controllers: [HostController] {
         return (try? requestControllers()) ?? []
     }

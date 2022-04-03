@@ -17,11 +17,11 @@ public extension HostController {
         _ commandParameter: CP,
         _ eventParameterType: EP.Type,
         timeout: HCICommandTimeout = .default
-    ) throws -> EP {
+    ) async throws -> EP {
             
         let command = CP.command
         let parameterData = commandParameter.data
-        let responseData = try fileDescriptor.sendRequest(
+        let responseData = try await socket.sendRequest(
             command: command,
             commandParameterData: parameterData,
             event: EP.event.rawValue,
@@ -39,9 +39,9 @@ public extension HostController {
         _ command: C,
         _ eventParameterType: EP.Type,
         timeout: HCICommandTimeout = .default
-    ) throws -> EP where C : HCICommand, EP : HCIEventParameter {
+    ) async throws -> EP where C : HCICommand, EP : HCIEventParameter {
         
-        let data = try fileDescriptor.sendRequest(
+        let data = try await socket.sendRequest(
             command: command,
             event: EP.event.rawValue,
             eventParameterLength: EP.length,
@@ -118,9 +118,9 @@ public extension HostController {
     func deviceRequest<C: HCICommand>(
         _ command: C,
         timeout: HCICommandTimeout = .default
-    ) throws {
+    ) async throws {
 
-        let data = try fileDescriptor.sendRequest(
+        let data = try await socket.sendRequest(
             command: command,
             eventParameterLength: 1,
             timeout: timeout
@@ -137,9 +137,9 @@ public extension HostController {
     func deviceRequest<CP: HCICommandParameter>(
         _ commandParameter: CP,
         timeout: HCICommandTimeout = .default
-    ) throws {
+    ) async throws {
         
-        let data = try fileDescriptor.sendRequest(
+        let data = try await socket.sendRequest(
             command: CP.command,
             commandParameterData: commandParameter.data,
             eventParameterLength: 1,
@@ -156,9 +156,9 @@ public extension HostController {
     func deviceRequest <Return: HCICommandReturnParameter> (
         _ commandReturnType : Return.Type,
         timeout: HCICommandTimeout = .default
-    ) throws -> Return {
+    ) async throws -> Return {
         
-        let data = try fileDescriptor.sendRequest(
+        let data = try await socket.sendRequest(
             command: commandReturnType.command,
             eventParameterLength: commandReturnType.length + 1, // status code + parameters
             timeout: timeout
@@ -181,11 +181,11 @@ public extension HostController {
         _ commandParameter: CP,
         _ commandReturnType : Return.Type,
         timeout: HCICommandTimeout = .default
-    ) throws -> Return {
+    ) async throws -> Return {
         
         assert(CP.command.opcode == Return.command.opcode)
         
-        let data = try fileDescriptor.sendRequest(
+        let data = try await socket.sendRequest(
             command: commandReturnType.command,
             commandParameterData: commandParameter.data,
             eventParameterLength: commandReturnType.length + 1,
