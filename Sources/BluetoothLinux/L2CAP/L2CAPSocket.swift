@@ -11,15 +11,16 @@ import Bluetooth
 import BluetoothHCI
 import CBluetoothLinux
 import SystemPackage
+import Socket
 
 /// L2CAP Bluetooth socket
-public final class L2CAPSocket: L2CAPSocketProtocol {
+public final class L2CAPSocket: Bluetooth.L2CAPSocket {
     
     // MARK: - Properties
     
     /// Internal socket file descriptor
     @usableFromInline
-    internal let fileDescriptor: FileDescriptor
+    internal let socket: Socket
     
     /// L2CAP Socket address
     public let address: L2CAPSocketAddress
@@ -27,20 +28,20 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     // MARK: - Initialization
 
     deinit {
-        try? fileDescriptor.close()
+        socket.close()
     }
     
     internal init(
         fileDescriptor: FileDescriptor,
         address: L2CAPSocketAddress
     ) {
-        self.fileDescriptor = fileDescriptor
+        self.socket = Socket(fileDescriptor: fileDescriptor)
         self.address = address
     }
     
     /// Create a new L2CAP socket with the specified address.
     public init(address: L2CAPSocketAddress) throws {
-        self.fileDescriptor = try .l2cap(address, [.closeOnExec])
+        self.socket = try Socket(fileDescriptor: .l2cap(address, [.closeOnExec, .nonBlocking]))
         self.address = address
     }
     
@@ -50,15 +51,15 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         type: AddressType? = nil,
         protocolServiceMultiplexer: ProtocolServiceMultiplexer? = nil,
         channel: ChannelIdentifier
-    ) throws {
-        let deviceAddress = try hostController.readDeviceAddress()
+    ) async throws {
+        let deviceAddress = try await hostController.readDeviceAddress()
         let socketAddress = L2CAPSocketAddress(
             address: deviceAddress,
             addressType: type,
             protocolServiceMultiplexer: protocolServiceMultiplexer,
             channel: channel
         )
-        self.fileDescriptor = try .l2cap(socketAddress, [.closeOnExec])
+        self.socket = try Socket(fileDescriptor: .l2cap(socketAddress, [.closeOnExec, .nonBlocking]))
         self.address = socketAddress
     }
     
@@ -72,7 +73,7 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
             lowEnergy: address,
             isRandom: isRandom
         )
-        let fileDescriptor = try FileDescriptor.l2cap(address, [.closeOnExec])
+        let fileDescriptor = try FileDescriptor.l2cap(address, [.closeOnExec, .nonBlocking])
         try fileDescriptor.closeIfThrows {
             try fileDescriptor.listen(backlog: backlog)
         }
@@ -87,8 +88,8 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         hostController: HostController,
         isRandom: Bool = false,
         backlog: Int = 10
-    ) throws -> L2CAPSocket {
-        let address = try hostController.readDeviceAddress()
+    ) async throws -> L2CAPSocket {
+        let address = try await hostController.readDeviceAddress()
         return try lowEnergyServer(
             address: address,
             isRandom: isRandom,
@@ -96,12 +97,25 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         )
     }
     
+    /// Creates a new socket connected to the remote address specified.
+    public static func lowEnergyClient(
+        address: BluetoothAddress,
+        destination: BluetoothAddress,
+        isRandom: Bool
+    ) async throws -> L2CAPSocket {
+        try await lowEnergyClient(
+            address: address,
+            destination: destination,
+            type: isRandom ? .random : .public
+        )
+    }
+    
     /// Creates a client socket for an L2CAP connection.
     public static func lowEnergyClient(
-        localAddress: BluetoothAddress,
-        destinationAddress: BluetoothAddress,
-        destinationAddressType: LowEnergyAddressType
-    ) throws -> L2CAPSocket {
+        address localAddress: BluetoothAddress,
+        destination destinationAddress: BluetoothAddress,
+        type destinationAddressType: LowEnergyAddressType
+    ) async throws -> L2CAPSocket {
         let localSocketAddress = L2CAPSocketAddress(
             address: localAddress,
             addressType: nil,
@@ -114,10 +128,9 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
             protocolServiceMultiplexer: nil,
             channel: .att
         )
-        let fileDescriptor = try FileDescriptor.l2cap(localSocketAddress, [.closeOnExec])
-        try fileDescriptor.closeIfThrows {
-            try fileDescriptor.connect(to: destinationSocketAddress)
-            try fileDescriptor.setNonblocking()
+        let fileDescriptor = try FileDescriptor.l2cap(localSocketAddress, [.closeOnExec, .nonBlocking])
+        try await fileDescriptor.closeIfThrows {
+            try await fileDescriptor.connect(to: destinationSocketAddress, sleep: 10_000_000)
         }
         return L2CAPSocket(
             fileDescriptor: fileDescriptor,
@@ -127,17 +140,16 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
     
     /// Creates a client socket for an L2CAP connection.
     public static func lowEnergyClient(
-        localAddress: BluetoothAddress,
+        address localAddress: BluetoothAddress,
         destination: HCILEAdvertisingReport.Report
-    ) throws -> L2CAPSocket {
-        return try lowEnergyClient(
-            localAddress: localAddress,
-            destinationAddress: destination.address,
-            destinationAddressType: destination.addressType
+    ) async throws -> L2CAPSocket {
+        try await lowEnergyClient(
+            address: localAddress,
+            destination: destination.address,
+            type: destination.addressType
         )
     }
     
-    // MARK: - Static Methods
     /*
     /// Check whether the file descriptor is a L2CAP socket.
     public static func validate(fileDescriptor: CInt) throws -> Bool {
@@ -163,23 +175,9 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
 
     // MARK: - Methods
     
-    /// Attempts to change the socket's security level.
-    public func setSecurityLevel(_ securityLevel: SecurityLevel) throws {
-        let socketOption = BluetoothSocketOption.Security(
-            level: securityLevel,
-            keySize: 0
-        )
-        try fileDescriptor.setSocketOption(socketOption)
-    }
-    
-    internal func _securityLevel() throws -> SecurityLevel {
-        let socketOption = try fileDescriptor.getSocketOption(BluetoothSocketOption.Security.self)
-        return socketOption.level
-    }
-
-    /// Attempt to accept an incomping connection.
-    public func accept() throws -> L2CAPSocket {
-        let (clientFileDescriptor, clientAddress) = try fileDescriptor.accept(L2CAPSocketAddress.self)
+    /// Attempt to accept an incoming connection.
+    public func accept() async throws -> L2CAPSocket {
+        let (clientFileDescriptor, clientAddress) = try await socket.fileDescriptor.accept(L2CAPSocketAddress.self, sleep: 10_000_000)
         try clientFileDescriptor.closeIfThrows {
             try clientFileDescriptor.setNonblocking()
         }
@@ -189,54 +187,33 @@ public final class L2CAPSocket: L2CAPSocketProtocol {
         )
     }
     
-    /// Reads from the socket.
-    public func recieve(_ bufferSize: Int = 1024) throws -> Data? {
-        
-        let events = try fileDescriptor.poll(
-            for: [.read],
-            timeout: 0
-        )
-        
-        guard events.contains(.read) else {
-            return nil
-        }
-        
-        var buffer = Data(repeating: 0, count: bufferSize)
-        let recievedByteCount = try buffer.withUnsafeMutableBytes {
-            try fileDescriptor.read(into: $0)
-        }
-        return Data(buffer.prefix(recievedByteCount))
-    }
-    
-    /// Blocks until data is ready.
-    public func waitForEvents(timeout: Foundation.TimeInterval) throws {
-        
-        let _ = try fileDescriptor.poll(
-            for: [.read, .write, .error, .readUrgent, .hangup, .invalidRequest],
-            timeout: Int(timeout)
-        )
-    }
-    
     /// Write to the socket.
-    public func send(_ data: Data) throws {
-        
-        let _ = try data.withUnsafeBytes {
-            try fileDescriptor.write($0)
-        }
+    public func send(_ data: Data) async throws {
+        try await socket.write(data)
+    }
+    
+    /// Reads from the socket.
+    public func recieve(_ bufferSize: Int) async throws -> Data {
+        return try await socket.read(bufferSize)
+    }
+    
+    /// Attempts to change the socket's security level.
+    public func setSecurityLevel(_ securityLevel: SecurityLevel) throws {
+        let socketOption = BluetoothSocketOption.Security(
+            level: securityLevel,
+            keySize: 0
+        )
+        try socket.fileDescriptor.setSocketOption(socketOption)
+    }
+    
+    public func securityLevel() throws -> SecurityLevel {
+        let socketOption = try socket.fileDescriptor.getSocketOption(BluetoothSocketOption.Security.self)
+        return socketOption.level
     }
     
     /// Attempt to get L2CAP socket options.
     public func getSocketOptions() throws -> L2CAPSocketOption.Options {
-        return try fileDescriptor.getSocketOption(L2CAPSocketOption.Options.self)
-    }
-}
-
-public extension L2CAPSocket {
-    
-    /// The socket's security level.
-    @available(*, deprecated, message: "Use throwing 'securityLevel()'")
-    var securityLevel: SecurityLevel {
-        return (try? _securityLevel()) ?? .sdp
+        return try socket.fileDescriptor.getSocketOption(L2CAPSocketOption.Options.self)
     }
 }
 
