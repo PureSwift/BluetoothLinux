@@ -14,7 +14,7 @@ import Socket
 
 /// Manages connection / communication to the underlying Bluetooth hardware.
 public final class HostController: BluetoothHostControllerInterface {
-    
+        
     // MARK: - Properties
     
     /// The device identifier of the Bluetooth controller.
