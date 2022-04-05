@@ -23,7 +23,7 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
     internal let socket: Socket
     
     /// L2CAP Socket address
-    public let address: L2CAPSocketAddress
+    public let address: BluetoothAddress
     
     // MARK: - Initialization
 
@@ -36,13 +36,13 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
         address: L2CAPSocketAddress
     ) {
         self.socket = Socket(fileDescriptor: fileDescriptor)
-        self.address = address
+        self.address = address.address
     }
     
     /// Create a new L2CAP socket with the specified address.
     public init(address: L2CAPSocketAddress) throws {
         self.socket = try Socket(fileDescriptor: .l2cap(address, [.closeOnExec, .nonBlocking]))
-        self.address = address
+        self.address = address.address
     }
     
     /// Create a new L2CAP socket on the `HostController` with the specified identifier.
@@ -60,7 +60,7 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
             channel: channel
         )
         self.socket = try Socket(fileDescriptor: .l2cap(socketAddress, [.closeOnExec, .nonBlocking]))
-        self.address = socketAddress
+        self.address = socketAddress.address
     }
     
     /// Creates a server socket for an L2CAP connection.
