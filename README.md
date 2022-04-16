@@ -3,15 +3,11 @@
 [![Swift][swift-badge]][swift-url]
 [![Platform][platform-badge]][platform-url]
 [![Release][release-badge]][release-url]
-[![Build Status][build-status-badge]][build-status-url]
 [![License][mit-badge]][mit-url]
-[![CodeBeat][codebeat-badge]][codebeat-url]
-
-[![SPM compatible][spm-badge]][spm-url]
 
 Pure Swift Bluetooth Stack for Linux
 
-Does not require [BlueZ](https://www.bluez.org), communicates directly with the Linux kernel and Bluetooth controller. 
+Does not require [BlueZ](https://www.bluez.org) userland library, communicates directly with the Linux kernel Bluetooth subsystem. 
 
 ## Usage
 
@@ -57,9 +53,7 @@ Read the documentation [here](http://pureswift.github.io/BluetoothLinux/docs/). 
 
 ## Troubleshooting
 
-Do not test in Parallels or VMware with the built in Bluetooth adapter found in Macs. You can, however, use VMWare or Parallels, with a Linux compatible Bluetooth LE USB adapter plugged in. VirtualBox will work with the builtin adapter on Macs.
-
-For best results, test with [Swift 5.1.5 on ARMv7](https://github.com/uraimo/buildSwiftOnARM) and a Linux-comptible Bluetooth dongle (e.g. CSR8510 A10).
+Do not test in Parallels or VMware with the built in Bluetooth adapter found in Macs. You can, however, use VMWare or Parallels, with a Linux compatible Bluetooth LE USB adapter plugged in. 
 
 ## See Also
 
@@ -73,19 +67,11 @@ License
 
 **BluetoothLinux** is released under the MIT license. See LICENSE for details.
 
-[swift-badge]: https://img.shields.io/badge/Swift-5.1-orange.svg?style=flat
+[swift-badge]: https://img.shields.io/badge/Swift-5.6-orange.svg?style=flat
 [swift-url]: https://swift.org
 [platform-badge]: https://img.shields.io/badge/platform-linux-lightgrey.svg
 [platform-url]: https://swift.org
 [mit-badge]: https://img.shields.io/badge/License-MIT-blue.svg?style=flat
 [mit-url]: https://tldrlegal.com/license/mit-license
-[build-status-badge]: https://travis-ci.org/PureSwift/BluetoothLinux.svg?branch=master
-[build-status-url]: https://travis-ci.org/PureSwift/BluetoothLinux
 [release-badge]: https://img.shields.io/github/release/PureSwift/BluetoothLinux.svg
 [release-url]: https://github.com/PureSwift/BluetoothLinux/releases
-[spm-badge]: https://img.shields.io/badge/SPM-compatible-4BC51D.svg?style=flat
-[spm-url]: https://github.com/apple/swift-package-manager
-[carthage-badge]: https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat
-[carthage-url]: https://github.com/Carthage/Carthage
-[codebeat-badge]: https://codebeat.co/badges/3eaf4fc3-6514-4f2d-83d5-ffd879f319d2
-[codebeat-url]: https://codebeat.co/projects/github-com-pureswift-bluetoothlinux-master
