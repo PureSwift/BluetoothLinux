@@ -73,7 +73,21 @@ internal extension Socket {
                 // decrement attempts
                 attempts -= 1
                 
-                eventBuffer = try await read(HCIEventHeader.maximumSize)
+                // attempt to read
+                eventBuffer.removeAll(keepingCapacity: true)
+                while eventBuffer.isEmpty {
+                    do {
+                        eventBuffer = try await read(HCIEventHeader.maximumSize)
+                    }
+                    // ignore these errors
+                    catch Errno.resourceTemporarilyUnavailable {
+                        continue
+                    }
+                    catch Errno.interrupted {
+                        continue
+                    }
+                }
+                
                 assert(eventBuffer.isEmpty == false, "No HCI event read")
                 let actualBytesRead = eventBuffer.count
                 let headerData = Data(eventBuffer[1 ..< 1 + HCIEventHeader.length])
