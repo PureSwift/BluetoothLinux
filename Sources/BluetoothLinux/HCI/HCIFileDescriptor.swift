@@ -49,7 +49,6 @@ internal extension Socket {
         
         // initialize variables
         let opcodePacked = command.opcode.littleEndian
-        var eventBuffer = Data()
         
         // configure new filter
         var newFilter = HCISocketOption.Filter()
@@ -74,20 +73,7 @@ internal extension Socket {
                 attempts -= 1
                 
                 // attempt to read
-                eventBuffer.removeAll(keepingCapacity: true)
-                while eventBuffer.isEmpty {
-                    do {
-                        eventBuffer = try await read(HCIEventHeader.maximumSize)
-                    }
-                    // ignore these errors
-                    catch Errno.resourceTemporarilyUnavailable {
-                        continue
-                    }
-                    catch Errno.interrupted {
-                        continue
-                    }
-                }
-                
+                let eventBuffer = try await read(HCIEventHeader.maximumSize)
                 assert(eventBuffer.isEmpty == false, "No HCI event read")
                 let actualBytesRead = eventBuffer.count
                 let headerData = Data(eventBuffer[1 ..< 1 + HCIEventHeader.length])
