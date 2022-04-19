@@ -26,6 +26,10 @@ public final class HostController: BluetoothHostControllerInterface {
     
     // MARK: - Initizalization
     
+    deinit {
+        socket.close()
+    }
+    
     /// Attempt to initialize an Bluetooth controller
     public init(id: ID) async throws {
         let address = HCISocketAddress(
