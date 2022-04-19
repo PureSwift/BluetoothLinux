@@ -48,7 +48,6 @@ internal extension Socket {
     ) async throws -> Data {
         
         // initialize variables
-        var timeout = timeout.rawValue
         let opcodePacked = command.opcode.littleEndian
         var eventBuffer = Data()
         
@@ -74,54 +73,14 @@ internal extension Socket {
                 // decrement attempts
                 attempts -= 1
                 
-                // wait for timeout
-                if timeout > 0 {
-                    var pollStatus: FileEvents = []
-                    while pollStatus.contains(.read) == false {
-                        // check for data
-                        do { pollStatus = try await fileDescriptor.poll(for: [.read], timeout: timeout) }
-                        // ignore these errors
-                        catch Errno.resourceTemporarilyUnavailable {
-                            continue
-                        }
-                        catch Errno.interrupted {
-                            continue
-                        }
-                    }
-                    
-                    // poll timed out
-                    guard pollStatus.contains(.read)
-                        else { throw Errno.timedOut }
-                    
-                    // decrement timeout
-                    timeout -= 10
-                }
-                
-                var actualBytesRead = 0
-                while actualBytesRead < 0 {
-                    do {
-                        eventBuffer = try await read(HCIEventHeader.maximumSize)
-                        actualBytesRead = eventBuffer.count
-                    }
-                    // ignore these errors
-                    catch Errno.resourceTemporarilyUnavailable {
-                        continue
-                    }
-                    catch Errno.interrupted {
-                        continue
-                    }
-                }
-                
+                eventBuffer = try await read(HCIEventHeader.maximumSize)
+                assert(eventBuffer.isEmpty == false, "No HCI event read")
+                let actualBytesRead = eventBuffer.count
                 let headerData = Data(eventBuffer[1 ..< 1 + HCIEventHeader.length])
                 let eventData = Data(eventBuffer[(1 + HCIEventHeader.length) ..< actualBytesRead])
-                //var length = actualBytesRead - (1 + HCIEventHeader.length)
 
                 guard let eventHeader = HCIEventHeader(data: headerData)
                     else { throw BluetoothHostControllerError.garbageResponse(headerData) }
-                
-                //print("Event header data: \(headerData)")
-                //print("Event header: \(eventHeader)")
-                //print("Event data: \(eventData)")
 
                 switch eventHeader.event {
 

@@ -54,66 +54,6 @@ public extension HostController {
         return eventParameter
     }
     
-    /*
-    @inline(__always)
-    func deviceRequest<C: HCICommand, EP: HCIEventParameter>(command: C, eventParameterType: EP.Type, timeout: HCICommandTimeout = .default) throws -> EP {
-
-        let opcode = (command.rawValue, C.opcodeGroupField.rawValue)
-
-        let event = EP.event.rawValue
-
-        let data = try HCISendRequest(internalSocket, opcode: opcode, event: event, eventParameterLength: EP.length, timeout: timeout)
-
-        guard let eventParameter = EP(bytes: data)
-            else { throw BluetoothHostControllerError.GarbageResponse(Data(bytes: data)) }
-
-        return eventParameter
-    }
-
-    @inline(__always)
-    func deviceRequest<CP: HCICommandParameter, E: HCIEvent>(commandParameter: CP, event: E, verifyStatusByte: Bool = true, timeout: HCICommandTimeout = .default) throws {
-
-        let command = CP.command
-
-        let opcode = (command.rawValue, command.dynamicType.opcodeGroupField.rawValue)
-
-        let parameterData = commandParameter.bytes
-
-        let eventParameterLength = verifyStatusByte ? 1 : 0
-
-        let data = try HCISendRequest(internalSocket, opcode: opcode, commandParameterData: parameterData, event: event.rawValue, eventParameterLength: eventParameterLength, timeout: timeout)
-
-        if verifyStatusByte {
-
-            guard let statusByte = data.first
-                else { fatalError("Missing status byte!") }
-
-            guard statusByte == 0x00
-                else { throw BluetoothHostControllerError.DeviceRequestStatus(statusByte) }
-        }
-    }
-
-    @inline(__always)
-    func deviceRequest<C: HCICommand, E: HCIEvent>(command: C, event: E, verifyStatusByte: Bool = true, timeout: HCICommandTimeout = .default) throws {
-
-        let opcode = (command.rawValue, C.opcodeGroupField.rawValue)
-
-        let eventParameterLength = verifyStatusByte ? 1 : 0
-
-        let data = try HCISendRequest(internalSocket, opcode: opcode, event: event.rawValue, eventParameterLength: eventParameterLength, timeout: timeout)
-
-        if verifyStatusByte {
-
-            guard let statusByte = data.first
-                else { fatalError("Missing status byte!") }
-
-            guard statusByte == 0x00
-                else { throw BluetoothHostControllerError.DeviceRequestStatus(statusByte) }
-        }
-    }
- 
-    */
-    
     /// Send a command to the controller and wait for response. 
     func deviceRequest<C: HCICommand>(
         _ command: C,

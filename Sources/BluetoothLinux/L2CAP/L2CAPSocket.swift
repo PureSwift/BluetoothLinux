@@ -130,7 +130,7 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
         )
         let fileDescriptor = try FileDescriptor.l2cap(localSocketAddress, [.closeOnExec, .nonBlocking])
         try await fileDescriptor.closeIfThrows {
-            try await fileDescriptor.connect(to: destinationSocketAddress, sleep: 10_000_000)
+            try await fileDescriptor.connect(to: destinationSocketAddress, sleep: 100_000_000)
         }
         return await L2CAPSocket(
             fileDescriptor: fileDescriptor,
