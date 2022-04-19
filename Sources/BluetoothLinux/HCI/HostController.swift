@@ -27,18 +27,18 @@ public final class HostController: BluetoothHostControllerInterface {
     // MARK: - Initizalization
     
     /// Attempt to initialize an Bluetooth controller
-    public init(id: ID) throws {
+    public init(id: ID) async throws {
         let address = HCISocketAddress(
             device: id,
             channel: .raw
         )
         let fileDescriptor = try FileDescriptor.hci(address, flags: [.closeOnExec, .nonBlocking])
         self.id = id
-        self.socket = Socket(fileDescriptor: fileDescriptor)
+        self.socket = await Socket(fileDescriptor: fileDescriptor)
     }
     
     /// Initializes the Bluetooth controller with the specified address.
-    public convenience init(address: BluetoothAddress) throws {
+    public convenience init(address: BluetoothAddress) async throws {
         // open socket to query devices with ioctl()`
         let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
         guard let deviceInfo = try fileDescriptor.closeAfter({
@@ -47,39 +47,65 @@ public final class HostController: BluetoothHostControllerInterface {
             })
         }) else { throw Errno.noSuchAddressOrDevice }
         // initialize with new file descriptor
-        try self.init(id: deviceInfo.id)
+        try await self.init(id: deviceInfo.id)
+    }
+}
+
+internal extension HostController {
+    
+    static private(set) var cachedControllers = [ID: HostController]()
+        
+    @usableFromInline
+    static func loadDevices() throws -> HostControllerIO.DeviceList {
+        let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
+        defer { try? fileDescriptor.close() }
+        return try fileDescriptor.deviceList()
+    }
+    
+    @discardableResult
+    static func reloadControllers() async throws -> [HostController] {
+        let cachedDevices = cachedControllers.keys
+        // load current devices
+        let devices = try loadDevices()
+            .lazy
+            .map { $0.id }
+        // initialize new controllers
+        let newDevices = devices
+            .filter { cachedDevices.contains($0) == false }
+        for id in newDevices {
+            do {
+                let hostController = try await HostController(id: id)
+                cachedControllers[id] = hostController
+            }
+            catch {
+                assertionFailure("Unable to load Bluetooth HCI device \(id.rawValue). \(error)")
+                continue
+            }
+        }
+        // remove invalid controllers
+        let oldDevices = cachedDevices
+            .filter { devices.contains($0) == false }
+        for id in oldDevices {
+            cachedControllers[id] = nil
+        }
+        // return sorted array
+        return cachedControllers
+            .values
+            .sorted { $0.id.rawValue < $1.id.rawValue }
     }
 }
 
 public extension HostController {
     
-    @usableFromInline
-    internal static func requestControllers() throws -> [HostController] {
-        let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
-        return try fileDescriptor.closeAfter {
-            try fileDescriptor.deviceList()
-                .lazy
-                .sorted { $0.id.rawValue < $1.id.rawValue }
-                .compactMap { try? HostController(id: $0.id) }
-        }
-    }
-    
     static var controllers: [HostController] {
-        return (try? requestControllers()) ?? []
-    }
-    
-    @inline(never)
-    static var `default`: HostController? {
-        do {
-            let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
-            return try fileDescriptor.closeAfter {
-                try fileDescriptor.deviceList(count: 1)
-                    .first
-                    .map { try HostController(id: $0.id) }
+        get async {
+            do {
+                return try await reloadControllers()
             }
-        } catch {
-            assertionFailure("Could not initialize HCI device. \(error)")
-            return nil
+            catch {
+                assertionFailure("Unable to fetch Bluetooth HCI devices. \(error)")
+                return []
+            }
         }
     }
 }
