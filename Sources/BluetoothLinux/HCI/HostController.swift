@@ -27,7 +27,9 @@ public final class HostController: BluetoothHostControllerInterface {
     // MARK: - Initizalization
     
     deinit {
-        socket.close()
+        Task(priority: .high) {
+            await socket.close()
+        }
     }
     
     /// Attempt to initialize an Bluetooth controller

@@ -28,7 +28,9 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
     // MARK: - Initialization
 
     deinit {
-        socket.close()
+        Task(priority: .high) {
+            await socket.close()
+        }
     }
     
     internal init(
