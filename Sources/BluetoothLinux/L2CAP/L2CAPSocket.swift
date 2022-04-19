@@ -34,14 +34,14 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
     internal init(
         fileDescriptor: FileDescriptor,
         address: L2CAPSocketAddress
-    ) {
-        self.socket = Socket(fileDescriptor: fileDescriptor)
+    ) async {
+        self.socket = await Socket(fileDescriptor: fileDescriptor)
         self.address = address.address
     }
     
     /// Create a new L2CAP socket with the specified address.
-    public init(address: L2CAPSocketAddress) throws {
-        self.socket = try Socket(fileDescriptor: .l2cap(address, [.closeOnExec, .nonBlocking]))
+    public init(address: L2CAPSocketAddress) async throws {
+        self.socket = try await Socket(fileDescriptor: .l2cap(address, [.closeOnExec, .nonBlocking]))
         self.address = address.address
     }
     
@@ -59,7 +59,7 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
             protocolServiceMultiplexer: protocolServiceMultiplexer,
             channel: channel
         )
-        self.socket = try Socket(fileDescriptor: .l2cap(socketAddress, [.closeOnExec, .nonBlocking]))
+        self.socket = try await Socket(fileDescriptor: .l2cap(socketAddress, [.closeOnExec, .nonBlocking]))
         self.address = socketAddress.address
     }
     
@@ -68,7 +68,7 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
         address: BluetoothAddress,
         isRandom: Bool = false,
         backlog: Int = 10
-    ) throws -> L2CAPSocket {
+    ) async throws -> L2CAPSocket {
         let address = L2CAPSocketAddress(
             lowEnergy: address,
             isRandom: isRandom
@@ -77,7 +77,7 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
         try fileDescriptor.closeIfThrows {
             try fileDescriptor.listen(backlog: backlog)
         }
-        return L2CAPSocket(
+        return await L2CAPSocket(
             fileDescriptor: fileDescriptor,
             address: address
         )
@@ -90,7 +90,7 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
         backlog: Int = 10
     ) async throws -> L2CAPSocket {
         let address = try await hostController.readDeviceAddress()
-        return try lowEnergyServer(
+        return try await lowEnergyServer(
             address: address,
             isRandom: isRandom,
             backlog: backlog
@@ -132,7 +132,7 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
         try await fileDescriptor.closeIfThrows {
             try await fileDescriptor.connect(to: destinationSocketAddress, sleep: 10_000_000)
         }
-        return L2CAPSocket(
+        return await L2CAPSocket(
             fileDescriptor: fileDescriptor,
             address: localSocketAddress
         )
@@ -181,7 +181,7 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
         try clientFileDescriptor.closeIfThrows {
             try clientFileDescriptor.setNonblocking()
         }
-        return L2CAPSocket(
+        return await L2CAPSocket(
             fileDescriptor: clientFileDescriptor,
             address: clientAddress
         )
@@ -206,14 +206,18 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
         try socket.fileDescriptor.setSocketOption(socketOption)
     }
     
-    public func securityLevel() throws -> SecurityLevel {
-        let socketOption = try socket.fileDescriptor.getSocketOption(BluetoothSocketOption.Security.self)
-        return socketOption.level
+    public var securityLevel: SecurityLevel {
+        get throws {
+            let socketOption = try socket.fileDescriptor.getSocketOption(BluetoothSocketOption.Security.self)
+            return socketOption.level
+        }
     }
     
     /// Attempt to get L2CAP socket options.
-    public func getSocketOptions() throws -> L2CAPSocketOption.Options {
-        return try socket.fileDescriptor.getSocketOption(L2CAPSocketOption.Options.self)
+    public var options: L2CAPSocketOption.Options {
+        get throws {
+            return try socket.fileDescriptor.getSocketOption(L2CAPSocketOption.Options.self)
+        }
     }
 }
 
