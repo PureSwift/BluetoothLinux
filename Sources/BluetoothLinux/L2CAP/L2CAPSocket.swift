@@ -151,35 +151,25 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
             type: destination.addressType
         )
     }
-    
-    /*
-    /// Check whether the file descriptor is a L2CAP socket.
-    public static func validate(fileDescriptor: CInt) throws -> Bool {
-        
-        func value(for socketOption: CInt) throws -> CInt {
-            
-            var optionValue: CInt = 0
-            var optionLength = socklen_t(MemoryLayout<CInt>.size)
-            
-            guard getsockopt(fileDescriptor, SOL_SOCKET, socketOption, &optionValue, &optionLength) == 0
-                else { throw POSIXError.fromErrno() }
-            
-            return optionValue
-        }
-        
-        // socket domain and protocol
-        guard try value(for: SO_DOMAIN) == AF_BLUETOOTH,
-            try value(for: SO_PROTOCOL) == BluetoothSocketProtocol.l2cap.rawValue
-            else { return false }
-        
-        return true
-    }*/
 
     // MARK: - Methods
     
+    /// Set an event handler for the socket.
+    public func setEvent(_ eventHandler: @escaping ((L2CAPSocketEvent) async -> ())) async {
+        do {
+            try await socket.setEvent { socketEvent in
+                let event = L2CAPSocketEvent(socketEvent)
+                Task { await eventHandler(event) }
+            }
+        }
+        catch {
+            assertionFailure("Unable to set event")
+        }
+    }
+    
     /// Attempt to accept an incoming connection.
     public func accept() async throws -> L2CAPSocket {
-        let (clientFileDescriptor, clientAddress) = try await socket.fileDescriptor.accept(L2CAPSocketAddress.self, sleep: 10_000_000)
+        let (clientFileDescriptor, clientAddress) = try await socket.fileDescriptor.accept(L2CAPSocketAddress.self, sleep: 100_000_000)
         try clientFileDescriptor.closeIfThrows {
             try clientFileDescriptor.setNonblocking()
         }
@@ -225,7 +215,23 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
 
 // MARK: - Supporting Types
 
-public extension L2CAPSocket {
+internal extension L2CAPSocketEvent {
+    
+    init(_ event: Socket.Event) {
+        switch event {
+        case .pendingRead:
+            self = .pendingRead
+        case let .read(bytes):
+            self = .read(bytes)
+        case let .write(bytes):
+            self = .write(bytes)
+        case let .close(error):
+            self = .close(error)
+        }
+    }
+}
+
+internal extension L2CAPSocket {
     
     enum ConnectionResult: UInt16 {
         
