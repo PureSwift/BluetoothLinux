@@ -7,6 +7,7 @@
 
 import SystemPackage
 
+/// Bluetooth HIDP `ioctl` requests
 @frozen
 public enum HIDPIO: Hashable, CaseIterable, IOControlID {
     

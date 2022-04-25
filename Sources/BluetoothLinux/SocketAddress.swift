@@ -8,6 +8,7 @@
 import Bluetooth
 import SystemPackage
 
+/// Bluetooth Linux Socket Address protocol
 public protocol BluetoothSocketAddress: SocketAddress where ProtocolID == BluetoothSocketProtocol {
         
     static var protocolID: BluetoothSocketProtocol { get }

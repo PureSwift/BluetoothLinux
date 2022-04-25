@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+/// Bluetooth RFCOMM Socket
+public actor RFCOMMSocket {
+    
+    
+}

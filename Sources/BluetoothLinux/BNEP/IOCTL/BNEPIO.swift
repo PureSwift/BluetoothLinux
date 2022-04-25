@@ -7,6 +7,7 @@
 
 import SystemPackage
 
+/// Bluetooth BNEP `ioctl` requests
 @frozen
 public enum BNEPIO: Hashable, CaseIterable, IOControlID {
     

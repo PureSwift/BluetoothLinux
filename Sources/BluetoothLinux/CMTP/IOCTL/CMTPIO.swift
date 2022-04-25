@@ -7,6 +7,7 @@
 
 import SystemPackage
 
+/// Bluetooth CMTP `ioctl` requests
 @frozen
 public enum CMTPIO: Hashable, CaseIterable, IOControlID {
     

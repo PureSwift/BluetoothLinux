@@ -7,7 +7,7 @@
 
 import SystemPackage
 
-/// RFCOMM I/O
+/// Bluetooth RFCOMM  `ioctl` requests
 @frozen
 public struct RFCOMMIO: RawRepresentable, Hashable, Codable, IOControlID {
   
