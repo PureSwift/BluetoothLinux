@@ -25,6 +25,16 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
     /// L2CAP Socket address
     public let address: BluetoothAddress
     
+    public lazy var event: L2CAPSocketEventStream = { [unowned self] in
+        let stream = self.socket.event
+        var iterator = stream.makeAsyncIterator()
+        return L2CAPSocketEventStream(unfolding: {
+            await iterator
+                .next()
+                .map { L2CAPSocketEvent($0) }
+        })
+    }()
+    
     // MARK: - Initialization
 
     deinit {
@@ -153,19 +163,6 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
     }
 
     // MARK: - Methods
-    
-    /// Set an event handler for the socket.
-    public func setEvent(_ eventHandler: @escaping ((L2CAPSocketEvent) async -> ())) async {
-        do {
-            try await socket.setEvent { socketEvent in
-                let event = L2CAPSocketEvent(socketEvent)
-                Task { await eventHandler(event) }
-            }
-        }
-        catch {
-            assertionFailure("Unable to set event")
-        }
-    }
     
     /// Attempt to accept an incoming connection.
     public func accept() async throws -> L2CAPSocket {
