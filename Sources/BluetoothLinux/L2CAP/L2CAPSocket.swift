@@ -14,7 +14,7 @@ import SystemPackage
 import Socket
 
 /// L2CAP Bluetooth socket
-public final class L2CAPSocket: Bluetooth.L2CAPSocket {
+public actor L2CAPSocket: Bluetooth.L2CAPSocket {
     
     // MARK: - Properties
     
@@ -25,7 +25,7 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
     /// L2CAP Socket address
     public let address: BluetoothAddress
     
-    public lazy var event: L2CAPSocketEventStream = { [unowned self] in
+    public nonisolated var event: L2CAPSocketEventStream {
         let stream = self.socket.event
         var iterator = stream.makeAsyncIterator()
         return L2CAPSocketEventStream(unfolding: {
@@ -33,7 +33,7 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
                 .next()
                 .map { L2CAPSocketEvent($0) }
         })
-    }()
+    }
     
     // MARK: - Initialization
 
