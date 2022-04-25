@@ -15,11 +15,11 @@ Does not require [BlueZ](https://www.bluez.org) userland library, communicates d
 import Bluetooth
 import BluetoothLinux
 
-guard let hostController = BluetoothLinux.HostController.default
+guard let hostController = await BluetoothLinux.HostController.default
     else { fatalError("No Bluetooth adapters found") }
 let uuid = UUID(rawValue: "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0")!
 let beacon = AppleBeacon(uuid: uuid, major: 1, minor: 1, rssi: -29)
-do { try hostController.iBeacon(beacon) }
+do { try await hostController.iBeacon(beacon) }
 catch { print("Error enabling iBeacon: \(error)") }
 ```
 
@@ -35,8 +35,8 @@ let package = Package(
         .package(
 			url: "https://github.com/PureSwift/BluetoothLinux.git",
     		.branch("master")
-    		)
-        ]
+    	)
+    ]
 )
 ```
 
@@ -49,8 +49,6 @@ Documentation can be generated with [DocC](https://github.com/apple/swift-docc).
 
 - [Bluetooth](https://github.com/PureSwift/Bluetooth) - Pure Swift Bluetooth Definitions.
 - [GATT](https://github.com/PureSwift/GATT) - Bluetooth Generic Attribute Profile (GATT) for Swift
-- [Silica](https://github.com/PureSwift/Silica) - Pure Swift CoreGraphics (Quartz2D) implementation
-- [Predicate](https://github.com/PureSwift/Predicate) - Pure Swift Predicate implementation 
 
 License
 -------
