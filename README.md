@@ -42,18 +42,8 @@ let package = Package(
 
 ## Documentation
 
-Documentation can be generated with [Jazzy](https://github.com/realm/jazzy).
-
-```
-swift package generate-xcodeproj
-jazzy
-```
-
-Read the documentation [here](http://pureswift.github.io/BluetoothLinux/docs/). For more information, see the [gh-pages](https://github.com/PureSwift/BluetoothLinux/tree/gh-pages) branch.
-
-## Troubleshooting
-
-Do not test in Parallels or VMware with the built in Bluetooth adapter found in Macs. You can, however, use VMWare or Parallels, with a Linux compatible Bluetooth LE USB adapter plugged in. 
+Read the documentation [here](http://pureswift.github.io/BluetootLinux/documentation/BluetootLinux/).
+Documentation can be generated with [DocC](https://github.com/apple/swift-docc).
 
 ## See Also
 
