@@ -42,13 +42,14 @@ let package = Package(
 
 ## Documentation
 
-Read the documentation [here](http://pureswift.github.io/BluetootLinux/documentation/BluetootLinux/).
+Read the documentation [here](http://pureswift.github.io/BluetoothLinux/documentation/bluetoothlinux/).
 Documentation can be generated with [DocC](https://github.com/apple/swift-docc).
 
 ## See Also
 
 - [Bluetooth](https://github.com/PureSwift/Bluetooth) - Pure Swift Bluetooth Definitions.
-- [GATT](https://github.com/PureSwift/GATT) - Bluetooth Generic Attribute Profile (GATT) for Swift
+- [GATT](https://github.com/PureSwift/GATT) - Bluetooth Generic Attribute Profile (GATT) for Swift.
+- [Netlink](https://github.com/PureSwift/Netlink) - Swift library for communicating with Linux Kernel Netlink subsystem.
 
 License
 -------
