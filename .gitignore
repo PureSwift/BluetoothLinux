@@ -7,7 +7,6 @@ Xcode/BluetoothLinux.xcodeproj/project.xcworkspace/xcuserdata
 BluetoothLinux.xcodeproj
 
 build/
-Docs/
 
 # SwiftPM
 Package.resolved
