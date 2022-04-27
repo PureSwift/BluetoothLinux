@@ -8,6 +8,7 @@
 import Bluetooth
 import BluetoothHCI
 import SystemPackage
+import Socket
 
 public extension HCISocketOption {
     

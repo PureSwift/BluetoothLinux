@@ -44,7 +44,7 @@ public actor L2CAPSocket: Bluetooth.L2CAPSocket {
     }
     
     internal init(
-        fileDescriptor: FileDescriptor,
+        fileDescriptor: SocketDescriptor,
         address: L2CAPSocketAddress
     ) async {
         self.socket = await Socket(fileDescriptor: fileDescriptor)
@@ -85,7 +85,7 @@ public actor L2CAPSocket: Bluetooth.L2CAPSocket {
             lowEnergy: address,
             isRandom: isRandom
         )
-        let fileDescriptor = try FileDescriptor.l2cap(address, [.closeOnExec, .nonBlocking])
+        let fileDescriptor = try SocketDescriptor.l2cap(address, [.closeOnExec, .nonBlocking])
         try fileDescriptor.closeIfThrows {
             try fileDescriptor.listen(backlog: backlog)
         }
@@ -140,7 +140,7 @@ public actor L2CAPSocket: Bluetooth.L2CAPSocket {
             protocolServiceMultiplexer: nil,
             channel: .att
         )
-        let fileDescriptor = try FileDescriptor.l2cap(localSocketAddress, [.closeOnExec, .nonBlocking])
+        let fileDescriptor = try SocketDescriptor.l2cap(localSocketAddress, [.closeOnExec, .nonBlocking])
         try await fileDescriptor.closeIfThrows {
             try await fileDescriptor.connect(to: destinationSocketAddress, sleep: 100_000_000)
         }

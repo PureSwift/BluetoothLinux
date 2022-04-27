@@ -6,7 +6,7 @@
 //
 
 import Bluetooth
-import SystemPackage
+import Socket
 
 /// RFCOMM Socket Options
 @frozen

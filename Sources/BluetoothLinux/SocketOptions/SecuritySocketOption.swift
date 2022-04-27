@@ -7,6 +7,7 @@
 
 import Bluetooth
 import SystemPackage
+import Socket
 
 public extension BluetoothSocketOption {
     

@@ -10,6 +10,7 @@ import Foundation
 import BluetoothHCI
 import CBluetoothLinux
 import SystemPackage
+import Socket
 
 // MARK: - Methods
 
@@ -174,7 +175,7 @@ public extension HostControllerIO {
 
 // MARK: - File Descriptor
 
-internal extension FileDescriptor {
+internal extension SocketDescriptor {
     
     @usableFromInline
     func inquiry(

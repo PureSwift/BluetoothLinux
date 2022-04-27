@@ -7,16 +7,16 @@
 
 import Bluetooth
 import BluetoothHCI
-import SystemPackage
+import Socket
 
-internal extension FileDescriptor {
+internal extension SocketDescriptor {
     
     /// Creates an L2CAP socket binded to the specified address.
     @usableFromInline
     static func l2cap(
         _ address: L2CAPSocketAddress,
         _ flags: SocketFlags
-    ) throws -> FileDescriptor {
+    ) throws -> SocketDescriptor {
         try bluetooth(
             .l2cap,
             bind: address,

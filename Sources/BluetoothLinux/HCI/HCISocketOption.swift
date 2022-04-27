@@ -7,7 +7,7 @@
 
 import Bluetooth
 import BluetoothHCI
-import SystemPackage
+import Socket
 
 /// Bluetooth HCI Socket Option Identifier
 public enum HCISocketOption: Int32, SocketOptionID {

@@ -9,15 +9,16 @@ import Foundation
 import Bluetooth
 import BluetoothHCI
 import SystemPackage
+import Socket
 
-internal extension FileDescriptor {
+internal extension SocketDescriptor {
     
     @usableFromInline
     static func bluetooth(
         _ socketProtocol: BluetoothSocketProtocol,
         flags: SocketFlags = [.closeOnExec]
-    ) throws -> FileDescriptor {
-        return try socket(
+    ) throws -> SocketDescriptor {
+        return try self.init(
             socketProtocol,
             flags: flags
         )
@@ -28,13 +29,12 @@ internal extension FileDescriptor {
         _ socketProtocol: BluetoothSocketProtocol,
         bind address: Address,
         flags: SocketFlags = [.closeOnExec]
-    ) throws -> FileDescriptor {
-        return try socket(socketProtocol, bind: address, flags: flags)
+    ) throws -> SocketDescriptor {
+        return try self.init(socketProtocol, bind: address, flags: flags)
     }
     
     @usableFromInline
     func setNonblocking(retryOnInterrupt: Bool = true) throws {
-        
         var flags = try getStatus(retryOnInterrupt: retryOnInterrupt)
         flags.insert(.nonBlocking)
         try setStatus(flags, retryOnInterrupt: retryOnInterrupt)

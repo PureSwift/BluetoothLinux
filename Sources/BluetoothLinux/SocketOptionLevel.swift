@@ -5,9 +5,9 @@
 //  Created by Alsey Coleman Miller on 16/10/21.
 //
 
-import SystemPackage
+import Socket
 
-public extension SocketOptionLevel {
+internal extension SocketOptionLevel {
     
     /// Bluetooth HCI Socket Option Level
     @_alwaysEmitIntoClient

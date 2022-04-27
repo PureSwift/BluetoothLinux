@@ -7,6 +7,7 @@
 //
 
 import SystemPackage
+import Socket
 
 #if !os(Linux)
 #warning("This module will only run on Linux")
@@ -28,22 +29,22 @@ internal extension SocketAddressFamily {
     static var bluetooth: SocketAddressFamily { stub() }
 }
 
-internal extension FileDescriptor {
+internal extension SocketDescriptor {
     
-    static func socket<T: SocketProtocol>(
+    init<T: SocketProtocol>(
         _ protocolID: T,
         flags: SocketFlags,
         retryOnInterrupt: Bool = true
-    ) throws -> FileDescriptor {
+    ) throws {
         stub()
     }
     
-    static func socket<Address: SocketAddress>(
+    init<Address: SocketAddress>(
         _ protocolID: Address.ProtocolID,
         bind address: Address,
         flags: SocketFlags,
         retryOnInterrupt: Bool = true
-    ) throws -> FileDescriptor {
+    ) throws {
         stub()
     }
 }

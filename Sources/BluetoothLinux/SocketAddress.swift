@@ -7,6 +7,7 @@
 
 import Bluetooth
 import SystemPackage
+import Socket
 
 /// Bluetooth Linux Socket Address protocol
 public protocol BluetoothSocketAddress: SocketAddress where ProtocolID == BluetoothSocketProtocol {

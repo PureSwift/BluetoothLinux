@@ -7,6 +7,7 @@
 
 import Bluetooth
 import SystemPackage
+import Socket
 
 public extension RFCOMMIO {
     
@@ -49,7 +50,7 @@ public extension RFCOMMIO.GetDeviceInformation {
 
 // MARK: - File Descriptor
 
-internal extension FileDescriptor {
+internal extension SocketDescriptor {
     
     @usableFromInline
     func rfcommGetDevice(

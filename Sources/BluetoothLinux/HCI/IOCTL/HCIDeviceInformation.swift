@@ -7,6 +7,7 @@
 
 import Bluetooth
 import SystemPackage
+import Socket
 
 public extension HostControllerIO {
     
@@ -57,7 +58,7 @@ public extension HostControllerIO.DeviceInformation {
 
 // MARK: - File Descriptor
 
-internal extension FileDescriptor {
+internal extension SocketDescriptor {
     
     @usableFromInline
     func deviceInformation(for id: HostController.ID) throws -> HostControllerIO.DeviceInformation {
@@ -73,7 +74,7 @@ public extension HostController {
     
     /// Get device information.
     static func deviceInformation(for id: HostController.ID) throws -> HostControllerIO.DeviceInformation {
-        let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
+        let fileDescriptor = try SocketDescriptor.bluetooth(.hci, flags: [.closeOnExec])
         return try fileDescriptor.closeAfter {
             try fileDescriptor.deviceInformation(for: id)
         }

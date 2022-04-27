@@ -6,6 +6,7 @@
 //
 
 import SystemPackage
+import Socket
 
 public extension HostControllerIO {
     
@@ -29,7 +30,7 @@ public extension HostControllerIO {
 
 // MARK: - File Descriptor
 
-internal extension FileDescriptor {
+internal extension SocketDescriptor {
     
     @usableFromInline
     func deviceUp(for id: HostController.ID) throws {
@@ -43,7 +44,7 @@ public extension HostController {
     
     /// Open and initialize HCI device.
     static func enable(device id: HostController.ID) throws {
-        let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
+        let fileDescriptor = try SocketDescriptor.bluetooth(.hci, flags: [.closeOnExec])
         try fileDescriptor.closeAfter {
             try fileDescriptor.deviceUp(for: id)
         }

@@ -21,10 +21,6 @@ let package = Package(
             .branch("master")
         ),
         .package(
-            url: "https://github.com/PureSwift/swift-system.git",
-            .branch("master")
-        ),
-        .package(
             url: "https://github.com/PureSwift/Socket.git",
             .branch("main")
         )
@@ -42,10 +38,6 @@ let package = Package(
                     package: "Bluetooth"
                 ),
                 "CBluetoothLinux",
-                .product(
-                    name: "SystemPackage",
-                    package: "swift-system"
-                ),
                 "Socket"
             ]
         ),

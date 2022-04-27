@@ -181,14 +181,14 @@ internal extension Socket {
     }
 }
 
-internal extension FileDescriptor {
+internal extension SocketDescriptor {
     
     /// Creates an HCI socket binded to the specified address.
     @usableFromInline
     static func hci(
         _ address: HCISocketAddress,
         flags: SocketFlags = [.closeOnExec]
-    ) throws -> FileDescriptor {
+    ) throws -> SocketDescriptor {
         try bluetooth(
             .hci,
             bind: address,

@@ -5,7 +5,7 @@
 //  Created by Alsey Coleman Miller on 16/10/21.
 //
 
-import SystemPackage
+import Socket
 
 /// Bluetooth HCI `ioctl` requests
 @frozen

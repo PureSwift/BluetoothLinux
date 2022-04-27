@@ -7,6 +7,7 @@
 
 import Bluetooth
 import SystemPackage
+import Socket
 
 public extension HostControllerIO {
     
@@ -111,7 +112,7 @@ public extension HostControllerIO.DeviceList {
 
 // MARK: - File Descriptor
 
-internal extension FileDescriptor {
+internal extension SocketDescriptor {
     
     /// List all HCI devices.
     @usableFromInline
@@ -128,7 +129,7 @@ public extension HostController {
     
     /// Get device information.
     static func deviceList(count: Int = CInterop.HCIDeviceList.capacity) throws -> HostControllerIO.DeviceList {
-        let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
+        let fileDescriptor = try SocketDescriptor.bluetooth(.hci, flags: [.closeOnExec])
         return try fileDescriptor.closeAfter {
             try fileDescriptor.deviceList(count: count)
         }

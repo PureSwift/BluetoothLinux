@@ -7,6 +7,7 @@
 //
 
 import SystemPackage
+import Socket
 
 /// Bluetooth Socket Protocol
 public enum BluetoothSocketProtocol: Int32, Codable {

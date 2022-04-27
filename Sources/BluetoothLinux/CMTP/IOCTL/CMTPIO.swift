@@ -6,6 +6,7 @@
 //
 
 import SystemPackage
+import Socket
 
 /// Bluetooth CMTP `ioctl` requests
 @frozen

@@ -6,7 +6,7 @@
 //
 
 import Bluetooth
-import SystemPackage
+import Socket
 
 /// Bluetooth Socket Options
 public enum BluetoothSocketOption: CInt, SocketOptionID {

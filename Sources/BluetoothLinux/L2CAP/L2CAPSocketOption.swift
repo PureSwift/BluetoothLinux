@@ -6,6 +6,7 @@
 //
 
 import SystemPackage
+import Socket
 
 /// L2CAP Socket Options
 public enum L2CAPSocketOption: CInt, SocketOptionID {

@@ -38,7 +38,7 @@ public final class HostController: BluetoothHostControllerInterface {
             device: id,
             channel: .raw
         )
-        let fileDescriptor = try FileDescriptor.hci(address, flags: [.closeOnExec, .nonBlocking])
+        let fileDescriptor = try SocketDescriptor.hci(address, flags: [.closeOnExec, .nonBlocking])
         self.id = id
         self.socket = await Socket(fileDescriptor: fileDescriptor)
     }
@@ -46,7 +46,7 @@ public final class HostController: BluetoothHostControllerInterface {
     /// Initializes the Bluetooth controller with the specified address.
     public convenience init(address: BluetoothAddress) async throws {
         // open socket to query devices with ioctl()`
-        let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
+        let fileDescriptor = try SocketDescriptor.bluetooth(.hci, flags: [.closeOnExec])
         guard let deviceInfo = try fileDescriptor.closeAfter({
             try fileDescriptor.deviceList().first(where: {
                 try fileDescriptor.deviceInformation(for: $0.id).address == address
@@ -63,7 +63,7 @@ internal extension HostController {
         
     @usableFromInline
     static func loadDevices() throws -> HostControllerIO.DeviceList {
-        let fileDescriptor = try FileDescriptor.bluetooth(.hci, flags: [.closeOnExec])
+        let fileDescriptor = try SocketDescriptor.bluetooth(.hci, flags: [.closeOnExec])
         defer { try? fileDescriptor.close() }
         return try fileDescriptor.deviceList()
     }

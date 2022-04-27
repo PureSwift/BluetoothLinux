@@ -6,6 +6,7 @@
 //
 
 import SystemPackage
+import Socket
 
 /// Bluetooth HIDP `ioctl` requests
 @frozen
