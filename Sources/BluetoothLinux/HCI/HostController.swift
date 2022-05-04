@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import CBluetoothLinux
+@_implementationOnly import CBluetoothLinux
 import BluetoothHCI
 import SystemPackage
 import Socket

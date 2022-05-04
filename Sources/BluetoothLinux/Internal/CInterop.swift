@@ -9,7 +9,7 @@ import Bluetooth
 import BluetoothHCI
 import SystemPackage
 import Socket
-import CBluetoothLinux
+@_implementationOnly import CBluetoothLinux
 
 public extension CInterop {
     
