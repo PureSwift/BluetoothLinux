@@ -15,15 +15,6 @@ import CBluetoothLinuxTest
 
 final class BluetoothLinuxTests: XCTestCase {
     
-#if os(Linux)
-    static let allTests = [
-        ("testHCISetBit", testHCISetBit),
-        ("testHCIFilterSetPacketType", testHCIFilterSetPacketType),
-        ("testHCIFilterSetEvent", testHCIFilterSetEvent),
-        ("testIOCTLConstants", testIOCTLConstants)
-    ]
-#endif
-    
     func testHCISetBit() {
         
         let event = HCIGeneralEvent.commandStatus.rawValue
@@ -47,7 +38,6 @@ final class BluetoothLinuxTests: XCTestCase {
         hci_filter_set_ptype(HCI_EVENT_PKT, &cFilter)
         
         XCTAssert(swiftFilter.typeMask == cFilter.type_mask, "\(swiftFilter.typeMask) == \(cFilter.type_mask)")
-        
         XCTAssert(cFilter.type_mask == 16)
     }
     
