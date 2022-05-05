@@ -1,6 +1,8 @@
 // swift-tools-version:5.5
 import PackageDescription
 
+let libraryType: PackageDescription.Product.Library.LibraryType = .dynamic
+
 let package = Package(
     name: "BluetoothLinux",
     platforms: [
@@ -12,6 +14,7 @@ let package = Package(
     products: [
         .library(
             name: "BluetoothLinux",
+            type: libraryType,
             targets: ["BluetoothLinux"]
         )
     ],
