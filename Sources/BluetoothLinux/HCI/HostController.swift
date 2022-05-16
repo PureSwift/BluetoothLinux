@@ -20,6 +20,12 @@ public final class HostController: BluetoothHostControllerInterface {
     /// The device identifier of the Bluetooth controller.
     public let id: ID
     
+    /// HCI device name.
+    public let name: String
+    
+    /// Bluetooth device address.
+    public let address: BluetoothAddress
+    
     /// Internal file descriptor for HCI socket
     @usableFromInline
     internal let socket: Socket
@@ -32,28 +38,46 @@ public final class HostController: BluetoothHostControllerInterface {
         }
     }
     
-    /// Attempt to initialize an Bluetooth controller
-    public init(id: ID) async throws {
-        let address = HCISocketAddress(
+    /// Initialize and open socket.
+    private init(
+        id: ID,
+        name: String,
+        address: BluetoothAddress
+    ) async throws {
+        let socketAddress = HCISocketAddress(
             device: id,
             channel: .raw
         )
-        let fileDescriptor = try SocketDescriptor.hci(address, flags: [.closeOnExec, .nonBlocking])
+        let fileDescriptor = try SocketDescriptor.hci(socketAddress, flags: [.closeOnExec, .nonBlocking])
         self.id = id
+        self.name = name
+        self.address = address
         self.socket = await Socket(fileDescriptor: fileDescriptor)
+    }
+    
+    /// Attempt to initialize an Bluetooth controller
+    public convenience init(id: ID) async throws {
+        let deviceInfo = try Self.deviceInformation(for: id)
+        try await self.init(id: id, name: deviceInfo.name, address: deviceInfo.address)
     }
     
     /// Initializes the Bluetooth controller with the specified address.
     public convenience init(address: BluetoothAddress) async throws {
         // open socket to query devices with ioctl()`
         let fileDescriptor = try SocketDescriptor.bluetooth(.hci, flags: [.closeOnExec])
-        guard let deviceInfo = try fileDescriptor.closeAfter({
-            try fileDescriptor.deviceList().first(where: {
-                try fileDescriptor.deviceInformation(for: $0.id).address == address
-            })
-        }) else { throw Errno.noSuchAddressOrDevice }
+        let deviceInfo = try fileDescriptor.closeAfter { () throws -> HostControllerIO.DeviceInformation in
+            let deviceList = try fileDescriptor.deviceList()
+            for device in deviceList {
+                let deviceInfo = try fileDescriptor.deviceInformation(for: device.id)
+                guard deviceInfo.address == address else {
+                    continue
+                }
+                return deviceInfo
+            }
+            throw Errno.noSuchAddressOrDevice
+        }
         // initialize with new file descriptor
-        try await self.init(id: deviceInfo.id)
+        try await self.init(id: deviceInfo.id, name: deviceInfo.name, address: deviceInfo.address)
     }
 }
 
