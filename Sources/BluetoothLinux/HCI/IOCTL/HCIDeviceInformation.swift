@@ -53,6 +53,14 @@ public extension HostControllerIO.DeviceInformation {
     var flags: HCIDeviceOptions {
         return .init(rawValue: bytes.flags)
     }
+    
+    var type: HCIControllerType {
+        return HCIControllerType(rawValue: CInt((bytes.type & 0x30) >> 4))
+    }
+    
+    var busType: HCIBusType {
+        return HCIBusType(rawValue: CInt(bytes.type & 0x0f))
+    }
 }
 
 
