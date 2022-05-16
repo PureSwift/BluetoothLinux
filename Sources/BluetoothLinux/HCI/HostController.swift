@@ -26,6 +26,12 @@ public final class HostController: BluetoothHostControllerInterface {
     /// Bluetooth device address.
     public let address: BluetoothAddress
     
+    /// HCI Controller type.
+    public let type: HCIControllerType
+    
+    /// Bus type.
+    public let busType: HCIBusType
+    
     /// Internal file descriptor for HCI socket
     @usableFromInline
     internal let socket: Socket
@@ -40,25 +46,25 @@ public final class HostController: BluetoothHostControllerInterface {
     
     /// Initialize and open socket.
     private init(
-        id: ID,
-        name: String,
-        address: BluetoothAddress
+        _ device: HostControllerIO.DeviceInformation
     ) async throws {
         let socketAddress = HCISocketAddress(
-            device: id,
+            device: device.id,
             channel: .raw
         )
         let fileDescriptor = try SocketDescriptor.hci(socketAddress, flags: [.closeOnExec, .nonBlocking])
-        self.id = id
-        self.name = name
-        self.address = address
+        self.id = device.id
+        self.name = device.name
+        self.address = device.address
+        self.busType = device.busType
+        self.type = device.type
         self.socket = await Socket(fileDescriptor: fileDescriptor)
     }
     
     /// Attempt to initialize an Bluetooth controller
     public convenience init(id: ID) async throws {
         let deviceInfo = try Self.deviceInformation(for: id)
-        try await self.init(id: id, name: deviceInfo.name, address: deviceInfo.address)
+        try await self.init(deviceInfo)
     }
     
     /// Initializes the Bluetooth controller with the specified address.
@@ -77,7 +83,7 @@ public final class HostController: BluetoothHostControllerInterface {
             throw Errno.noSuchAddressOrDevice
         }
         // initialize with new file descriptor
-        try await self.init(id: deviceInfo.id, name: deviceInfo.name, address: deviceInfo.address)
+        try await self.init(deviceInfo)
     }
 }
 
