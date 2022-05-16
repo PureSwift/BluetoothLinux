@@ -81,6 +81,21 @@ public final class HostController: BluetoothHostControllerInterface {
     }
 }
 
+// MARK: - CustomStringConvertible
+
+extension HostController: CustomStringConvertible, CustomDebugStringConvertible {
+    
+    public var description: String {
+        "HostController(id: \(id), name: \(name), address: \(address))"
+    }
+    
+    public var debugDescription: String {
+        "HostController(id: \(id), name: \(name), address: \(address), socket: \(socket.fileDescriptor.rawValue)"
+    }
+}
+
+// MARK: - Controllers
+
 internal extension HostController {
     
     static private(set) var cachedControllers = [ID: HostController]()
@@ -158,6 +173,17 @@ public extension HostController {
         public init(rawValue: UInt16) {
             self.rawValue = rawValue
         }
+    }
+}
+
+extension HostController.ID: CustomStringConvertible, CustomDebugStringConvertible {
+    
+    public var description: String {
+        rawValue.description
+    }
+    
+    public var debugDescription: String {
+        description
     }
 }
 
