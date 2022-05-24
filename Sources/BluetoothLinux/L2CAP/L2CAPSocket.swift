@@ -14,7 +14,7 @@ import SystemPackage
 import Socket
 
 /// L2CAP Bluetooth socket
-public actor L2CAPSocket: Bluetooth.L2CAPSocket {
+public final class L2CAPSocket: Bluetooth.L2CAPSocket {
     
     // MARK: - Properties
     
@@ -25,7 +25,7 @@ public actor L2CAPSocket: Bluetooth.L2CAPSocket {
     /// L2CAP Socket address
     public let address: BluetoothAddress
     
-    public nonisolated var event: L2CAPSocketEventStream {
+    public var event: L2CAPSocketEventStream {
         let stream = self.socket.event
         var iterator = stream.makeAsyncIterator()
         return L2CAPSocketEventStream(unfolding: {
@@ -80,7 +80,7 @@ public actor L2CAPSocket: Bluetooth.L2CAPSocket {
         address: BluetoothAddress,
         isRandom: Bool = false,
         backlog: Int = 10
-    ) async throws -> L2CAPSocket {
+    ) async throws -> Self {
         let address = L2CAPSocketAddress(
             lowEnergy: address,
             isRandom: isRandom
@@ -89,7 +89,7 @@ public actor L2CAPSocket: Bluetooth.L2CAPSocket {
         try fileDescriptor.closeIfThrows {
             try fileDescriptor.listen(backlog: backlog)
         }
-        return await L2CAPSocket(
+        return await Self(
             fileDescriptor: fileDescriptor,
             address: address
         )
@@ -100,7 +100,7 @@ public actor L2CAPSocket: Bluetooth.L2CAPSocket {
         hostController: HostController,
         isRandom: Bool = false,
         backlog: Int = 10
-    ) async throws -> L2CAPSocket {
+    ) async throws -> Self {
         let address = try await hostController.readDeviceAddress()
         return try await lowEnergyServer(
             address: address,
@@ -114,7 +114,7 @@ public actor L2CAPSocket: Bluetooth.L2CAPSocket {
         address: BluetoothAddress,
         destination: BluetoothAddress,
         isRandom: Bool
-    ) async throws -> L2CAPSocket {
+    ) async throws -> Self {
         try await lowEnergyClient(
             address: address,
             destination: destination,
@@ -127,7 +127,7 @@ public actor L2CAPSocket: Bluetooth.L2CAPSocket {
         address localAddress: BluetoothAddress,
         destination destinationAddress: BluetoothAddress,
         type destinationAddressType: LowEnergyAddressType
-    ) async throws -> L2CAPSocket {
+    ) async throws -> Self {
         let localSocketAddress = L2CAPSocketAddress(
             address: localAddress,
             addressType: nil,
@@ -144,7 +144,7 @@ public actor L2CAPSocket: Bluetooth.L2CAPSocket {
         try await fileDescriptor.closeIfThrows {
             try await fileDescriptor.connect(to: destinationSocketAddress, sleep: 100_000_000)
         }
-        return await L2CAPSocket(
+        return await Self(
             fileDescriptor: fileDescriptor,
             address: localSocketAddress
         )
@@ -154,7 +154,7 @@ public actor L2CAPSocket: Bluetooth.L2CAPSocket {
     public static func lowEnergyClient(
         address localAddress: BluetoothAddress,
         destination: HCILEAdvertisingReport.Report
-    ) async throws -> L2CAPSocket {
+    ) async throws -> Self {
         try await lowEnergyClient(
             address: localAddress,
             destination: destination.address,
@@ -165,12 +165,12 @@ public actor L2CAPSocket: Bluetooth.L2CAPSocket {
     // MARK: - Methods
     
     /// Attempt to accept an incoming connection.
-    public func accept() async throws -> L2CAPSocket {
+    public func accept() async throws -> Self {
         let (clientFileDescriptor, clientAddress) = try await socket.fileDescriptor.accept(L2CAPSocketAddress.self, sleep: 100_000_000)
         try clientFileDescriptor.closeIfThrows {
             try clientFileDescriptor.setNonblocking()
         }
-        return await L2CAPSocket(
+        return await Self(
             fileDescriptor: clientFileDescriptor,
             address: clientAddress
         )
