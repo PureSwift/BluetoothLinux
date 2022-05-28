@@ -3,8 +3,9 @@ name: Swift
 on: [push]
 
 jobs:
+
     linux-swift:
-        name: Linux x86_64
+        name: Linux (Swift 5.6.1)
         runs-on: ubuntu-20.04
         container: swift:5.6.1-focal
         steps:
@@ -17,6 +18,13 @@ jobs:
         - name: Build (Release)
           run: swift build -c release
         - name: Test (Debug)
-          run: swift test --configuration debug
+          run: swift test --configuration debug --enable-code-coverage
         - name: Test (Release)
-          run: swift test --configuration release -Xswiftc -enable-testing
+          run: swift test --configuration release -Xswiftc -enable-testing --enable-code-coverage
+        - name: Archive Build artifacts
+          uses: actions/upload-artifact@v3
+          with:
+            name: swiftpm-build-ubuntu-x86_64
+            path: .build/*/*.xctest
+        - name: Coverage Report
+          uses: maxep/spm-lcov-action@0.3.1
