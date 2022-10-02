@@ -5,9 +5,9 @@ on: [push]
 jobs:
 
     linux-swift:
-        name: Linux (Swift 5.6.1)
+        name: Linux
         runs-on: ubuntu-20.04
-        container: swift:5.6.1-focal
+        container: swift:5.7-focal
         steps:
         - name: Checkout
           uses: actions/checkout@v2
