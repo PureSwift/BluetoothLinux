@@ -71,4 +71,12 @@ extension HCISocketAddress: BluetoothSocketAddress {
         try bytes.withUnsafeMutablePointer(body)
         return Self.init(bytes)
     }
+    
+    public static func withUnsafePointer(
+        _ pointer: UnsafeMutablePointer<CInterop.SocketAddress>
+    ) -> Self {
+        return pointer.withMemoryRebound(to: CInterop.HCISocketAddress.self, capacity: 1) { pointer in
+            Self.init(pointer.pointee)
+        }
+    }
 }

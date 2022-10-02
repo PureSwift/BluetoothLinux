@@ -67,6 +67,15 @@ public struct L2CAPSocketAddress: Equatable, Hashable, BluetoothSocketAddress {
         )
     }
     
+    internal init(_ address: CInterop.L2CAPSocketAddress) {
+        self.init(
+            address: .init(littleEndian: address.l2_bdaddr),
+            addressType: .init(rawValue: address.l2_bdaddr_type),
+            protocolServiceMultiplexer: .init(rawValue: UInt8(UInt16(littleEndian: address.l2_psm))),
+            channel: .init(rawValue: .init(littleEndian: address.l2_cid))
+        )
+    }
+    
     public func withUnsafePointer<Result>(
       _ body: (UnsafePointer<CInterop.SocketAddress>, UInt32) throws -> Result
     ) rethrows -> Result {
@@ -84,11 +93,14 @@ public struct L2CAPSocketAddress: Equatable, Hashable, BluetoothSocketAddress {
     ) rethrows -> Self {
         var value = CInterop.L2CAPSocketAddress()
         try value.withUnsafeMutablePointer(body)
-        return Self.init(
-            address: .init(littleEndian: value.l2_bdaddr),
-            addressType: .init(rawValue: value.l2_bdaddr_type),
-            protocolServiceMultiplexer: .init(rawValue: UInt8(UInt16(littleEndian: value.l2_psm))),
-            channel: .init(rawValue: .init(littleEndian: value.l2_cid))
-        )
+        return Self.init(value)
+    }
+    
+    public static func withUnsafePointer(
+        _ pointer: UnsafeMutablePointer<CInterop.SocketAddress>
+    ) -> Self {
+        return pointer.withMemoryRebound(to: CInterop.L2CAPSocketAddress.self, capacity: 1) { pointer in
+            Self.init(pointer.pointee)
+        }
     }
 }

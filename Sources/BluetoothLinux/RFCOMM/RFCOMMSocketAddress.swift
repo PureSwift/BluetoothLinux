@@ -29,7 +29,7 @@ public struct RFCOMMSocketAddress: Equatable, Hashable {
 }
 
 extension RFCOMMSocketAddress: BluetoothSocketAddress {
-        
+    
     @_alwaysEmitIntoClient
     public static var protocolID: BluetoothSocketProtocol { .rfcomm }
     
@@ -48,6 +48,14 @@ extension RFCOMMSocketAddress: BluetoothSocketAddress {
         var bytes = CInterop.RFCOMMSocketAddress()
         try bytes.withUnsafeMutablePointer(body)
         return Self.init(bytes)
+    }
+    
+    public static func withUnsafePointer(
+        _ pointer: UnsafeMutablePointer<CInterop.SocketAddress>
+    ) -> Self {
+        return pointer.withMemoryRebound(to: CInterop.RFCOMMSocketAddress.self, capacity: 1) { pointer in
+            Self.init(pointer.pointee)
+        }
     }
 }
 
