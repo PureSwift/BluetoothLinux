@@ -57,7 +57,11 @@ var package = Package(
             name: "BluetoothLinuxTests",
             dependencies: [
                 "BluetoothLinux",
-                "CBluetoothLinuxTest"
+                "CBluetoothLinuxTest",
+                .product(
+                    name: "BluetoothGATT",
+                    package: "Bluetooth"
+                ),
             ]
         )
     ]
