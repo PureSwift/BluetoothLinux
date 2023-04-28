@@ -14,7 +14,7 @@ import SystemPackage
 import Socket
 
 /// L2CAP Bluetooth socket
-public final class L2CAPSocket: Bluetooth.L2CAPSocket {
+public struct L2CAPSocket: Bluetooth.L2CAPSocket {
     
     // MARK: - Properties
     
@@ -36,11 +36,13 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
     }
     
     // MARK: - Initialization
-
-    deinit {
-        Task(priority: .high) {
-            await socket.close()
-        }
+    
+    internal init(
+        socket: Socket,
+        address: L2CAPSocketAddress
+    ) async {
+        self.socket = socket
+        self.address = address.address
     }
     
     internal init(
@@ -79,7 +81,7 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
     public static func lowEnergyServer(
         address: BluetoothAddress,
         isRandom: Bool = false,
-        backlog: Int = 10
+        backlog: Int = Socket.maxSocketBacklog
     ) async throws -> Self {
         let address = L2CAPSocketAddress(
             lowEnergy: address,
@@ -99,7 +101,7 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
     public static func lowEnergyServer(
         hostController: HostController,
         isRandom: Bool = false,
-        backlog: Int = 10
+        backlog: Int = Socket.maxSocketBacklog
     ) async throws -> Self {
         let address = try await hostController.readDeviceAddress()
         return try await lowEnergyServer(
@@ -140,12 +142,15 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
             protocolServiceMultiplexer: nil,
             channel: .att
         )
-        let fileDescriptor = try SocketDescriptor.l2cap(localSocketAddress, [.closeOnExec, .nonBlocking])
-        try await fileDescriptor.closeIfThrows {
-            try await fileDescriptor.connect(to: destinationSocketAddress, sleep: 100_000_000)
+        let socket = try await Socket(fileDescriptor: .l2cap(localSocketAddress, [.closeOnExec, .nonBlocking]))
+        do {
+            try await socket.connect(to: destinationSocketAddress)
+        } catch {
+            await socket.close()
+            throw error
         }
         return await Self(
-            fileDescriptor: fileDescriptor,
+            socket: socket,
             address: localSocketAddress
         )
     }
@@ -161,18 +166,20 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
             type: destination.addressType
         )
     }
-
+    
     // MARK: - Methods
+    
+    /// Close socket.
+    public func close() async {
+        await socket.close()
+    }
     
     /// Attempt to accept an incoming connection.
     public func accept() async throws -> Self {
-        let (clientFileDescriptor, clientAddress) = try await socket.fileDescriptor.accept(L2CAPSocketAddress.self, sleep: 100_000_000)
-        try clientFileDescriptor.closeIfThrows {
-            try clientFileDescriptor.setNonblocking()
-        }
+        let (socket, address) = try await socket.accept(L2CAPSocketAddress.self)
         return await Self(
-            fileDescriptor: clientFileDescriptor,
-            address: clientAddress
+            socket: socket,
+            address: address
         )
     }
     
@@ -188,10 +195,8 @@ public final class L2CAPSocket: Bluetooth.L2CAPSocket {
     
     /// Attempts to change the socket's security level.
     public func setSecurityLevel(_ securityLevel: SecurityLevel) throws {
-        let socketOption = BluetoothSocketOption.Security(
-            level: securityLevel,
-            keySize: 0
-        )
+        var socketOption = try socket[BluetoothSocketOption.Security.self]
+        socketOption = .init(level: securityLevel, keySize: socketOption.keySize)
         try socket.fileDescriptor.setSocketOption(socketOption)
     }
     
@@ -216,14 +221,20 @@ internal extension L2CAPSocketEvent {
     
     init(_ event: Socket.Event) {
         switch event {
-        case .pendingRead:
-            self = .pendingRead
-        case let .read(bytes):
-            self = .read(bytes)
-        case let .write(bytes):
-            self = .write(bytes)
-        case let .close(error):
-            self = .close(error)
+        case .connection:
+            self = .connection
+        case .read:
+            self = .read
+        case .write:
+            self = .write
+        case let .didRead(bytes):
+            self = .didRead(bytes)
+        case let .didWrite(bytes):
+            self = .didWrite(bytes)
+        case .close:
+            self = .close
+        case let .error(error):
+            self = .error(error)
         }
     }
 }
