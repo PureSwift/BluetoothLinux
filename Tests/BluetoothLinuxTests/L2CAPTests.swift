@@ -30,19 +30,67 @@ final class L2CAPTests: XCTestCase {
         NSLog("Created server socket")
         let newConnection = try await serverSocket.accept()
         NSLog("Server Connected")
-        let characteristic = GATTAttribute.Characteristic(
-                uuid: GATTManufacturerNameString.uuid,
-                value: GATTManufacturerNameString(rawValue: "PureSwift").data,
-                permissions: [.read],
-                properties: [.read],
-                descriptors: []
-        )
         let service = GATTAttribute.Service(
             uuid: .deviceInformation,
             primary: true,
-            characteristics: [characteristic]
+            characteristics: [
+                GATTAttribute.Characteristic(
+                    uuid: GATTManufacturerNameString.uuid,
+                    value: GATTManufacturerNameString(rawValue: "PureSwift").data,
+                    permissions: [.read],
+                    properties: [.read],
+                    descriptors: []
+                ),
+                GATTAttribute.Characteristic(
+                    uuid: GATTModelNumber.uuid,
+                    value: GATTModelNumber(rawValue: "SolarInverter1,1").data,
+                    permissions: [.read],
+                    properties: [.read],
+                    descriptors: []
+                ),
+                GATTAttribute.Characteristic(
+                    uuid: GATTHardwareRevisionString.uuid,
+                    value: GATTHardwareRevisionString(rawValue: "1.0.0").data,
+                    permissions: [.read],
+                    properties: [.read],
+                    descriptors: []
+                ),
+                GATTAttribute.Characteristic(
+                    uuid: GATTFirmwareRevisionString.uuid,
+                    value: GATTFirmwareRevisionString(rawValue: "1.0.1").data,
+                    permissions: [.read],
+                    properties: [.read],
+                    descriptors: []
+                ),
+            ]
         )
-        let database = GATTDatabase(services: [service])
+        let service2 = GATTAttribute.Service(
+            uuid: .savantSystems,
+            primary: true,
+            characteristics: [
+                    GATTAttribute.Characteristic(
+                    uuid: .savantSystems2,
+                    value: GATTManufacturerNameString(rawValue: "PureSwift").data,
+                    permissions: [.read, .write],
+                    properties: [.read, .write],
+                    descriptors: []
+                )
+            ]
+        )
+        let batteryService = GATTAttribute.Service(
+            uuid: .batteryService,
+            primary: true,
+            characteristics: [
+                    GATTAttribute.Characteristic(
+                    uuid: .batteryService,
+                    value: GATTBatteryLevel(level: .init(rawValue: 95)!).data,
+                    permissions: [.read],
+                    properties: [.read],
+                    descriptors: []
+                )
+            ]
+        )
+        let database = GATTDatabase(services: [service, service2, batteryService])
         var logs = [String]()
         let server = await GATTServer(
             socket: newConnection, 
