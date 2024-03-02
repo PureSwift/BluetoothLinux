@@ -62,6 +62,10 @@ var package = Package(
                     name: "BluetoothGATT",
                     package: "Bluetooth"
                 ),
+                .product(
+                    name: "BluetoothGAP",
+                    package: "Bluetooth"
+                )
             ]
         )
     ]

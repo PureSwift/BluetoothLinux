@@ -10,6 +10,7 @@ import XCTest
 import Bluetooth
 import BluetoothHCI
 import BluetoothGATT
+import BluetoothGAP
 @testable import BluetoothLinux
 
 final class L2CAPTests: XCTestCase {
@@ -22,6 +23,23 @@ final class L2CAPTests: XCTestCase {
             XCTFail()
             return
         }
+        do {
+            do { try await controller.enableLowEnergyAdvertising(false) }
+            catch HCIError.commandDisallowed { /* ignore */ }
+
+            let encoder = GAPDataEncoder()
+            let advertisingData = try encoder.encodeAdvertisingData([
+                GAPShortLocalName(name: "Test")
+            ])
+            try await controller.setLowEnergyAdvertisingData(advertisingData)
+
+            do { try await controller.enableLowEnergyAdvertising() }
+            catch HCIError.commandDisallowed { /* ignore */ }
+        }
+        catch {
+            NSLog("Unable to enable advertising. \(error)")
+        }
+        NSLog("Enabled advertising")
         let address = try await controller.readDeviceAddress()
         NSLog("Will create server socket \(address)")
         let serverSocket = try await BluetoothLinux.L2CAPSocket.lowEnergyServer(
