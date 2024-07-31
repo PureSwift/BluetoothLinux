@@ -189,7 +189,7 @@ public struct L2CAPSocket: Bluetooth.L2CAPSocket {
     }
     
     /// Reads from the socket.
-    public func recieve(_ bufferSize: Int) async throws -> Data {
+    public func receive(_ bufferSize: Int) async throws -> Data {
         return try await socket.read(bufferSize)
     }
     
