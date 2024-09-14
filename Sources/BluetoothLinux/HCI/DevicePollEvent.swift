@@ -12,7 +12,7 @@ import SystemPackage
 
 public extension HostController {
     
-    func recieve<Event>(_ eventType: Event.Type) async throws -> Event where Event: HCIEventParameter, Event.HCIEventType == HCIGeneralEvent {
+    func receive<Event>(_ eventType: Event.Type) async throws -> Event where Event: HCIEventParameter, Event.HCIEventType == HCIGeneralEvent {
         var newFilter = HCISocketOption.Filter()
         newFilter.setPacketType(.event)
         newFilter.setEvent(Event.event)

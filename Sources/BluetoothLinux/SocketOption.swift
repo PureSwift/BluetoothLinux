@@ -35,8 +35,8 @@ public enum BluetoothSocketOption: CInt, SocketOptionID {
     /// Bluetooth Socket Send MTU
     case sendMTU        = 12 // BT_SNDMTU
     
-    /// Bluetooth Socket Recieve MTU
-    case recieveMTU     = 13 // BT_RCVMTU
+    /// Bluetooth Socket Receive MTU
+    case receiveMTU     = 13 // BT_RCVMTU
     
     /// Bluetooth Phy
     case phy            = 14 // BT_PHY
