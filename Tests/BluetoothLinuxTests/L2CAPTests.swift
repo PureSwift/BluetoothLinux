@@ -11,6 +11,7 @@ import Bluetooth
 import BluetoothHCI
 import BluetoothGATT
 import BluetoothGAP
+import SystemPackage
 @testable import BluetoothLinux
 
 final class L2CAPTests: XCTestCase {
@@ -49,7 +50,7 @@ final class L2CAPTests: XCTestCase {
         while serverSocket.status.accept == false {
             try await Task.sleep(nanoseconds: 10_000)
             if let error = serverSocket.status.error {
-                
+                throw error
             }
         }
         let newConnection = try serverSocket.accept()
@@ -126,5 +127,17 @@ final class L2CAPTests: XCTestCase {
                 logs.append($0)
             }
         )
+        try await Task.sleep(nanoseconds: 100_000)
+        do {
+            while true {
+                try server.run()
+            }
+        }
+        catch {
+            print(error)
+        }
+        withExtendedLifetime(server) {
+            _ = $0
+        }
     }
 }
