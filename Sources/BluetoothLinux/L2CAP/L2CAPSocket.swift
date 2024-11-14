@@ -62,7 +62,7 @@ public struct L2CAPSocket: Sendable {
     public static func lowEnergyServer(
         address: BluetoothAddress,
         isRandom: Bool = false,
-        backlog: Int = Socket.maxSocketBacklog
+        backlog: Int = Socket.maxBacklog
     ) throws(Errno) -> Self {
         let address = L2CAPSocketAddress(
             lowEnergy: address,
@@ -79,7 +79,7 @@ public struct L2CAPSocket: Sendable {
     public static func lowEnergyServer(
         hostController: HostController,
         isRandom: Bool = false,
-        backlog: Int = Socket.maxSocketBacklog
+        backlog: Int = Socket.maxBacklog
     ) async throws -> Self {
         let address = try await hostController.readDeviceAddress()
         return try lowEnergyServer(
@@ -260,7 +260,7 @@ public extension L2CAPSocket {
         public static func lowEnergyServer(
             address: BluetoothAddress,
             isRandom: Bool = false,
-            backlog: Int = Socket.maxSocketBacklog
+            backlog: Int = Socket.maxBacklog
         ) throws(Errno) -> L2CAPSocket.Server {
             let socket = try L2CAPSocket.lowEnergyServer(
                 address: address,

@@ -77,9 +77,9 @@ public struct L2CAPSocketAddress: Equatable, Hashable, BluetoothSocketAddress, S
         )
     }
     
-    public func withUnsafePointer<Result>(
-      _ body: (UnsafePointer<CInterop.SocketAddress>, UInt32) throws -> Result
-    ) rethrows -> Result {
+    public func withUnsafePointer<Result, Error>(
+      _ body: (UnsafePointer<CInterop.SocketAddress>, UInt32) throws(Error) -> Result
+    ) rethrows -> Result where Error: Swift.Error {
         var value = CInterop.L2CAPSocketAddress()
         value.l2_bdaddr = address.littleEndian
         // FIXME: PSM enum should be UInt16 not UInt8
@@ -89,9 +89,9 @@ public struct L2CAPSocketAddress: Equatable, Hashable, BluetoothSocketAddress, S
         return try value.withUnsafePointer(body)
     }
     
-    public static func withUnsafePointer(
-        _ body: (UnsafeMutablePointer<CInterop.SocketAddress>, UInt32) throws -> ()
-    ) rethrows -> Self {
+    public static func withUnsafePointer<Error>(
+        _ body: (UnsafeMutablePointer<CInterop.SocketAddress>, UInt32) throws(Error) -> ()
+    ) rethrows -> Self where Error: Swift.Error {
         var value = CInterop.L2CAPSocketAddress()
         try value.withUnsafeMutablePointer(body)
         return Self.init(value)

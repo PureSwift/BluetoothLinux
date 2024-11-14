@@ -36,16 +36,16 @@ extension RFCOMMSocketAddress: BluetoothSocketAddress {
     
     /// Unsafe pointer closure
     @_alwaysEmitIntoClient
-    public func withUnsafePointer<Result>(
-      _ body: (UnsafePointer<CInterop.SocketAddress>, UInt32) throws -> Result
-    ) rethrows -> Result {
+    public func withUnsafePointer<Result, Error>(
+      _ body: (UnsafePointer<CInterop.SocketAddress>, UInt32) throws(Error) -> Result
+    ) rethrows -> Result where Error: Swift.Error {
         try bytes.withUnsafePointer(body)
     }
     
     @_alwaysEmitIntoClient
-    public static func withUnsafePointer(
-        _ body: (UnsafeMutablePointer<CInterop.SocketAddress>, UInt32) throws -> ()
-    ) rethrows -> Self {
+    public static func withUnsafePointer<Error>(
+        _ body: (UnsafeMutablePointer<CInterop.SocketAddress>, UInt32) throws(Error) -> ()
+    ) rethrows -> Self where Error: Swift.Error {
         var bytes = CInterop.RFCOMMSocketAddress()
         try bytes.withUnsafeMutablePointer(body)
         return Self.init(bytes)

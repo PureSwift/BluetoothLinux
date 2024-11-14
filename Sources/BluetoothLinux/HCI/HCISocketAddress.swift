@@ -59,15 +59,17 @@ extension HCISocketAddress: BluetoothSocketAddress {
     public static var protocolID: BluetoothSocketProtocol { .hci }
     
     /// Unsafe pointer closure
-    public func withUnsafePointer<Result>(
-      _ body: (UnsafePointer<CInterop.SocketAddress>, UInt32) throws -> Result
-    ) rethrows -> Result {
+    @_alwaysEmitIntoClient
+    public func withUnsafePointer<Result, Error>(
+      _ body: (UnsafePointer<CInterop.SocketAddress>, UInt32) throws(Error) -> Result
+    ) rethrows -> Result where Error: Swift.Error {
         try bytes.withUnsafePointer(body)
     }
     
-    public static func withUnsafePointer(
-        _ body: (UnsafeMutablePointer<CInterop.SocketAddress>, UInt32) throws -> ()
-    ) rethrows -> Self {
+    @_alwaysEmitIntoClient
+    public static func withUnsafePointer<Error>(
+        _ body: (UnsafeMutablePointer<CInterop.SocketAddress>, UInt32) throws(Error) -> ()
+    ) rethrows -> Self where Error: Swift.Error {
         var bytes = CInterop.HCISocketAddress()
         try bytes.withUnsafeMutablePointer(body)
         return Self.init(bytes)
