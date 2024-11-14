@@ -69,7 +69,8 @@ var package = Package(
                     name: "BluetoothGAP",
                     package: "Bluetooth"
                 )
-            ]
+            ],
+            swiftSettings: [.swiftLanguageMode(.v5)]
         )
     ]
 )
