@@ -7,7 +7,7 @@
 
 /// HCI bus types
 @frozen
-public struct HCIBusType: RawRepresentable, Equatable, Hashable {
+public struct HCIBusType: RawRepresentable, Equatable, Hashable, Sendable {
     
     public let rawValue: CInt
     

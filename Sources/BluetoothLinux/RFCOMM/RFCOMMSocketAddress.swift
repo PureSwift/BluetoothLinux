@@ -11,7 +11,7 @@ import Bluetooth
 
 /// RFCOMM Socket Address
 @frozen
-public struct RFCOMMSocketAddress: Equatable, Hashable {
+public struct RFCOMMSocketAddress: Equatable, Hashable, Sendable {
     
     // MARK: - Properties
     

@@ -10,7 +10,7 @@ import SystemPackage
 import Socket
 
 /// Bluetooth Socket Protocol
-public enum BluetoothSocketProtocol: Int32, Codable {
+public enum BluetoothSocketProtocol: Int32, Sendable, Codable, CaseIterable {
     
     /// Bluetooth L2CAP (Logical link control and adaptation protocol)
     case l2cap      = 0

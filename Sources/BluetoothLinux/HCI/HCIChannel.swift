@@ -6,7 +6,7 @@
 //
 
 /// HCI Channel
-public enum HCIChannel: UInt16 {
+public enum HCIChannel: UInt16, Sendable {
     
     case raw        = 0
     case user       = 1

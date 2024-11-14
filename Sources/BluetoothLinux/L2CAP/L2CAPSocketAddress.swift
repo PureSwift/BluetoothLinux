@@ -12,7 +12,7 @@ import BluetoothHCI
 
 /// Bluetooth L2CAP Socket
 @frozen
-public struct L2CAPSocketAddress: Equatable, Hashable, BluetoothSocketAddress {
+public struct L2CAPSocketAddress: Equatable, Hashable, BluetoothSocketAddress, Sendable {
     
     @_alwaysEmitIntoClient
     public static var protocolID: BluetoothSocketProtocol { .l2cap }

@@ -11,7 +11,7 @@ import Bluetooth
 
 /// Bluetooth HCI Socket Address
 @frozen
-public struct HCISocketAddress: Equatable, Hashable {
+public struct HCISocketAddress: Equatable, Hashable, Sendable {
     
     // MARK: - Properties
     

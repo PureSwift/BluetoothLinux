@@ -155,7 +155,7 @@ internal extension Socket {
                     
                     let parameterData = eventData
                     
-                    guard let metaParameter = HCILowEnergyMetaEvent(data: parameterData)
+                    guard let metaParameter = HCILowEnergyMetaEvent<Data>(data: parameterData)
                         else { throw BluetoothHostControllerError.garbageResponse(parameterData) }
                     
                     // LE event should match

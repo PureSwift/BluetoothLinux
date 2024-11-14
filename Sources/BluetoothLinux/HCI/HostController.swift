@@ -39,6 +39,7 @@ public final class HostController: BluetoothHostControllerInterface {
     // MARK: - Initizalization
     
     deinit {
+        let socket = self.socket
         Task(priority: .high) {
             await socket.close()
         }
@@ -104,8 +105,8 @@ extension HostController: CustomStringConvertible, CustomDebugStringConvertible 
 
 internal extension HostController {
     
-    static private(set) var cachedControllers = [ID: HostController]()
-        
+    static nonisolated(unsafe) private(set) var cachedControllers = [ID: HostController]()
+    
     @usableFromInline
     static func loadDevices() throws -> HostControllerIO.DeviceList {
         let fileDescriptor = try SocketDescriptor.bluetooth(.hci, flags: [.closeOnExec])
