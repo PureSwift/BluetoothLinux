@@ -14,49 +14,31 @@ import SystemPackage
 import Socket
 
 /// L2CAP Bluetooth socket
-public struct L2CAPSocket: Bluetooth.L2CAPSocket {
+public struct L2CAPSocket: Sendable {
     
     // MARK: - Properties
     
     /// Internal socket file descriptor
     @usableFromInline
-    internal let socket: Socket
+    internal let fileDescriptor: SocketDescriptor
     
     /// L2CAP Socket address
-    public let address: BluetoothAddress
-    
-    public var event: L2CAPSocketEventStream {
-        let stream = self.socket.event
-        var iterator = stream.makeAsyncIterator()
-        return L2CAPSocketEventStream(unfolding: {
-            await iterator
-                .next()
-                .map { L2CAPSocketEvent($0) }
-        })
-    }
+    public let address: L2CAPSocketAddress
     
     // MARK: - Initialization
     
     internal init(
-        socket: Socket,
-        address: L2CAPSocketAddress
-    ) async {
-        self.socket = socket
-        self.address = address.address
-    }
-    
-    internal init(
         fileDescriptor: SocketDescriptor,
         address: L2CAPSocketAddress
-    ) async {
-        self.socket = await Socket(fileDescriptor: fileDescriptor)
-        self.address = address.address
+    ) {
+        self.fileDescriptor = fileDescriptor
+        self.address = address
     }
     
     /// Create a new L2CAP socket with the specified address.
-    public init(address: L2CAPSocketAddress) async throws {
-        self.socket = try await Socket(fileDescriptor: .l2cap(address, [.closeOnExec, .nonBlocking]))
-        self.address = address.address
+    public init(address: L2CAPSocketAddress) throws(Errno) {
+        self.fileDescriptor = try .l2cap(address, [.closeOnExec, .nonBlocking])
+        self.address = address
     }
     
     /// Create a new L2CAP socket on the `HostController` with the specified identifier.
@@ -73,8 +55,7 @@ public struct L2CAPSocket: Bluetooth.L2CAPSocket {
             protocolServiceMultiplexer: protocolServiceMultiplexer,
             channel: channel
         )
-        self.socket = try await Socket(fileDescriptor: .l2cap(socketAddress, [.closeOnExec, .nonBlocking]))
-        self.address = socketAddress.address
+        try self.init(address: socketAddress)
     }
     
     /// Creates a server socket for an L2CAP connection.
@@ -82,19 +63,16 @@ public struct L2CAPSocket: Bluetooth.L2CAPSocket {
         address: BluetoothAddress,
         isRandom: Bool = false,
         backlog: Int = Socket.maxSocketBacklog
-    ) async throws -> Self {
+    ) throws(Errno) -> Self {
         let address = L2CAPSocketAddress(
             lowEnergy: address,
             isRandom: isRandom
         )
         let fileDescriptor = try SocketDescriptor.l2cap(address, [.closeOnExec, .nonBlocking])
-        try fileDescriptor.closeIfThrows {
+        try fileDescriptor.closeIfThrows { () throws(Errno) -> () in
             try fileDescriptor.listen(backlog: backlog)
         }
-        return await Self(
-            fileDescriptor: fileDescriptor,
-            address: address
-        )
+        return Self.init(fileDescriptor: fileDescriptor, address: address)
     }
     
     /// Creates a server socket for an L2CAP connection.
@@ -104,7 +82,7 @@ public struct L2CAPSocket: Bluetooth.L2CAPSocket {
         backlog: Int = Socket.maxSocketBacklog
     ) async throws -> Self {
         let address = try await hostController.readDeviceAddress()
-        return try await lowEnergyServer(
+        return try lowEnergyServer(
             address: address,
             isRandom: isRandom,
             backlog: backlog
@@ -116,8 +94,8 @@ public struct L2CAPSocket: Bluetooth.L2CAPSocket {
         address: BluetoothAddress,
         destination: BluetoothAddress,
         isRandom: Bool
-    ) async throws -> Self {
-        try await lowEnergyClient(
+    ) throws(Errno) -> Self {
+        try lowEnergyClient(
             address: address,
             destination: destination,
             type: isRandom ? .random : .public
@@ -129,7 +107,7 @@ public struct L2CAPSocket: Bluetooth.L2CAPSocket {
         address localAddress: BluetoothAddress,
         destination destinationAddress: BluetoothAddress,
         type destinationAddressType: LowEnergyAddressType
-    ) async throws -> Self {
+    ) throws(Errno) -> Self {
         let localSocketAddress = L2CAPSocketAddress(
             address: localAddress,
             addressType: nil,
@@ -139,28 +117,20 @@ public struct L2CAPSocket: Bluetooth.L2CAPSocket {
         let destinationSocketAddress = L2CAPSocketAddress(
             address: destinationAddress,
             addressType: AddressType(lowEnergy: destinationAddressType),
-            protocolServiceMultiplexer: nil,
+            protocolServiceMultiplexer: .att,
             channel: .att
         )
-        let socket = try await Socket(fileDescriptor: .l2cap(localSocketAddress, [.closeOnExec, .nonBlocking]))
-        do {
-            try await socket.connect(to: destinationSocketAddress)
-        } catch {
-            await socket.close()
-            throw error
-        }
-        return await Self(
-            socket: socket,
-            address: localSocketAddress
-        )
+        let fileDescriptor = try SocketDescriptor.l2cap(localSocketAddress, [.closeOnExec, .nonBlocking])
+        try? fileDescriptor.connect(to: destinationSocketAddress) // ignore result, async socket always throws
+        return Self.init(fileDescriptor: fileDescriptor, address: localSocketAddress)
     }
     
     /// Creates a client socket for an L2CAP connection.
     public static func lowEnergyClient(
         address localAddress: BluetoothAddress,
         destination: HCILEAdvertisingReport.Report
-    ) async throws -> Self {
-        try await lowEnergyClient(
+    ) throws(Errno) -> Self {
+        try lowEnergyClient(
             address: localAddress,
             destination: destination.address,
             type: destination.addressType
@@ -170,71 +140,246 @@ public struct L2CAPSocket: Bluetooth.L2CAPSocket {
     // MARK: - Methods
     
     /// Close socket.
-    public func close() async {
-        await socket.close()
+    public func close() {
+        try? fileDescriptor.close()
     }
     
     /// Attempt to accept an incoming connection.
-    public func accept() async throws -> Self {
-        let (socket, address) = try await socket.accept(L2CAPSocketAddress.self)
-        return await Self(
-            socket: socket,
+    public func accept() throws(Errno) -> Self {
+        let (fileDescriptor, address) = try self.fileDescriptor.accept(L2CAPSocketAddress.self)
+        return Self.init(
+            fileDescriptor: fileDescriptor,
             address: address
         )
     }
     
     /// Write to the socket.
-    public func send(_ data: Data) async throws {
-        try await socket.write(data)
+    public func send(_ data: Data) throws(Errno) -> Int {
+        do {
+            return try data.withUnsafeBytes { (bytes) throws(Errno) -> Int in
+                try fileDescriptor.write(bytes)
+            }
+        }
+        catch {
+            throw error as! Errno // TODO: Foundation doesnt support typed error yet
+        }
     }
     
     /// Reads from the socket.
-    public func receive(_ bufferSize: Int) async throws -> Data {
-        return try await socket.read(bufferSize)
+    public func receive(_ length: Int) throws(Errno) -> Data {
+        do {
+            var data = Data(count: length)
+            let bytesRead = try data.withUnsafeMutableBytes { (bytes) throws(Errno) -> Int in
+                try fileDescriptor.read(into: bytes)
+            }
+            if bytesRead < length {
+                data = data.prefix(bytesRead)
+            }
+            return data
+        }
+        catch {
+            throw error as! Errno // TODO: Foundation doesnt support typed error yet
+        }
+    }
+    
+    public var security: BluetoothSocketOption.Security {
+        get throws(Errno) {
+            try fileDescriptor.getSocketOption(BluetoothSocketOption.Security.self)
+        }
     }
     
     /// Attempts to change the socket's security level.
-    public func setSecurityLevel(_ securityLevel: SecurityLevel) throws {
-        var socketOption = try socket[BluetoothSocketOption.Security.self]
-        socketOption = .init(level: securityLevel, keySize: socketOption.keySize)
-        try socket.fileDescriptor.setSocketOption(socketOption)
-    }
-    
-    public var securityLevel: SecurityLevel {
-        get throws {
-            let socketOption = try socket.fileDescriptor.getSocketOption(BluetoothSocketOption.Security.self)
-            return socketOption.level
-        }
+    public func setSecurity(_ security: BluetoothSocketOption.Security) throws(Errno) {
+        try fileDescriptor.setSocketOption(security)
     }
     
     /// Attempt to get L2CAP socket options.
     public var options: L2CAPSocketOption.Options {
-        get throws {
-            return try socket.fileDescriptor.getSocketOption(L2CAPSocketOption.Options.self)
+        get throws(Errno) {
+            return try fileDescriptor.getSocketOption(L2CAPSocketOption.Options.self)
         }
+    }
+    
+    public func setOptions(_ options: L2CAPSocketOption.Options) throws(Errno) {
+        try fileDescriptor.setSocketOption(options)
     }
 }
 
 // MARK: - Supporting Types
 
-internal extension L2CAPSocketEvent {
+// MARK: - Server
+
+public extension L2CAPSocket {
     
-    init(_ event: Socket.Event) {
-        switch event {
-        case .connection:
-            self = .connection
-        case .read:
-            self = .read
-        case .write:
-            self = .write
-        case let .didRead(bytes):
-            self = .didRead(bytes)
-        case let .didWrite(bytes):
-            self = .didWrite(bytes)
-        case .close:
-            self = .close
-        case let .error(error):
-            self = .error(error)
+    struct Server: Bluetooth.L2CAPServer, Sendable {
+        
+        // MARK: Properties
+        
+        @usableFromInline
+        internal let socket: BluetoothLinux.L2CAPSocket
+        
+        /// Socket address
+        public var address: BluetoothAddress {
+            socket.address.address
+        }
+        
+        /// Socket status
+        public var status: L2CAPSocketStatus<Errno> {
+            let events: FileEvents
+            let errno: Errno?
+            do {
+                events = try socket.fileDescriptor.poll(for: [.read, .error, .hangup, .invalidRequest])
+                if events.contains(.error) {
+                    errno = .connectionReset
+                } else if events.contains(.invalidRequest) {
+                    errno = .badFileDescriptor
+                } else if events.contains(.hangup) {
+                    errno = .socketShutdown
+                } else {
+                    errno = nil
+                }
+            }
+            catch {
+                errno = error
+                events = []
+            }
+            return .init(
+                send: false,
+                recieve: false,
+                accept: events.contains(.read) && errno == nil,
+                error: errno
+            )
+        }
+        
+        // MARK: Initialization
+        
+        internal init(socket: BluetoothLinux.L2CAPSocket) {
+            self.socket = socket
+        }
+        
+        public static func lowEnergyServer(
+            address: BluetoothAddress,
+            isRandom: Bool = false,
+            backlog: Int = Socket.maxSocketBacklog
+        ) throws(Errno) -> L2CAPSocket.Server {
+            let socket = try L2CAPSocket.lowEnergyServer(
+                address: address,
+                isRandom: isRandom,
+                backlog: backlog
+            )
+            return Self.init(socket: socket)
+        }
+        
+        // MARK: Methods
+        
+        /// Close socket.
+        public func close() {
+            socket.close()
+        }
+        
+        public func accept() throws(Errno) -> L2CAPSocket.Connection {
+            let socket = try self.socket.accept()
+            return .init(socket: socket, destination: self.socket.address.address)
+        }
+    }
+}
+
+// MARK: - Connection
+
+public extension L2CAPSocket {
+    
+    struct Connection: Bluetooth.L2CAPConnection, Sendable {
+        
+        // MARK: Properties
+        
+        @usableFromInline
+        internal let socket: BluetoothLinux.L2CAPSocket
+        
+        public let destination: BluetoothAddress
+        
+        /// Socket address
+        public var address: BluetoothAddress {
+            socket.address.address
+        }
+                
+        /// Socket status
+        public var status: L2CAPSocketStatus<Errno> {
+            let events: FileEvents
+            let errno: Errno?
+            do {
+                events = try socket.fileDescriptor.poll(for: [.read, .write, .error, .hangup, .invalidRequest])
+                if events.contains(.error) {
+                    errno = .connectionReset
+                } else if events.contains(.invalidRequest) {
+                    errno = .badFileDescriptor
+                } else if events.contains(.hangup) {
+                    errno = .socketShutdown
+                } else {
+                    errno = nil
+                }
+            }
+            catch {
+                errno = error
+                events = []
+            }
+            return .init(
+                send: events.contains(.write) && errno == nil,
+                recieve: events.contains(.read) && errno == nil,
+                accept: false,
+                error: errno
+            )
+        }
+        
+        // MARK: Initialization
+        
+        internal init(
+            socket: BluetoothLinux.L2CAPSocket,
+            destination: BluetoothAddress
+        ) {
+            self.socket = socket
+            self.destination = destination
+        }
+        
+        public static func lowEnergyClient(
+            address: BluetoothAddress,
+            destination: BluetoothAddress,
+            isRandom: Bool = false
+        ) throws(Errno) -> Self {
+            let socket = try L2CAPSocket.lowEnergyClient(
+                address: address,
+                destination: destination,
+                isRandom: isRandom
+            )
+            return .init(socket: socket, destination: destination)
+        }
+        
+        // MARK: Methods
+        
+        /// Close socket.
+        public func close() {
+            socket.close()
+        }
+                
+        /// Write to the socket.
+        public func send(_ data: Data) throws(Errno) {
+            _ = try socket.send(data)
+        }
+        
+        /// Reads from the socket.
+        public func receive(_ bufferSize: Int) throws(Errno) -> Data {
+            try socket.receive(bufferSize)
+        }
+            
+        /// Attempts to change the socket's security level.
+        public func setSecurityLevel(_ securityLevel: SecurityLevel) throws(Errno) {
+            var security = try socket.security
+            security = .init(level: securityLevel, keySize: security.keySize)
+            try socket.setSecurity(security)
+        }
+        
+        /// Get security level
+        public func securityLevel() throws(Errno) -> SecurityLevel {
+            try socket.security.level
         }
     }
 }
