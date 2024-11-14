@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:6.0
 import PackageDescription
 import class Foundation.ProcessInfo
 
@@ -24,11 +24,11 @@ var package = Package(
     dependencies: [
         .package(
             url: "https://github.com/PureSwift/Bluetooth.git",
-            .upToNextMajor(from: "6.0.0")
+            branch: "master"
         ),
         .package(
             url: "https://github.com/PureSwift/Socket.git",
-            .branch("main")
+            branch: "main"
         )
     ],
     targets: [
@@ -43,8 +43,11 @@ var package = Package(
                     name: "BluetoothHCI",
                     package: "Bluetooth"
                 ),
-                "CBluetoothLinux",
-                "Socket"
+                .product(
+                    name: "Socket",
+                    package: "Socket"
+                ),
+                "CBluetoothLinux"
             ]
         ),
         .target(
