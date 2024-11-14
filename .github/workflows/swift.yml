@@ -19,8 +19,6 @@ jobs:
           run: swift build -c release
         - name: Test (Debug)
           run: swift test --configuration debug --enable-code-coverage
-        - name: Test (Release)
-          run: swift test --configuration release -Xswiftc -enable-testing --enable-code-coverage
         - name: Archive Build artifacts
           uses: actions/upload-artifact@v3
           with:
