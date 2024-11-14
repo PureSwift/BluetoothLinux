@@ -27,10 +27,10 @@ final class L2CAPTests: XCTestCase {
             do { try await controller.enableLowEnergyAdvertising(false) }
             catch HCIError.commandDisallowed { /* ignore */ }
 
-            let encoder = GAPDataEncoder()
-            let advertisingData = try encoder.encodeAdvertisingData([
+            let encoder = GAPDataEncoder<LowEnergyAdvertisingData>.self
+            let advertisingData = encoder.encode(
                 GAPShortLocalName(name: "Test")
-            ])
+            )
             try await controller.setLowEnergyAdvertisingData(advertisingData)
 
             do { try await controller.enableLowEnergyAdvertising() }
@@ -42,15 +42,21 @@ final class L2CAPTests: XCTestCase {
         NSLog("Enabled advertising")
         let address = try await controller.readDeviceAddress()
         NSLog("Will create server socket \(address)")
-        let serverSocket = try await BluetoothLinux.L2CAPSocket.lowEnergyServer(
+        let serverSocket = try BluetoothLinux.L2CAPSocket.Server.lowEnergyServer(
             address: address
         )
         NSLog("Created server socket")
-        let newConnection = try await serverSocket.accept()
+        while serverSocket.status.accept == false {
+            try await Task.sleep(nanoseconds: 10_000)
+            if let error = serverSocket.status.error {
+                
+            }
+        }
+        let newConnection = try serverSocket.accept()
         NSLog("Server Connected")
         let service = GATTAttribute.Service(
             uuid: .deviceInformation,
-            primary: true,
+            isPrimary: true,
             characteristics: [
                 GATTAttribute.Characteristic(
                     uuid: GATTManufacturerNameString.uuid,
@@ -84,7 +90,7 @@ final class L2CAPTests: XCTestCase {
         )
         let service2 = GATTAttribute.Service(
             uuid: .savantSystems,
-            primary: true,
+            isPrimary: true,
             characteristics: [
                     GATTAttribute.Characteristic(
                     uuid: .savantSystems2,
@@ -97,7 +103,7 @@ final class L2CAPTests: XCTestCase {
         )
         let batteryService = GATTAttribute.Service(
             uuid: .batteryService,
-            primary: true,
+            isPrimary: true,
             characteristics: [
                     GATTAttribute.Characteristic(
                     uuid: .batteryService,
@@ -110,7 +116,7 @@ final class L2CAPTests: XCTestCase {
         )
         let database = GATTDatabase(services: [service, service2, batteryService])
         var logs = [String]()
-        let server = await GATTServer(
+        let server = GATTServer(
             socket: newConnection, 
             maximumTransmissionUnit: .max,
             maximumPreparedWrites: 1000,
@@ -120,9 +126,5 @@ final class L2CAPTests: XCTestCase {
                 logs.append($0)
             }
         )
-        // 
-        for await event in newConnection.event {
-            NSLog("Server: \(event)")
-        }
     }
 }
