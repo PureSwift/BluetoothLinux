@@ -7,7 +7,7 @@ jobs:
     linux-swift:
         name: Linux
         runs-on: ubuntu-20.04
-        container: swift:5.8-focal
+        container: swift:6.0.2-jammy
         steps:
         - name: Checkout
           uses: actions/checkout@v2
