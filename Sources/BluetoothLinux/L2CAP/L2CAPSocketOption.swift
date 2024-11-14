@@ -25,7 +25,7 @@ public enum L2CAPSocketOption: CInt, SocketOptionID {
 
 public extension L2CAPSocketOption {
     
-    struct Options: Equatable, Hashable, SocketOption {
+    struct Options: Equatable, Hashable, SocketOption, Sendable {
         
         public static var id: L2CAPSocketOption { .options }
         
@@ -47,13 +47,15 @@ public extension L2CAPSocketOption {
             self.transmissionWindowSize = 0
         }
         
-        public func withUnsafeBytes<Result>(_ pointer: ((UnsafeRawBufferPointer) throws -> (Result))) rethrows -> Result {
+        public func withUnsafeBytes<Result, Error>(_ body: ((UnsafeRawBufferPointer) throws(Error) -> (Result))) rethrows -> Result where Error: Swift.Error {
             return try Swift.withUnsafeBytes(of: self) { bufferPointer in
-                try pointer(bufferPointer)
+                try body(bufferPointer)
             }
         }
         
-        public static func withUnsafeBytes(_ body: (UnsafeMutableRawBufferPointer) throws -> ()) rethrows -> Self {
+        public static func withUnsafeBytes<Error>(
+            _ body: (UnsafeMutableRawBufferPointer) throws(Error) -> ()
+        ) rethrows -> Self where Error: Swift.Error {
             var value = self.init()
             try Swift.withUnsafeMutableBytes(of: &value, body)
             return value
@@ -64,7 +66,7 @@ public extension L2CAPSocketOption {
 public extension L2CAPSocketOption {
     
     /// L2CAP Connection Info
-    struct ConnectionInfo: SocketOption {
+    struct ConnectionInfo: SocketOption, Sendable {
         
         public static var id: L2CAPSocketOption { .connectionInfo }
         
@@ -76,13 +78,15 @@ public extension L2CAPSocketOption {
             self.deviceClass = (0,0,0)
         }
         
-        public func withUnsafeBytes<Result>(_ pointer: ((UnsafeRawBufferPointer) throws -> (Result))) rethrows -> Result {
+        public func withUnsafeBytes<Result, Error>(_ body: ((UnsafeRawBufferPointer) throws(Error) -> (Result))) rethrows -> Result where Error: Swift.Error {
             return try Swift.withUnsafeBytes(of: self) { bufferPointer in
-                try pointer(bufferPointer)
+                try body(bufferPointer)
             }
         }
         
-        public static func withUnsafeBytes(_ body: (UnsafeMutableRawBufferPointer) throws -> ()) rethrows -> Self {
+        public static func withUnsafeBytes<Error>(
+            _ body: (UnsafeMutableRawBufferPointer) throws(Error) -> ()
+        ) rethrows -> Self where Error: Swift.Error {
             var value = self.init()
             try Swift.withUnsafeMutableBytes(of: &value, body)
             return value

@@ -16,7 +16,7 @@ internal extension SocketDescriptor {
     static func l2cap(
         _ address: L2CAPSocketAddress,
         _ flags: SocketFlags
-    ) throws -> SocketDescriptor {
+    ) throws(Errno) -> SocketDescriptor {
         try bluetooth(
             .l2cap,
             bind: address,

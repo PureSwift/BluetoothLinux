@@ -72,7 +72,7 @@ public final class HostController: BluetoothHostControllerInterface {
     public convenience init(address: BluetoothAddress) async throws {
         // open socket to query devices with ioctl()`
         let fileDescriptor = try SocketDescriptor.bluetooth(.hci, flags: [.closeOnExec])
-        let deviceInfo = try fileDescriptor.closeAfter { () throws -> HostControllerIO.DeviceInformation in
+        let deviceInfo = try fileDescriptor.closeAfter { () throws(Errno) -> HostControllerIO.DeviceInformation in
             let deviceList = try fileDescriptor.deviceList()
             for device in deviceList {
                 let deviceInfo = try fileDescriptor.deviceInformation(for: device.id)

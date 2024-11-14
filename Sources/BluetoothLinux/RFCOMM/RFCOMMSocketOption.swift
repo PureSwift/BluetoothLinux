@@ -39,13 +39,15 @@ public extension RFCOMMSocketOption {
             self.deviceClass = (0,0,0)
         }
         
-        public func withUnsafeBytes<Result>(_ pointer: ((UnsafeRawBufferPointer) throws -> (Result))) rethrows -> Result {
+        public func withUnsafeBytes<Result, Error>(_ pointer: ((UnsafeRawBufferPointer) throws(Error) -> (Result))) rethrows -> Result where Error: Swift.Error {
             return try Swift.withUnsafeBytes(of: self) { bufferPointer in
                 try pointer(bufferPointer)
             }
         }
         
-        public static func withUnsafeBytes(_ body: (UnsafeMutableRawBufferPointer) throws -> ()) rethrows -> Self {
+        public static func withUnsafeBytes<Error>(
+            _ body: (UnsafeMutableRawBufferPointer) throws(Error) -> ()
+        ) rethrows -> Self where Error: Swift.Error {
             var value = self.init()
             try Swift.withUnsafeMutableBytes(of: &value, body)
             return value
@@ -68,13 +70,15 @@ public extension RFCOMMSocketOption {
             self.linkMode = linkMode
         }
         
-        public func withUnsafeBytes<Result>(_ pointer: ((UnsafeRawBufferPointer) throws -> (Result))) rethrows -> Result {
+        public func withUnsafeBytes<Result, Error>(_ pointer: ((UnsafeRawBufferPointer) throws(Error) -> (Result))) rethrows -> Result where Error: Swift.Error {
             return try Swift.withUnsafeBytes(of: linkMode.rawValue) { bufferPointer in
                 try pointer(bufferPointer)
             }
         }
         
-        public static func withUnsafeBytes(_ body: (UnsafeMutableRawBufferPointer) throws -> ()) rethrows -> Self {
+        public static func withUnsafeBytes<Error>(
+            _ body: (UnsafeMutableRawBufferPointer) throws(Error) -> ()
+        ) rethrows -> Self where Error: Swift.Error {
             var rawValue: UInt16 = 0
             try Swift.withUnsafeMutableBytes(of: &rawValue, body)
             return self.init(linkMode: .init(rawValue: rawValue))

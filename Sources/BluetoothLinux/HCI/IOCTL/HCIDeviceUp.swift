@@ -33,7 +33,7 @@ public extension HostControllerIO {
 internal extension SocketDescriptor {
     
     @usableFromInline
-    func deviceUp(for id: HostController.ID) throws {
+    func deviceUp(for id: HostController.ID) throws(Errno) {
         try inputOutput(HostControllerIO.DeviceUp(device: id))
     }
 }
@@ -43,9 +43,9 @@ internal extension SocketDescriptor {
 public extension HostController {
     
     /// Open and initialize HCI device.
-    static func enable(device id: HostController.ID) throws {
+    static func enable(device id: HostController.ID) throws(Errno) {
         let fileDescriptor = try SocketDescriptor.bluetooth(.hci, flags: [.closeOnExec])
-        try fileDescriptor.closeAfter {
+        try fileDescriptor.closeAfter { () throws(Errno) -> () in
             try fileDescriptor.deviceUp(for: id)
         }
     }

@@ -563,7 +563,7 @@ public extension CInterop {
 
 public extension CInterop {
     
-    struct HCIFilterSocketOption {
+    struct HCIFilterSocketOption: Sendable {
         
         public var typeMask: UInt32 = 0
         

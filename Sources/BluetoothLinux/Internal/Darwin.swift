@@ -35,7 +35,7 @@ internal extension SocketDescriptor {
         _ protocolID: T,
         flags: SocketFlags,
         retryOnInterrupt: Bool = true
-    ) throws {
+    ) throws(Errno) {
         stub()
     }
     
@@ -44,7 +44,7 @@ internal extension SocketDescriptor {
         bind address: Address,
         flags: SocketFlags,
         retryOnInterrupt: Bool = true
-    ) throws {
+    ) throws(Errno) {
         stub()
     }
 }

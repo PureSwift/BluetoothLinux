@@ -17,7 +17,7 @@ internal extension SocketDescriptor {
     static func bluetooth(
         _ socketProtocol: BluetoothSocketProtocol,
         flags: SocketFlags = [.closeOnExec]
-    ) throws -> SocketDescriptor {
+    ) throws(Errno) -> SocketDescriptor {
         return try self.init(
             socketProtocol,
             flags: flags
@@ -29,12 +29,12 @@ internal extension SocketDescriptor {
         _ socketProtocol: BluetoothSocketProtocol,
         bind address: Address,
         flags: SocketFlags = [.closeOnExec]
-    ) throws -> SocketDescriptor {
+    ) throws(Errno) -> SocketDescriptor {
         return try self.init(socketProtocol, bind: address, flags: flags)
     }
     
     @usableFromInline
-    func setNonblocking(retryOnInterrupt: Bool = true) throws {
+    func setNonblocking(retryOnInterrupt: Bool = true) throws(Errno) {
         var flags = try getStatus(retryOnInterrupt: retryOnInterrupt)
         flags.insert(.nonBlocking)
         try setStatus(flags, retryOnInterrupt: retryOnInterrupt)

@@ -13,7 +13,7 @@ import Socket
 public extension HCISocketOption {
     
     /// HCI Filter Socket Option
-    struct Filter: SocketOption {
+    struct Filter: SocketOption, Sendable {
         
         @_alwaysEmitIntoClient
         public static var id: HCISocketOption { .filter }
@@ -54,14 +54,16 @@ public extension HCISocketOption {
         }
         
         @_alwaysEmitIntoClient
-        public func withUnsafeBytes<Result>(_ pointer: ((UnsafeRawBufferPointer) throws -> (Result))) rethrows -> Result {
+        public func withUnsafeBytes<Result, Error>(_ body: ((UnsafeRawBufferPointer) throws(Error) -> (Result))) rethrows -> Result where Error: Swift.Error {
             return try Swift.withUnsafeBytes(of: bytes) { bufferPointer in
-                try pointer(bufferPointer)
+                try body(bufferPointer)
             }
         }
         
         @_alwaysEmitIntoClient
-        public static func withUnsafeBytes(_ body: (UnsafeMutableRawBufferPointer) throws -> ()) rethrows -> Self {
+        public static func withUnsafeBytes<Error>(
+            _ body: (UnsafeMutableRawBufferPointer) throws(Error) -> ()
+        ) rethrows -> Self where Error: Swift.Error {
             var value = self.init()
             try Swift.withUnsafeMutableBytes(of: &value.bytes, body)
             return value

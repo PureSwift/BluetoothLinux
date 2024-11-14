@@ -69,7 +69,7 @@ public extension HostControllerIO.DeviceInformation {
 internal extension SocketDescriptor {
     
     @usableFromInline
-    func deviceInformation(for id: HostController.ID) throws -> HostControllerIO.DeviceInformation {
+    func deviceInformation(for id: HostController.ID) throws(Errno) -> HostControllerIO.DeviceInformation {
         var request = HostControllerIO.DeviceInformation(request: id)
         try inputOutput(&request)
         return request
@@ -81,9 +81,9 @@ internal extension SocketDescriptor {
 public extension HostController {
     
     /// Get device information.
-    static func deviceInformation(for id: HostController.ID) throws -> HostControllerIO.DeviceInformation {
+    static func deviceInformation(for id: HostController.ID) throws(Errno) -> HostControllerIO.DeviceInformation {
         let fileDescriptor = try SocketDescriptor.bluetooth(.hci, flags: [.closeOnExec])
-        return try fileDescriptor.closeAfter {
+        return try fileDescriptor.closeAfter { () throws(Errno) -> HostControllerIO.DeviceInformation in
             try fileDescriptor.deviceInformation(for: id)
         }
     }

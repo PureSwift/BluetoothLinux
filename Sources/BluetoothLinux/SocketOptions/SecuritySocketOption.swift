@@ -38,11 +38,13 @@ public extension BluetoothSocketOption {
             return bytes.key_size
         }
         
-        public func withUnsafeBytes<Result>(_ body: ((UnsafeRawBufferPointer) throws -> (Result))) rethrows -> Result {
+        public func withUnsafeBytes<Result, Error>(_ body: ((UnsafeRawBufferPointer) throws(Error) -> (Result))) rethrows -> Result where Error: Swift.Error {
             return try Swift.withUnsafeBytes(of: bytes, body)
         }
         
-        public static func withUnsafeBytes(_ body: (UnsafeMutableRawBufferPointer) throws -> ()) rethrows -> Self {
+        public static func withUnsafeBytes<Error>(
+            _ body: (UnsafeMutableRawBufferPointer) throws(Error) -> ()
+        ) rethrows -> Self where Error: Swift.Error {
             var value = CInterop.BluetoothSocketSecurity()
             try Swift.withUnsafeMutableBytes(of: &value, body)
             return Self.init(value)

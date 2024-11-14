@@ -116,7 +116,7 @@ internal extension SocketDescriptor {
     
     /// List all HCI devices.
     @usableFromInline
-    func deviceList(count: Int = CInterop.HCIDeviceList.capacity) throws -> HostControllerIO.DeviceList {
+    func deviceList(count: Int = CInterop.HCIDeviceList.capacity) throws(Errno) -> HostControllerIO.DeviceList {
         var deviceList = HostControllerIO.DeviceList(request: count)
         try inputOutput(&deviceList)
         return deviceList
@@ -128,9 +128,9 @@ internal extension SocketDescriptor {
 public extension HostController {
     
     /// Get device information.
-    static func deviceList(count: Int = CInterop.HCIDeviceList.capacity) throws -> HostControllerIO.DeviceList {
+    static func deviceList(count: Int = CInterop.HCIDeviceList.capacity) throws(Errno) -> HostControllerIO.DeviceList {
         let fileDescriptor = try SocketDescriptor.bluetooth(.hci, flags: [.closeOnExec])
-        return try fileDescriptor.closeAfter {
+        return try fileDescriptor.closeAfter { () throws(Errno) -> HostControllerIO.DeviceList in
             try fileDescriptor.deviceList(count: count)
         }
     }
