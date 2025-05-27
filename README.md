@@ -31,12 +31,12 @@ catch { print("Error enabling iBeacon: \(error)") }
 import PackageDescription
 
 let package = Package(
-    dependencies: [
-        .package(
-			url: "https://github.com/PureSwift/BluetoothLinux.git",
-    		.branch("master")
-    	)
-    ]
+  dependencies: [
+    .package(
+      url: "https://github.com/PureSwift/BluetoothLinux.git",
+      .branch("master")
+    )
+  ]
 )
 ```
 
