@@ -24,11 +24,11 @@ var package = Package(
     dependencies: [
         .package(
             url: "https://github.com/PureSwift/Bluetooth.git",
-            branch: "master"
+            branch: "7.2.0"
         ),
         .package(
             url: "https://github.com/PureSwift/Socket.git",
-            branch: "main"
+            from: "0.4.0"
         )
     ],
     targets: [
@@ -80,7 +80,7 @@ var package = Package(
 let buildDocs = ProcessInfo.processInfo.environment["BUILDING_FOR_DOCUMENTATION_GENERATION"] != nil
 if buildDocs {
     package.dependencies += [
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin.git", from: "1.0.0"),
     ]
 }
 #endif

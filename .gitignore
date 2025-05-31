@@ -10,5 +10,6 @@ build/
 Docs/
 
 # SwiftPM
-Package.resolved
 .swiftpm
+DerivedData
+.DS_Store
