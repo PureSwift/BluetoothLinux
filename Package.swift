@@ -24,11 +24,11 @@ var package = Package(
     dependencies: [
         .package(
             url: "https://github.com/PureSwift/Bluetooth.git",
-            branch: "master"
+            from: "7.2.1"
         ),
         .package(
             url: "https://github.com/PureSwift/Socket.git",
-            branch: "main"
+            from: "0.4.0"
         )
     ],
     targets: [
