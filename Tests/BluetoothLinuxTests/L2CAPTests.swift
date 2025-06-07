@@ -56,7 +56,7 @@ final class L2CAPTests: XCTestCase {
         let newConnection = try serverSocket.accept()
         NSLog("Server Connected")
         let service = GATTAttribute.Service(
-            uuid: .deviceInformation,
+            uuid: BluetoothUUID.Service.deviceInformation,
             isPrimary: true,
             characteristics: [
                 GATTAttribute.Characteristic(
@@ -90,11 +90,11 @@ final class L2CAPTests: XCTestCase {
             ]
         )
         let service2 = GATTAttribute.Service(
-            uuid: .savantSystems,
+            uuid: BluetoothUUID.Member.savantSystems,
             isPrimary: true,
             characteristics: [
                     GATTAttribute.Characteristic(
-                    uuid: .savantSystems2,
+                    uuid: BluetoothUUID.Member.savantSystems2,
                     value: GATTManufacturerNameString(rawValue: "PureSwift").data,
                     permissions: [.read, .write],
                     properties: [.read, .write],
@@ -103,11 +103,11 @@ final class L2CAPTests: XCTestCase {
             ]
         )
         let batteryService = GATTAttribute.Service(
-            uuid: .batteryService,
+            uuid: BluetoothUUID.Service.battery,
             isPrimary: true,
             characteristics: [
                     GATTAttribute.Characteristic(
-                    uuid: .batteryService,
+                    uuid: BluetoothUUID.Service.battery,
                     value: GATTBatteryLevel(level: .init(rawValue: 95)!).data,
                     permissions: [.read],
                     properties: [.read],
