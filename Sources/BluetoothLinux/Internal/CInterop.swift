@@ -571,6 +571,10 @@ public extension CInterop {
         
         public var opcode: UInt16 = 0
         
+        // Explicit padding for Linux kernel 6.8+ compatibility
+        // The kernel expects 16 bytes but the struct is naturally 14 bytes
+        private var _padding: UInt16 = 0
+        
         public init() { }
     }
 }
