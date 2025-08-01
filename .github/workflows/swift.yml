@@ -10,7 +10,7 @@ jobs:
         container: swift:6.0.2-jammy
         steps:
         - name: Checkout
-          uses: actions/checkout@v2
+          uses: actions/checkout@v4
         - name: Swift Version
           run: swift --version
         - name: Build (Debug)
@@ -20,7 +20,7 @@ jobs:
         - name: Test (Debug)
           run: swift test --configuration debug --enable-code-coverage
         - name: Archive Build artifacts
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
             name: swiftpm-build-ubuntu-x86_64
             path: .build/*/*.xctest
