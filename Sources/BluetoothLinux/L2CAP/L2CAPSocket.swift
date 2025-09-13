@@ -14,7 +14,7 @@ import SystemPackage
 import Socket
 
 /// L2CAP Bluetooth socket
-public struct L2CAPSocket: Sendable {
+public struct L2CAPSocket: Sendable, L2CAPServer, L2CAPConnection {
     
     // MARK: - Properties
     
