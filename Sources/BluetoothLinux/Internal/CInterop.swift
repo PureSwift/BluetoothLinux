@@ -589,8 +589,15 @@ internal extension CInterop.HCIFilterSocketOption {
     
     @usableFromInline
     mutating func setEvent(_ event: UInt8) {
-        let bit = (CInt(event) & 63)
-        HCISetBit(bit, &eventMask.0)
+        // Events 0-31 use eventMask.0, events 32-63 use eventMask.1
+        // Bug fix: was always using eventMask.0 even for events >= 32
+        if event >= 32 {
+            let bit = CInt(event) - 32
+            HCISetBit(bit, &eventMask.1)
+        } else {
+            let bit = CInt(event)
+            HCISetBit(bit, &eventMask.0)
+        }
     }
     
     @usableFromInline
