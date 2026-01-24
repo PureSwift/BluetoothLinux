@@ -121,7 +121,33 @@ public struct L2CAPSocket: Sendable {
             channel: .att
         )
         let fileDescriptor = try SocketDescriptor.l2cap(localSocketAddress, [.closeOnExec, .nonBlocking])
-        try? fileDescriptor.connect(to: destinationSocketAddress) // ignore result, async socket always throws
+
+        // Start async connect - for non-blocking sockets this returns EINPROGRESS
+        do {
+            try fileDescriptor.connect(to: destinationSocketAddress)
+        } catch Errno.nowInProgress {
+            // Expected for non-blocking socket - connection is in progress
+            // Wait for socket to become writable (indicates connect completed)
+            let timeout: Int = 30_000  // 30 seconds in milliseconds
+            let events = try fileDescriptor.poll(for: [.write, .error, .hangup], timeout: timeout)
+
+            // Check for errors
+            if events.contains(.error) || events.contains(.hangup) {
+                try? fileDescriptor.close()
+                throw Errno.connectionRefused
+            }
+
+            // Check if we timed out (no events returned)
+            if !events.contains(.write) {
+                try? fileDescriptor.close()
+                throw Errno.timedOut
+            }
+        } catch {
+            // Other errors during connect
+            try? fileDescriptor.close()
+            throw error
+        }
+
         return Self.init(fileDescriptor: fileDescriptor, address: localSocketAddress)
     }
     
