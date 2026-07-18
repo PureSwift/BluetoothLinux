@@ -19,6 +19,26 @@ var package = Package(
             name: "BluetoothLinux",
             type: libraryType,
             targets: ["BluetoothLinux"]
+        ),
+        .executable(
+            name: "hcitool",
+            targets: ["hcitool"]
+        ),
+        .executable(
+            name: "hciconfig",
+            targets: ["hciconfig"]
+        ),
+        .executable(
+            name: "gatttool",
+            targets: ["gatttool"]
+        ),
+        .executable(
+            name: "gattserver",
+            targets: ["gattserver"]
+        ),
+        .executable(
+            name: "beacon",
+            targets: ["beacon"]
         )
     ],
     dependencies: [
@@ -29,6 +49,10 @@ var package = Package(
         .package(
             url: "https://github.com/PureSwift/Socket.git",
             branch: "main"
+        ),
+        .package(
+            url: "https://github.com/apple/swift-argument-parser.git",
+            from: "1.5.0"
         )
     ],
     targets: [
@@ -53,6 +77,72 @@ var package = Package(
                 // Syscall mocking for unit tests (see Internal/Mocking.swift),
                 // same pattern as swift-system.
                 .define("ENABLE_MOCKING", .when(configuration: .debug))
+            ]
+        ),
+        .executableTarget(
+            name: "hcitool",
+            dependencies: [
+                "BluetoothLinux",
+                .product(
+                    name: "BluetoothGAP",
+                    package: "Bluetooth"
+                ),
+                .product(
+                    name: "ArgumentParser",
+                    package: "swift-argument-parser"
+                )
+            ]
+        ),
+        .executableTarget(
+            name: "hciconfig",
+            dependencies: [
+                "BluetoothLinux",
+                .product(
+                    name: "ArgumentParser",
+                    package: "swift-argument-parser"
+                )
+            ]
+        ),
+        .executableTarget(
+            name: "gatttool",
+            dependencies: [
+                "BluetoothLinux",
+                .product(
+                    name: "BluetoothGATT",
+                    package: "Bluetooth"
+                ),
+                .product(
+                    name: "ArgumentParser",
+                    package: "swift-argument-parser"
+                )
+            ]
+        ),
+        .executableTarget(
+            name: "gattserver",
+            dependencies: [
+                "BluetoothLinux",
+                .product(
+                    name: "BluetoothGATT",
+                    package: "Bluetooth"
+                ),
+                .product(
+                    name: "BluetoothGAP",
+                    package: "Bluetooth"
+                ),
+                .product(
+                    name: "ArgumentParser",
+                    package: "swift-argument-parser"
+                )
+            ]
+        ),
+        .executableTarget(
+            name: "beacon",
+            dependencies: [
+                "BluetoothLinux",
+                .product(
+                    name: "ArgumentParser",
+                    package: "swift-argument-parser"
+                )
             ]
         ),
         .target(
