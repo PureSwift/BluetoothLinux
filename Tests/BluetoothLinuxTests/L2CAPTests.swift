@@ -56,33 +56,33 @@ final class L2CAPTests: XCTestCase {
         let newConnection = try serverSocket.accept()
         NSLog("Server Connected")
         let service = GATTAttribute.Service(
-            uuid: .deviceInformation,
+            uuid: .bit16(0x180A), // Device Information
             isPrimary: true,
             characteristics: [
                 GATTAttribute.Characteristic(
                     uuid: GATTManufacturerNameString.uuid,
-                    value: GATTManufacturerNameString(rawValue: "PureSwift").data,
+                    value: Data(GATTManufacturerNameString(rawValue: "PureSwift")),
                     permissions: [.read],
                     properties: [.read],
                     descriptors: []
                 ),
                 GATTAttribute.Characteristic(
                     uuid: GATTModelNumber.uuid,
-                    value: GATTModelNumber(rawValue: "SolarInverter1,1").data,
+                    value: Data(GATTModelNumber(rawValue: "SolarInverter1,1")),
                     permissions: [.read],
                     properties: [.read],
                     descriptors: []
                 ),
                 GATTAttribute.Characteristic(
                     uuid: GATTHardwareRevisionString.uuid,
-                    value: GATTHardwareRevisionString(rawValue: "1.0.0").data,
+                    value: Data(GATTHardwareRevisionString(rawValue: "1.0.0")),
                     permissions: [.read],
                     properties: [.read],
                     descriptors: []
                 ),
                 GATTAttribute.Characteristic(
                     uuid: GATTFirmwareRevisionString.uuid,
-                    value: GATTFirmwareRevisionString(rawValue: "1.0.1").data,
+                    value: Data(GATTFirmwareRevisionString(rawValue: "1.0.1")),
                     permissions: [.read],
                     properties: [.read],
                     descriptors: []
@@ -90,12 +90,12 @@ final class L2CAPTests: XCTestCase {
             ]
         )
         let service2 = GATTAttribute.Service(
-            uuid: .savantSystems,
+            uuid: .bit16(0xFEA8), // Savant Systems
             isPrimary: true,
             characteristics: [
                     GATTAttribute.Characteristic(
-                    uuid: .savantSystems2,
-                    value: GATTManufacturerNameString(rawValue: "PureSwift").data,
+                    uuid: .bit16(0xFEA9), // Savant Systems
+                    value: Data(GATTManufacturerNameString(rawValue: "PureSwift")),
                     permissions: [.read, .write],
                     properties: [.read, .write],
                     descriptors: []
@@ -103,12 +103,12 @@ final class L2CAPTests: XCTestCase {
             ]
         )
         let batteryService = GATTAttribute.Service(
-            uuid: .batteryService,
+            uuid: GATTBatteryService.uuid,
             isPrimary: true,
             characteristics: [
                     GATTAttribute.Characteristic(
-                    uuid: .batteryService,
-                    value: GATTBatteryLevel(level: .init(rawValue: 95)!).data,
+                    uuid: GATTBatteryLevel.uuid,
+                    value: Data(GATTBatteryLevel(level: .init(rawValue: 95)!)),
                     permissions: [.read],
                     properties: [.read],
                     descriptors: []
