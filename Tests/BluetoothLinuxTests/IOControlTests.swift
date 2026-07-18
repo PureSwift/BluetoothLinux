@@ -46,6 +46,88 @@ final class IOControlTests: XCTestCase {
         }
     }
 
+    func testDeviceDownIsTraced() throws {
+        try MockingDriver.withMockingEnabled { driver in
+            try fileDescriptor.deviceDown(for: .init(rawValue: 2))
+            XCTAssertEqual(
+                driver.trace.dequeue(),
+                Trace.Entry(name: "ioctl", [
+                    fileDescriptor.rawValue,
+                    HostControllerIO.deviceDown.rawValue,
+                    Int32(2)
+                ])
+            )
+            XCTAssertTrue(driver.trace.isEmpty)
+        }
+    }
+
+    func testDeviceInformationFakedKernelReply() throws {
+        try MockingDriver.withMockingEnabled { driver in
+            driver.ioctlHandler = { fd, request, pointer in
+                XCTAssertEqual(request, HostControllerIO.getDeviceInfo.rawValue)
+                guard let pointer else {
+                    XCTFail("Expected an out-parameter for HCIGETDEVINFO")
+                    errno = EINVAL
+                    return -1
+                }
+                var info = CInterop.HCIDeviceInformation(id: 0)
+                info.name = (0x68, 0x63, 0x69, 0x30, 0, 0, 0, 0) // "hci0"
+                info.address = (1, 2, 3, 4, 5, 6)
+                info.flags = 0b0000_0100 // .running bit
+                info.type = 0x13 // busType 0x3, controllerType 0x1
+                pointer.storeBytes(of: info, as: CInterop.HCIDeviceInformation.self)
+                return 0
+            }
+            let information = try fileDescriptor.deviceInformation(for: .init(rawValue: 0))
+            XCTAssertEqual(information.id, HostController.ID(rawValue: 0))
+            XCTAssertEqual(information.name, "hci0")
+            XCTAssertEqual(information.address, BluetoothAddress(bytes: (1, 2, 3, 4, 5, 6)))
+            XCTAssertTrue(information.flags.contains(.running))
+            XCTAssertEqual(
+                driver.trace.dequeue(),
+                Trace.Entry(name: "ioctl", [
+                    fileDescriptor.rawValue,
+                    HostControllerIO.getDeviceInfo.rawValue
+                ])
+            )
+            XCTAssertTrue(driver.trace.isEmpty)
+        }
+    }
+
+    func testRFCOMMCreateDeviceIsTraced() throws {
+        try MockingDriver.withMockingEnabled { driver in
+            try fileDescriptor.rfcommCreateDevice(
+                id: .init(rawValue: 0),
+                flags: [.reuseDLC],
+                source: BluetoothAddress(bytes: (1, 2, 3, 4, 5, 6)),
+                destination: BluetoothAddress(bytes: (6, 5, 4, 3, 2, 1)),
+                channel: 1
+            )
+            XCTAssertEqual(
+                driver.trace.dequeue(),
+                Trace.Entry(name: "ioctl", [
+                    fileDescriptor.rawValue,
+                    RFCOMMIO.createDevice.rawValue
+                ])
+            )
+            XCTAssertTrue(driver.trace.isEmpty)
+        }
+    }
+
+    func testRFCOMMReleaseDeviceIsTraced() throws {
+        try MockingDriver.withMockingEnabled { driver in
+            try fileDescriptor.rfcommReleaseDevice(id: .init(rawValue: 3))
+            XCTAssertEqual(
+                driver.trace.dequeue(),
+                Trace.Entry(name: "ioctl", [
+                    fileDescriptor.rawValue,
+                    RFCOMMIO.releaseDevice.rawValue
+                ])
+            )
+            XCTAssertTrue(driver.trace.isEmpty)
+        }
+    }
+
     func testDeviceListFakedKernelReply() throws {
         try MockingDriver.withMockingEnabled { driver in
             driver.ioctlHandler = { fd, request, pointer in
