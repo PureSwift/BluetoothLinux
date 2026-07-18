@@ -19,7 +19,7 @@ public extension HostController {
     func deviceCommand<T: HCICommandParameter>(_ commandParameter: T) async throws {
         try await socket.sendCommand(
             T.command,
-            parameter: commandParameter.data
+            parameter: Data(commandParameter)
         )
     }
 }

@@ -48,6 +48,11 @@ var package = Package(
                     package: "Socket"
                 ),
                 "CBluetoothLinux"
+            ],
+            swiftSettings: [
+                // Syscall mocking for unit tests (see Internal/Mocking.swift),
+                // same pattern as swift-system.
+                .define("ENABLE_MOCKING", .when(configuration: .debug))
             ]
         ),
         .target(
@@ -70,7 +75,10 @@ var package = Package(
                     package: "Bluetooth"
                 )
             ],
-            swiftSettings: [.swiftLanguageMode(.v5)]
+            swiftSettings: [
+                .swiftLanguageMode(.v5),
+                .define("ENABLE_MOCKING", .when(configuration: .debug))
+            ]
         )
     ]
 )

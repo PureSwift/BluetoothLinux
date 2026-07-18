@@ -14,7 +14,7 @@ public struct RFCOMMDevice: Equatable, Hashable {
     
     public let id: HostController.ID
     
-    public var flags: BitMaskOptionSet<RFCOMMFlag>
+    public var flags: RFCOMMFlag
     
     public var state: RFCOMMState
     
@@ -35,7 +35,7 @@ internal extension RFCOMMDevice {
         self.flags = .init(rawValue: cValue.flags)
         self.state = .init(rawValue: cValue.state) ?? .unknown
         self.source = cValue.source
-        self.destination = cValue.source
+        self.destination = cValue.destination
         self.channel = cValue.channel
     }
 }
