@@ -64,9 +64,9 @@ public extension RFCOMMSocketOption {
         @_alwaysEmitIntoClient
         public static var id: RFCOMMSocketOption { .connectionInfo }
         
-        public var linkMode: BitMaskOptionSet<RFCOMMLinkMode>
+        public var linkMode: RFCOMMLinkMode
         
-        public init(linkMode: BitMaskOptionSet<RFCOMMLinkMode> = []) {
+        public init(linkMode: RFCOMMLinkMode = []) {
             self.linkMode = linkMode
         }
         
