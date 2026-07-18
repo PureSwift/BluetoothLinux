@@ -8,7 +8,7 @@
 import BluetoothHCI
 
 /// HCI Packet types
-public enum HCIPacketType: UInt8 {
+public enum HCIPacketType: UInt8, Sendable {
     
     case command                            = 0x01
     case acl                                = 0x02
