@@ -95,7 +95,37 @@ public extension CInterop {
 }
 
 extension CInterop.SCOSocketAddress: CSocketAddress {
-    
+
+    @usableFromInline
+    static var family: SocketAddressFamily { .bluetooth }
+}
+
+public extension CInterop {
+
+    /// `sockaddr_iso` ISO Socket Address
+    struct ISOSocketAddress: Equatable, Hashable {
+
+        public let family: CInterop.SocketAddressFamily
+
+        /// `bdaddr_t iso_bdaddr` (little endian)
+        public var address: BluetoothAddress
+
+        /// `uint8_t iso_bdaddr_type`
+        public var type: UInt8
+
+        public init(
+            address: BluetoothAddress = .zero,
+            type: UInt8 = 0
+        ) {
+            self.family = .init(Self.family.rawValue)
+            self.address = address
+            self.type = type
+        }
+    }
+}
+
+extension CInterop.ISOSocketAddress: CSocketAddress {
+
     @usableFromInline
     static var family: SocketAddressFamily { .bluetooth }
 }

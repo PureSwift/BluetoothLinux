@@ -35,6 +35,9 @@ public enum BluetoothSocketProtocol: Int32, Sendable, Codable, CaseIterable {
     
     /// Audio/video data transport protocol
     case avdtp      = 7
+
+    /// Isochronous channels (LE Audio)
+    case iso        = 8
 }
 
 extension BluetoothSocketProtocol: SocketProtocol {
@@ -53,6 +56,7 @@ extension BluetoothSocketProtocol: SocketProtocol {
         case .cmtp:     return .raw
         case .hidp:     return .raw
         case .avdtp:    return .raw
+        case .iso:      return .sequencedPacket
         }
     }
 }
