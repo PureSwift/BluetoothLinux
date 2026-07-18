@@ -19,17 +19,11 @@ public struct HCIDeviceOptions: RawRepresentable, Equatable, Hashable {
 
 public extension HCIDeviceOptions {
     
-    var flags: BitMaskOptionSet<HCIDeviceFlag> {
-        var options = BitMaskOptionSet<HCIDeviceFlag>()
-        HCIDeviceFlag.allCases.forEach {
-            if contains($0) {
-                options.insert($0)
-            }
-        }
-        return options
+    var flags: HCIDeviceFlag {
+        HCIDeviceFlag(rawValue: rawValue).intersection(.all)
     }
-    
+
     func contains(_ flag: HCIDeviceFlag) -> Bool {
-        return (self.rawValue + (UInt32(bitPattern: flag.rawValue) >> 5)) & (1 << (UInt32(bitPattern: flag.rawValue) & 31)) != 0
+        HCIDeviceFlag(rawValue: rawValue).isSuperset(of: flag)
     }
 }
