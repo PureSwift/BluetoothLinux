@@ -28,7 +28,7 @@ public extension RFCOMMIO {
         @_alwaysEmitIntoClient
         public init(
             id: HostController.ID,
-            flags: BitMaskOptionSet<RFCOMMFlag>
+            flags: RFCOMMFlag
         ) {
             self.init(CInterop.RFCOMMDeviceRequest(
                 device: id.rawValue,
@@ -56,7 +56,7 @@ public extension RFCOMMIO.ReleaseDevice {
     }
     
     @_alwaysEmitIntoClient
-    var flags: BitMaskOptionSet<RFCOMMFlag> {
+    var flags: RFCOMMFlag {
         return .init(rawValue: bytes.flags)
     }
 }
@@ -68,7 +68,7 @@ internal extension SocketDescriptor {
     @usableFromInline
     func rfcommReleaseDevice(
         id: HostController.ID,
-        flags: BitMaskOptionSet<RFCOMMFlag> = []
+        flags: RFCOMMFlag = []
     ) throws {
         var request = RFCOMMIO.ReleaseDevice(
             id: id,
