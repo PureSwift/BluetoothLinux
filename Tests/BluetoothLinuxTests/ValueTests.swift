@@ -99,16 +99,22 @@ final class ValueTests: XCTestCase {
 
     func testHCIDeviceOptionsEmpty() {
         let options = HCIDeviceOptions(rawValue: 0)
-        for flag in HCIDeviceFlag.allCases {
+        let allFlags: [HCIDeviceFlag] = [
+            .up, .initialized, .running,
+            .passiveScan, .interactiveScan, .authenticated, .encrypt, .inquiry,
+            .raw
+        ]
+        for flag in allFlags {
             XCTAssertFalse(options.contains(flag))
         }
         XCTAssertTrue(options.flags.isEmpty)
     }
 
     func testHCIDeviceOptionsFlagsPopulated() {
-        // Bit 2 -> .running; a non-zero bit position is representable in the set.
-        let options = HCIDeviceOptions(rawValue: 0b0000_0100)
+        // Bit 0 -> .up (now representable as a native OptionSet mask).
+        let options = HCIDeviceOptions(rawValue: 0b0000_0101)
         XCTAssertFalse(options.flags.isEmpty)
+        XCTAssertTrue(options.flags.contains(.up))
         XCTAssertTrue(options.flags.contains(.running))
     }
 }
