@@ -275,7 +275,120 @@ public extension CInterop {
 }
 
 public extension CInterop {
-    
+
+    /// `bnep_connadd_req`
+    struct BNEPConnectionAddRequest {
+
+        /// int sock;
+        public var socket: CInt
+
+        /// uint32_t flags;
+        public var flags: UInt32
+
+        /// uint16_t role;
+        public var role: UInt16
+
+        /// char device[16];
+        public var device: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
+
+        public init(
+            socket: CInt,
+            flags: UInt32,
+            role: UInt16,
+            device: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8) = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        ) {
+            self.socket = socket
+            self.flags = flags
+            self.role = role
+            self.device = device
+        }
+    }
+}
+
+public extension CInterop {
+
+    /// `bnep_conndel_req`
+    struct BNEPConnectionDeleteRequest: Equatable, Hashable {
+
+        /// uint32_t flags;
+        public var flags: UInt32
+
+        /// uint8_t dst[6];
+        ///
+        /// The remote address in network (Ethernet) byte order.
+        public var destination: BluetoothAddress
+
+        public init(
+            flags: UInt32,
+            destination: BluetoothAddress
+        ) {
+            self.flags = flags
+            self.destination = destination
+        }
+    }
+}
+
+public extension CInterop {
+
+    /// `bnep_conninfo`
+    struct BNEPConnectionInformation {
+
+        /// uint32_t flags;
+        public var flags: UInt32
+
+        /// uint16_t role;
+        public var role: UInt16
+
+        /// uint16_t state;
+        public var state: UInt16
+
+        /// uint8_t dst[6];
+        ///
+        /// The remote address in network (Ethernet) byte order.
+        public var destination: BluetoothAddress
+
+        /// char device[16];
+        public var device: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
+
+        public init(
+            flags: UInt32,
+            role: UInt16,
+            state: UInt16,
+            destination: BluetoothAddress,
+            device: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8) = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        ) {
+            self.flags = flags
+            self.role = role
+            self.state = state
+            self.destination = destination
+            self.device = device
+        }
+    }
+}
+
+public extension CInterop {
+
+    /// `bnep_connlist_req`
+    struct BNEPConnectionListRequest {
+
+        /// uint32_t cnum;
+        public var count: UInt32
+
+        /// struct bnep_conninfo *ci;
+        public var connections: UnsafeMutablePointer<CInterop.BNEPConnectionInformation>?
+
+        public init(
+            count: UInt32,
+            connections: UnsafeMutablePointer<CInterop.BNEPConnectionInformation>? = nil
+        ) {
+            self.count = count
+            self.connections = connections
+        }
+    }
+}
+
+public extension CInterop {
+
     /// `sco_conninfo` SCO Connection Information
     struct SCOConnectionInfo {
         
