@@ -20,7 +20,7 @@ public extension HostController {
     ) async throws -> EP {
             
         let command = CP.command
-        let parameterData = commandParameter.data
+        let parameterData = Data(commandParameter)
         let responseData = try await socket.sendRequest(
             command: command,
             commandParameterData: parameterData,
@@ -81,7 +81,7 @@ public extension HostController {
         
         let data = try await socket.sendRequest(
             command: CP.command,
-            commandParameterData: commandParameter.data,
+            commandParameterData: Data(commandParameter),
             eventParameterLength: 1,
             timeout: timeout
         )
@@ -127,7 +127,7 @@ public extension HostController {
         
         let data = try await socket.sendRequest(
             command: commandReturnType.command,
-            commandParameterData: commandParameter.data,
+            commandParameterData: Data(commandParameter),
             eventParameterLength: commandReturnType.length + 1,
             timeout: timeout
         )
