@@ -28,7 +28,7 @@ public extension HostController {
     func scan(duration: Int = 8,
               limit: Int = 255,
               deviceClass: (UInt8, UInt8, UInt8)? = nil,
-              options: BitMaskOptionSet<ScanOption> = []) throws -> [InquiryResult] {
+              options: ScanOption = []) throws -> [InquiryResult] {
         
         assert(duration > 0, "Scan must be longer than 0 seconds")
         assert(limit > 0, "Must scan at least one device")
@@ -66,12 +66,18 @@ public extension HostController {
 public extension HostController {
     
     /// Options for scanning Bluetooth devices
-    enum ScanOption: UInt16, BitMaskOption {
-        
-        /// The cache of previously detected devices is flushed before performing the current inquiry. 
-        /// Otherwise, if flags is set to 0, then the results of previous inquiries may be returned, 
+    struct ScanOption: OptionSet, Equatable, Hashable, Sendable {
+
+        public let rawValue: UInt16
+
+        public init(rawValue: UInt16) {
+            self.rawValue = rawValue
+        }
+
+        /// The cache of previously detected devices is flushed before performing the current inquiry.
+        /// Otherwise, if flags is set to 0, then the results of previous inquiries may be returned,
         /// even if the devices aren't in range anymore.
-        case flushCache = 0x0001
+        public static let flushCache = ScanOption(rawValue: 0x0001)
     }
     
     struct InquiryResult {
@@ -108,7 +114,7 @@ public extension HostControllerIO {
         
         public var deviceClass: (UInt8, UInt8, UInt8)?
         
-        public var options: BitMaskOptionSet<HostController.ScanOption>
+        public var options: HostController.ScanOption
         
         public private(set) var response: [HostController.InquiryResult]
         
@@ -117,7 +123,7 @@ public extension HostControllerIO {
             duration: UInt8 = 8,
             limit: UInt8 = 255,
             deviceClass: (UInt8, UInt8, UInt8)? = nil,
-            options: BitMaskOptionSet<HostController.ScanOption> = []
+            options: HostController.ScanOption = []
         ) {
             self.device = device
             self.duration = duration
@@ -183,7 +189,7 @@ internal extension SocketDescriptor {
         duration: UInt8 = 8,
         limit: UInt8 = 255,
         deviceClass: (UInt8, UInt8, UInt8)? = nil,
-        options: BitMaskOptionSet<HostController.ScanOption> = []
+        options: HostController.ScanOption = []
     ) throws -> [HostController.InquiryResult] {
         var inquiry = HostControllerIO.Inquiry(
             device: id,
