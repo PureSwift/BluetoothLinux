@@ -46,4 +46,7 @@ public enum BluetoothSocketOption: CInt, SocketOptionID {
     
     /// Bluetooth Packet Status
     case packetStatus   = 16 // BT_PKT_STATUS
+
+    /// Bluetooth Isochronous Channel Quality of Service
+    case isoQualityOfService = 17 // BT_ISO_QOS
 }
