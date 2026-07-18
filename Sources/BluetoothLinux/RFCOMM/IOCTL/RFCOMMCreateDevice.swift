@@ -28,7 +28,7 @@ public extension RFCOMMIO {
         @_alwaysEmitIntoClient
         public init(
             id: HostController.ID,
-            flags: BitMaskOptionSet<RFCOMMFlag>,
+            flags: RFCOMMFlag,
             source: BluetoothAddress,
             destination: BluetoothAddress,
             channel: UInt8 = 1
@@ -59,7 +59,7 @@ public extension RFCOMMIO.CreateDevice {
     }
     
     @_alwaysEmitIntoClient
-    var flags: BitMaskOptionSet<RFCOMMFlag> {
+    var flags: RFCOMMFlag {
         return .init(rawValue: bytes.flags)
     }
     
@@ -87,7 +87,7 @@ internal extension SocketDescriptor {
     @usableFromInline
     func rfcommCreateDevice(
         id: HostController.ID,
-        flags: BitMaskOptionSet<RFCOMMFlag> = [],
+        flags: RFCOMMFlag = [],
         source: BluetoothAddress,
         destination: BluetoothAddress,
         channel: UInt8 = 1
