@@ -14,7 +14,7 @@ public struct RFCOMMDevice: Equatable, Hashable {
     
     public let id: HostController.ID
     
-    public var flags: BitMaskOptionSet<RFCOMMFlag>
+    public var flags: RFCOMMFlag
     
     public var state: RFCOMMState
     
