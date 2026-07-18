@@ -31,35 +31,40 @@ public extension RFCOMMIO {
         }
         
         public mutating func withUnsafeMutablePointer<Result>(_ body: (UnsafeMutableRawPointer) throws -> (Result)) rethrows -> Result {
-            
-            let bufferSize = MemoryLayout<CInterop.RFCOMMDeviceListRequest>.size
-                + (MemoryLayout<CInterop.RFCOMMDeviceInformation>.size * self.limit)
-            
-            let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
+
+            // The kernel's `struct rfcomm_dev_list_req` places the flexible
+            // `dev_info[]` array at the C struct size, i.e. the 2-byte count
+            // padded up to the element alignment (4), not the Swift size (2).
+            let elementAlignment = MemoryLayout<CInterop.RFCOMMDeviceInformation>.alignment
+            let headerSize = (MemoryLayout<CInterop.RFCOMMDeviceListRequest>.size + elementAlignment - 1)
+                & ~(elementAlignment - 1)
+            let elementSize = MemoryLayout<CInterop.RFCOMMDeviceInformation>.stride
+            let bufferSize = headerSize + (elementSize * self.limit)
+
+            let buffer = UnsafeMutableRawPointer.allocate(
+                byteCount: bufferSize,
+                alignment: elementAlignment
+            )
             defer { buffer.deallocate() }
-            
-            buffer.withMemoryRebound(to: CInterop.RFCOMMDeviceListRequest.self, capacity: 1) {
-                $0.pointee.count = numericCast(self.limit)
-            }
-            
+            buffer.initializeMemory(as: UInt8.self, repeating: 0, count: bufferSize)
+
+            let request = buffer.bindMemory(to: CInterop.RFCOMMDeviceListRequest.self, capacity: 1)
+            request.pointee.count = numericCast(self.limit)
+
             // call ioctl
             let result = try body(buffer)
-            
-            let resultCount = buffer.withMemoryRebound(to: CInterop.RFCOMMDeviceListRequest.self, capacity: 1) {
-                Int($0.pointee.count)
-            }
-            
+
+            let resultCount = Int(request.pointee.count)
+
             self.response.removeAll(keepingCapacity: true)
             self.response.reserveCapacity(resultCount)
-            
+
             for index in 0 ..< resultCount {
-                let offset = MemoryLayout<CInterop.RFCOMMDeviceListRequest>.size + (MemoryLayout<CInterop.RFCOMMDeviceInformation>.size * index)
-                buffer.advanced(by: offset).withMemoryRebound(to: CInterop.RFCOMMDeviceInformation.self, capacity: 1) {
-                    let element = RFCOMMDevice($0.pointee)
-                    self.response.append(element)
-                }
+                let offset = headerSize + (elementSize * index)
+                let bytes = buffer.loadUnaligned(fromByteOffset: offset, as: CInterop.RFCOMMDeviceInformation.self)
+                self.response.append(RFCOMMDevice(bytes))
             }
-            
+
             return result
         }
     }
