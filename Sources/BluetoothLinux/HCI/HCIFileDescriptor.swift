@@ -28,7 +28,7 @@ internal extension Socket {
         let dataLength = 1 + HCICommandHeader.length + parameterData.count
         var data = Data(capacity: dataLength)
         data.append(HCIPacketType.command.rawValue)
-        data.append(header.data)
+        header.append(to: &data)
         if parameterData.isEmpty == false {
             data.append(parameterData)
         }
