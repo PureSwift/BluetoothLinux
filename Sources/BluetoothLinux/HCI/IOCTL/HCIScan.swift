@@ -134,46 +134,49 @@ public extension HostControllerIO {
         }
         
         public mutating func withUnsafeMutablePointer<Result>(_ body: (UnsafeMutableRawPointer) throws -> (Result)) rethrows -> Result {
-            
-            let bufferSize = MemoryLayout<CInterop.HCIInquiryRequest>.size
-                + (MemoryLayout<CInterop.HCIInquiryResult>.size * Int(limit))
-            
-            let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
+
+            // The kernel writes inquiry results at `sizeof(struct hci_inquiry_req)`,
+            // which is the stride (10), not the Swift size (9, tail padding excluded).
+            let headerSize = MemoryLayout<CInterop.HCIInquiryRequest>.stride
+            let elementSize = MemoryLayout<CInterop.HCIInquiryResult>.stride
+            let bufferSize = headerSize + (elementSize * Int(limit))
+
+            let buffer = UnsafeMutableRawPointer.allocate(
+                byteCount: bufferSize,
+                alignment: MemoryLayout<CInterop.HCIInquiryRequest>.alignment
+            )
             defer { buffer.deallocate() }
-            
-            buffer.withMemoryRebound(to: CInterop.HCIInquiryRequest.self, capacity: 1) {
-                $0.pointee.id = self.device.rawValue
-                $0.pointee.lap = self.deviceClass ?? (0x33, 0x8b, 0x9e)
-                $0.pointee.flags = self.options.rawValue
-                $0.pointee.responseCount = self.limit
-                $0.pointee.length = self.duration
-            }
-            
+            buffer.initializeMemory(as: UInt8.self, repeating: 0, count: bufferSize)
+
+            let request = buffer.bindMemory(to: CInterop.HCIInquiryRequest.self, capacity: 1)
+            request.pointee.id = self.device.rawValue
+            request.pointee.lap = self.deviceClass ?? (0x33, 0x8b, 0x9e)
+            request.pointee.flags = self.options.rawValue
+            request.pointee.responseCount = self.limit
+            request.pointee.length = self.duration
+
             // call ioctl
             let result = try body(buffer)
-            
-            let resultCount = buffer.withMemoryRebound(to: CInterop.HCIInquiryRequest.self, capacity: 1) {
-                Int($0.pointee.responseCount)
-            }
-            
+
+            let resultCount = Int(request.pointee.responseCount)
+
             self.response.removeAll(keepingCapacity: true)
             self.response.reserveCapacity(resultCount)
-            
+
             for index in 0 ..< resultCount {
-                let offset = MemoryLayout<CInterop.HCIInquiryRequest>.size + (MemoryLayout<CInterop.HCIInquiryResult>.size * index)
-                buffer.advanced(by: offset).withMemoryRebound(to: CInterop.HCIInquiryResult.self, capacity: 1) {
-                    let element = HostController.InquiryResult(
-                        address: $0.pointee.address,
-                        pscanRepMode: $0.pointee.pscanRepMode,
-                        pscanPeriodMode: $0.pointee.pscanPeriodMode,
-                        pscanMode: $0.pointee.pscanMode,
-                        deviceClass: $0.pointee.deviceClass,
-                        clockOffset: $0.pointee.clockOffset
-                    )
-                    self.response.append(element)
-                }
+                let offset = headerSize + (elementSize * index)
+                let bytes = buffer.loadUnaligned(fromByteOffset: offset, as: CInterop.HCIInquiryResult.self)
+                let element = HostController.InquiryResult(
+                    address: bytes.address,
+                    pscanRepMode: bytes.pscanRepMode,
+                    pscanPeriodMode: bytes.pscanPeriodMode,
+                    pscanMode: bytes.pscanMode,
+                    deviceClass: bytes.deviceClass,
+                    clockOffset: bytes.clockOffset
+                )
+                self.response.append(element)
             }
-            
+
             return result
         }
     }
