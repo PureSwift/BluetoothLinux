@@ -419,6 +419,173 @@ public extension CInterop {
 
 public extension CInterop {
 
+    /// `char name[128]` fixed-size device name buffer (as 32-bit words to preserve C layout).
+    typealias HIDPDeviceName = (UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32)
+
+    /// `hidp_connadd_req`
+    struct HIDPConnectionAddRequest {
+
+        /// int ctrl_sock;
+        public var controlSocket: CInt
+
+        /// int intr_sock;
+        public var interruptSocket: CInt
+
+        /// uint16_t parser;
+        public var parser: UInt16
+
+        /// uint16_t rd_size;
+        public var reportDescriptorSize: UInt16
+
+        /// uint8_t *rd_data;
+        public var reportDescriptor: UnsafeMutablePointer<UInt8>?
+
+        /// uint8_t country;
+        public var country: UInt8
+
+        /// uint8_t subclass;
+        public var subclass: UInt8
+
+        /// uint16_t vendor;
+        public var vendor: UInt16
+
+        /// uint16_t product;
+        public var product: UInt16
+
+        /// uint16_t version;
+        public var version: UInt16
+
+        /// uint32_t flags;
+        public var flags: UInt32
+
+        /// uint32_t idle_to;
+        public var idleTimeout: UInt32
+
+        /// char name[128];
+        public var name: HIDPDeviceName
+
+        public init(
+            controlSocket: CInt,
+            interruptSocket: CInt,
+            parser: UInt16,
+            reportDescriptorSize: UInt16 = 0,
+            reportDescriptor: UnsafeMutablePointer<UInt8>? = nil,
+            country: UInt8 = 0,
+            subclass: UInt8 = 0,
+            vendor: UInt16 = 0,
+            product: UInt16 = 0,
+            version: UInt16 = 0,
+            flags: UInt32 = 0,
+            idleTimeout: UInt32 = 0,
+            name: HIDPDeviceName = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        ) {
+            self.controlSocket = controlSocket
+            self.interruptSocket = interruptSocket
+            self.parser = parser
+            self.reportDescriptorSize = reportDescriptorSize
+            self.reportDescriptor = reportDescriptor
+            self.country = country
+            self.subclass = subclass
+            self.vendor = vendor
+            self.product = product
+            self.version = version
+            self.flags = flags
+            self.idleTimeout = idleTimeout
+            self.name = name
+        }
+    }
+}
+
+public extension CInterop {
+
+    /// `hidp_conndel_req`
+    struct HIDPConnectionDeleteRequest: Equatable, Hashable {
+
+        /// `bdaddr_t` (little endian)
+        public var address: BluetoothAddress
+
+        /// uint32_t flags;
+        public var flags: UInt32
+
+        public init(
+            address: BluetoothAddress,
+            flags: UInt32
+        ) {
+            self.address = address
+            self.flags = flags
+        }
+    }
+}
+
+public extension CInterop {
+
+    /// `hidp_conninfo`
+    struct HIDPConnectionInformation {
+
+        /// `bdaddr_t` (little endian)
+        public var address: BluetoothAddress
+
+        /// uint32_t flags;
+        public var flags: UInt32
+
+        /// uint16_t state;
+        public var state: UInt16
+
+        /// uint16_t vendor;
+        public var vendor: UInt16
+
+        /// uint16_t product;
+        public var product: UInt16
+
+        /// uint16_t version;
+        public var version: UInt16
+
+        /// char name[128];
+        public var name: HIDPDeviceName
+
+        public init(
+            address: BluetoothAddress = .zero,
+            flags: UInt32 = 0,
+            state: UInt16 = 0,
+            vendor: UInt16 = 0,
+            product: UInt16 = 0,
+            version: UInt16 = 0,
+            name: HIDPDeviceName = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        ) {
+            self.address = address
+            self.flags = flags
+            self.state = state
+            self.vendor = vendor
+            self.product = product
+            self.version = version
+            self.name = name
+        }
+    }
+}
+
+public extension CInterop {
+
+    /// `hidp_connlist_req`
+    struct HIDPConnectionListRequest {
+
+        /// uint32_t cnum;
+        public var count: UInt32
+
+        /// struct hidp_conninfo *ci;
+        public var connections: UnsafeMutablePointer<CInterop.HIDPConnectionInformation>?
+
+        public init(
+            count: UInt32,
+            connections: UnsafeMutablePointer<CInterop.HIDPConnectionInformation>? = nil
+        ) {
+            self.count = count
+            self.connections = connections
+        }
+    }
+}
+
+public extension CInterop {
+
     /// `sco_conninfo` SCO Connection Information
     struct SCOConnectionInfo {
         
