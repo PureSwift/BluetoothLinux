@@ -194,12 +194,38 @@ if buildDocs {
 // itself is built by CMake, which is the only one of the two that can
 // set a soname, a version and an export list.
 if ProcessInfo.processInfo.environment["SWIFTPM_BLUETOOTH_CABI"] == "1" {
+    package.products += [
+        .library(
+            name: "BluetoothLinuxABI",
+            type: .dynamic,
+            targets: ["BluetoothLinuxABI"]
+        )
+    ]
     package.targets += [
         .target(
             name: "CBluetoothLinuxABI",
             exclude: [
                 "README.md",
                 "include/bluetooth/LICENSE"
+            ]
+        ),
+        .target(
+            name: "BluetoothLinuxABI",
+            dependencies: [
+                "CBluetoothLinuxABI",
+                // For bt_malloc/bt_malloc0/bt_free — CBluetoothLinuxABI
+                // declares them (bluetooth.h) but does not define them;
+                // BluetoothABI's CBluetooth does. Also gated behind
+                // SWIFTPM_BLUETOOTH_CABI=1, which SwiftPM propagates to
+                // this dependency's own manifest evaluation.
+                .product(name: "BluetoothABI", package: "Bluetooth")
+            ]
+        ),
+        .testTarget(
+            name: "BluetoothLinuxABITests",
+            dependencies: [
+                "BluetoothLinuxABI",
+                "CBluetoothLinuxABI"
             ]
         )
     ]
