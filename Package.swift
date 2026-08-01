@@ -182,3 +182,25 @@ if buildDocs {
     ]
 }
 #endif
+
+// C ABI (libbluetooth.so.3 replacement)
+//
+// Off by default so the ordinary Swift build stays unaffected. Enable
+// with `SWIFTPM_BLUETOOTH_CABI=1` to build the C surface — the vendored
+// BlueZ headers plus the generated stub table for every symbol not
+// implemented yet (see scripts/gen_stubs.py).
+//
+// SwiftPM builds the sources; the installable `libbluetooth.so.3`
+// itself is built by CMake, which is the only one of the two that can
+// set a soname, a version and an export list.
+if ProcessInfo.processInfo.environment["SWIFTPM_BLUETOOTH_CABI"] == "1" {
+    package.targets += [
+        .target(
+            name: "CBluetoothLinuxABI",
+            exclude: [
+                "README.md",
+                "include/bluetooth/LICENSE"
+            ]
+        )
+    ]
+}
