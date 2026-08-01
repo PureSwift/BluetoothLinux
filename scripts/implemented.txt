@@ -1,0 +1,43 @@
+# Symbols already implemented, and therefore NOT stubbed.
+#
+# scripts/gen_stubs.py subtracts this list from symbols.txt. Moving a
+# name here without providing an implementation is a link error at the
+# next build (undefined symbol); leaving one here after implementing it
+# is a duplicate-symbol error. Either way the mistake is loud.
+#
+# Each phase of the port moves names from stubbed to implemented and
+# watches the conformance diff shrink.
+
+# --- Phase 1: PureSwift/Bluetooth, Sources/BluetoothABI + Sources/CBluetooth ---
+# The bluetooth.c entry points (17).
+ba2oui
+ba2str
+ba2strlc
+bachk
+bafprintf
+baprintf
+basnprintf
+basprintf
+baswap
+batostr
+bt_compidtostr
+bt_error
+bt_free
+bt_malloc
+bt_malloc0
+str2ba
+strtoba
+
+# The bt_uuid_* family (10). Note these are NOT in symbols.txt: the
+# reference keeps them in libbluetooth-internal.a and exports none of
+# them. We export them anyway — see cmake/libbluetooth.map.
+bt_string_to_uuid
+bt_uuid128_create
+bt_uuid16_cmp
+bt_uuid16_create
+bt_uuid32_create
+bt_uuid_cmp
+bt_uuid_strcmp
+bt_uuid_to_le
+bt_uuid_to_string
+bt_uuid_to_uuid128
