@@ -1,0 +1,4 @@
+module CBluetoothLinuxABI {
+    umbrella header "CBluetoothLinuxABI.h"
+    export *
+}
