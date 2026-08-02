@@ -40,11 +40,6 @@ int hci_change_link_key(int dd, uint16_t handle, int to)
 	cbt_unimplemented("hci_change_link_key");
 }
 
-int hci_close_dev(int dd)
-{
-	cbt_unimplemented("hci_close_dev");
-}
-
 int hci_create_connection(int dd, const bdaddr_t *bdaddr, uint16_t ptype, uint16_t clkoffset, uint8_t rswitch, uint16_t *handle, int to)
 {
 	cbt_unimplemented("hci_create_connection");
@@ -53,21 +48,6 @@ int hci_create_connection(int dd, const bdaddr_t *bdaddr, uint16_t ptype, uint16
 int hci_delete_stored_link_key(int dd, bdaddr_t *bdaddr, uint8_t all, int to)
 {
 	cbt_unimplemented("hci_delete_stored_link_key");
-}
-
-int hci_devba(int dev_id, bdaddr_t *bdaddr)
-{
-	cbt_unimplemented("hci_devba");
-}
-
-int hci_devid(const char *str)
-{
-	cbt_unimplemented("hci_devid");
-}
-
-int hci_devinfo(int dev_id, struct hci_dev_info *di)
-{
-	cbt_unimplemented("hci_devinfo");
 }
 
 int hci_disconnect(int dd, uint16_t handle, uint8_t reason, int to)
@@ -83,16 +63,6 @@ int hci_encrypt_link(int dd, uint16_t handle, uint8_t encrypt, int to)
 int hci_exit_park_mode(int dd, uint16_t handle, int to)
 {
 	cbt_unimplemented("hci_exit_park_mode");
-}
-
-int hci_for_each_dev(int flag, int(*func)(int dd, int dev_id, long arg), long arg)
-{
-	cbt_unimplemented("hci_for_each_dev");
-}
-
-int hci_get_route(bdaddr_t *bdaddr)
-{
-	cbt_unimplemented("hci_get_route");
 }
 
 int hci_inquiry(int dev_id, int len, int num_rsp, const uint8_t *lap, inquiry_info **ii, long flags)
@@ -173,11 +143,6 @@ int hci_le_set_scan_enable(int dev_id, uint8_t enable, uint8_t filter_dup, int t
 int hci_le_set_scan_parameters(int dev_id, uint8_t type, uint16_t interval, uint16_t window, uint8_t own_type, uint8_t filter, int to)
 {
 	cbt_unimplemented("hci_le_set_scan_parameters");
-}
-
-int hci_open_dev(int dev_id)
-{
-	cbt_unimplemented("hci_open_dev");
 }
 
 int hci_park_mode(int dd, uint16_t handle, uint16_t max_interval, uint16_t min_interval, int to)
@@ -343,16 +308,6 @@ int hci_read_transmit_power_level(int dd, uint16_t handle, uint8_t type, int8_t 
 int hci_read_voice_setting(int dd, uint16_t *vs, int to)
 {
 	cbt_unimplemented("hci_read_voice_setting");
-}
-
-int hci_send_cmd(int dd, uint16_t ogf, uint16_t ocf, uint8_t plen, void *param)
-{
-	cbt_unimplemented("hci_send_cmd");
-}
-
-int hci_send_req(int dd, struct hci_request *req, int timeout)
-{
-	cbt_unimplemented("hci_send_req");
 }
 
 int hci_set_afh_classification(int dd, uint8_t *map, int to)
