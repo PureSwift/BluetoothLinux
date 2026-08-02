@@ -35,11 +35,6 @@ int hci_authenticate_link(int dd, uint16_t handle, int to)
 	cbt_unimplemented("hci_authenticate_link");
 }
 
-const char *hci_bustostr(int bus)
-{
-	cbt_unimplemented("hci_bustostr");
-}
-
 int hci_change_link_key(int dd, uint16_t handle, int to)
 {
 	cbt_unimplemented("hci_change_link_key");
@@ -48,16 +43,6 @@ int hci_change_link_key(int dd, uint16_t handle, int to)
 int hci_close_dev(int dd)
 {
 	cbt_unimplemented("hci_close_dev");
-}
-
-char *hci_cmdtostr(unsigned int cmd)
-{
-	cbt_unimplemented("hci_cmdtostr");
-}
-
-char *hci_commandstostr(const uint8_t *commands, const char *pref, int width)
-{
-	cbt_unimplemented("hci_commandstostr");
 }
 
 int hci_create_connection(int dd, const bdaddr_t *bdaddr, uint16_t ptype, uint16_t clkoffset, uint8_t rswitch, uint16_t *handle, int to)
@@ -85,19 +70,9 @@ int hci_devinfo(int dev_id, struct hci_dev_info *di)
 	cbt_unimplemented("hci_devinfo");
 }
 
-char *hci_dflagstostr(uint32_t flags)
-{
-	cbt_unimplemented("hci_dflagstostr");
-}
-
 int hci_disconnect(int dd, uint16_t handle, uint8_t reason, int to)
 {
 	cbt_unimplemented("hci_disconnect");
-}
-
-const char *hci_dtypetostr(int type)
-{
-	cbt_unimplemented("hci_dtypetostr");
 }
 
 int hci_encrypt_link(int dd, uint16_t handle, uint8_t encrypt, int to)
@@ -200,16 +175,6 @@ int hci_le_set_scan_parameters(int dev_id, uint8_t type, uint16_t interval, uint
 	cbt_unimplemented("hci_le_set_scan_parameters");
 }
 
-char *hci_lmtostr(unsigned int ptype)
-{
-	cbt_unimplemented("hci_lmtostr");
-}
-
-char *hci_lptostr(unsigned int ptype)
-{
-	cbt_unimplemented("hci_lptostr");
-}
-
 int hci_open_dev(int dev_id)
 {
 	cbt_unimplemented("hci_open_dev");
@@ -218,11 +183,6 @@ int hci_open_dev(int dev_id)
 int hci_park_mode(int dd, uint16_t handle, uint16_t max_interval, uint16_t min_interval, int to)
 {
 	cbt_unimplemented("hci_park_mode");
-}
-
-char *hci_ptypetostr(unsigned int ptype)
-{
-	cbt_unimplemented("hci_ptypetostr");
 }
 
 int hci_read_afh_map(int dd, uint16_t handle, uint8_t *mode, uint8_t *map, int to)
@@ -385,11 +345,6 @@ int hci_read_voice_setting(int dd, uint16_t *vs, int to)
 	cbt_unimplemented("hci_read_voice_setting");
 }
 
-char *hci_scoptypetostr(unsigned int ptype)
-{
-	cbt_unimplemented("hci_scoptypetostr");
-}
-
 int hci_send_cmd(int dd, uint16_t ogf, uint16_t ocf, uint8_t plen, void *param)
 {
 	cbt_unimplemented("hci_send_cmd");
@@ -405,44 +360,9 @@ int hci_set_afh_classification(int dd, uint8_t *map, int to)
 	cbt_unimplemented("hci_set_afh_classification");
 }
 
-int hci_strtolm(char *str, unsigned int *val)
-{
-	cbt_unimplemented("hci_strtolm");
-}
-
-int hci_strtolp(char *str, unsigned int *val)
-{
-	cbt_unimplemented("hci_strtolp");
-}
-
-int hci_strtoptype(char *str, unsigned int *val)
-{
-	cbt_unimplemented("hci_strtoptype");
-}
-
-int hci_strtoscoptype(char *str, unsigned int *val)
-{
-	cbt_unimplemented("hci_strtoscoptype");
-}
-
-int hci_strtover(char *str, unsigned int *ver)
-{
-	cbt_unimplemented("hci_strtover");
-}
-
 int hci_switch_role(int dd, bdaddr_t *bdaddr, uint8_t role, int to)
 {
 	cbt_unimplemented("hci_switch_role");
-}
-
-char *hci_typetostr(int type)
-{
-	cbt_unimplemented("hci_typetostr");
-}
-
-char *hci_vertostr(unsigned int ver)
-{
-	cbt_unimplemented("hci_vertostr");
 }
 
 int hci_write_afh_mode(int dd, uint8_t mode, int to)
@@ -510,71 +430,6 @@ int hci_write_voice_setting(int dd, uint16_t vs, int to)
 	cbt_unimplemented("hci_write_voice_setting");
 }
 
-char *lmp_featurestostr(uint8_t *features, char *pref, int width)
-{
-	cbt_unimplemented("lmp_featurestostr");
-}
-
-int lmp_strtover(char *str, unsigned int *ver)
-{
-	cbt_unimplemented("lmp_strtover");
-}
-
-char *lmp_vertostr(unsigned int ver)
-{
-	cbt_unimplemented("lmp_vertostr");
-}
-
-int pal_strtover(char *str, unsigned int *ver)
-{
-	cbt_unimplemented("pal_strtover");
-}
-
-char *pal_vertostr(unsigned int ver)
-{
-	cbt_unimplemented("pal_vertostr");
-}
-
-void sdp_add_lang_attr(sdp_record_t *rec)
-{
-	cbt_unimplemented("sdp_add_lang_attr");
-}
-
-void sdp_append_to_buf(sdp_buf_t *dst, uint8_t *data, uint32_t len)
-{
-	cbt_unimplemented("sdp_append_to_buf");
-}
-
-void sdp_append_to_pdu(sdp_buf_t *dst, sdp_data_t *d)
-{
-	cbt_unimplemented("sdp_append_to_pdu");
-}
-
-int sdp_attr_add(sdp_record_t *rec, uint16_t attr, sdp_data_t *data)
-{
-	cbt_unimplemented("sdp_attr_add");
-}
-
-int sdp_attr_add_new(sdp_record_t *rec, uint16_t attr, uint8_t dtd, const void *p)
-{
-	cbt_unimplemented("sdp_attr_add_new");
-}
-
-void sdp_attr_remove(sdp_record_t *rec, uint16_t attr)
-{
-	cbt_unimplemented("sdp_attr_remove");
-}
-
-void sdp_attr_replace(sdp_record_t *rec, uint16_t attr, sdp_data_t *data)
-{
-	cbt_unimplemented("sdp_attr_replace");
-}
-
-int sdp_attrid_comp_func(const void *key1, const void *key2)
-{
-	cbt_unimplemented("sdp_attrid_comp_func");
-}
-
 int sdp_close(sdp_session_t *session)
 {
 	cbt_unimplemented("sdp_close");
@@ -585,34 +440,9 @@ sdp_session_t *sdp_connect(const bdaddr_t *src, const bdaddr_t *dst, uint32_t fl
 	cbt_unimplemented("sdp_connect");
 }
 
-sdp_record_t *sdp_copy_record(sdp_record_t *rec)
-{
-	cbt_unimplemented("sdp_copy_record");
-}
-
 sdp_session_t *sdp_create(int sk, uint32_t flags)
 {
 	cbt_unimplemented("sdp_create");
-}
-
-sdp_data_t *sdp_data_alloc(uint8_t dtd, const void *value)
-{
-	cbt_unimplemented("sdp_data_alloc");
-}
-
-sdp_data_t *sdp_data_alloc_with_length(uint8_t dtd, const void *value, uint32_t length)
-{
-	cbt_unimplemented("sdp_data_alloc_with_length");
-}
-
-void sdp_data_free(sdp_data_t *data)
-{
-	cbt_unimplemented("sdp_data_free");
-}
-
-sdp_data_t *sdp_data_get(const sdp_record_t *rec, uint16_t attr_id)
-{
-	cbt_unimplemented("sdp_data_get");
 }
 
 int sdp_device_record_register(sdp_session_t *session, bdaddr_t *device, sdp_record_t *rec, uint8_t flags)
@@ -645,31 +475,6 @@ int sdp_device_record_update_binary(sdp_session_t *session, bdaddr_t *device, ui
 	cbt_unimplemented("sdp_device_record_update_binary");
 }
 
-sdp_data_t *sdp_extract_attr(const uint8_t *pdata, int bufsize, int *extractedLength, sdp_record_t *rec)
-{
-	cbt_unimplemented("sdp_extract_attr");
-}
-
-sdp_record_t *sdp_extract_pdu(const uint8_t *pdata, int bufsize, int *scanned)
-{
-	cbt_unimplemented("sdp_extract_pdu");
-}
-
-int sdp_extract_seqtype(const uint8_t *buf, int bufsize, uint8_t *dtdp, int *size)
-{
-	cbt_unimplemented("sdp_extract_seqtype");
-}
-
-int sdp_gen_pdu(sdp_buf_t *pdu, sdp_data_t *data)
-{
-	cbt_unimplemented("sdp_gen_pdu");
-}
-
-int sdp_gen_record_pdu(const sdp_record_t *rec, sdp_buf_t *pdu)
-{
-	cbt_unimplemented("sdp_gen_record_pdu");
-}
-
 uint16_t sdp_gen_tid(sdp_session_t *session)
 {
 	cbt_unimplemented("sdp_gen_tid");
@@ -680,79 +485,9 @@ int sdp_general_inquiry(inquiry_info *ii, int dev_num, int duration, uint8_t *fo
 	cbt_unimplemented("sdp_general_inquiry");
 }
 
-int sdp_get_access_protos(const sdp_record_t *rec, sdp_list_t **protos)
-{
-	cbt_unimplemented("sdp_get_access_protos");
-}
-
-int sdp_get_add_access_protos(const sdp_record_t *rec, sdp_list_t **protos)
-{
-	cbt_unimplemented("sdp_get_add_access_protos");
-}
-
-int sdp_get_database_state(const sdp_record_t *rec, uint32_t *svcDBState)
-{
-	cbt_unimplemented("sdp_get_database_state");
-}
-
 int sdp_get_error(sdp_session_t *session)
 {
 	cbt_unimplemented("sdp_get_error");
-}
-
-int sdp_get_group_id(const sdp_record_t *rec, uuid_t *uuid)
-{
-	cbt_unimplemented("sdp_get_group_id");
-}
-
-int sdp_get_int_attr(const sdp_record_t *rec, uint16_t attr, int *value)
-{
-	cbt_unimplemented("sdp_get_int_attr");
-}
-
-int sdp_get_lang_attr(const sdp_record_t *rec, sdp_list_t **langSeq)
-{
-	cbt_unimplemented("sdp_get_lang_attr");
-}
-
-int sdp_get_profile_descs(const sdp_record_t *rec, sdp_list_t **profDesc)
-{
-	cbt_unimplemented("sdp_get_profile_descs");
-}
-
-sdp_data_t *sdp_get_proto_desc(sdp_list_t *list, int proto)
-{
-	cbt_unimplemented("sdp_get_proto_desc");
-}
-
-int sdp_get_proto_port(const sdp_list_t *list, int proto)
-{
-	cbt_unimplemented("sdp_get_proto_port");
-}
-
-int sdp_get_record_state(const sdp_record_t *rec, uint32_t *svcRecState)
-{
-	cbt_unimplemented("sdp_get_record_state");
-}
-
-int sdp_get_server_ver(const sdp_record_t *rec, sdp_list_t **pVnumList)
-{
-	cbt_unimplemented("sdp_get_server_ver");
-}
-
-int sdp_get_service_avail(const sdp_record_t *rec, uint8_t *svcAvail)
-{
-	cbt_unimplemented("sdp_get_service_avail");
-}
-
-int sdp_get_service_id(const sdp_record_t *rec, uuid_t *uuid)
-{
-	cbt_unimplemented("sdp_get_service_id");
-}
-
-int sdp_get_service_ttl(const sdp_record_t *rec, uint32_t *svcTTLInfo)
-{
-	cbt_unimplemented("sdp_get_service_ttl");
 }
 
 int sdp_get_socket(const sdp_session_t *session)
@@ -760,79 +495,9 @@ int sdp_get_socket(const sdp_session_t *session)
 	cbt_unimplemented("sdp_get_socket");
 }
 
-int sdp_get_string_attr(const sdp_record_t *rec, uint16_t attr, char *value, size_t valuelen)
-{
-	cbt_unimplemented("sdp_get_string_attr");
-}
-
-int sdp_get_supp_feat(const sdp_record_t *rec, sdp_list_t **seqp)
-{
-	cbt_unimplemented("sdp_get_supp_feat");
-}
-
-int sdp_get_uuidseq_attr(const sdp_record_t *rec, uint16_t attr, sdp_list_t **seqp)
-{
-	cbt_unimplemented("sdp_get_uuidseq_attr");
-}
-
-sdp_list_t *sdp_list_append(sdp_list_t *list, void *d)
-{
-	cbt_unimplemented("sdp_list_append");
-}
-
-void sdp_list_free(sdp_list_t *list, sdp_free_func_t f)
-{
-	cbt_unimplemented("sdp_list_free");
-}
-
-sdp_list_t *sdp_list_insert_sorted(sdp_list_t *list, void *data, sdp_comp_func_t f)
-{
-	cbt_unimplemented("sdp_list_insert_sorted");
-}
-
-sdp_list_t *sdp_list_remove(sdp_list_t *list, void *d)
-{
-	cbt_unimplemented("sdp_list_remove");
-}
-
-void sdp_pattern_add_uuid(sdp_record_t *rec, uuid_t *uuid)
-{
-	cbt_unimplemented("sdp_pattern_add_uuid");
-}
-
-void sdp_pattern_add_uuidseq(sdp_record_t *rec, sdp_list_t *seq)
-{
-	cbt_unimplemented("sdp_pattern_add_uuidseq");
-}
-
 int sdp_process(sdp_session_t *session)
 {
 	cbt_unimplemented("sdp_process");
-}
-
-int sdp_profile_uuid2strn(const uuid_t *uuid, char *str, size_t n)
-{
-	cbt_unimplemented("sdp_profile_uuid2strn");
-}
-
-int sdp_proto_uuid2strn(const uuid_t *uuid, char *str, size_t n)
-{
-	cbt_unimplemented("sdp_proto_uuid2strn");
-}
-
-sdp_record_t *sdp_record_alloc(void)
-{
-	cbt_unimplemented("sdp_record_alloc");
-}
-
-void sdp_record_free(sdp_record_t *rec)
-{
-	cbt_unimplemented("sdp_record_free");
-}
-
-void sdp_record_print(const sdp_record_t *rec)
-{
-	cbt_unimplemented("sdp_record_print");
 }
 
 int sdp_record_register(sdp_session_t *session, sdp_record_t *rec, uint8_t flags)
@@ -853,21 +518,6 @@ int sdp_record_update(sdp_session_t *sess, const sdp_record_t *rec)
 int sdp_send_req_w4_rsp(sdp_session_t *session, uint8_t *req, uint8_t *rsp, uint32_t reqsize, uint32_t *rspsize)
 {
 	cbt_unimplemented("sdp_send_req_w4_rsp");
-}
-
-sdp_data_t *sdp_seq_alloc(void **dtds, void **values, int len)
-{
-	cbt_unimplemented("sdp_seq_alloc");
-}
-
-sdp_data_t *sdp_seq_alloc_with_length(void **dtds, void **values, int *length, int len)
-{
-	cbt_unimplemented("sdp_seq_alloc_with_length");
-}
-
-sdp_data_t *sdp_seq_append(sdp_data_t *seq, sdp_data_t *data)
-{
-	cbt_unimplemented("sdp_seq_append");
 }
 
 int sdp_service_attr_async(sdp_session_t *session, uint32_t handle, sdp_attrreq_type_t reqtype, const sdp_list_t *attrid_list)
@@ -900,138 +550,8 @@ int sdp_service_search_req(sdp_session_t *session, const sdp_list_t *search, uin
 	cbt_unimplemented("sdp_service_search_req");
 }
 
-int sdp_set_access_protos(sdp_record_t *rec, const sdp_list_t *proto)
-{
-	cbt_unimplemented("sdp_set_access_protos");
-}
-
-int sdp_set_add_access_protos(sdp_record_t *rec, const sdp_list_t *proto)
-{
-	cbt_unimplemented("sdp_set_add_access_protos");
-}
-
-void sdp_set_attrid(sdp_buf_t *pdu, uint16_t id)
-{
-	cbt_unimplemented("sdp_set_attrid");
-}
-
-void sdp_set_group_id(sdp_record_t *rec, uuid_t grouuuid)
-{
-	cbt_unimplemented("sdp_set_group_id");
-}
-
-void sdp_set_info_attr(sdp_record_t *rec, const char *name, const char *prov, const char *desc)
-{
-	cbt_unimplemented("sdp_set_info_attr");
-}
-
-int sdp_set_lang_attr(sdp_record_t *rec, const sdp_list_t *list)
-{
-	cbt_unimplemented("sdp_set_lang_attr");
-}
-
 int sdp_set_notify(sdp_session_t *session, sdp_callback_t *func, void *udata)
 {
 	cbt_unimplemented("sdp_set_notify");
-}
-
-int sdp_set_profile_descs(sdp_record_t *rec, const sdp_list_t *desc)
-{
-	cbt_unimplemented("sdp_set_profile_descs");
-}
-
-void sdp_set_seq_len(uint8_t *ptr, uint32_t length)
-{
-	cbt_unimplemented("sdp_set_seq_len");
-}
-
-void sdp_set_service_id(sdp_record_t *rec, uuid_t uuid)
-{
-	cbt_unimplemented("sdp_set_service_id");
-}
-
-int sdp_set_supp_feat(sdp_record_t *rec, const sdp_list_t *sf)
-{
-	cbt_unimplemented("sdp_set_supp_feat");
-}
-
-void sdp_set_url_attr(sdp_record_t *rec, const char *clientExecURL, const char *docURL, const char *iconURL)
-{
-	cbt_unimplemented("sdp_set_url_attr");
-}
-
-int sdp_set_uuidseq_attr(sdp_record_t *rec, uint16_t attr, sdp_list_t *seq)
-{
-	cbt_unimplemented("sdp_set_uuidseq_attr");
-}
-
-int sdp_svclass_uuid2strn(const uuid_t *uuid, char *str, size_t n)
-{
-	cbt_unimplemented("sdp_svclass_uuid2strn");
-}
-
-int sdp_uuid128_cmp(const void *p1, const void *p2)
-{
-	cbt_unimplemented("sdp_uuid128_cmp");
-}
-
-uuid_t *sdp_uuid128_create(uuid_t *uuid, const void *data)
-{
-	cbt_unimplemented("sdp_uuid128_create");
-}
-
-int sdp_uuid128_to_uuid(uuid_t *uuid)
-{
-	cbt_unimplemented("sdp_uuid128_to_uuid");
-}
-
-int sdp_uuid16_cmp(const void *p1, const void *p2)
-{
-	cbt_unimplemented("sdp_uuid16_cmp");
-}
-
-uuid_t *sdp_uuid16_create(uuid_t *uuid, uint16_t data)
-{
-	cbt_unimplemented("sdp_uuid16_create");
-}
-
-void sdp_uuid16_to_uuid128(uuid_t *uuid128, const uuid_t *uuid16)
-{
-	cbt_unimplemented("sdp_uuid16_to_uuid128");
-}
-
-int sdp_uuid2strn(const uuid_t *uuid, char *str, size_t n)
-{
-	cbt_unimplemented("sdp_uuid2strn");
-}
-
-uuid_t *sdp_uuid32_create(uuid_t *uuid, uint32_t data)
-{
-	cbt_unimplemented("sdp_uuid32_create");
-}
-
-void sdp_uuid32_to_uuid128(uuid_t *uuid128, const uuid_t *uuid32)
-{
-	cbt_unimplemented("sdp_uuid32_to_uuid128");
-}
-
-int sdp_uuid_cmp(const void *p1, const void *p2)
-{
-	cbt_unimplemented("sdp_uuid_cmp");
-}
-
-int sdp_uuid_extract(const uint8_t *buffer, int bufsize, uuid_t *uuid, int *scanned)
-{
-	cbt_unimplemented("sdp_uuid_extract");
-}
-
-int sdp_uuid_to_proto(uuid_t *uuid)
-{
-	cbt_unimplemented("sdp_uuid_to_proto");
-}
-
-uuid_t *sdp_uuid_to_uuid128(const uuid_t *uuid)
-{
-	cbt_unimplemented("sdp_uuid_to_uuid128");
 }
 
