@@ -136,6 +136,22 @@ target_include_directories(CBluetoothLinuxABI PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/Sources/CBluetoothLinuxABI/include")
 
 # ---------------------------------------------------------------------
+# BluetoothLinuxABI — the Swift implementations of the C entry points
+# this repository owns (currently: the HCI string converter family)
+# ---------------------------------------------------------------------
+
+file(GLOB BLUETOOTH_LINUX_ABI_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/Sources/BluetoothLinuxABI/*.swift"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Sources/BluetoothLinuxABI/gen/*.swift")
+
+add_library(BluetoothLinuxABI STATIC ${BLUETOOTH_LINUX_ABI_SOURCES})
+
+set_target_properties(BluetoothLinuxABI PROPERTIES
+    Swift_MODULE_NAME BluetoothLinuxABI)
+
+target_link_libraries(BluetoothLinuxABI PUBLIC CBluetoothLinuxABI)
+
+# ---------------------------------------------------------------------
 # The non-socket half, from PureSwift/Bluetooth
 # ---------------------------------------------------------------------
 
@@ -176,11 +192,13 @@ set_target_properties(bluetooth3 PROPERTIES
 target_link_options(bluetooth3 PRIVATE
     "LINKER:--whole-archive"
     "LINKER:$<TARGET_FILE:BluetoothABI>"
+    "LINKER:$<TARGET_FILE:BluetoothSDP>"
+    "LINKER:$<TARGET_FILE:BluetoothLinuxABI>"
     "LINKER:$<TARGET_FILE:CBluetooth>"
     "LINKER:$<TARGET_FILE:CBluetoothLinuxABI>"
     "LINKER:--no-whole-archive")
 
-add_dependencies(bluetooth3 BluetoothABI CBluetooth CBluetoothLinuxABI)
+add_dependencies(bluetooth3 BluetoothABI BluetoothSDP BluetoothLinuxABI CBluetooth CBluetoothLinuxABI)
 
 target_link_libraries(bluetooth3 PRIVATE Bluetooth)
 
