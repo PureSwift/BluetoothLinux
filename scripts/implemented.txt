@@ -143,3 +143,15 @@ lmp_strtover
 lmp_vertostr
 pal_strtover
 pal_vertostr
+
+# HCI device management (9), implemented in
+# Sources/BluetoothLinuxABI/HCIDevice.swift.
+hci_open_dev
+hci_close_dev
+hci_devid
+hci_devinfo
+hci_devba
+hci_for_each_dev
+hci_get_route
+hci_send_cmd
+hci_send_req
