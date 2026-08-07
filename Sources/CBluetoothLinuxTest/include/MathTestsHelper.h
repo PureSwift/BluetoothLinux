@@ -7,6 +7,14 @@
 //
 
 #import <stdint.h>
+// string.h for memset. Without it, clang implicitly declares the
+// builtin as `void *(void *, int, unsigned long)` and that declaration
+// becomes part of this module — where it shadows SwiftGlibc's annotated
+// memset. Release builds then crash the compiler: cross-module
+// optimization deserializes FoundationEssentials SIL that references
+// SwiftGlibc.memset, resolution finds only the mismatched builtin, and
+// the deserializer aborts (signal 6, ModuleFileSharedCore.cpp).
+#import <string.h>
 
 struct hci_filter {
     uint32_t type_mask;
