@@ -34,8 +34,11 @@ jobs:
         path: Bluetooth
     - name: Swift Version
       run: swift --version
-    - name: Install CMake and Ninja
-      run: apt-get update && apt-get install -y cmake ninja-build
+    # python3 as well: the swift containers don't ship it, and the
+    # configure step runs the stub/symbol generators (scripts/*.py)
+    # through find_package(Python3), which is REQUIRED.
+    - name: Install CMake, Ninja and Python
+      run: apt-get update && apt-get install -y cmake ninja-build python3
     - name: Configure
       run: >
         cmake -B build -G Ninja
