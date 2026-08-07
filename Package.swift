@@ -44,7 +44,7 @@ var package = Package(
     dependencies: [
         .package(
             url: "https://github.com/PureSwift/Bluetooth.git",
-            branch: "master"
+            from: "8.1.0"
         ),
         .package(
             url: "https://github.com/PureSwift/Socket.git",
@@ -215,7 +215,11 @@ if ProcessInfo.processInfo.environment["SWIFTPM_BLUETOOTH_CABI"] == "1" {
                 "CBluetoothLinuxABI",
                 // For bt_malloc/bt_malloc0/bt_free — CBluetoothLinuxABI
                 // declares them (bluetooth.h) but does not define them;
-                // BluetoothABI's CBluetooth does. Also gated behind
+                // BluetoothABI's CBluetooth does. It also carries the
+                // pure sdp_* symbols — the PDU codec (sdp_gen_pdu,
+                // sdp_extract_pdu, sdp_seq_alloc, sdp_data_alloc, ...)
+                // that the SDP session functions build request and
+                // response PDUs with. Also gated behind
                 // SWIFTPM_BLUETOOTH_CABI=1, which SwiftPM propagates to
                 // this dependency's own manifest evaluation.
                 .product(name: "BluetoothABI", package: "Bluetooth")
