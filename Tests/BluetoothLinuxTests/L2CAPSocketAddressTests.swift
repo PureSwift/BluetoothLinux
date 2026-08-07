@@ -40,7 +40,13 @@ final class L2CAPSocketAddressTests: XCTestCase {
         bytes.l2_bdaddr = BluetoothAddress(rawValue: "00:1A:7D:DA:71:13")!.littleEndian
         let address = L2CAPSocketAddress(bytes)
         XCTAssertEqual(address.protocolServiceMultiplexer, .hidc)
-        XCTAssertEqual(address.addressType, nil)
+        // Decoding is deliberately not the inverse of encoding here. On the
+        // wire `l2_bdaddr_type` has no "unspecified" encoding: 0 *is* BR/EDR,
+        // which is why the encoder maps a nil address type onto it. Reading 0
+        // back as `.bredr` is therefore the accurate answer, and the one the
+        // kernel means, even though it does not round-trip to the nil this
+        // address was built from.
+        XCTAssertEqual(address.addressType, .bredr)
         XCTAssertEqual(address.channel.rawValue, 0)
         XCTAssertEqual(address.address.rawValue, "00:1A:7D:DA:71:13")
     }
