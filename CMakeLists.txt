@@ -168,6 +168,11 @@ set(BLUETOOTH_ABI_INSTALL_HEADERS OFF CACHE BOOL "" FORCE)
 
 add_subdirectory("${BLUETOOTH_PACKAGE_PATH}" "${CMAKE_CURRENT_BINARY_DIR}/Bluetooth")
 
+# The SDP session sources `import BluetoothABI` for the PDU codec, so
+# the module has to be on the search path. This has to come after
+# add_subdirectory, which is where the target is defined.
+target_link_libraries(BluetoothLinuxABI PUBLIC BluetoothABI)
+
 # ---------------------------------------------------------------------
 # libbluetooth.so.3
 # ---------------------------------------------------------------------
