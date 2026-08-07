@@ -247,3 +247,22 @@ sdp_service_attr_req
 sdp_service_search_attr_req
 sdp_service_search_req
 sdp_set_notify
+
+# The service record registration functions (9), implemented in
+# Sources/BluetoothLinuxABI/SDPRecordRegistration.swift.
+sdp_device_record_register
+sdp_device_record_register_binary
+sdp_device_record_unregister
+sdp_device_record_unregister_binary
+sdp_device_record_update
+sdp_device_record_update_binary
+sdp_record_register
+sdp_record_unregister
+sdp_record_update
+
+# The asynchronous SDP requests and their response pump (4),
+# implemented in Sources/BluetoothLinuxABI/SDPSessionAsync.swift.
+sdp_process
+sdp_service_attr_async
+sdp_service_search_async
+sdp_service_search_attr_async
