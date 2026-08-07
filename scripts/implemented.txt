@@ -43,7 +43,7 @@ bt_uuid_to_string
 bt_uuid_to_uuid128
 
 # The pure (non-socket) sdp.c symbols (75), implemented in
-# PureSwift/Bluetooth's Sources/BluetoothSDP.
+# PureSwift/Bluetooth's Sources/BluetoothABI.
 sdp_add_lang_attr
 sdp_append_to_buf
 sdp_append_to_pdu
@@ -231,3 +231,19 @@ hci_write_local_name
 hci_write_simple_pairing_mode
 hci_write_stored_link_key
 hci_write_voice_setting
+
+# The socket-bound SDP client session functions (12), implemented in
+# Sources/BluetoothLinuxABI/SDPSession.swift, SDPSessionRequests.swift
+# and SDPPDU.swift.
+sdp_close
+sdp_connect
+sdp_create
+sdp_gen_tid
+sdp_general_inquiry
+sdp_get_error
+sdp_get_socket
+sdp_send_req_w4_rsp
+sdp_service_attr_req
+sdp_service_search_attr_req
+sdp_service_search_req
+sdp_set_notify
