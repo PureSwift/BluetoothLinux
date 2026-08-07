@@ -192,13 +192,12 @@ set_target_properties(bluetooth3 PROPERTIES
 target_link_options(bluetooth3 PRIVATE
     "LINKER:--whole-archive"
     "LINKER:$<TARGET_FILE:BluetoothABI>"
-    "LINKER:$<TARGET_FILE:BluetoothSDP>"
     "LINKER:$<TARGET_FILE:BluetoothLinuxABI>"
     "LINKER:$<TARGET_FILE:CBluetooth>"
     "LINKER:$<TARGET_FILE:CBluetoothLinuxABI>"
     "LINKER:--no-whole-archive")
 
-add_dependencies(bluetooth3 BluetoothABI BluetoothSDP BluetoothLinuxABI CBluetooth CBluetoothLinuxABI)
+add_dependencies(bluetooth3 BluetoothABI BluetoothLinuxABI CBluetooth CBluetoothLinuxABI)
 
 target_link_libraries(bluetooth3 PRIVATE Bluetooth)
 
