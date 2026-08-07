@@ -30,21 +30,6 @@ static void cbt_unimplemented(const char *symbol)
 	abort();
 }
 
-int sdp_close(sdp_session_t *session)
-{
-	cbt_unimplemented("sdp_close");
-}
-
-sdp_session_t *sdp_connect(const bdaddr_t *src, const bdaddr_t *dst, uint32_t flags)
-{
-	cbt_unimplemented("sdp_connect");
-}
-
-sdp_session_t *sdp_create(int sk, uint32_t flags)
-{
-	cbt_unimplemented("sdp_create");
-}
-
 int sdp_device_record_register(sdp_session_t *session, bdaddr_t *device, sdp_record_t *rec, uint8_t flags)
 {
 	cbt_unimplemented("sdp_device_record_register");
@@ -75,26 +60,6 @@ int sdp_device_record_update_binary(sdp_session_t *session, bdaddr_t *device, ui
 	cbt_unimplemented("sdp_device_record_update_binary");
 }
 
-uint16_t sdp_gen_tid(sdp_session_t *session)
-{
-	cbt_unimplemented("sdp_gen_tid");
-}
-
-int sdp_general_inquiry(inquiry_info *ii, int dev_num, int duration, uint8_t *found)
-{
-	cbt_unimplemented("sdp_general_inquiry");
-}
-
-int sdp_get_error(sdp_session_t *session)
-{
-	cbt_unimplemented("sdp_get_error");
-}
-
-int sdp_get_socket(const sdp_session_t *session)
-{
-	cbt_unimplemented("sdp_get_socket");
-}
-
 int sdp_process(sdp_session_t *session)
 {
 	cbt_unimplemented("sdp_process");
@@ -115,19 +80,9 @@ int sdp_record_update(sdp_session_t *sess, const sdp_record_t *rec)
 	cbt_unimplemented("sdp_record_update");
 }
 
-int sdp_send_req_w4_rsp(sdp_session_t *session, uint8_t *req, uint8_t *rsp, uint32_t reqsize, uint32_t *rspsize)
-{
-	cbt_unimplemented("sdp_send_req_w4_rsp");
-}
-
 int sdp_service_attr_async(sdp_session_t *session, uint32_t handle, sdp_attrreq_type_t reqtype, const sdp_list_t *attrid_list)
 {
 	cbt_unimplemented("sdp_service_attr_async");
-}
-
-sdp_record_t *sdp_service_attr_req(sdp_session_t *session, uint32_t handle, sdp_attrreq_type_t reqtype, const sdp_list_t *attrid_list)
-{
-	cbt_unimplemented("sdp_service_attr_req");
 }
 
 int sdp_service_search_async(sdp_session_t *session, const sdp_list_t *search, uint16_t max_rec_num)
@@ -138,20 +93,5 @@ int sdp_service_search_async(sdp_session_t *session, const sdp_list_t *search, u
 int sdp_service_search_attr_async(sdp_session_t *session, const sdp_list_t *search, sdp_attrreq_type_t reqtype, const sdp_list_t *attrid_list)
 {
 	cbt_unimplemented("sdp_service_search_attr_async");
-}
-
-int sdp_service_search_attr_req(sdp_session_t *session, const sdp_list_t *search, sdp_attrreq_type_t reqtype, const sdp_list_t *attrid_list, sdp_list_t **rsp_list)
-{
-	cbt_unimplemented("sdp_service_search_attr_req");
-}
-
-int sdp_service_search_req(sdp_session_t *session, const sdp_list_t *search, uint16_t max_rec_num, sdp_list_t **rsp_list)
-{
-	cbt_unimplemented("sdp_service_search_req");
-}
-
-int sdp_set_notify(sdp_session_t *session, sdp_callback_t *func, void *udata)
-{
-	cbt_unimplemented("sdp_set_notify");
 }
 
