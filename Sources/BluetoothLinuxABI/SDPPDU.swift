@@ -25,6 +25,17 @@ internal struct SDPContinuationState {
     var data: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
 }
 
+/// Write a fixed-width integer at a byte offset that carries no
+/// alignment guarantee. Every multi-byte field in an SDP PDU sits at
+/// whatever offset the preceding fields leave it at — the 5-byte
+/// header alone puts the body on an odd address — so nothing here may
+/// go through a typed pointer.
+internal func storeUnaligned<T: FixedWidthInteger>(_ value: T, to pointer: UnsafeMutableRawPointer, offset: Int) {
+    withUnsafeBytes(of: value) { source in
+        pointer.advanced(by: offset).copyMemory(from: source.baseAddress!, byteCount: source.count)
+    }
+}
+
 /// `static int copy_cstate(uint8_t *pdata, int pdata_len, const sdp_cstate_t *cstate)`
 internal func copyContinuationState(_ destination: UnsafeMutableRawPointer, _ availableLength: Int, _ cstate: UnsafePointer<SDPContinuationState>?) -> Int32 {
     guard let cstate else {
