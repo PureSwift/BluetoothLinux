@@ -4,10 +4,39 @@ on: [push]
 
 jobs:
 
-    linux-swift:
-        name: Linux
+    # The toolchain floor is 6.2, not the 6.0.2 this used to pin:
+    # PureSwift/Bluetooth 8.1.0 declares swift-tools-version:6.2, so an
+    # older toolchain cannot parse the dependency's manifest and fails
+    # during resolution, before anything is compiled.
+    linux:
+        name: Linux (${{ matrix.container }}, ${{ matrix.config }})
+        strategy:
+          # One failing cell shouldn't hide the others' results — which
+          # toolchain/configuration combinations fail is the whole point
+          # of running a matrix.
+          fail-fast: false
+          matrix:
+            container: ["swift:6.2.3", "swift:6.3.3"]
+            config: ["debug", "release"]
         runs-on: ubuntu-latest
-        container: swift:6.0.2-jammy
+        container: ${{ matrix.container }}-jammy
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Swift Version
+          run: swift --version
+        - name: Build
+          run: swift build -c ${{ matrix.config }}
+        - name: Test
+          run: swift test -c ${{ matrix.config }}
+
+    # Coverage runs once rather than per matrix cell: the report is a
+    # property of the source, not of the toolchain, and one upload keeps
+    # the artifact names unambiguous.
+    coverage:
+        name: Coverage
+        runs-on: ubuntu-latest
+        container: swift:6.3.3-jammy
         permissions:
           contents: read
           code-quality: write # required by actions/upload-code-coverage
@@ -16,10 +45,6 @@ jobs:
           uses: actions/checkout@v4
         - name: Swift Version
           run: swift --version
-        - name: Build (Debug)
-          run: swift build -c debug
-        - name: Build (Release)
-          run: swift build -c release
         - name: Test (Debug)
           run: swift test --configuration debug --enable-code-coverage
         - name: Archive Build artifacts
@@ -48,3 +73,38 @@ jobs:
             name: code-coverage
             path: .build/coverage/
             if-no-files-found: error
+
+    # The C ABI targets are excluded from the package unless
+    # SWIFTPM_BLUETOOTH_CABI=1, so none of the jobs above compile a line
+    # of them — this is the only SwiftPM coverage the drop-in library
+    # gets.
+    #
+    # 6.3 only, unlike the matrix above: the boundary functions are bound
+    # to the vendored declarations with `@c`, which 6.2 rejects as an
+    # unknown attribute.
+    c-abi:
+        name: C ABI (${{ matrix.config }})
+        strategy:
+          fail-fast: false
+          matrix:
+            config: ["debug", "release"]
+        runs-on: ubuntu-latest
+        container: swift:6.3.3-jammy
+        env:
+          SWIFTPM_BLUETOOTH_CABI: "1"
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Swift Version
+          run: swift --version
+        - name: Build
+          run: swift build -c ${{ matrix.config }}
+        - name: Test
+          run: swift test -c ${{ matrix.config }}
+        # The differential drivers are C programs linked twice, once
+        # against the reference library and once against ours, so both a
+        # C compiler and the real libbluetooth.so.3 have to be present.
+        - name: Install conformance prerequisites
+          run: apt-get update && apt-get install -y gcc libbluetooth3
+        - name: Differential conformance
+          run: Conformance/compare.sh "$(swift build -c ${{ matrix.config }} --show-bin-path)/libBluetoothLinuxABI.so"
