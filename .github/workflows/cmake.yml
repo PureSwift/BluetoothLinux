@@ -39,11 +39,17 @@ jobs:
     # through find_package(Python3), which is REQUIRED.
     - name: Install CMake, Ninja and Python
       run: apt-get update && apt-get install -y cmake ninja-build python3
+    # $GITHUB_WORKSPACE (the runtime variable), not ${{ github.workspace }}
+    # (the expression): in a container job the expression expands to the
+    # host path (/home/runner/work/...), which does not exist inside the
+    # container, where the workspace is mounted at /__w/... instead. The
+    # variable is set by the runner in the container's environment and
+    # resolves to the mounted path.
     - name: Configure
       run: >
         cmake -B build -G Ninja
         -DCMAKE_BUILD_TYPE=Release
-        -DBLUETOOTH_PACKAGE_PATH=${{ github.workspace }}/Bluetooth
+        -DBLUETOOTH_PACKAGE_PATH="${GITHUB_WORKSPACE}/Bluetooth"
     - name: Build
       run: cmake --build build
     - name: Check exported symbols
@@ -51,6 +57,6 @@ jobs:
     # Installing is cheap and catches a broken install rule, which would
     # otherwise only surface when someone tries to package the library.
     - name: Install
-      run: cmake --install build --prefix "${{ github.workspace }}/install"
+      run: cmake --install build --prefix "${GITHUB_WORKSPACE}/install"
     - name: Show installed layout
-      run: find "${{ github.workspace }}/install" -type f -o -type l
+      run: find "${GITHUB_WORKSPACE}/install" -type f -o -type l
