@@ -44,7 +44,7 @@ var package = Package(
     dependencies: [
         .package(
             url: "https://github.com/PureSwift/Bluetooth.git",
-            branch: "master"
+            from: "8.1.0"
         ),
         .package(
             url: "https://github.com/PureSwift/Socket.git",
@@ -182,3 +182,55 @@ if buildDocs {
     ]
 }
 #endif
+
+// C ABI (libbluetooth.so.3 replacement)
+//
+// Off by default so the ordinary Swift build stays unaffected. Enable
+// with `SWIFTPM_BLUETOOTH_CABI=1` to build the C surface — the vendored
+// BlueZ headers plus the generated stub table for every symbol not
+// implemented yet (see scripts/gen_stubs.py).
+//
+// SwiftPM builds the sources; the installable `libbluetooth.so.3`
+// itself is built by CMake, which is the only one of the two that can
+// set a soname, a version and an export list.
+if ProcessInfo.processInfo.environment["SWIFTPM_BLUETOOTH_CABI"] == "1" {
+    package.products += [
+        .library(
+            name: "BluetoothLinuxABI",
+            type: .dynamic,
+            targets: ["BluetoothLinuxABI"]
+        )
+    ]
+    package.targets += [
+        .target(
+            name: "CBluetoothLinuxABI",
+            exclude: [
+                "README.md",
+                "include/bluetooth/LICENSE"
+            ]
+        ),
+        .target(
+            name: "BluetoothLinuxABI",
+            dependencies: [
+                "CBluetoothLinuxABI",
+                // For bt_malloc/bt_malloc0/bt_free — CBluetoothLinuxABI
+                // declares them (bluetooth.h) but does not define them;
+                // BluetoothABI's CBluetooth does. It also carries the
+                // pure sdp_* symbols — the PDU codec (sdp_gen_pdu,
+                // sdp_extract_pdu, sdp_seq_alloc, sdp_data_alloc, ...)
+                // that the SDP session functions build request and
+                // response PDUs with. Also gated behind
+                // SWIFTPM_BLUETOOTH_CABI=1, which SwiftPM propagates to
+                // this dependency's own manifest evaluation.
+                .product(name: "BluetoothABI", package: "Bluetooth")
+            ]
+        ),
+        .testTarget(
+            name: "BluetoothLinuxABITests",
+            dependencies: [
+                "BluetoothLinuxABI",
+                "CBluetoothLinuxABI"
+            ]
+        )
+    ]
+}

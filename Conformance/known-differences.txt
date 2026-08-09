@@ -1,0 +1,27 @@
+# Accepted differences between our output and the reference's.
+#
+# compare.sh strips the +/- prefixes from the diff, dedupes the lines,
+# and subtracts this list, so each entry here accepts a line regardless
+# of which side produced it. Comments and blank lines are ignored.
+#
+# The entries below are all BlueZ version skew: our tables match current
+# BlueZ (5.79, the reference this port is verified against on Debian 13),
+# while CI's reference is whatever libbluetooth3 the container's distro
+# ships — jammy has 5.64, noble 5.72. Both sides of each pair are listed
+# because the older reference prints the fallback where ours prints the
+# newer name. On a reference that knows these values the outputs are
+# identical and none of these entries apply.
+
+# Bus type 11 (HCI_IPC): added to lib/hci.c after 5.72, so both jammy
+# (5.64) and noble (5.72) print the fallback.
+bustostr(11) = "IPC"
+bustostr(11) = "Unknown"
+dtypetostr(11) = "IPC"
+dtypetostr(11) = "Unknown"
+
+# HCI/LMP version 0x0d (Bluetooth 5.4): known to noble's 5.72 but not
+# jammy's 5.64, which prints an empty string.
+lmp_vertostr(0x0d) = ""
+lmp_vertostr(0x0d) = "5.4"
+vertostr(0x0d) = ""
+vertostr(0x0d) = "5.4"

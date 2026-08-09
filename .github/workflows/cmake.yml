@@ -1,0 +1,62 @@
+name: CMake
+
+on: [push]
+
+jobs:
+
+  # Verifies the CMake packaging path, which is what actually produces
+  # the installable libbluetooth.so.3: soname, symbol versioning and the
+  # export list are not expressible in Package.swift, so SwiftPM's build
+  # of the same sources proves nothing about the shipped artifact.
+  #
+  # This is also the only job that runs check-exports, the assertion that
+  # the library exports exactly the reference's symbol set — the one
+  # check that would catch the drop-in premise breaking.
+  cmake:
+    name: CMake
+    runs-on: ubuntu-latest
+    # noble, not jammy like the Swift workflow: CMakeLists.txt requires
+    # CMake 3.26+ and jammy's apt carries only 3.22. noble ships 3.28.
+    # 6.3 because the C ABI is bound with `@c`, which 6.2 rejects.
+    container: swift:6.3.3-noble
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    # The shared object links the non-socket half of the C ABI out of
+    # PureSwift/Bluetooth's own CMakeLists, so that has to be checked out
+    # too — pinned to the same version Package.swift depends on, so the
+    # two halves cannot drift apart in CI.
+    - name: Checkout PureSwift/Bluetooth
+      uses: actions/checkout@v4
+      with:
+        repository: PureSwift/Bluetooth
+        ref: "8.1.0"
+        path: Bluetooth
+    - name: Swift Version
+      run: swift --version
+    # python3 as well: the swift containers don't ship it, and the
+    # configure step runs the stub/symbol generators (scripts/*.py)
+    # through find_package(Python3), which is REQUIRED.
+    - name: Install CMake, Ninja and Python
+      run: apt-get update && apt-get install -y cmake ninja-build python3
+    # $GITHUB_WORKSPACE (the runtime variable), not ${{ github.workspace }}
+    # (the expression): in a container job the expression expands to the
+    # host path (/home/runner/work/...), which does not exist inside the
+    # container, where the workspace is mounted at /__w/... instead. The
+    # variable is set by the runner in the container's environment and
+    # resolves to the mounted path.
+    - name: Configure
+      run: >
+        cmake -B build -G Ninja
+        -DCMAKE_BUILD_TYPE=Release
+        -DBLUETOOTH_PACKAGE_PATH="${GITHUB_WORKSPACE}/Bluetooth"
+    - name: Build
+      run: cmake --build build
+    - name: Check exported symbols
+      run: cmake --build build --target check-exports
+    # Installing is cheap and catches a broken install rule, which would
+    # otherwise only surface when someone tries to package the library.
+    - name: Install
+      run: cmake --install build --prefix "${GITHUB_WORKSPACE}/install"
+    - name: Show installed layout
+      run: find "${GITHUB_WORKSPACE}/install" -type f -o -type l
