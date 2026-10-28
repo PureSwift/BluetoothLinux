@@ -65,13 +65,19 @@ internal extension Socket {
             // send command
             try await sendCommand(command, parameter: commandParameterData)
 
-            // retrieve data...
-            var attempts = 10
-            while attempts > 0 {
+            // retrieve data until the timeout expires
+            // (a fixed number of reads is not enough while scanning, since LE advertising
+            // reports also pass the filter and can arrive before the command's response)
+            let deadline = ContinuousClock.now + .milliseconds(Int(timeout.rawValue))
+            while ContinuousClock.now < deadline {
 
-                // decrement attempts
-                attempts -= 1
-                
+                // wait for the next event no longer than the remaining time
+                let remaining = (deadline - ContinuousClock.now).components
+                let milliseconds = Int(remaining.seconds) * 1000 + Int(remaining.attoseconds / 1_000_000_000_000_000)
+                guard try fileDescriptor.poll(for: [.read], timeout: max(milliseconds, 0)).contains(.read) else {
+                    break
+                }
+
                 // attempt to read
                 let eventBuffer = try await read(HCIEventHeader.maximumSize)
                 assert(eventBuffer.isEmpty == false, "No HCI event read")
