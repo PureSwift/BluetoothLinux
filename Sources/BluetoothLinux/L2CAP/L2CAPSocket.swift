@@ -117,7 +117,9 @@ public struct L2CAPSocket: Sendable {
         let destinationSocketAddress = L2CAPSocketAddress(
             address: destinationAddress,
             addressType: AddressType(lowEnergy: destinationAddressType),
-            protocolServiceMultiplexer: .att,
+            // LE ATT connects over the fixed channel with no PSM;
+            // the kernel rejects an address with both l2_psm and l2_cid set (EINVAL)
+            protocolServiceMultiplexer: nil,
             channel: .att
         )
         let fileDescriptor = try SocketDescriptor.l2cap(localSocketAddress, [.closeOnExec, .nonBlocking])
